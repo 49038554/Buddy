@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="SDK">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="SDK\Protocl">
+      <UniqueIdentifier>{1a2efb76-0221-438b-8138-9074a657339a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Protocl\Object">
+      <UniqueIdentifier>{27d42c76-8bac-4be2-a205-f0561a07dad9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Protocl\base">
+      <UniqueIdentifier>{6d627ac8-2b3c-4d12-a0c1-042ee6351a83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\DBCenter">
+      <UniqueIdentifier>{9ce83ef0-1ab1-4989-8ddf-6c3a5d925b89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\DBCenter\Data">
+      <UniqueIdentifier>{4c0792b6-a3b3-491e-ae4f-aedec7650f34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Interface">
+      <UniqueIdentifier>{cc6b5a50-344e-4f2a-84f1-0e048677306c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Interface\ClusterMgr">
+      <UniqueIdentifier>{52ff82f5-06fc-46f4-a02d-ebd2344c6a58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Protocl\Object\Operation">
+      <UniqueIdentifier>{807fe722-f205-4fa7-b704-acf121a4df69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Protocl\Object\Notify">
+      <UniqueIdentifier>{451de386-2b85-4e28-a8c5-ebdd81855bd3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\SupportLayer\Notify\Main.cpp">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SupportLayer\Notify\Worker.cpp">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Buffer.cpp">
+      <Filter>SDK\Protocl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Protocl\cpp\base\Message.cpp">
+      <Filter>SDK\Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Protocl\cpp\base\Stream.cpp">
+      <Filter>SDK\Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp">
+      <Filter>SDK\DBCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\GuestNode.cpp">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp">
+      <Filter>SDK\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp">
+      <Filter>SDK\Interface\ClusterMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Operation\Cluster.cpp">
+      <Filter>SDK\Protocl\Object\Operation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Operation\GetCluster.cpp">
+      <Filter>SDK\Protocl\Object\Operation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Operation\GetRoomCfg.cpp">
+      <Filter>SDK\Protocl\Object\Operation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Operation\RoomCfg.cpp">
+      <Filter>SDK\Protocl\Object\Operation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Notify\Event.cpp">
+      <Filter>SDK\Protocl\Object\Notify</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Protocl\cpp\base\Socket.cpp">
+      <Filter>SDK\Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\Anchor.cpp">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\Ranking.cpp">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\ContributionInfo.cpp">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\Family.cpp">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\SupportLayer\Notify\Main.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SupportLayer\Notify\Worker.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Buffer.h">
+      <Filter>SDK\Protocl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Protocl.h">
+      <Filter>SDK\Protocl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Protocl\cpp\base\Message.h">
+      <Filter>SDK\Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Protocl\cpp\base\Stream.h">
+      <Filter>SDK\Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h">
+      <Filter>SDK\DBCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\GuestNode.h">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h">
+      <Filter>SDK\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h">
+      <Filter>SDK\Interface\ClusterMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Operation\Cluster.h">
+      <Filter>SDK\Protocl\Object\Operation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Operation\GetCluster.h">
+      <Filter>SDK\Protocl\Object\Operation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Operation\GetRoomCfg.h">
+      <Filter>SDK\Protocl\Object\Operation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Operation\RoomCfg.h">
+      <Filter>SDK\Protocl\Object\Operation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Notify\Event.h">
+      <Filter>SDK\Protocl\Object\Notify</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Protocl\cpp\base\Socket.h">
+      <Filter>SDK\Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\Anchor.h">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\Ranking.h">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\ContributionInfo.h">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\Family.h">
+      <Filter>SDK\DBCenter\Data</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\SupportLayer\Notify\makefile" />
+    <None Include="..\..\..\SupportLayer\Notify\bin\Notify.cfg" />
+    <None Include="..\..\..\SupportLayer\Notify\bin\list.sh" />
+    <None Include="..\..\..\SupportLayer\Notify\bin\stop.sh" />
+    <None Include="..\..\..\SupportLayer\Notify\bin\run.sh" />
+  </ItemGroup>
+</Project>

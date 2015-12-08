@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="SDK">
+      <UniqueIdentifier>{c9c36ee5-3453-4ed1-a728-b934a9c74e65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl">
+      <UniqueIdentifier>{059a786a-4cdd-41c9-9bba-98d8081dc1a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\base">
+      <UniqueIdentifier>{9c6b94e4-a456-4133-9526-1d328282eda4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object">
+      <UniqueIdentifier>{5d93a953-14b7-42bd-addd-bc6ba6290be4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object\Operation">
+      <UniqueIdentifier>{02d0aa55-b8e3-4e7b-9bc3-23ba5e618642}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\SupportLayer\ClusterMgr\Main.cpp">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SupportLayer\ClusterMgr\Worker.cpp">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mysql\MySqlClient.cpp">
+      <Filter>SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\ServerEx.cpp">
+      <Filter>SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\MysqlCluster.cpp">
+      <Filter>SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\Console.cpp">
+      <Filter>SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp">
+      <Filter>Protocl\Object\Operation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp">
+      <Filter>Protocl\Object\Operation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Buffer.cpp">
+      <Filter>Protocl</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\SupportLayer\ClusterMgr\Main.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SupportLayer\ClusterMgr\Worker.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mysql\MySqlClient.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\ServerEx.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\MysqlCluster.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\Console.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h">
+      <Filter>Protocl\Object\Operation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h">
+      <Filter>Protocl\Object\Operation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h">
+      <Filter>Protocl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Buffer.h">
+      <Filter>Protocl</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\SupportLayer\ClusterMgr\makefile" />
+    <None Include="..\..\..\SupportLayer\ClusterMgr\bin\list.sh" />
+    <None Include="..\..\..\SupportLayer\ClusterMgr\bin\run.sh" />
+    <None Include="..\..\..\SupportLayer\ClusterMgr\bin\stop.sh" />
+    <None Include="..\..\..\SupportLayer\ClusterMgr\bin\ClusterMgr.cfg" />
+  </ItemGroup>
+</Project>

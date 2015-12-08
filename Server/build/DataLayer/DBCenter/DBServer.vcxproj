@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Buffer.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\BindingPhone.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\ResetPassword.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRegister.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp" />
+    <ClCompile Include="..\..\..\DataLayer\DBCenter\Main.cpp" />
+    <ClCompile Include="..\..\..\DataLayer\DBCenter\Worker.cpp" />
+    <ClCompile Include="..\..\..\SDK\common\common.cpp" />
+    <ClCompile Include="..\..\..\SDK\common\MD5Helper.cpp" />
+    <ClCompile Include="..\..\..\SDK\common\MysqlCluster.cpp" />
+    <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp" />
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp" />
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp" />
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp" />
+    <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp" />
+    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp" />
+    <ClCompile Include="..\..\..\SDK\mysql\MySqlClient.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Buffer.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\BindingPhone.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\ResetPassword.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRegister.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h" />
+    <ClInclude Include="..\..\..\DataLayer\DBCenter\Main.h" />
+    <ClInclude Include="..\..\..\DataLayer\DBCenter\Worker.h" />
+    <ClInclude Include="..\..\..\SDK\common\common.h" />
+    <ClInclude Include="..\..\..\SDK\common\MD5Helper.h" />
+    <ClInclude Include="..\..\..\SDK\common\MysqlCluster.h" />
+    <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h" />
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h" />
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h" />
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h" />
+    <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h" />
+    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h" />
+    <ClInclude Include="..\..\..\SDK\mysql\MySqlClient.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\DataLayer\DBCenter\bin\DBCenter.cfg" />
+    <None Include="..\..\..\DataLayer\DBCenter\bin\list.sh" />
+    <None Include="..\..\..\DataLayer\DBCenter\bin\OnlyId.cfg" />
+    <None Include="..\..\..\DataLayer\DBCenter\bin\run.sh" />
+    <None Include="..\..\..\DataLayer\DBCenter\bin\stop.sh" />
+    <None Include="..\..\..\DataLayer\DBCenter\makefile" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{32DB8B3E-4426-48C5-891B-CDC71E78474F}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>DBServer</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\..\DataLayer\DBCenter\bin</OutDir>
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\..\DataLayer\DBCenter\bin</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>..\..\..\SDK;..\..\..\SDK\Micro-Development-Kit\include;..\..\..\SDK\mysql\include;..\..\..\SDK\hiredis\include;..\..\..\..</AdditionalIncludeDirectories>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\..\..\SDK\mysql\lib\debug;..\..\..\SDK\Micro-Development-Kit\lib;..\..\..\SDK\hiredis\lib</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>libcmt</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\SDK;..\..\..\SDK\Micro-Development-Kit\include;..\..\..\SDK\mysql\include;..\..\..\SDK\hiredis\include;..\..\..\..</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>..\..\..\SDK\mysql\lib\debug;..\..\..\SDK\Micro-Development-Kit\lib;..\..\..\SDK\hiredis\lib</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

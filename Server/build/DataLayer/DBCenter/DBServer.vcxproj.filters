@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{ebd8d733-f272-421b-823c-c142c749b935}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message">
+      <UniqueIdentifier>{39c5f0cb-132d-405f-9971-4cd2f172e055}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\Base">
+      <UniqueIdentifier>{62ce76c4-af72-4c69-8e28-4bf4b886a044}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\Object">
+      <UniqueIdentifier>{cbf84b0a-1da2-497b-9230-e609ba4aa2c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\Object\Auth">
+      <UniqueIdentifier>{c274fe71-880b-4fb6-8dc6-1c5b245cb3bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{458289c0-643a-4016-a4e2-61d77f07dfd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MySQL">
+      <UniqueIdentifier>{ab5dd0b9-82a3-4054-bdb6-8e24c42d67ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DBCenter">
+      <UniqueIdentifier>{10f9e6b2-6770-475c-ac82-697e90aec2dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DBCenter\Data">
+      <UniqueIdentifier>{2b25c553-d280-441d-b172-296f8118bee6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{2d5ec179-520b-410f-8773-7b25a644f517}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\Object\Operation">
+      <UniqueIdentifier>{d4796510-666f-471b-8031-402470a20e68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\Object\Database">
+      <UniqueIdentifier>{ca825674-b009-43e8-9997-0760b7b3cd7e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\DataLayer\DBCenter\Main.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\DataLayer\DBCenter\Worker.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mysql\MySqlClient.cpp">
+      <Filter>MySQL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp">
+      <Filter>Message\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp">
+      <Filter>Message\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp">
+      <Filter>Message\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Buffer.cpp">
+      <Filter>Message</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp">
+      <Filter>Message\Object\Operation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp">
+      <Filter>Message\Object\Operation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\ResetPassword.cpp">
+      <Filter>Message\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRegister.cpp">
+      <Filter>Message\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp">
+      <Filter>DBCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp">
+      <Filter>DBCenter\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp">
+      <Filter>DBCenter\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\common.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\MD5Helper.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\MysqlCluster.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\BindingPhone.cpp">
+      <Filter>Message\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp">
+      <Filter>DBCenter\Data</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\DataLayer\DBCenter\Main.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\DataLayer\DBCenter\Worker.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mysql\MySqlClient.h">
+      <Filter>MySQL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h">
+      <Filter>Message\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h">
+      <Filter>Message\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h">
+      <Filter>Message\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h">
+      <Filter>Message</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Buffer.h">
+      <Filter>Message</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h">
+      <Filter>Message\Object\Operation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h">
+      <Filter>Message\Object\Operation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\ResetPassword.h">
+      <Filter>Message\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRegister.h">
+      <Filter>Message\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h">
+      <Filter>DBCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h">
+      <Filter>DBCenter\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h">
+      <Filter>DBCenter\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\common.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\MD5Helper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\MysqlCluster.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\BindingPhone.h">
+      <Filter>Message\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h">
+      <Filter>DBCenter\Data</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\DataLayer\DBCenter\bin\DBCenter.cfg" />
+    <None Include="..\..\..\DataLayer\DBCenter\bin\list.sh" />
+    <None Include="..\..\..\DataLayer\DBCenter\bin\OnlyId.cfg" />
+    <None Include="..\..\..\DataLayer\DBCenter\bin\run.sh" />
+    <None Include="..\..\..\DataLayer\DBCenter\bin\stop.sh" />
+    <None Include="..\..\..\DataLayer\DBCenter\makefile" />
+  </ItemGroup>
+</Project>

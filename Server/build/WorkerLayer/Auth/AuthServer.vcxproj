@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Buffer.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\BindingPhone.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\ResetPassword.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\UserLogin.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\UserLogout.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRegister.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp" />
+    <ClCompile Include="..\..\..\SDK\common\common.cpp" />
+    <ClCompile Include="..\..\..\SDK\common\MD5Helper.cpp" />
+    <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp" />
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp" />
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp" />
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp" />
+    <ClCompile Include="..\..\..\SDK\DBCenter\DBInterFace.cpp" />
+    <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp" />
+    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp" />
+    <ClCompile Include="..\..\..\WorkLayer\Auth\Main.cpp" />
+    <ClCompile Include="..\..\..\WorkLayer\Auth\Worker.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Buffer.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\BindingPhone.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\ResetPassword.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\UserLogin.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\UserLogout.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRegister.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h" />
+    <ClInclude Include="..\..\..\SDK\common\common.h" />
+    <ClInclude Include="..\..\..\SDK\common\MD5Helper.h" />
+    <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h" />
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h" />
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h" />
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h" />
+    <ClInclude Include="..\..\..\SDK\DBCenter\DBInterFace.h" />
+    <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h" />
+    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h" />
+    <ClInclude Include="..\..\..\WorkLayer\Auth\Main.h" />
+    <ClInclude Include="..\..\..\WorkLayer\Auth\Worker.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\WorkLayer\Auth\bin\Auth.cfg" />
+    <None Include="..\..\..\WorkLayer\Auth\bin\list.sh" />
+    <None Include="..\..\..\WorkLayer\Auth\bin\run.sh" />
+    <None Include="..\..\..\WorkLayer\Auth\bin\stop.sh" />
+    <None Include="..\..\..\WorkLayer\Auth\makefile" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9C715BD2-00BA-41DC-A1CD-1175579E597B}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>AuthServer</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)\..\..\..\WorkLayer\Auth\bin</OutDir>
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)\..\..\..\WorkLayer\Auth\bin</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\SDK\Micro-Development-Kit\include;..\..\..\SDK\hiredis\include;..\..\..\SDK;..\..\..\..</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\..\..\SDK\Micro-Development-Kit\lib;..\..\..\SDK\hiredis\lib</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\SDK\Micro-Development-Kit\include;..\..\..\SDK\hiredis\include;..\..\..\SDK;..\..\..\..</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>..\..\..\SDK\Micro-Development-Kit\lib;..\..\..\SDK\hiredis\lib</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

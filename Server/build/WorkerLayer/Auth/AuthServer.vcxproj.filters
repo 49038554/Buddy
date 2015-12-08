@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="DBCenter">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="DBCenter\Data">
+      <UniqueIdentifier>{a2cb63c4-53cd-412c-ae9c-a3dd2dc4163e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{dcd0cc66-37b3-4779-a924-8dad421e2c20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message">
+      <UniqueIdentifier>{f717ab03-74bf-419d-8e25-a4bb28a7161a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\Base">
+      <UniqueIdentifier>{293be309-8765-4264-bc3a-c7bde0026266}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\Object">
+      <UniqueIdentifier>{2696f8fb-36af-49f5-8ebd-75f94d742129}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\Object\Auth">
+      <UniqueIdentifier>{5034b7ca-6632-4120-8e92-a0e2b5ef59b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\Object\DataBase">
+      <UniqueIdentifier>{b238fddb-5503-401f-8c51-e9fde9ed4e26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Message\Object\Operation">
+      <UniqueIdentifier>{e8c6bdf2-0f84-46f8-a487-39f78eca9d72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{9bd00df7-d456-49d9-b42d-cf15ad79f7e3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp">
+      <Filter>Message\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp">
+      <Filter>Message\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\BindingPhone.cpp">
+      <Filter>Message\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\ResetPassword.cpp">
+      <Filter>Message\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\UserLogin.cpp">
+      <Filter>Message\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\UserLogout.cpp">
+      <Filter>Message\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRegister.cpp">
+      <Filter>Message\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp">
+      <Filter>Message\Object\Operation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp">
+      <Filter>Message\Object\Operation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Buffer.cpp">
+      <Filter>Message</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WorkLayer\Auth\Main.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WorkLayer\Auth\Worker.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp">
+      <Filter>DBCenter\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp">
+      <Filter>DBCenter\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp">
+      <Filter>DBCenter\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp">
+      <Filter>DBCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\DBInterFace.cpp">
+      <Filter>DBCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\common.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\MD5Helper.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp">
+      <Filter>Message\Base</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h">
+      <Filter>Message\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h">
+      <Filter>Message\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\BindingPhone.h">
+      <Filter>Message\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\ResetPassword.h">
+      <Filter>Message\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\UserLogin.h">
+      <Filter>Message\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\UserLogout.h">
+      <Filter>Message\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRegister.h">
+      <Filter>Message\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h">
+      <Filter>Message\Object\Operation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h">
+      <Filter>Message\Object\Operation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Buffer.h">
+      <Filter>Message</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h">
+      <Filter>Message</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WorkLayer\Auth\Main.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WorkLayer\Auth\Worker.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h">
+      <Filter>DBCenter\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h">
+      <Filter>DBCenter\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h">
+      <Filter>DBCenter\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h">
+      <Filter>DBCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\DBInterFace.h">
+      <Filter>DBCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\common.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\MD5Helper.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h">
+      <Filter>Message\Base</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\WorkLayer\Auth\bin\Auth.cfg" />
+    <None Include="..\..\..\WorkLayer\Auth\bin\stop.sh" />
+    <None Include="..\..\..\WorkLayer\Auth\bin\list.sh" />
+    <None Include="..\..\..\WorkLayer\Auth\bin\run.sh" />
+    <None Include="..\..\..\WorkLayer\Auth\makefile" />
+  </ItemGroup>
+</Project>
