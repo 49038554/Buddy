@@ -11,6 +11,7 @@
 #include "Protocl/cpp/Object/Auth/UserLogout.h"
 #include "Protocl/cpp/Object/Auth/ResetPassword.h"
 #include "Protocl/cpp/Object/Auth/BindingPhone.h"
+#include "Interface/DBCenter/cpp/DBCenterCluster.h"
 
 #ifdef WIN32
 #ifdef _DEBUG
@@ -70,6 +71,7 @@ Worker::Worker(void)
 		exit(0);
 	}
 
+	std::vector<msg::Cluster::NODE> dbCenters;
 	std::map< Moudle::Moudle, std::map< NetLine::NetLine, std::vector<msg::Cluster::NODE> > >::iterator itMoudle;
 	std::map< NetLine::NetLine, std::vector<msg::Cluster::NODE> >::iterator itLine;
 	std::vector<msg::Cluster::NODE>::iterator itNode;
@@ -86,33 +88,36 @@ Worker::Worker(void)
 					m_cfg.Save();
 				}
 				// 创建所有的DB连接
-				else if (Moudle::DBEntry == itMoudle->first)
-				{
-					m_log.Info("run", "创建DBCenter结点:%s %d", itNode->ip.c_str(), itNode->port);
-					DBInterface* pDBInterface = new DBInterface;
-					pDBInterface->SetServerInfo(itNode->ip, itNode->port);
-					m_allDB.push_back(pDBInterface);
-				}
-				else
-				{
-					continue;
-				}
+				if (Moudle::DBEntry == itMoudle->first) dbCenters.push_back(*itNode);
 			}
 		}
 	}
-
-	if (0 == m_allDB.size())
-	{
-		m_log.Info("Error", "集群缺少模块，请检查Cluster库");
-		mdk::mdk_assert(false);
-		exit(0);
-	}
-	m_log.Info("Run", "DB服务器节点%d个", m_allDB.size());
+	m_log.Info("Run", "DB服务器节点%d个", dbCenters.size());
 
 	// 设置工作线程数目
 	unsigned uNumbers = mdk::GetCUPNumber( 32, 4 );
 	SetWorkThreadCount(uNumbers);
-
+	std::vector<void*> objList;
+	int i = 0;
+	for ( i = 0; i < uNumbers; i++ )
+	{
+		DBCenterCluster *pCluster = new DBCenterCluster;
+		int j = 0;
+		for ( j = 0; j < dbCenters.size(); j++ )
+		{
+			pCluster->AddNode(dbCenters[j].nodeId, dbCenters[j].ip, dbCenters[j].port);
+		}
+		objList.push_back(pCluster);
+		if ( 0 < i ) continue;
+		if ( !pCluster->CheckCluster() )
+		{
+			m_log.Info("run", "DBCenter集群配置异常：结点id必须从1开始且连续");
+			mdk::mdk_assert(false);
+			exit(0);
+			return;
+		}
+	}
+	SetThreadsObjects(objList);
 	// 初始化Redis集群
 	if (! m_cache.InitCluster(m_cfg, uNumbers))
 	{
@@ -131,15 +136,6 @@ Worker::Worker(void)
 
 Worker::~Worker(void)
 {
-	for (int idx = 0; idx != m_allDB.size(); ++idx)
-	{
-		if (m_allDB[idx] != NULL)
-		{
-			delete m_allDB[idx];
-			m_allDB[idx] = NULL;
-		}
-	}
-	m_allDB.clear();
 }
 
 void Worker::OnMsg(mdk::NetHost& host)
@@ -184,8 +180,8 @@ bool Worker::OnUserRegister(mdk::NetHost& host, msg::Buffer& buffer)
 			break;
 		}
 		// 注册用户
-		DBInterface* pDBInterface = DBNode(msg.m_account);
-		pDBInterface->CreateUser(msg); 
+		DBCenter *pDBCenter = ((DBCenterCluster*)SafeObject())->Node(msg.m_account);
+		pDBCenter->CreateUser(msg); 
 	}
 	while (false);
 	if ( ResultCode::Success != msg.m_code )
@@ -312,9 +308,10 @@ bool Worker::OnUserResetPwd(mdk::NetHost& host, msg::Buffer& buffer)
 			break;
 		}
 		// 再修改数据库中的密码
-		DBInterface* pDBInterface = DBNode(msg.m_objectId);
-		pDBInterface->ResetUserPwd(msg);
-	} while (false);
+		DBCenter *pDBCenter = ((DBCenterCluster*)SafeObject())->Node(msg.m_objectId);
+		pDBCenter->ResetUserPwd(msg);
+	} 
+	while (false);
 	if ( ResultCode::Success != msg.m_code )
 	{
 		m_log.Info("Error", "修改密码失败：%s", msg.m_reason.c_str());
@@ -340,9 +337,10 @@ bool Worker::OnUserBindingPhone(mdk::NetHost& host, msg::Buffer& buffer)
 			break;
 		}
 		// 再修改数据库中的用户信息
-		DBInterface* pDBInterface = DBNode(msg.m_objectId);
-		pDBInterface->BindingPhone(msg);
-	} while (false);
+		DBCenter *pDBCenter = ((DBCenterCluster*)SafeObject())->Node(msg.m_objectId);
+		pDBCenter->BindingPhone(msg);
+	} 
+	while (false);
 	if ( ResultCode::Success != msg.m_code )
 	{
 		m_log.Info("Error", "绑定手机失败：%s", msg.m_reason.c_str());
@@ -352,17 +350,4 @@ bool Worker::OnUserBindingPhone(mdk::NetHost& host, msg::Buffer& buffer)
 	host.Send(msg, msg.Size());
 
 	return (msg.m_code ? false : true);
-}
-
-DBInterface* Worker::DBNode(const std::string& strAccount)
-{
-	mdk::uint64 virtualId = memtoiSmall((unsigned char*)strAccount.c_str(), strAccount.size() <= 8 ? strAccount.size() : 8);
-	int nodeId            = virtualId % m_allDB.size();
-	return m_allDB[nodeId];
-}
-
-DBInterface* Worker::DBNode(int userId)
-{
-	int nodeId = userId % m_allDB.size();
-	return m_allDB[nodeId];
 }

@@ -36,6 +36,15 @@
     <Filter Include="Interface">
       <UniqueIdentifier>{9bd00df7-d456-49d9-b42d-cf15ad79f7e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mdk_ex">
+      <UniqueIdentifier>{ee0663b6-aca2-4f1e-b5c9-d707f5d3a250}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface\ClusterMgr">
+      <UniqueIdentifier>{994431fa-feca-4d14-9595-99e174f0f4f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface\DBCenter">
+      <UniqueIdentifier>{f154ef1e-b7da-45c1-b1ff-fa32618781a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp">
@@ -77,9 +86,6 @@
     <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp">
-      <Filter>Interface</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp">
       <Filter>DBCenter\Data</Filter>
     </ClCompile>
@@ -92,9 +98,6 @@
     <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp">
       <Filter>DBCenter</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\SDK\DBCenter\DBInterFace.cpp">
-      <Filter>DBCenter</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\SDK\common\common.cpp">
       <Filter>common</Filter>
     </ClCompile>
@@ -103,6 +106,21 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp">
       <Filter>Message\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\Console.cpp">
+      <Filter>mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\ServerEx.cpp">
+      <Filter>mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp">
+      <Filter>Interface\ClusterMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenter.cpp">
+      <Filter>Interface\DBCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.cpp">
+      <Filter>Interface\DBCenter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -148,9 +166,6 @@
     <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h">
       <Filter>Interface</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h">
-      <Filter>Interface</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h">
       <Filter>DBCenter\Data</Filter>
     </ClInclude>
@@ -163,9 +178,6 @@
     <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h">
       <Filter>DBCenter</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\SDK\DBCenter\DBInterFace.h">
-      <Filter>DBCenter</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\SDK\common\common.h">
       <Filter>common</Filter>
     </ClInclude>
@@ -174,6 +186,21 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h">
       <Filter>Message\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\Console.h">
+      <Filter>mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\ServerEx.h">
+      <Filter>mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h">
+      <Filter>Interface\ClusterMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenter.h">
+      <Filter>Interface\DBCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.h">
+      <Filter>Interface\DBCenter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

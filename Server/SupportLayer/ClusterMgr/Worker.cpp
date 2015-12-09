@@ -107,7 +107,7 @@ bool Worker::OnGetCluster(mdk::NetHost &host, msg::Buffer &buffer)
 	nodes.m_cluster.clear();
 
 	MysqlCluster *pCluster = (MysqlCluster*)SafeObject();
-	MySqlClient *pMysql = pCluster->GetClusterNode();
+	MySqlClient *pMysql = pCluster->Node("Cluster");
 	char sql[256];
 	if ( Moudle::all == msg.m_moudle ) sprintf( sql, 
 		"select node_type.id as moudleId, net_line.id as lineId, node.nodeNo as nodeId, node.ip, node.`port` "

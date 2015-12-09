@@ -7,7 +7,6 @@
 #include "mdk/Lock.h"
 #include <vector>
 #include <string>
-#include "Protocl/cpp/Protocl.h"
 #include "Protocl/cpp/Buffer.h"
 #include "DBCenter/CacheInterface.h"
 #include "Interface/ClusterMgr/cpp/ClusterMgr.h"

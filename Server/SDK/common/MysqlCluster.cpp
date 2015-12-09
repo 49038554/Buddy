@@ -79,7 +79,7 @@ MySqlClient* MysqlCluster::Node(const std::string& dbName)
 	static int pos = 0;
 	if (m_dbCluster.end() == m_dbCluster.find(dbName)) return NULL;
 	if (!m_dbCluster[dbName].size()) return NULL;
-	if ( pos > m_dbCluster[dbName].size() ) pos = 0;
+	if ( pos >= m_dbCluster[dbName].size() ) pos = 0;
 	m_dbCluster[dbName][pos]->Init();
 	MySqlClient *pMysql = m_dbCluster[dbName][pos]; 
 	pos++;
