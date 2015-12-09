@@ -4,7 +4,6 @@
 #include "mdk/Logger.h"
 #include "mdk/ConfigFile.h"
 #include "mdk/Lock.h"
-#include "Protocl/cpp/Protocl.h"
 #include "Protocl/cpp/Buffer.h"
 #include "DBCenter/CacheInterface.h"
 #include "Interface/ClusterMgr/cpp/ClusterMgr.h"
@@ -24,6 +23,7 @@ public:
 private:
 	mdk::Logger		m_log;
 	mdk::ConfigFile	m_cfg;
+	ClusterMgr	m_cluster;
 	int				m_nodeId;
 	CacheInterface	m_cache;
 	std::map<int, mdk::NetHost>	m_tcpEntryMap;
@@ -32,6 +32,4 @@ private:
 	{
 		int nodeId;
 	}NODE_INFO;
-
-	ClusterMgr	m_cluster;
 };

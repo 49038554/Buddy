@@ -11,51 +11,39 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Buffer.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\ConnectAuth.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp" />
     <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp" />
-    <ClCompile Include="..\..\..\SDK\DBCenter\Data\Anchor.cpp" />
-    <ClCompile Include="..\..\..\SDK\DBCenter\Data\ContributionInfo.cpp" />
-    <ClCompile Include="..\..\..\SDK\DBCenter\Data\Family.cpp" />
-    <ClCompile Include="..\..\..\SDK\DBCenter\Data\GuestNode.cpp" />
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp" />
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp" />
-    <ClCompile Include="..\..\..\SDK\DBCenter\Data\Ranking.cpp" />
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp" />
     <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp" />
     <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp" />
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\base\Message.cpp" />
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\base\Socket.cpp" />
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\base\Stream.cpp" />
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Buffer.cpp" />
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Notify\Event.cpp" />
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Operation\Cluster.cpp" />
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Operation\GetCluster.cpp" />
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Operation\GetRoomCfg.cpp" />
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Operation\RoomCfg.cpp" />
     <ClCompile Include="..\..\..\SupportLayer\Notify\Main.cpp" />
     <ClCompile Include="..\..\..\SupportLayer\Notify\Worker.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Buffer.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\ConnectAuth.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h" />
     <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h" />
-    <ClInclude Include="..\..\..\SDK\DBCenter\Data\Anchor.h" />
-    <ClInclude Include="..\..\..\SDK\DBCenter\Data\ContributionInfo.h" />
-    <ClInclude Include="..\..\..\SDK\DBCenter\Data\Family.h" />
-    <ClInclude Include="..\..\..\SDK\DBCenter\Data\GuestNode.h" />
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h" />
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h" />
-    <ClInclude Include="..\..\..\SDK\DBCenter\Data\Ranking.h" />
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h" />
     <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h" />
     <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h" />
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\base\Message.h" />
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\base\Socket.h" />
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\base\Stream.h" />
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Buffer.h" />
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Notify\Event.h" />
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Operation\Cluster.h" />
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Operation\GetCluster.h" />
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Operation\GetRoomCfg.h" />
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Operation\RoomCfg.h" />
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Protocl.h" />
     <ClInclude Include="..\..\..\SupportLayer\Notify\Main.h" />
     <ClInclude Include="..\..\..\SupportLayer\Notify\Worker.h" />
   </ItemGroup>
@@ -109,7 +97,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\SDK;..\..\..\SDK\Micro-Development-Kit\include;..\..\..\SDK\hiredis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\SDK;..\..\..\SDK\Micro-Development-Kit\include;..\..\..\SDK\hiredis\include;..\..\..\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -127,7 +115,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\SDK;..\..\..\SDK\Micro-Development-Kit\include;..\..\..\SDK\hiredis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\SDK;..\..\..\SDK\Micro-Development-Kit\include;..\..\..\SDK\hiredis\include;..\..\..\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>

@@ -319,7 +319,7 @@ bool Worker::OnConnectAuth(mdk::NetHost &host, msg::Buffer &buffer)
 	}
 	ConnectInfo *pData = new ConnectInfo;
 	pData->nodeId = msg.m_nodeId;
-	pData->type = msg.m_moudleId;
+	pData->type = msg.m_nodeType;
 	std::string ip;
 	int port;
 	host.GetAddress(pData->ip, pData->port);

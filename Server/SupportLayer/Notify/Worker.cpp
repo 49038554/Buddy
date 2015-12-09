@@ -3,6 +3,7 @@
 #include "Worker.h"
 #include "mdk/mapi.h"
 #include "Protocl/cpp/Object/Notify/Event.h"
+#include "Protocl/cpp/Object/ConnectAuth.h"
 
 #ifdef WIN32
 #ifdef _DEBUG
@@ -102,8 +103,14 @@ void Worker::OnConnect(mdk::NetHost &host)
 
 	NODE_INFO *pSvr = (NODE_INFO*)host.GetSvrInfo();
 	if ( NULL == pSvr ) return;
+
 	mdk::AutoLock lock(&m_lockTcpEntryMap);
 	m_tcpEntryMap[pSvr->nodeId] = host;
+	msg::ConnectAuth auth;
+	auth.m_nodeType = Moudle::Notify;
+	auth.m_nodeId = m_nodeId;
+	auth.Build();
+	host.Send(auth, auth.Size());
 }
 
 void Worker::OnCloseConnect(mdk::NetHost &host)
@@ -145,19 +152,7 @@ void Worker::OnMsg(mdk::NetHost &host)
 	}
 
 	int tcpNodeId;
-	if ( buffer.m_isGuest )
-	{
-		Cache::GuestNode node;
-		if ( !m_cache.GetGuestNode(buffer.m_objectId, node) )
-		{
-			m_log.Info("Waring", "找不到游客连接地址");
-			return;
-		}
-		buffer.m_connectId = node.connectId;
-		tcpNodeId = node.tcpEntryNodeId;
-		buffer.Build();
-	}
-	else m_cache.GetUserNode(buffer.m_objectId, tcpNodeId);
+	m_cache.GetUserNode(buffer.m_objectId, tcpNodeId);
 	mdk::NetHost tcpHost;
 	mdk::AutoLock lock(&m_lockTcpEntryMap);
 	if ( m_tcpEntryMap.end() == m_tcpEntryMap.find(tcpNodeId) ) 

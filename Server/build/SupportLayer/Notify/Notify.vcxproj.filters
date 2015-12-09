@@ -48,20 +48,8 @@
     <ClCompile Include="..\..\..\SupportLayer\Notify\Worker.cpp">
       <Filter>资源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Buffer.cpp">
-      <Filter>SDK\Protocl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\base\Message.cpp">
-      <Filter>SDK\Protocl\base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\base\Stream.cpp">
-      <Filter>SDK\Protocl\base</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp">
       <Filter>SDK\DBCenter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\SDK\DBCenter\Data\GuestNode.cpp">
-      <Filter>SDK\DBCenter\Data</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp">
       <Filter>SDK\DBCenter\Data</Filter>
@@ -75,38 +63,32 @@
     <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp">
       <Filter>SDK\Interface\ClusterMgr</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Operation\Cluster.cpp">
-      <Filter>SDK\Protocl\Object\Operation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Operation\GetCluster.cpp">
-      <Filter>SDK\Protocl\Object\Operation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Operation\GetRoomCfg.cpp">
-      <Filter>SDK\Protocl\Object\Operation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Operation\RoomCfg.cpp">
-      <Filter>SDK\Protocl\Object\Operation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\Object\Notify\Event.cpp">
-      <Filter>SDK\Protocl\Object\Notify</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Protocl\cpp\base\Socket.cpp">
-      <Filter>SDK\Protocl\base</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp">
       <Filter>SDK\DBCenter\Data</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\SDK\DBCenter\Data\Anchor.cpp">
-      <Filter>SDK\DBCenter\Data</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Buffer.cpp">
+      <Filter>SDK\Protocl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\SDK\DBCenter\Data\Ranking.cpp">
-      <Filter>SDK\DBCenter\Data</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp">
+      <Filter>SDK\Protocl\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\SDK\DBCenter\Data\ContributionInfo.cpp">
-      <Filter>SDK\DBCenter\Data</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp">
+      <Filter>SDK\Protocl\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\SDK\DBCenter\Data\Family.cpp">
-      <Filter>SDK\DBCenter\Data</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp">
+      <Filter>SDK\Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\ConnectAuth.cpp">
+      <Filter>SDK\Protocl\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp">
+      <Filter>SDK\Protocl\Object\Operation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp">
+      <Filter>SDK\Protocl\Object\Operation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.cpp">
+      <Filter>SDK\Protocl\Object\Notify</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -116,23 +98,8 @@
     <ClInclude Include="..\..\..\SupportLayer\Notify\Worker.h">
       <Filter>资源文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Buffer.h">
-      <Filter>SDK\Protocl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Protocl.h">
-      <Filter>SDK\Protocl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\base\Message.h">
-      <Filter>SDK\Protocl\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\base\Stream.h">
-      <Filter>SDK\Protocl\base</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h">
       <Filter>SDK\DBCenter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\DBCenter\Data\GuestNode.h">
-      <Filter>SDK\DBCenter\Data</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h">
       <Filter>SDK\DBCenter\Data</Filter>
@@ -146,38 +113,35 @@
     <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h">
       <Filter>SDK\Interface\ClusterMgr</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Operation\Cluster.h">
-      <Filter>SDK\Protocl\Object\Operation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Operation\GetCluster.h">
-      <Filter>SDK\Protocl\Object\Operation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Operation\GetRoomCfg.h">
-      <Filter>SDK\Protocl\Object\Operation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Operation\RoomCfg.h">
-      <Filter>SDK\Protocl\Object\Operation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\Object\Notify\Event.h">
-      <Filter>SDK\Protocl\Object\Notify</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Protocl\cpp\base\Socket.h">
-      <Filter>SDK\Protocl\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\DBCenter\Data\Anchor.h">
-      <Filter>SDK\DBCenter\Data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h">
       <Filter>SDK\DBCenter\Data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\SDK\DBCenter\Data\Ranking.h">
-      <Filter>SDK\DBCenter\Data</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Buffer.h">
+      <Filter>SDK\Protocl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\SDK\DBCenter\Data\ContributionInfo.h">
-      <Filter>SDK\DBCenter\Data</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h">
+      <Filter>SDK\Protocl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\SDK\DBCenter\Data\Family.h">
-      <Filter>SDK\DBCenter\Data</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h">
+      <Filter>SDK\Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h">
+      <Filter>SDK\Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h">
+      <Filter>SDK\Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\ConnectAuth.h">
+      <Filter>SDK\Protocl\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h">
+      <Filter>SDK\Protocl\Object\Operation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h">
+      <Filter>SDK\Protocl\Object\Operation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.h">
+      <Filter>SDK\Protocl\Object\Notify</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
