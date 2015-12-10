@@ -250,13 +250,10 @@ void Worker::OnMsg(mdk::NetHost &host)
 		return;
 	}
 	if ( !host.Recv(buffer, buffer.Size()) ) return;
-	if ( Moudle::Notify == buffer.MoudleId() ) 
+	if ( Moudle::Notify == buffer.MoudleId() && MsgId::event == buffer.Id() ) 
 	{
-		if ( MsgId::event == buffer.Id() )
-		{
-			OnNotify(host, buffer);
-			return;
-		}
+		OnNotify(host, buffer);
+		return;
 	}
 
 	if ( !buffer.IsResult() ) FillTCPParam(host, buffer);
