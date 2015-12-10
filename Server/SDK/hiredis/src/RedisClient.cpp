@@ -19,6 +19,16 @@ RedisClient::~RedisClient(void)
 		delete m_idleClients[i];
 	}
 }
+
+bool RedisClient::DelData(const std::string &key)
+{
+	RedisConnect* pConn = Alloc();
+	if (!pConn) return false;
+	bool ret = pConn->DelData(key);
+	Free(pConn);
+	return ret;
+}
+
 /////////////////////////////////////////////////////////////////////////
 //Map²Ù×÷
 bool RedisClient::SetMapItem(const std::string &mapName, const std::string &itemKey, const std::string &itemValue)
@@ -44,6 +54,15 @@ Redis::Result RedisClient::GetMap(const std::string &mapName, std::map<std::stri
 	RedisConnect* pConn = Alloc();
 	if (!pConn) return Redis::unknow;
 	Redis::Result ret = pConn->GetMap(mapName, items);
+	Free(pConn);
+	return ret;
+}
+
+Redis::Result RedisClient::MapItemCount(const std::string &mapName, int &count)
+{
+	RedisConnect* pConn = Alloc();
+	if (!pConn) return Redis::unknow;
+	Redis::Result ret = pConn->MapItemCount(mapName, count);
 	Free(pConn);
 	return ret;
 }

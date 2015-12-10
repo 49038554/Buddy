@@ -17,11 +17,13 @@ public:
 	static bool InitNetwork();
 	void SetThreadCount	(std::string &host, int port, int count);
 
+	bool DelData(const std::string &key);
 	//////////////////////////////////////////////////////////////////////////
 	//Map²Ù×÷
 	bool SetMapItem(const std::string &mapName, const std::string &itemKey, const std::string &itemValue);
 	Redis::Result GetMapItem(const std::string &mapName, const std::string &itemKey, std::string &itemValue);
 	Redis::Result GetMap(const std::string &mapName, std::map<std::string,std::string> &items);
+	Redis::Result MapItemCount(const std::string &mapName, int &count);
 	bool DelMapItem(const std::string &mapName, const std::string &itemKey);
 
 	//////////////////////////////////////////////////////////////////////////

@@ -40,6 +40,9 @@
     <Filter Include="SDK\Protocl\Object\Notify">
       <UniqueIdentifier>{451de386-2b85-4e28-a8c5-ebdd81855bd3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SDK\mdk_ex">
+      <UniqueIdentifier>{68415eac-9981-4769-9463-90d618c76a30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\SupportLayer\Notify\Main.cpp">
@@ -88,6 +91,9 @@
       <Filter>SDK\Protocl\Object\Operation</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.cpp">
+      <Filter>SDK\Protocl\Object\Notify</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\GetEvent.cpp">
       <Filter>SDK\Protocl\Object\Notify</Filter>
     </ClCompile>
   </ItemGroup>
@@ -141,6 +147,9 @@
       <Filter>SDK\Protocl\Object\Operation</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.h">
+      <Filter>SDK\Protocl\Object\Notify</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\GetEvent.h">
       <Filter>SDK\Protocl\Object\Notify</Filter>
     </ClInclude>
   </ItemGroup>

@@ -10,6 +10,7 @@
 #include "Protocl/cpp/Buffer.h"
 #include "DBCenter/CacheInterface.h"
 #include "Interface/ClusterMgr/cpp/ClusterMgr.h"
+#include "common/HostCluster.h"
 
 class Worker : public mdk::NetServer
 {
@@ -67,7 +68,8 @@ private:
 	mdk::ConfigFile	m_cfg;
 	mdk::int32		m_nodeId;//结点编号
 	ClusterMgr		m_cluster;//集群
-	mdk::int32		m_authSetCount;//配置的Auth数量
+	mdk::int32		m_authSvrCount;//配置的Auth数量
+	mdk::int32		m_snsSvrCount;//配置的sns数量
 	//结点信息
 	class ConnectInfo : public mdk::HostData
 	{
@@ -81,8 +83,6 @@ private:
 		ConnectInfo(void){}
 		virtual ~ConnectInfo(){}
 	};
-	std::vector<mdk::NetHost>	m_auths;//所有认证服务结点
-	mdk::Mutex					m_lockAuths;
 
 	//用户数据
 	class User : public ConnectInfo
@@ -105,5 +105,8 @@ private:
 
 
 	CacheInterface	m_cache;//缓存
+	HostCluster		m_authCluster;//认证服务集群
+	HostCluster		m_snsCluster;//SNS服务集群
+	HostCluster		m_notifyCluster;//notify服务集群
 };
 

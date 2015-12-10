@@ -10,9 +10,10 @@ class Event : public Buffer
 {
 public:
 	//请求参数
+	unsigned int	m_eventId;//事件Id Nofity填写
 	int			m_senderId;//发送者Id
 	std::string	m_sender;//发送者昵称
-	int			m_senderlevel;//发送者等级
+	int64		m_holdTime;//有效时间
 	Buffer		m_msg;//原始消息
 	//回应参数
 

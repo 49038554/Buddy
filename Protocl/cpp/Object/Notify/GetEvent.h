@@ -1,21 +1,21 @@
 #pragma once
-#include "../Buffer.h"
+#include "../../Buffer.h"
+#include "../../Protocl.h"
 
 namespace msg
 {
 
-//连接认证
-class ConnectAuth : public Buffer
+//购买商品
+class GetEvent : public Buffer
 {
 public:
 	//请求参数
-	Moudle::Moudle	m_nodeType;//结点类型
-	int				m_nodeId;//结点Id
+
 	//回应参数
 
 public:
-	ConnectAuth();
-	virtual ~ConnectAuth();
+	GetEvent();
+	virtual ~GetEvent();
 	bool Build();//构造报文，发送
 	bool Parse();//解析报文，接收
 

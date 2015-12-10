@@ -8,6 +8,9 @@
 #include "Protocl/cpp/Object/Auth/UserRelogin.h"
 #include "Protocl/cpp/Object/Auth/BindingPhone.h"
 #include "Protocl/cpp/Object/Auth/UserLogout.h"
+#include "Protocl/cpp/Object/SNS/AddBuddy.h"
+#include "Protocl/cpp/Object/Notify/Event.h"
+#include "Protocl/cpp/Object/Notify/GetEvent.h"
 
 #include "common/MD5Helper.h"
 
@@ -32,6 +35,10 @@ int main(int argc, char* argv[])
 		ret = msg.Parse();
 	}
 	{
+		/*
+			test0005 16777221
+			test0006 16777222
+		*/
 		msg::UserLogin msg;
 		msg.m_clientType = ClientType::android;
 		msg.m_accountType = AccountType::mobile;
@@ -42,6 +49,58 @@ int main(int argc, char* argv[])
 		msg.ReInit();
 		c.Receive(msg, 1024);
 		ret = msg.Parse();
+		{
+			msg::GetEvent msg;
+			msg.Build();
+			c.Send(msg, msg.Size());
+			msg::Event e;
+			msg::AddBuddy ab;
+			e.ReInit();
+			c.Receive(e, e.HeaderSize(), true);
+			int n = e.Size();
+			c.Receive(e, e.Size());
+			ret = e.Parse();
+			ab.ReInit();
+			memcpy( ab, e.m_msg, e.m_msg.Size() );
+			ret = ab.Parse();
+
+
+			e.ReInit();
+			e.m_msg.ReInit();
+			c.Receive(e, e.HeaderSize(), true);
+			n = e.Size();
+			c.Receive(e, e.Size());
+			ret = e.Parse();
+			ab.ReInit();
+			memcpy( ab, e.m_msg, e.m_msg.Size() );
+			ret = ab.Parse();
+
+			e.ReInit();
+			e.m_msg.ReInit();
+			c.Receive(e, e.HeaderSize(), true);
+			n = e.Size();
+			c.Receive(e, e.Size());
+			ret = e.Parse();
+			ab.ReInit();
+			memcpy( ab, e.m_msg, e.m_msg.Size() );
+			ret = ab.Parse();
+		}
+
+		msg::AddBuddy ab;
+		ab.m_step = 0;
+		ab.m_msg = "test";
+		ab.m_buddyId = 16777221;//test0005
+		ab.Build();
+		c.Send(ab, ab.Size());
+		c.Send(ab, ab.Size());
+		c.Send(ab, ab.Size());
+		msg::Event n;
+		c.Receive(n, 1024);
+		ret = n.Parse();
+		ab.ReInit();
+		memcpy( ab, n.m_msg, n.m_msg.Size() );
+		ret = ab.Parse();
+		ret = false;
 	}
 
 	return 0;

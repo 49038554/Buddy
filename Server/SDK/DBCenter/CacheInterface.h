@@ -30,6 +30,13 @@ public:
 	//用户信息,统一在DBCenter模块中修改，其它模块禁止操作
 	bool SetUserInfo(Cache::User &userInfo);
 	Redis::Result GetUserInfo(Cache::User &userInfo);
+	//小伙伴列表,统一在DBCenter模块中修改，其它模块禁止操作
+	bool SetBuddys(mdk::uint32 userId, Cache::IdList &list);
+	Redis::Result GetBuddys(mdk::uint32 userId, Cache::IdList &list);
+	//事件缓存
+	bool AddEvent(mdk::uint32 userId, mdk::uint32 msgIndex, char *event, int size);
+	Redis::Result GetEvents(mdk::uint32 userId, std::vector<std::string> &events);
+
 	//用户粉丝列表,统一在DBCenter模块中修改，其它模块禁止操作
 	bool SetUserFans(mdk::uint32 userId, Cache::IdList &list);
 	Redis::Result GetUserFans(mdk::uint32 userId, Cache::IdList &list);

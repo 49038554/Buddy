@@ -33,6 +33,19 @@ bool RedisConnect::HoldConnect()
 	return true;
 }
 
+bool RedisConnect::DelData(const std::string &key)
+{
+	if (!HoldConnect()) return false;
+	redisReply* reply = (redisReply *)redisCommand(m_conn,"DEL %s", key.c_str());
+	if (!reply) 
+	{
+		Ping();
+		return false;
+	}
+	freeReplyObject(reply);
+	return true;
+}
+
 //////////////////////////////////////////////////////////////////////////
 //Map²Ù×÷
 bool RedisConnect::SetMapItem(const std::string &mapName, const std::string &itemKey, const std::string &itemValue)
@@ -93,6 +106,27 @@ Redis::Result RedisConnect::GetMap(const std::string &mapName, std::map<std::str
 		freeReplyObject(reply);
 		return Redis::success;
 	}
+}
+
+Redis::Result RedisConnect::MapItemCount(const std::string &mapName, int &count)
+{
+	if (!HoldConnect()) return Redis::unsvr;
+	redisReply* reply = (redisReply *)redisCommand(m_conn,"HLEN %s", mapName.c_str());
+	if (!reply) 
+	{
+		Ping();
+		return Redis::unsvr;
+	}
+	if (REDIS_REPLY_INTEGER == reply->type)
+	{
+		count = reply->integer;
+		freeReplyObject(reply);
+		return Redis::success;
+	}
+
+	count = 0;
+	freeReplyObject(reply);
+	return Redis::unknow;
 }
 
 bool RedisConnect::DelMapItem(const std::string &mapName, const std::string &itemKey)

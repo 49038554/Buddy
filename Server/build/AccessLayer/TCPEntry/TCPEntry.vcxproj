@@ -27,6 +27,7 @@
     <ClCompile Include="..\..\..\AccessLayer\TCPEntry\Main.cpp" />
     <ClCompile Include="..\..\..\AccessLayer\TCPEntry\Worker.cpp" />
     <ClCompile Include="..\..\..\SDK\common\common.cpp" />
+    <ClCompile Include="..\..\..\SDK\common\HostCluster.cpp" />
     <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp" />
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp" />
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp" />
@@ -52,6 +53,7 @@
     <ClInclude Include="..\..\..\AccessLayer\TCPEntry\Main.h" />
     <ClInclude Include="..\..\..\AccessLayer\TCPEntry\Worker.h" />
     <ClInclude Include="..\..\..\SDK\common\common.h" />
+    <ClInclude Include="..\..\..\SDK\common\HostCluster.h" />
     <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h" />
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h" />
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h" />

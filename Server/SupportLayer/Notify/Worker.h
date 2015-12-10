@@ -19,12 +19,23 @@ public:
 	virtual void OnCloseConnect(mdk::NetHost &host);
 	virtual void OnMsg(mdk::NetHost &host);
 
+protected:
+	void OnEvent(mdk::NetHost &host, msg::Buffer &buffer);
+	void OnGetEvent(mdk::NetHost &host, msg::Buffer &buffer);
+
+private:
+	bool InitId( const std::string &fileName );
+	bool CreateId( mdk::uint32 &id, bool now = true );
+	void SaveId( bool now );
+
 
 private:
 	mdk::Logger		m_log;
 	mdk::ConfigFile	m_cfg;
 	ClusterMgr	m_cluster;
-	int				m_nodeId;
+	mdk::uint16 m_nodeId;
+	mdk::uint32 m_searialNo;
+	mdk::ConfigFile *m_pCfg;
 	CacheInterface	m_cache;
 	std::map<int, mdk::NetHost>	m_tcpEntryMap;
 	mdk::Mutex					m_lockTcpEntryMap;

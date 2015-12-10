@@ -37,6 +37,9 @@
     <Filter Include="Message\Object\Database">
       <UniqueIdentifier>{ca825674-b009-43e8-9997-0760b7b3cd7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Message\Object\SNS">
+      <UniqueIdentifier>{bdab649c-3c65-4d46-a8f4-cf04add31fcc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\DataLayer\DBCenter\Main.cpp">
@@ -101,6 +104,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp">
       <Filter>DBCenter\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp">
+      <Filter>Message\Object\SNS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +175,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h">
       <Filter>DBCenter\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.h">
+      <Filter>Message\Object\SNS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

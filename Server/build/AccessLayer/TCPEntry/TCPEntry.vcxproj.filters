@@ -104,6 +104,9 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRelogin.cpp">
       <Filter>SDK\Protocl\Object\Auth</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\HostCluster.cpp">
+      <Filter>SDK\common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\AccessLayer\TCPEntry\Worker.h">
@@ -174,6 +177,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRelogin.h">
       <Filter>SDK\Protocl\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\HostCluster.h">
+      <Filter>SDK\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

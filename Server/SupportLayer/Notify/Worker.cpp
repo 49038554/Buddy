@@ -3,6 +3,7 @@
 #include "Worker.h"
 #include "mdk/mapi.h"
 #include "Protocl/cpp/Object/Notify/Event.h"
+#include "Protocl/cpp/Object/Notify/GetEvent.h"
 #include "Protocl/cpp/Object/ConnectAuth.h"
 
 #ifdef WIN32
@@ -64,6 +65,7 @@ Worker::Worker(void)
 						{
 							m_nodeId = it->nodeId;
 							m_cfg["opt"]["nodeId"] = m_nodeId;
+							m_cfg["Only Id"]["nodeId"] = m_nodeId;
 							m_cfg.Save();
 						}
 					}
@@ -89,12 +91,63 @@ Worker::Worker(void)
 	SetWorkThreadCount(CPU);
 	m_cache.InitCluster(m_cfg, CPU);
 
+	InitId("Notify.cfg");
 	m_log.Info( "Run", "监听端口:%d", port );
 	Listen(port);
 }
 
 Worker::~Worker(void)
 {
+}
+
+bool Worker::InitId( const std::string &fileName )
+{
+	char exePath[1024];
+	mdk::GetExeDir( exePath, 1024 );//取得可执行程序位置
+	char cfgFile[1024+256];
+	sprintf( cfgFile, "%s/%s", exePath, fileName.c_str() );
+	m_pCfg = new mdk::ConfigFile();
+
+	mdk::ConfigFile &cfg = *m_pCfg;
+	if ( !cfg.ReadConfig( cfgFile ) ) return false;
+	m_nodeId = cfg["Only Id"]["nodeId"];
+	std::string searialNo = cfg["Only Id"]["searialNo"];
+	m_searialNo = 0;
+	sscanf( searialNo.c_str(), "%u", &m_searialNo );
+
+	return true;
+}
+
+bool Worker::CreateId( mdk::uint32 &id, bool now )
+{
+	//id已用完
+	if ( 0x01000000 == m_searialNo ) return false;
+
+	id = m_nodeId;
+	id <<= 24;
+	id += m_searialNo;
+	m_searialNo++;
+	SaveId(false);
+
+	return true;
+}
+
+void Worker::SaveId( bool now )
+{
+	static uint64 count = 0;
+	static uint64 lastSave = 0;
+	mdk::ConfigFile &cfg = *m_pCfg;
+
+	count++;
+	if ( now || 0 == count % 10000
+		|| mdk::MillTime() - lastSave > 5000 )
+	{
+		lastSave = mdk::MillTime();
+		char temp[128];
+		sprintf( temp, "%u", m_searialNo );
+		cfg["Only Id"]["searialNo"] = (std::string)temp;
+		cfg.Save();
+	}
 }
 
 void Worker::OnConnect(mdk::NetHost &host)
@@ -137,8 +190,7 @@ void Worker::OnMsg(mdk::NetHost &host)
 
 	if ( !host.Recv(buffer, buffer.Size()) ) return;
 	if ( Moudle::Notify != buffer.MoudleId() 
-		|| buffer.IsResult() 
-		|| MsgId::event != buffer.Id() ) 
+		|| buffer.IsResult() ) 
 	{
 		m_log.Info("Waring", "非法报文");
 		return;
@@ -151,8 +203,36 @@ void Worker::OnMsg(mdk::NetHost &host)
 		return;
 	}
 
+	if ( MsgId::event == buffer.Id() ) OnEvent(host, buffer);
+	if ( MsgId::getEvent == buffer.Id() ) OnGetEvent(host, buffer);
+}
+
+void Worker::OnEvent(mdk::NetHost &host, msg::Buffer &buffer)
+{
+	msg::Event msg;
+	memcpy(msg, buffer, buffer.Size());
+	if ( !msg.Parse() )
+	{
+		m_log.Info("Error", "非法报文格式");
+		return;
+	}
+	if ( !CreateId( msg.m_eventId ) )
+	{
+		m_log.Info("Error", "无可用Id");
+		return;
+	}
+	msg.Build();
 	int tcpNodeId;
-	m_cache.GetUserNode(buffer.m_objectId, tcpNodeId);
+	if ( Redis::success != m_cache.GetUserNode(buffer.m_objectId, tcpNodeId) )//取不到用户连接信息，则保存下来以后发送
+	{
+		if ( !m_cache.AddEvent(msg.m_objectId, msg.m_eventId, msg, msg.Size()) )
+		{
+			m_log.Info("Error", "保存通知失败");
+		}
+		return;
+	}
+
+	//转发出去
 	mdk::NetHost tcpHost;
 	mdk::AutoLock lock(&m_lockTcpEntryMap);
 	if ( m_tcpEntryMap.end() == m_tcpEntryMap.find(tcpNodeId) ) 
@@ -162,4 +242,31 @@ void Worker::OnMsg(mdk::NetHost &host)
 	}
 	tcpHost = m_tcpEntryMap[tcpNodeId];
 	tcpHost.Send(buffer, buffer.Size());
+}
+
+void Worker::OnGetEvent(mdk::NetHost &host, msg::Buffer &buffer)
+{
+	std::vector<std::string> events;
+	Redis::Result ret = m_cache.GetEvents(buffer.m_objectId, events);
+
+	if ( Redis::unsvr == ret )
+	{
+		m_log.Info("Error", "读取通知失败:Redis服务异常");
+		return;
+	}
+	if ( 0 >= events.size() ) return;
+
+	//转发出去
+	int i = 0;
+	for ( i = 0; i < events.size(); i++ )
+	{
+		buffer.ReInit();
+		memcpy(buffer, events[i].c_str(), events[i].size());
+		if ( !buffer.Parse() ) 
+		{
+			m_log.Info("Error", "1条消息无法解析");
+			continue;
+		}
+		host.Send(buffer, buffer.Size());
+	}
 }

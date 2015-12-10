@@ -57,6 +57,15 @@
     <ClCompile Include="..\..\Protocl\cpp\Object\Auth\UserRelogin.cpp">
       <Filter>头文件\Object</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp">
+      <Filter>头文件\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\Object\Notify\Event.cpp">
+      <Filter>头文件\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\Object\Notify\GetEvent.cpp">
+      <Filter>头文件\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Protocl\cpp\Buffer.h">
@@ -93,6 +102,15 @@
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Protocl\cpp\Object\Auth\UserRelogin.h">
+      <Filter>头文件\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\Object\SNS\AddBuddy.h">
+      <Filter>头文件\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\Object\Notify\Event.h">
+      <Filter>头文件\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\Object\Notify\GetEvent.h">
       <Filter>头文件\Object</Filter>
     </ClInclude>
   </ItemGroup>

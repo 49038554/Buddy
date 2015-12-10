@@ -1,20 +1,15 @@
 #ifndef __WORKER_H__
 #define __WORKER_H__
 
-#include <map>
-#include <string>
-#include <vector>
 #include "mdk/Logger.h"
 #include "mdk/ConfigFile.h"
 #include "frame/netserver/STNetHost.h"
 #include "frame/netserver/STNetServer.h"
-#include "DBCenter/Data/User.h"
 #include "Protocl/cpp/Object/Auth/UserRegister.h"
-#include "Protocl/cpp/Object/Auth/ResetPassword.h"
-#include "Protocl/cpp/Object/Auth/BindingPhone.h"
 #include "DBCenter/CacheInterface.h"
 #include "common/MysqlCluster.h"
 #include "Interface/ClusterMgr/cpp/ClusterMgr.h"
+
 
 /**
  * Worker
@@ -31,8 +26,8 @@ protected:
 	 * 说明：该处理会过滤掉除了要处理之外的消息，并记录Log
 	 */
 	virtual void OnMsg(mdk::STNetHost& host);
-	void OnAuth(mdk::STNetHost &host, msg::Buffer &buffer);
-
+	void OnAuth(mdk::STNetHost &host, msg::Buffer &buffer);//认证模块消息响应
+	void OnSNS(mdk::STNetHost &host, msg::Buffer &buffer);//社交模块消息响应
 	//////////////////////////////////////////////////////////////////////////
 	// 认证服模块
 	//////////////////////////////////////////////////////////////////////////
@@ -42,6 +37,10 @@ protected:
 	bool OnResetPassword(mdk::STNetHost& host, msg::Buffer& buffer);
 	// 用户绑定手机号码
 	bool OnBindingPhone(mdk::STNetHost& host, msg::Buffer& buffer);
+	//////////////////////////////////////////////////////////////////////////
+	//SNS模块
+	//添加伙伴
+	void OnAddBuddy(mdk::STNetHost &host, msg::Buffer &buffer);
 
 private:
 	friend int main(int argc, char* argv[]);

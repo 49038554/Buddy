@@ -5,6 +5,8 @@
 #include "Worker.h"
 #include "common/MD5Helper.h"
 #include "mdk/mapi.h"
+#include "Protocl/cpp/Object/Auth/ResetPassword.h"
+#include "Protocl/cpp/Object/Auth/BindingPhone.h"
 
 static MD5Helper gs_md5helper;
 
@@ -175,6 +177,9 @@ void Worker::OnMsg(mdk::STNetHost& host)
 	case Moudle::Auth:    // 认证模块
 		OnAuth(host, buffer);
 		break;
+	case Moudle::SNS :
+		OnSNS(host, buffer);
+		break;
 	default:
 		m_log.Info("Error", "未预料的报文! 强制断开");
 		host.Close();
@@ -225,7 +230,7 @@ bool Worker::OnUserRegister(mdk::STNetHost& host, msg::Buffer& buffer)
 	{
 		m_log.Info("Error", "注册失败:%s!", msg.m_reason.c_str());
 	}
-	bool ret = msg.Build(true);
+	msg.Build(true);
 	host.Send(msg, msg.Size());
 
 	return true;
@@ -475,4 +480,73 @@ void Worker::RandKey(std::string& randKey)
 	}
 
 	return;
+}
+
+#include "Protocl/cpp/Object/SNS/AddBuddy.h"
+void Worker::OnSNS(mdk::STNetHost &host, msg::Buffer &buffer)
+{
+	if (MsgId::addBuddy == buffer.Id()) OnAddBuddy(host, buffer);
+}
+
+void Worker::OnAddBuddy(mdk::STNetHost &host, msg::Buffer &buffer)
+{
+	msg::AddBuddy msg;
+	memcpy(msg, buffer, buffer.Size());
+
+	do 
+	{
+		if ( !msg.Parse() )
+		{
+			msg.m_code   = ResultCode::FormatInvalid;
+			msg.m_reason = "报文格式非法";
+			break;
+		}
+		Cache::IdList buddyIds;
+		if ( Redis::unsvr == m_cache.GetBuddys(msg.m_userId, buddyIds) )
+		{
+			msg.m_code   = ResultCode::DBError;
+			msg.m_reason = "Redis服务异常";
+			break;
+		}
+		int i = 0;
+		for ( i = 0; i < buddyIds.m_ids.size() ; i++ )
+		{
+			if ( msg.m_buddyId == buddyIds.m_ids[i] )
+			{
+				msg.m_code   = ResultCode::Refuse;
+				msg.m_reason = "已经是小伙伴";
+				break;
+			}
+		}
+		char sql[256];
+		sprintf( sql, "insert into buddy (userId, buddyId) values(%d, %d)", 
+			msg.m_userId, msg.m_buddyId );
+		MySqlClient *pMysql = m_mySQLCluster.Node("Buddy", msg.m_userId);
+		if (!pMysql)
+		{
+			msg.m_code   = ResultCode::DBError;
+			msg.m_reason = "找不到Buddy数据库结点";
+			break;
+		}
+		if ( !pMysql->ExecuteSql(sql) )
+		{
+			msg.m_code   = ResultCode::DBError;
+			msg.m_reason = "修改数据库失败:";
+			msg.m_reason += pMysql->GetLastError();
+			break;
+		}
+		buddyIds.m_ids.push_back(msg.m_buddyId);
+		if ( !m_cache.SetBuddys(msg.m_userId, buddyIds) )
+		{
+			msg.m_code   = ResultCode::DBError;
+			msg.m_reason = "写缓存失败";
+		}
+	}
+	while (false);
+	if ( msg.m_code )
+	{
+		m_log.Info("Error", "添加小伙伴失败:%s!", msg.m_reason.c_str());
+	}
+	msg.Build(true);
+	host.Send(msg, msg.Size());
 }

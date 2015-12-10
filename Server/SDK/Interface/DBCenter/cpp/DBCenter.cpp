@@ -149,3 +149,8 @@ bool DBCenter::doLogic(msg::Buffer& msg)
 
 	return true;
 }
+
+bool DBCenter::AddBuddy(msg::AddBuddy& msg)
+{
+	return doLogic(msg);
+}

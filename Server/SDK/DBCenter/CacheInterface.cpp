@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include "Protocl/cpp/Protocl.h"
+#include "mdk/Socket.h"
 
 //将一个整数存储到字节流buf，按照小端字节序(低位在前，高位在后)
 static void itomemSmall( unsigned char *buf, mdk::uint64 value, mdk::int32 size )
@@ -34,7 +35,6 @@ static mdk::uint64 memtoiSmall( unsigned char *buf, mdk::int32 size )
 
 CacheInterface::CacheInterface()
 {
-
 }
 
 CacheInterface::~CacheInterface()
@@ -208,6 +208,32 @@ RedisClient& CacheInterface::PollingNode()
 	return m_cacheCluster[pos]->redis;
 }
 
+bool CacheInterface::SetBuddys(mdk::uint32 userId, Cache::IdList &list)
+{
+	RedisClient &node = GetNode(userId);
+	char key[256];
+	sprintf( key, "buddy_%u", userId );
+	std::string data;
+	if ( !list.Build() ) return false;
+	data.assign((char*)list, list.Size());
+	return node.Set(key, data);
+}
+
+Redis::Result CacheInterface::GetBuddys(mdk::uint32 userId, Cache::IdList &list)
+{
+	RedisClient &node = GetNode(userId);
+	char key[256];
+	sprintf( key, "buddy_%u", userId );
+	std::string data;
+	Redis::Result ret = node.Get(key, data);
+	if ( Redis::success != ret ) return ret;
+	list.Clear();
+	memcpy(list, data.c_str(), data.size());
+	if ( !list.Parse() ) return Redis::nullData;
+
+	return ret;
+}
+
 //用户粉丝列表
 bool CacheInterface::SetUserFans(mdk::uint32 userId, Cache::IdList &list)
 {
@@ -235,6 +261,39 @@ Redis::Result CacheInterface::GetUserFans(mdk::uint32 userId, Cache::IdList &lis
 	if ( !list.Parse() ) return Redis::nullData;
 
 	return ret;
+}
+
+bool CacheInterface::AddEvent(mdk::uint32 userId, mdk::uint32 msgIndex, char *event, int size)
+{
+	RedisClient &node = GetNode(userId);
+	char key[256];
+
+	sprintf( key, "event_%u", userId );
+	char ikey[256];
+	sprintf( ikey, "%u", msgIndex );
+	std::string data;
+	data.assign((char*)event, size);
+
+	return node.SetMapItem(key, ikey, data);
+}
+
+Redis::Result CacheInterface::GetEvents(mdk::uint32 userId, std::vector<std::string> &events)
+{
+	RedisClient &node = GetNode(userId);
+	char key[256];
+	sprintf( key, "event_%u", userId );
+	std::map<std::string, std::string> items;
+	Redis::Result ret = node.GetMap(key, items);
+	if ( Redis::success != ret ) return ret;
+
+	std::map<std::string, std::string>::iterator it = items.begin();
+	for ( ; it != items.end(); it++ )
+	{
+		events.push_back(it->second);
+	}
+//	if ( !node.DelData(key) ) return Redis::unsvr;
+
+	return Redis::success;
 }
 
 //用户偶像列表

@@ -89,6 +89,9 @@
     <ClCompile Include="..\..\Protocl\cpp\Object\Auth\UserLogout.cpp" />
     <ClCompile Include="..\..\Protocl\cpp\Object\Auth\UserRegister.cpp" />
     <ClCompile Include="..\..\Protocl\cpp\Object\Auth\UserRelogin.cpp" />
+    <ClCompile Include="..\..\Protocl\cpp\Object\Notify\Event.cpp" />
+    <ClCompile Include="..\..\Protocl\cpp\Object\Notify\GetEvent.cpp" />
+    <ClCompile Include="..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp" />
     <ClCompile Include="..\SDK\common\MD5Helper.cpp" />
     <ClCompile Include="TestClient.cpp" />
   </ItemGroup>
@@ -103,6 +106,9 @@
     <ClInclude Include="..\..\Protocl\cpp\Object\Auth\UserLogout.h" />
     <ClInclude Include="..\..\Protocl\cpp\Object\Auth\UserRegister.h" />
     <ClInclude Include="..\..\Protocl\cpp\Object\Auth\UserRelogin.h" />
+    <ClInclude Include="..\..\Protocl\cpp\Object\Notify\Event.h" />
+    <ClInclude Include="..\..\Protocl\cpp\Object\Notify\GetEvent.h" />
+    <ClInclude Include="..\..\Protocl\cpp\Object\SNS\AddBuddy.h" />
     <ClInclude Include="..\..\Protocl\cpp\Protocl.h" />
     <ClInclude Include="..\SDK\common\MD5Helper.h" />
   </ItemGroup>

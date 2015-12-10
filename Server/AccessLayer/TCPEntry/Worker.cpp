@@ -75,7 +75,8 @@ Worker::Worker(void)
 		mdk::mdk_assert(false);
 		exit(0);
 	}
-	m_authSetCount = 0;
+	m_authSvrCount = 0;
+	m_snsSvrCount = 0;
 	ConnectInfo *pNode;
 	std::map<Moudle::Moudle, std::map<NetLine::NetLine, std::vector<msg::Cluster::NODE> > >::iterator itMoudle;
 	std::map<NetLine::NetLine, std::vector<msg::Cluster::NODE> >::iterator itLine;
@@ -100,7 +101,8 @@ Worker::Worker(void)
 					}
 					continue;
 				}
-				else if ( Moudle::Auth == itMoudle->first ) m_authSetCount++;
+				else if ( Moudle::Auth == itMoudle->first ) m_authSvrCount++;
+				else if ( Moudle::SNS == itMoudle->first ) m_snsSvrCount++;
 				else continue;
 
 				pNode = new ConnectInfo;
@@ -113,13 +115,13 @@ Worker::Worker(void)
 			}
 		}
 	}
-	if ( 0 >= m_authSetCount )
+	if ( 0 >= m_authSvrCount || 0 >= m_snsSvrCount )
 	{
 		m_log.Info( "Error", "集群缺少模块，请检查Cluster库" );
 		mdk::mdk_assert(false);
 		exit(0);
 	}
-	m_log.Info("Run", "认证结点%d个", m_authSetCount);
+	m_log.Info("Run", "认证结点%d个, sns结点%d个", m_authSvrCount, m_snsSvrCount);
 	int CPU = mdk::GetCUPNumber(32, 32);
 	SetWorkThreadCount(CPU);
 	m_cache.InitCluster(m_cfg, CPU);
@@ -186,9 +188,13 @@ void Worker::OnConnect(mdk::NetHost &host)
 	ConnectInfo *pNode = (ConnectInfo*)host.GetSvrInfo();
 	if ( Moudle::Auth == pNode->type )
 	{
-		mdk::AutoLock lock(&m_lockAuths);
-		m_auths.push_back(host);
+		m_authCluster.AddNode(pNode->nodeId, host);
 		m_log.Info("Run", "认证服务(%d):%s:%d连接完成", pNode->nodeId, pNode->ip.c_str(), pNode->port);
+	}
+	if ( Moudle::SNS == pNode->type )
+	{
+		m_snsCluster.AddNode(pNode->nodeId, host);
+		m_log.Info("Run", "SNS服务(%d):%s:%d连接完成", pNode->nodeId, pNode->ip.c_str(), pNode->port);
 	}
 }
 
@@ -214,6 +220,7 @@ void Worker::OnCloseConnect(mdk::NetHost &host)
 		{
 			m_log.Info("Run", "Notify(%d):%s:%d连接断开", 
 				pData->nodeId, pData->ip.c_str(), pData->port);
+			m_notifyCluster.DelNode(pData->nodeId);
 		}
 		
 		return;
@@ -222,9 +229,13 @@ void Worker::OnCloseConnect(mdk::NetHost &host)
 	ConnectInfo *pNode = (ConnectInfo*)host.GetSvrInfo();
 	if ( Moudle::Auth == pNode->type )
 	{
-		mdk::AutoLock lock(&m_lockAuths);
-		DelFromVector(m_auths, host);
+		m_authCluster.DelNode(pNode->nodeId);
 		m_log.Info("Run", "认证服务(%d):%s:%d连接断开", pNode->nodeId, pNode->ip.c_str(), pNode->port);
+	}
+	if ( Moudle::SNS == pNode->type )
+	{
+		m_snsCluster.DelNode(pNode->nodeId);
+		m_log.Info("Run", "SNS服务(%d):%s:%d连接断开", pNode->nodeId, pNode->ip.c_str(), pNode->port);
 	}
 }
 
@@ -239,10 +250,16 @@ void Worker::OnMsg(mdk::NetHost &host)
 		return;
 	}
 	if ( !host.Recv(buffer, buffer.Size()) ) return;
-	if ( !buffer.IsResult() ) 
+	if ( Moudle::Notify == buffer.MoudleId() ) 
 	{
-		FillTCPParam(host, buffer);
+		if ( MsgId::event == buffer.Id() )
+		{
+			OnNotify(host, buffer);
+			return;
+		}
 	}
+
+	if ( !buffer.IsResult() ) FillTCPParam(host, buffer);
 	//按模块分发消息
 	if ( Moudle::Auth == buffer.MoudleId() ) //认证模块特殊处理
 	{
@@ -254,14 +271,40 @@ void Worker::OnMsg(mdk::NetHost &host)
 		OnServerMsg( buffer );
 		return;
 	}
+
 	//client请求
 	if ( buffer.IsResult() ) //不应该发送回应报文
 	{
 		host.Close();
 		return;
 	}
-	if ( Moudle::all == buffer.MoudleId() ) OnAllMod(host, buffer);
-	else if ( Moudle::Notify == buffer.MoudleId() ) OnNotify(host, buffer);
+	if ( Moudle::all == buffer.MoudleId() ) 
+	{
+		OnAllMod(host, buffer);
+		return;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	//业务指令
+	User *pUser = (User*)host.GetData();
+	if ( NULL == pUser || Moudle::Client != pUser->type ) //必须登录
+	{
+		m_log.Info("Error","请求需要登录，断开连接");
+		host.Close();
+		return;
+	}
+	mdk::NetHost helperHost;
+	int nodeId = 0;
+	if ( Moudle::SNS == buffer.MoudleId() ) nodeId = m_snsCluster.Node(helperHost);
+	if ( Moudle::Notify == buffer.MoudleId() ) nodeId = m_notifyCluster.Node(helperHost);
+	if ( 0 == nodeId )
+	{
+		m_log.Info("Error", "服务结点未连接");
+		return;
+	}
+	helperHost.Send(buffer, buffer.Size());
+
+	return;
 }
 
 bool Worker::OnServerMsg( msg::Buffer &buffer )
@@ -325,9 +368,12 @@ bool Worker::OnConnectAuth(mdk::NetHost &host, msg::Buffer &buffer)
 	host.GetAddress(pData->ip, pData->port);
 	host.SetData(pData);
 	const char *modName;
-	if ( Moudle::Notify == pData->type ) modName = "Notify";
-	m_log.Info("Run", "%s(%s:%d):连接", modName, pData->ip.c_str(), pData->port );
-	
+	if ( Moudle::Notify == pData->type ) 
+	{
+		modName = "Notify";
+		m_notifyCluster.AddNode(pData->nodeId, host);
+	}
+	m_log.Info("Run", "%s(%d):%s:%d连接", modName, pData->nodeId, pData->ip.c_str(), pData->port );
 	DelConnect(host.ID());
 
 	return true;
@@ -382,56 +428,18 @@ bool Worker::OnAuth(mdk::NetHost &host, msg::Buffer &buffer)
 	case MsgId::bindingPhone:
 		{
 			mdk::NetHost authHost;
-			if ( !SelectAuthNode(pUser->id, authHost) ) return false;
+			int nodeId = m_authCluster.Node(pUser->id, authHost);
+			if ( 0 == nodeId )
+			{
+				m_log.Info("Error", "Auth结点未连接");
+				return false;
+			}
 			authHost.Send(buffer, buffer.Size());
 		}
 		return true;
 	default:
 		return true;
 	}
-}
-
-bool Worker::SelectAuthNode( const std::string &accout, mdk::NetHost &host, bool randNode )
-{
-	mdk::uint64 virUserId = memtoiSmall((unsigned char*)accout.c_str(), accout.size() <= 8?accout.size():8);
-	mdk::int32 selectNodeId = virUserId % m_authSetCount + 1;
-	mdk::AutoLock lock(&m_lockAuths);
-	std::vector<mdk::NetHost>::iterator it = m_auths.begin();
-	ConnectInfo *pNode;
-	for ( ; it != m_auths.end(); it++ )
-	{
-		pNode = (ConnectInfo*)it->GetSvrInfo();
-		if ( selectNodeId == pNode->nodeId )
-		{
-			m_log.Info("Run", "Select the %dth. AuthNode", selectNodeId);
-			host = *it;
-			return true;
-		}
-	}
-	if ( 0 >= m_auths.size() )
-	{
-		m_log.Info("Error","无可用Auth结点");
-		return false;
-	}
-	m_log.Info("Error","%d号Auth结点未连接", (virUserId % m_authSetCount) + 1);
-	if ( !randNode ) return false;
-
-	//对应服务结点未找到，采用轮询方式选择处理结点
-	static mdk::int32 pos = 0;//轮询位置
-	if ( pos >= m_auths.size() ) pos = 0;
-	host = m_auths[pos];
-	pos++;
-
-	return true;
-}
-
-bool Worker::SelectAuthNode( mdk::uint32 userId, mdk::NetHost &host )
-{
-	mdk::AutoLock lock(&m_lockAuths);
-	int pos = userId % m_auths.size();
-	host = m_auths[pos];
-
-	return true;
 }
 
 bool Worker::OnUserRegister(mdk::NetHost &host, msg::Buffer &buffer)
@@ -445,7 +453,12 @@ bool Worker::OnUserRegister(mdk::NetHost &host, msg::Buffer &buffer)
 		return false;
 	}
 	mdk::NetHost auth;
-	if ( !SelectAuthNode(msg.m_account, auth) ) return false;
+	int nodeId = m_authCluster.Node(auth);
+	if ( 0 == nodeId ) 
+	{
+		m_log.Info("Error", "无auth结点");
+		return false;
+	}
 	auth.Send(msg, msg.Size());
 
 	return true;
@@ -471,7 +484,12 @@ bool Worker::OnUserLogin(mdk::NetHost &host, msg::Buffer &buffer)
 	if ( !msg.IsResult() )//登录请求，执行转发
 	{
 		mdk::NetHost auth;
-		if ( !SelectAuthNode(msg.m_account, auth, false) ) return false;
+		int nodeId = m_authCluster.Node(msg.m_account, auth);
+		if ( 0 == nodeId )
+		{
+			m_log.Info("Error", "Auth结点未连接");
+			return false;
+		}
 		auth.Send(msg, msg.Size());
 
 		return false;
@@ -485,7 +503,6 @@ bool Worker::OnUserLogin(mdk::NetHost &host, msg::Buffer &buffer)
 			m_log.Info("Waring","请求方已断开");
 			return false;
 		}
-		SetHostRecv(userHost, true);
 		User *pUser = new User;
 		pUser->type = Moudle::Client;
 		userHost.GetAddress(pUser->ip, pUser->port);
@@ -508,6 +525,7 @@ bool Worker::OnUserLogin(mdk::NetHost &host, msg::Buffer &buffer)
 			msg.Build(true);
 			oldUser.Send(msg, msg.Size());
 		}
+		SetHostRecv(userHost, true);
 	}
 	else
 	{
@@ -534,7 +552,12 @@ bool Worker::UserLogout(mdk::NetHost &host)
 
 	//转发登出消息到Auth
 	mdk::NetHost auth;
-	if ( !SelectAuthNode(pUser->account, auth, false) ) return false;
+	int nodeId = m_authCluster.Node(pUser->account, auth);
+	if ( 0 == nodeId )
+	{
+		m_log.Info("Error", "Auth结点未连接");
+		return false;
+	}
 	msg::UserLogout msg;
 	FillTCPParam(host, msg);
 	msg.m_clientType = pUser->clientType;

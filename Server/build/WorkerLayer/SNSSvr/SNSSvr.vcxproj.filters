@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="SDK">
+      <UniqueIdentifier>{1ce669b8-dc05-4595-b4ac-2915dcc92463}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Interface">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="SDK\Interface\ClusterMgr">
+      <UniqueIdentifier>{067e8238-8e09-411d-abf6-328d11d27156}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Interface\DBCenter">
+      <UniqueIdentifier>{c5852127-a7da-4f35-8133-012291e05f2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\common">
+      <UniqueIdentifier>{b500ca43-a18f-4c54-b140-0b3a77ecbb90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Protocl\Object">
+      <UniqueIdentifier>{183f2eb0-15fb-4b02-9989-101dad304bb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object\SNS">
+      <UniqueIdentifier>{7955d45c-66bd-4b1f-8b30-9487d4639588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\base">
+      <UniqueIdentifier>{4241bf12-0595-475b-b894-bd05498927f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\mdk_ex">
+      <UniqueIdentifier>{073dcb06-e88d-4ce1-adba-e376f0a98ef8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object\Cluster">
+      <UniqueIdentifier>{86f4b75f-361a-43d7-97ec-8647e6ef9c62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Interface\Cache">
+      <UniqueIdentifier>{65e05287-4d2d-4c29-b630-e4c9c9ce9df2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Interface\Cache\Data">
+      <UniqueIdentifier>{295e9cbb-73b0-4df2-9ad6-35f00bddd192}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object\Notify">
+      <UniqueIdentifier>{ce01450e-aece-403f-b173-c3dd77fcb8fd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\WorkLayer\SNSSvr\bin\list.sh" />
+    <None Include="..\..\..\WorkLayer\SNSSvr\makefile" />
+    <None Include="..\..\..\WorkLayer\SNSSvr\bin\run.sh" />
+    <None Include="..\..\..\WorkLayer\SNSSvr\bin\SNSSvr.cfg" />
+    <None Include="..\..\..\WorkLayer\SNSSvr\bin\stop.sh" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\WorkLayer\SNSSvr\Main.cpp">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WorkLayer\SNSSvr\Worker.cpp">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Buffer.cpp">
+      <Filter>Protocl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp">
+      <Filter>SDK\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\common.cpp">
+      <Filter>SDK\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp">
+      <Filter>SDK\Interface\ClusterMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenter.cpp">
+      <Filter>SDK\Interface\DBCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.cpp">
+      <Filter>SDK\Interface\DBCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\Console.cpp">
+      <Filter>SDK\mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\ServerEx.cpp">
+      <Filter>SDK\mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp">
+      <Filter>SDK\Interface\Cache</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp">
+      <Filter>SDK\Interface\Cache\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp">
+      <Filter>SDK\Interface\Cache\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp">
+      <Filter>SDK\Interface\Cache\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp">
+      <Filter>Protocl\Object\Cluster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp">
+      <Filter>Protocl\Object\Cluster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\HostCluster.cpp">
+      <Filter>SDK\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.cpp">
+      <Filter>Protocl\Object\Notify</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\WorkLayer\SNSSvr\Main.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WorkLayer\SNSSvr\Worker.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Buffer.h">
+      <Filter>Protocl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h">
+      <Filter>Protocl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.h">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h">
+      <Filter>SDK\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\common.h">
+      <Filter>SDK\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h">
+      <Filter>SDK\Interface\ClusterMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.h">
+      <Filter>SDK\Interface\DBCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenter.h">
+      <Filter>SDK\Interface\DBCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\Console.h">
+      <Filter>SDK\mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\ServerEx.h">
+      <Filter>SDK\mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h">
+      <Filter>SDK\Interface\Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h">
+      <Filter>SDK\Interface\Cache\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h">
+      <Filter>SDK\Interface\Cache\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h">
+      <Filter>SDK\Interface\Cache\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h">
+      <Filter>Protocl\Object\Cluster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h">
+      <Filter>Protocl\Object\Cluster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\HostCluster.h">
+      <Filter>SDK\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.h">
+      <Filter>Protocl\Object\Notify</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

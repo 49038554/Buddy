@@ -14,6 +14,7 @@ namespace Moudle
 		Notify = 4,			//广播模块
 		DBEntry = 5,		//数据中心
 		Client = 6,			//客户端
+		SNS = 7,			//社交模块
 	};
 }
 
@@ -22,6 +23,9 @@ namespace MsgId
 {
 	enum MsgId
 	{
+		//运维模块
+		getCluster = 1001,//取集群信息
+		cluster = 2001,//集群信息
 		//所有模块通用
 		connectAuth = 1001,//连接认证
 		//认证模块
@@ -31,26 +35,12 @@ namespace MsgId
 		userLogout = 1004,//登出
 		resetPassword = 1005,//重置密码
 		bindingPhone = 1006,//绑定手机号
-		//运维模块
-		getCluster = 1001,//取集群信息
-		cluster = 2001,//集群信息
-		getRoomCfg = 1002,//取房间配置
-		roomCfg = 2002,//房间配置
-		//数据中心
-		updateCoin = 1001,//修改虚拟币
-		updateItemCount = 1002,//修改道具数量
-		updateRoomBacklist = 1003,// 更新特定房间的黑名单信息
-		updateRoomDisableList = 1004,// 更新特定房间的禁言列表信息
-		updateRoomManagerList = 1005,// 更新特定房间的管理员列表信息
+		//SNS模块
+		addBuddy = 1001,	//添加伙伴
 		//通知模块
-		event = 1001,//转发事件，聊天，送礼，禁言，离开房间==
-
-		//数据服务端数据或通知
-		itemListState = 2001,//商品列表开始/结束
-		itemInfo = 2002,//单个商品信息
-		roomInfo = 2003,//直播间信息
-		lookerListState = 2004,//直播间观众列表开始/结束
-		lookerPart = 2005,//直播间观众列表片段
+		event = 1001,//转发事件
+		getEvent = 1002,//读取事件
+		//数据中心
 	};
 }
 
