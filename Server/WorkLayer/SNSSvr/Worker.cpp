@@ -216,7 +216,7 @@ bool Worker::OnAddBuddy(mdk::NetHost& host, msg::Buffer& buffer)
 		return true;
 	}
 	mdk::NetHost notifyHost;
-	int nodeId = m_notifyCluster.Node(notifyHost);
+	int nodeId = m_notifyCluster.Node(msg.m_buddyId, notifyHost);
 	if ( 0 == nodeId )
 	{
 		m_log.Info("Error", "添加小伙伴失败：消息中心无可用服务");
@@ -255,10 +255,10 @@ bool Worker::OnAddBuddy(mdk::NetHost& host, msg::Buffer& buffer)
 	msg.m_nickName = ui.nickName;
 	msg.Build();
 	msg::Event notify;
-	notify.m_objectId = msg.m_buddyId;
 	notify.m_senderId = msg.m_userId;
 	notify.m_sender = msg.m_nickName;
-	notify.m_holdTime = time(NULL) + 86400 * 31;
+	notify.m_recvType = msg::Event::user;
+	notify.m_recverId = msg.m_buddyId;
 	if ( 1 == msg.m_step )//对方回应
 	{
 		if ( msg.m_accepted )//对方接受
@@ -270,7 +270,7 @@ bool Worker::OnAddBuddy(mdk::NetHost& host, msg::Buffer& buffer)
 		{
 			msg.m_code = ResultCode::Refuse;
 			msg.m_reason = "对方拒绝";
-			msg.Build(true);
+			msg.Build();
 		}
 	}
 	memcpy(notify.m_msg, msg, msg.Size());

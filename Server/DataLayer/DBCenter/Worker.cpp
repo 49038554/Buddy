@@ -482,7 +482,6 @@ void Worker::RandKey(std::string& randKey)
 	return;
 }
 
-#include "Protocl/cpp/Object/SNS/AddBuddy.h"
 void Worker::OnSNS(mdk::STNetHost &host, msg::Buffer &buffer)
 {
 	if (MsgId::addBuddy == buffer.Id()) OnAddBuddy(host, buffer);
@@ -501,52 +500,60 @@ void Worker::OnAddBuddy(mdk::STNetHost &host, msg::Buffer &buffer)
 			msg.m_reason = "报文格式非法";
 			break;
 		}
-		Cache::IdList buddyIds;
-		if ( Redis::unsvr == m_cache.GetBuddys(msg.m_userId, buddyIds) )
-		{
-			msg.m_code   = ResultCode::DBError;
-			msg.m_reason = "Redis服务异常";
-			break;
-		}
-		int i = 0;
-		for ( i = 0; i < buddyIds.m_ids.size() ; i++ )
-		{
-			if ( msg.m_buddyId == buddyIds.m_ids[i] )
-			{
-				msg.m_code   = ResultCode::Refuse;
-				msg.m_reason = "已经是小伙伴";
-				break;
-			}
-		}
-		char sql[256];
-		sprintf( sql, "insert into buddy (userId, buddyId) values(%d, %d)", 
-			msg.m_userId, msg.m_buddyId );
-		MySqlClient *pMysql = m_mySQLCluster.Node("Buddy", msg.m_userId);
-		if (!pMysql)
-		{
-			msg.m_code   = ResultCode::DBError;
-			msg.m_reason = "找不到Buddy数据库结点";
-			break;
-		}
-		if ( !pMysql->ExecuteSql(sql) )
-		{
-			msg.m_code   = ResultCode::DBError;
-			msg.m_reason = "修改数据库失败:";
-			msg.m_reason += pMysql->GetLastError();
-			break;
-		}
-		buddyIds.m_ids.push_back(msg.m_buddyId);
-		if ( !m_cache.SetBuddys(msg.m_userId, buddyIds) )
-		{
-			msg.m_code   = ResultCode::DBError;
-			msg.m_reason = "写缓存失败";
-		}
+		if ( !SetBuddy(msg.m_userId, msg.m_buddyId, msg) ) break;
+		SetBuddy(msg.m_buddyId, msg.m_userId, msg);
 	}
-	while (false);
+	while ( false );
 	if ( msg.m_code )
 	{
 		m_log.Info("Error", "添加小伙伴失败:%s!", msg.m_reason.c_str());
 	}
 	msg.Build(true);
 	host.Send(msg, msg.Size());
+}
+
+bool Worker::SetBuddy(mdk::uint32 userId, mdk::uint32 buddyId, msg::AddBuddy &msg)
+{
+	Cache::IdList buddyIds;
+	if ( Redis::unsvr == m_cache.GetBuddys(userId, buddyIds) )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "Redis服务异常";
+		return false;
+	}
+	int i = 0;
+	for ( i = 0; i < buddyIds.m_ids.size() ; i++ )
+	{
+		if ( buddyId == buddyIds.m_ids[i] )
+		{
+			msg.m_code   = ResultCode::Refuse;
+			msg.m_reason = "已经是小伙伴";
+			return true;
+		}
+	}
+	char sql[256];
+	sprintf( sql, "insert into buddy (userId, buddyId) values(%d, %d)", 
+		userId, buddyId );
+	MySqlClient *pMysql = m_mySQLCluster.Node("Buddy", userId);
+	if (!pMysql)
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "找不到Buddy数据库结点";
+		return false;
+	}
+	if ( !pMysql->ExecuteSql(sql) )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "修改数据库失败:";
+		msg.m_reason += pMysql->GetLastError();
+		return false;
+	}
+	buddyIds.m_ids.push_back(buddyId);
+	if ( !m_cache.SetBuddys(userId, buddyIds) )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "写缓存失败";
+		return false;
+	}
+	return true;
 }

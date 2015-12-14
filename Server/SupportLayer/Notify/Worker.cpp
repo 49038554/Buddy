@@ -2,9 +2,9 @@
 #include <cstring>
 #include "Worker.h"
 #include "mdk/mapi.h"
-#include "Protocl/cpp/Object/Notify/Event.h"
 #include "Protocl/cpp/Object/Notify/GetEvent.h"
 #include "Protocl/cpp/Object/ConnectAuth.h"
+#include "Protocl/cpp/Object/SNS/AddBuddy.h"
 
 #ifdef WIN32
 #ifdef _DEBUG
@@ -121,7 +121,7 @@ bool Worker::InitId( const std::string &fileName )
 bool Worker::CreateId( mdk::uint32 &id, bool now )
 {
 	//id已用完
-	if ( 0x01000000 == m_searialNo ) return false;
+	if ( 0x01000000 == m_searialNo ) m_searialNo = 0;
 
 	id = m_nodeId;
 	id <<= 24;
@@ -216,22 +216,26 @@ void Worker::OnEvent(mdk::NetHost &host, msg::Buffer &buffer)
 		m_log.Info("Error", "非法报文格式");
 		return;
 	}
-	if ( !CreateId( msg.m_eventId ) )
-	{
-		m_log.Info("Error", "无可用Id");
-		return;
-	}
+	CreateId(msg.m_eventId);
 	msg.Build();
+	if ( msg::Event::user == msg.m_recvType ) NotifyUser(msg);
+	else if ( msg::Event::buddys == msg.m_recvType ) NotifyBuddys(msg);
+ 	else if ( msg::Event::group == msg.m_recvType ) NotifyGroup(msg);
+
+	return;
+}
+
+void Worker::NotifyUser(msg::Event &msg)
+{
 	int tcpNodeId;
-	if ( Redis::success != m_cache.GetUserNode(buffer.m_objectId, tcpNodeId) )//取不到用户连接信息，则保存下来以后发送
+	if ( Redis::success != m_cache.GetUserNode(msg.m_recverId, tcpNodeId) )//取不到用户连接信息，则保存下来以后发送
 	{
-		if ( !m_cache.AddEvent(msg.m_objectId, msg.m_eventId, msg, msg.Size()) )
+		if ( !m_cache.AddEvent(msg.m_recverId, msg.m_eventId, msg, msg.Size()) )
 		{
 			m_log.Info("Error", "保存通知失败");
 		}
 		return;
 	}
-
 	//转发出去
 	mdk::NetHost tcpHost;
 	mdk::AutoLock lock(&m_lockTcpEntryMap);
@@ -241,32 +245,57 @@ void Worker::OnEvent(mdk::NetHost &host, msg::Buffer &buffer)
 		return;
 	}
 	tcpHost = m_tcpEntryMap[tcpNodeId];
-	tcpHost.Send(buffer, buffer.Size());
+	tcpHost.Send(msg, msg.Size());
+	return;
+}
+
+void Worker::NotifyBuddys(msg::Event &msg)
+{
+	Cache::IdList ids;
+	Redis::Result ret = m_cache.GetBuddys(msg.m_recverId, ids);
+	if ( Redis::nullData == ret ) return;
+	if ( Redis::success != ret ) 
+	{
+		m_log.Info("Error", "查询小伙伴列表失败");
+		return;
+	}
+	msg.m_recvType = msg::Event::user;
+	int i = 0;
+	for ( i = 0; i < ids.m_ids.size(); i++ )
+	{
+		msg.m_recverId = ids.m_ids[i];
+		msg.Build();
+		NotifyUser(msg);
+	}
+	return;
+}
+
+void Worker::NotifyGroup(msg::Event &msg)
+{
+	Cache::IdList ids;
+	Redis::Result ret = m_cache.GetGroupMember(msg.m_recverId, ids);
+	if ( Redis::nullData == ret ) return;
+	if ( Redis::success != ret ) 
+	{
+		m_log.Info("Error", "查询分组成员失败");
+		return;
+	}
+	msg.m_recvType = msg::Event::user;
+	int i = 0;
+	for ( i = 0; i < ids.m_ids.size(); i++ )
+	{
+		msg.m_recverId = ids.m_ids[i];
+		msg.Build();
+		NotifyUser(msg);
+	}
+	return;
 }
 
 void Worker::OnGetEvent(mdk::NetHost &host, msg::Buffer &buffer)
 {
-	std::vector<std::string> events;
-	Redis::Result ret = m_cache.GetEvents(buffer.m_objectId, events);
-
-	if ( Redis::unsvr == ret )
-	{
-		m_log.Info("Error", "读取通知失败:Redis服务异常");
-		return;
-	}
-	if ( 0 >= events.size() ) return;
-
-	//转发出去
-	int i = 0;
-	for ( i = 0; i < events.size(); i++ )
-	{
-		buffer.ReInit();
-		memcpy(buffer, events[i].c_str(), events[i].size());
-		if ( !buffer.Parse() ) 
-		{
-			m_log.Info("Error", "1条消息无法解析");
-			continue;
-		}
-		host.Send(buffer, buffer.Size());
-	}
+	msg::GetEvent msg;
+	memcpy(msg, buffer, buffer.Size());
+	if ( !msg.Parse() ) return;
+	msg.Build(true);
+	host.Send(msg, msg.Size());
 }

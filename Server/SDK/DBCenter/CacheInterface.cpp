@@ -234,6 +234,33 @@ Redis::Result CacheInterface::GetBuddys(mdk::uint32 userId, Cache::IdList &list)
 	return ret;
 }
 
+//进群
+bool CacheInterface::SetGroupMember(mdk::uint32 groupId, Cache::IdList &list)
+{
+	RedisClient &node = GetNode(groupId);
+	char key[256];
+	sprintf( key, "group_%u", groupId );
+	std::string data;
+	if ( !list.Build() ) return false;
+	data.assign((char*)list, list.Size());
+	return node.SetMapItem(key, "member", data);
+}
+
+Redis::Result CacheInterface::GetGroupMember(mdk::uint32 groupId, Cache::IdList &list)
+{
+	RedisClient &node = GetNode(groupId);
+	char key[256];
+	sprintf( key, "group_%u", groupId );
+	std::string data;
+	Redis::Result ret = node.GetMapItem(key, "member", data);
+	if ( Redis::success != ret ) return ret;
+	list.Clear();
+	memcpy(list, data.c_str(), data.size());
+	if ( !list.Parse() ) return Redis::nullData;
+
+	return ret;
+}
+
 //用户粉丝列表
 bool CacheInterface::SetUserFans(mdk::uint32 userId, Cache::IdList &list)
 {

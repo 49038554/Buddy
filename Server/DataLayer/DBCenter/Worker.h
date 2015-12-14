@@ -9,6 +9,7 @@
 #include "DBCenter/CacheInterface.h"
 #include "common/MysqlCluster.h"
 #include "Interface/ClusterMgr/cpp/ClusterMgr.h"
+#include "Protocl/cpp/Object/SNS/AddBuddy.h"
 
 
 /**
@@ -56,6 +57,7 @@ private:
 	void RandKey(std::string& randKey);
 	// 创建一个用户的昵称，用来创建用户时进行默认填充
 	void RandNickname(std::string& nickname, int userId);
+	bool SetBuddy(mdk::uint32 userid, mdk::uint32 buddyId, msg::AddBuddy &msg);
 
 private:
 	mdk::Logger     m_log;

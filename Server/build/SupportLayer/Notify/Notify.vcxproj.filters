@@ -37,11 +37,11 @@
     <Filter Include="SDK\Protocl\Object\Operation">
       <UniqueIdentifier>{807fe722-f205-4fa7-b704-acf121a4df69}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SDK\Protocl\Object\Notify">
-      <UniqueIdentifier>{451de386-2b85-4e28-a8c5-ebdd81855bd3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SDK\mdk_ex">
       <UniqueIdentifier>{68415eac-9981-4769-9463-90d618c76a30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Protocl\Object\MsgCenter">
+      <UniqueIdentifier>{451de386-2b85-4e28-a8c5-ebdd81855bd3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -91,10 +91,13 @@
       <Filter>SDK\Protocl\Object\Operation</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.cpp">
-      <Filter>SDK\Protocl\Object\Notify</Filter>
+      <Filter>SDK\Protocl\Object\MsgCenter</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\GetEvent.cpp">
-      <Filter>SDK\Protocl\Object\Notify</Filter>
+      <Filter>SDK\Protocl\Object\MsgCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp">
+      <Filter>SDK\Protocl\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -147,10 +150,13 @@
       <Filter>SDK\Protocl\Object\Operation</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.h">
-      <Filter>SDK\Protocl\Object\Notify</Filter>
+      <Filter>SDK\Protocl\Object\MsgCenter</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\GetEvent.h">
-      <Filter>SDK\Protocl\Object\Notify</Filter>
+      <Filter>SDK\Protocl\Object\MsgCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.h">
+      <Filter>SDK\Protocl\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -13,9 +13,9 @@ GetEvent::~GetEvent()
 {
 }
 
-bool GetEvent::Build()
+bool GetEvent::Build(bool isResult)
 {
-	SetId(MsgId::getEvent, false);
+	SetId(MsgId::getEvent, isResult);
 	if ( !FillTransmitParam() ) return false;//Tcp服务填写参数
 	//请求参数
 

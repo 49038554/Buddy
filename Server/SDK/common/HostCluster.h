@@ -10,6 +10,7 @@ public:
 	HostCluster(void);
 	virtual ~HostCluster(void);
 
+	void SetNodeCount( int count );
 	void AddNode(int nodeId, mdk::NetHost &host);
 	void DelNode(int nodeId);
 

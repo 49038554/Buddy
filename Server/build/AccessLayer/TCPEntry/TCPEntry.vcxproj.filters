@@ -36,6 +36,9 @@
     <Filter Include="SDK\Protocl\Object\Cluster">
       <UniqueIdentifier>{085fa3dd-a636-4eec-ae95-b0757f3be07e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SDK\Protocl\Object\MsgCenter">
+      <UniqueIdentifier>{a9aa4d7e-1ae7-48ed-9787-e47c7ef8226b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\AccessLayer\TCPEntry\Worker.cpp">
@@ -106,6 +109,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\SDK\common\HostCluster.cpp">
       <Filter>SDK\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.cpp">
+      <Filter>SDK\Protocl\Object\MsgCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\GetEvent.cpp">
+      <Filter>SDK\Protocl\Object\MsgCenter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +189,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\SDK\common\HostCluster.h">
       <Filter>SDK\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.h">
+      <Filter>SDK\Protocl\Object\MsgCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\GetEvent.h">
+      <Filter>SDK\Protocl\Object\MsgCenter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

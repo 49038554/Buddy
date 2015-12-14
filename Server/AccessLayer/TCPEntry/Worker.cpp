@@ -11,6 +11,7 @@
 #include "Protocl/cpp/Object/Auth/ResetPassword.h"
 #include "Protocl/cpp/Object/Auth/BindingPhone.h"
 #include "Protocl/cpp/Object/Auth/UserRelogin.h"
+#include "Protocl/cpp/Object/Notify/Event.h"
 
 #ifdef WIN32
 #ifdef _DEBUG
@@ -77,6 +78,7 @@ Worker::Worker(void)
 	}
 	m_authSvrCount = 0;
 	m_snsSvrCount = 0;
+	int notifySvrCount = 0;
 	ConnectInfo *pNode;
 	std::map<Moudle::Moudle, std::map<NetLine::NetLine, std::vector<msg::Cluster::NODE> > >::iterator itMoudle;
 	std::map<NetLine::NetLine, std::vector<msg::Cluster::NODE> >::iterator itLine;
@@ -101,6 +103,11 @@ Worker::Worker(void)
 					}
 					continue;
 				}
+				else if ( Moudle::Notify == itMoudle->first ) 
+				{
+					notifySvrCount++;
+					continue;
+				}
 				else if ( Moudle::Auth == itMoudle->first ) m_authSvrCount++;
 				else if ( Moudle::SNS == itMoudle->first ) m_snsSvrCount++;
 				else continue;
@@ -121,6 +128,9 @@ Worker::Worker(void)
 		mdk::mdk_assert(false);
 		exit(0);
 	}
+	m_notifyCluster.SetNodeCount(notifySvrCount);
+	m_authCluster.SetNodeCount(m_authSvrCount);
+	m_snsCluster.SetNodeCount(m_snsSvrCount);
 	m_log.Info("Run", "认证结点%d个, sns结点%d个", m_authSvrCount, m_snsSvrCount);
 	int CPU = mdk::GetCUPNumber(32, 32);
 	SetWorkThreadCount(CPU);
@@ -250,7 +260,7 @@ void Worker::OnMsg(mdk::NetHost &host)
 		return;
 	}
 	if ( !host.Recv(buffer, buffer.Size()) ) return;
-	if ( Moudle::Notify == buffer.MoudleId() && MsgId::event == buffer.Id() ) 
+	if ( Moudle::Notify == buffer.MoudleId() ) 
 	{
 		OnNotify(host, buffer);
 		return;
@@ -293,7 +303,6 @@ void Worker::OnMsg(mdk::NetHost &host)
 	mdk::NetHost helperHost;
 	int nodeId = 0;
 	if ( Moudle::SNS == buffer.MoudleId() ) nodeId = m_snsCluster.Node(helperHost);
-	if ( Moudle::Notify == buffer.MoudleId() ) nodeId = m_notifyCluster.Node(helperHost);
 	if ( 0 == nodeId )
 	{
 		m_log.Info("Error", "服务结点未连接");
@@ -631,18 +640,107 @@ bool Worker::GetUser(mdk::uint32 userId, mdk::NetHost& host)
 
 bool Worker::OnNotify(mdk::NetHost &host, msg::Buffer &buffer)
 {
-	if ( !buffer.Parse() )
+	if ( MsgId::event == buffer.Id() ) 
 	{
-		m_log.Info("Error", "非法格式通知报文");
-		return false;
+		if ( !buffer.Parse() ) 
+		{
+			m_log.Info("Error","通知报文:非法格式");
+			return false;
+		}
+		return NotifyUser(buffer);
 	}
-	mdk::NetHost clientHost;
-	if ( !GetUser(buffer.m_objectId, clientHost) )
+
+	//转发到消息中心，或回应
+	if ( !buffer.IsResult() ) FillTCPParam(host, buffer);
+
+	if ( MsgId::getEvent == buffer.Id() )
 	{
-		m_log.Info("Waring", "找不到用户(%d)连接，通知无法到达用户", buffer.m_objectId);
-		return true;
+		if ( !buffer.Parse() ) 
+		{
+			m_log.Info("Error","读消息报文:非法格式");
+			return false;
+		}
+		if ( !buffer.IsResult() )//转发
+		{
+			mdk::NetHost msgCenter;
+			if ( 0 == m_notifyCluster.Node(buffer.m_objectId, msgCenter) )
+			{
+				m_log.Info("Error", "消息中心未连接");
+				return false;
+			}
+			msgCenter.Send(buffer, buffer.Size());
+		}
+		else
+		{
+			mdk::NetHost clientHost;
+			if ( !GetUser(buffer.m_objectId, clientHost) )
+			{
+				m_log.Info("Waring", "找不到用户(%d)连接，通知无法到达用户", buffer.m_objectId);
+				return false;
+			}
+
+			std::vector<std::string> events;
+			Redis::Result ret = m_cache.GetEvents(buffer.m_objectId, events);
+			if ( Redis::unsvr == ret )
+			{
+				m_log.Info("Error", "redis未连接");
+				return false;
+			}
+			if ( Redis::success != ret ) return true;
+			int i = 0;
+			time_t curTime = time(NULL);
+			for ( i = 0; i < events.size(); i++ )
+			{
+				msg::Event data;
+				memcpy(data, events[i].c_str(), events[i].size());
+				if ( !data.Parse() ) 
+				{
+					m_log.Info("Error", "1条消息无法解析");
+					continue;
+				}
+				buffer.ReInit();
+				memcpy(buffer, data.m_msg, data.m_msg.Size());
+				if ( !buffer.Parse() ) 
+				{
+					m_log.Info("Error", "1条消息无法解析");
+					continue;
+				}
+				clientHost.Send(buffer, buffer.Size());
+			}
+		}
 	}
-	clientHost.Send(buffer, buffer.Size());
 
 	return true;
 }
+
+bool Worker::NotifyUser(msg::Buffer &buffer)
+{
+	msg::Event msg;
+	memcpy(msg, buffer, buffer.Size());
+	if ( !msg.Parse() )
+	{
+		m_log.Info("Error", "非法格式通知");
+		return false;
+	}
+	if ( msg::Event::user != msg.m_recvType ) 
+	{
+		m_log.Info("Error", "未预料的群发消息");
+		return false;
+	}
+	mdk::NetHost clientHost;
+	if ( !GetUser(msg.m_recverId, clientHost) )
+	{
+		m_log.Info("Waring", "找不到用户(%d)连接，通知无法到达用户", msg.m_recverId);
+		return false;
+	}
+	buffer.ReInit();
+	memcpy(buffer, msg.m_msg, msg.m_msg.Size());
+	if ( !buffer.Parse() )
+	{
+		m_log.Info("Error", "非法格式报文");
+		return false;
+	}
+	clientHost.Send(buffer, buffer.Size());
+	return true;
+}
+

@@ -11,10 +11,14 @@ HostCluster::~HostCluster(void)
 {
 }
 
+void HostCluster::SetNodeCount( int count )
+{
+	m_nodeCount = count;
+}
+
 void HostCluster::AddNode(int nodeId, mdk::NetHost &host)
 {
 	mdk::AutoLock lock(&m_lockHostList);
-	m_nodeCount++;
 	m_hosts[nodeId] = host;
 }
 

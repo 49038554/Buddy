@@ -62,6 +62,8 @@ private:
 	bool SelectAuthNode( mdk::uint32 userId, mdk::NetHost &host );
 	void SetHostRecv(mdk::NetHost &host, bool enable);//设置host是否可以接收消息中心转发消息
 
+	//通知用户
+	bool NotifyUser(msg::Buffer &buffer);
 
 private:
 	mdk::Logger		m_log;

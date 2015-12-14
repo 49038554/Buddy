@@ -23,26 +23,15 @@ int main(int argc, char* argv[])
 
 	bool ret = false;
 	MD5Helper md5;
-	{
-		/*
-			test0001 16777223
-			test0002 16777224
-		*/
-		msg::UserRegister msg;
-		msg.m_accountType = AccountType::mobile;
-		msg.m_account = "test0001";
-		msg.m_pwd = md5.HashString("111111", 6);
-		msg.Build();
-		c.Send(msg, msg.Size());
-		msg.ReInit();
-		c.Receive(msg, 1024);
-		ret = msg.Parse();
-	}
+	/*
+	test0001 16777223
+	test0002 16777224
+	*/
 	{
 		msg::UserLogin msg;
 		msg.m_clientType = ClientType::android;
 		msg.m_accountType = AccountType::mobile;
-		msg.m_account = "test0001";
+		msg.m_account = "test0002";
 		msg.m_pwd = md5.HashString("111111", 6);
 		msg.Build();
 		c.Send(msg, msg.Size());
@@ -51,13 +40,11 @@ int main(int argc, char* argv[])
 		ret = msg.Parse();
 	}
 	{
-		msg::AddBuddy ab;
-		ab.m_step = 0;
-		ab.m_msg = "test";
-		ab.m_buddyId = 16777224;//test0002
-		ab.Build();
-		c.Send(ab, ab.Size());
+		msg::GetEvent msg;
+		ret = msg.Build();
+		c.Send(msg, msg.Size());
 	}
+
 	msg::Buffer buffer;
 	while ( true )
 	{
@@ -75,17 +62,13 @@ int main(int argc, char* argv[])
 			{
 				return 0;
 			}
-			if ( !msg.m_accepted )
-			{
-				msg.m_code = ResultCode::Success;
-				msg.m_step = 0;
-				msg.m_buddyId = msg.m_userId;
-				msg.Build();
-				c.Send(msg, msg.Size());
-			}
+			msg.m_step = 1;
+			msg.m_accepted = true;
+			msg.m_buddyId = msg.m_userId;
+			msg.Build();
+			c.Send(msg, msg.Size());
 		}
 	}
-
 	return 0;
 }
 

@@ -20,6 +20,7 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\GetEvent.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp" />
     <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp" />
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp" />
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp" />
@@ -39,6 +40,7 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\GetEvent.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h" />
     <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h" />
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h" />

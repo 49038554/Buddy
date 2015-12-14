@@ -7,6 +7,7 @@
 #include "Protocl/cpp/Buffer.h"
 #include "DBCenter/CacheInterface.h"
 #include "Interface/ClusterMgr/cpp/ClusterMgr.h"
+#include "Protocl/cpp/Object/Notify/Event.h"
 
 class Worker : public mdk::NetServer
 {
@@ -27,6 +28,9 @@ private:
 	bool InitId( const std::string &fileName );
 	bool CreateId( mdk::uint32 &id, bool now = true );
 	void SaveId( bool now );
+	void NotifyUser(msg::Event &msg);
+	void NotifyBuddys(msg::Event &msg);
+	void NotifyGroup(msg::Event &msg);
 
 
 private:

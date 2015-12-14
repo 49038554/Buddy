@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="头文件\Object">
+      <UniqueIdentifier>{c75b44d5-5225-4873-8dcd-95a69273460c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Protocl\cpp\Buffer.cpp">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\base\Message.cpp">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\base\Socket.cpp">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\base\Stream.cpp">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\Object\Auth\BindingPhone.cpp">
+      <Filter>头文件\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\Object\Auth\ResetPassword.cpp">
+      <Filter>头文件\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\Object\Auth\UserLogin.cpp">
+      <Filter>头文件\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\Object\Auth\UserLogout.cpp">
+      <Filter>头文件\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\Object\Auth\UserRegister.cpp">
+      <Filter>头文件\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SDK\common\MD5Helper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\Object\Auth\UserRelogin.cpp">
+      <Filter>头文件\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp">
+      <Filter>头文件\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\Object\Notify\Event.cpp">
+      <Filter>头文件\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Protocl\cpp\Object\Notify\GetEvent.cpp">
+      <Filter>头文件\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="TestClient.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Protocl\cpp\Buffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\Protocl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\base\Stream.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\base\Message.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\base\Socket.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\Object\Auth\BindingPhone.h">
+      <Filter>头文件\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\Object\Auth\ResetPassword.h">
+      <Filter>头文件\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\Object\Auth\UserLogin.h">
+      <Filter>头文件\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\Object\Auth\UserLogout.h">
+      <Filter>头文件\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\Object\Auth\UserRegister.h">
+      <Filter>头文件\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDK\common\MD5Helper.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\Object\Auth\UserRelogin.h">
+      <Filter>头文件\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\Object\SNS\AddBuddy.h">
+      <Filter>头文件\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\Object\Notify\Event.h">
+      <Filter>头文件\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Protocl\cpp\Object\Notify\GetEvent.h">
+      <Filter>头文件\Object</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
