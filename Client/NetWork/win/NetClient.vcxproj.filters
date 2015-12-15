@@ -5,16 +5,120 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="头文件">
+    <Filter Include="Protocl">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="资源文件">
+    <Filter Include="Protocl\base">
+      <UniqueIdentifier>{7fdcb6a6-3aac-4dbf-95ea-8a69b684afe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object">
+      <UniqueIdentifier>{9d4b935f-a636-446f-9716-fd95f6cfe249}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object\Auth">
+      <UniqueIdentifier>{bcb17326-c93c-4c64-8247-babb12308496}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object\MsgCenter">
+      <UniqueIdentifier>{09912497-015e-4fdb-a248-2ed70e45c911}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object\SNS">
+      <UniqueIdentifier>{20a8e169-de6f-44b9-8068-db104bdb941f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Buffer.cpp">
+      <Filter>Protocl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\base\Message.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\base\Socket.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\base\Stream.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\Auth\BindingPhone.cpp">
+      <Filter>Protocl\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\Auth\ResetPassword.cpp">
+      <Filter>Protocl\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\Auth\UserLogin.cpp">
+      <Filter>Protocl\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\Auth\UserLogout.cpp">
+      <Filter>Protocl\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\Auth\UserRegister.cpp">
+      <Filter>Protocl\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\Auth\UserRelogin.cpp">
+      <Filter>Protocl\Object\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\Notify\Event.cpp">
+      <Filter>Protocl\Object\MsgCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\Notify\GetEvent.cpp">
+      <Filter>Protocl\Object\MsgCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\MD5Helper.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="test.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Protocl\cpp\Buffer.h">
+      <Filter>Protocl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Protocl.h">
+      <Filter>Protocl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\base\Message.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\base\Socket.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\base\Stream.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\Auth\UserRelogin.h">
+      <Filter>Protocl\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\Auth\BindingPhone.h">
+      <Filter>Protocl\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\Auth\ResetPassword.h">
+      <Filter>Protocl\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\Auth\UserLogin.h">
+      <Filter>Protocl\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\Auth\UserLogout.h">
+      <Filter>Protocl\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\Auth\UserRegister.h">
+      <Filter>Protocl\Object\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\Notify\GetEvent.h">
+      <Filter>Protocl\Object\MsgCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\Notify\Event.h">
+      <Filter>Protocl\Object\MsgCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\AddBuddy.h">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\common\MD5Helper.h">
+      <Filter>common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
