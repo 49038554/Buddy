@@ -25,6 +25,16 @@
     <ClCompile Include="..\..\..\Protocl\cpp\Object\Notify\GetEvent.cpp" />
     <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp" />
     <ClCompile Include="..\..\common\MD5Helper.cpp" />
+    <ClCompile Include="..\..\mdk\ConfigFile.cpp" />
+    <ClCompile Include="..\..\mdk\Executor.cpp" />
+    <ClCompile Include="..\..\mdk\Lock.cpp" />
+    <ClCompile Include="..\..\mdk\mapi.cpp" />
+    <ClCompile Include="..\..\mdk\Signal.cpp" />
+    <ClCompile Include="..\..\mdk\Task.cpp" />
+    <ClCompile Include="..\..\mdk\Thread.cpp" />
+    <ClCompile Include="..\Source\Client.cpp" />
+    <ClCompile Include="..\Source\NetWorker.cpp" />
+    <ClCompile Include="Console.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -43,6 +53,18 @@
     <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\AddBuddy.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Protocl.h" />
     <ClInclude Include="..\..\common\MD5Helper.h" />
+    <ClInclude Include="..\..\mdk\atom.h" />
+    <ClInclude Include="..\..\mdk\ConfigFile.h" />
+    <ClInclude Include="..\..\mdk\Executor.h" />
+    <ClInclude Include="..\..\mdk\FixLengthInt.h" />
+    <ClInclude Include="..\..\mdk\Lock.h" />
+    <ClInclude Include="..\..\mdk\mapi.h" />
+    <ClInclude Include="..\..\mdk\Signal.h" />
+    <ClInclude Include="..\..\mdk\Task.h" />
+    <ClInclude Include="..\..\mdk\Thread.h" />
+    <ClInclude Include="..\Source\Client.h" />
+    <ClInclude Include="..\Source\NetWorker.h" />
+    <ClInclude Include="Console.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{34FBD35F-D5F9-40BB-B746-84E2208C9AD6}</ProjectGuid>
@@ -53,13 +75,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -85,7 +107,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>..\..\..;..\..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..;..\..;..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -102,7 +124,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>..\..\..;..\..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..;..\..;..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -80,6 +80,8 @@ public:
 	virtual ~Socket();
 
 public:
+	//功能：等待数据，默认无限等待
+	static bool WaitData( int *list, int &count, long lSecond = -1, long lMinSecond = -1);
 	//将域名转换为真实IP，如果lpszHostAddress本来就是ip，不影响转换结果
 	//转换失败返回""
 	static char* HostName2IP( char *hostname );
@@ -263,8 +265,6 @@ protected:
 		返回值：超时返回TRUE，否则返回FALSE
 	*/
 	bool TimeOut( long lSecond, long lMinSecond );
-	//功能：等待数据
-	bool WaitData();
 	/*
 		功能：从sockaddr结构转换成常见类型表示的地址
 		参数：

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PROTOCL_BUFFER_H
+#define PROTOCL_BUFFER_H
+
 #include "base/Message.h"
 #include "Protocl.h"
 
@@ -25,3 +27,5 @@ private:
 };
 
 }
+
+#endif //PROTOCL_BUFFER_H

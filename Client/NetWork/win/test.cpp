@@ -13,9 +13,13 @@
 #include "Protocl/cpp/Object/Notify/GetEvent.h"
 
 #include "common/MD5Helper.h"
+#include "Source/Client.h"
 
 int main(int argc, char* argv[])
 {
+	Client t;
+	t.Connect(1, "127.0.0.1", 6601);
+	t.Start();
 	net::Socket::SocketInit();
 	net::Socket c;
 	bool b = c.Init(net::Socket::tcp);

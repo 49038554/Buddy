@@ -28,6 +28,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="mdk">
+      <UniqueIdentifier>{d122fe49-d666-450b-b172-5c98e6dddd35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Protocl\cpp\Buffer.cpp">
@@ -73,6 +76,34 @@
       <Filter>common</Filter>
     </ClCompile>
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="Console.cpp" />
+    <ClCompile Include="..\Source\NetWorker.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mdk\ConfigFile.cpp">
+      <Filter>mdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mdk\Executor.cpp">
+      <Filter>mdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mdk\Lock.cpp">
+      <Filter>mdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mdk\mapi.cpp">
+      <Filter>mdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mdk\Signal.cpp">
+      <Filter>mdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mdk\Task.cpp">
+      <Filter>mdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mdk\Thread.cpp">
+      <Filter>mdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Client.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Protocl\cpp\Buffer.h">
@@ -119,6 +150,40 @@
     </ClInclude>
     <ClInclude Include="..\..\common\MD5Helper.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h" />
+    <ClInclude Include="..\Source\NetWorker.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mdk\atom.h">
+      <Filter>mdk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mdk\ConfigFile.h">
+      <Filter>mdk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mdk\Executor.h">
+      <Filter>mdk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mdk\FixLengthInt.h">
+      <Filter>mdk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mdk\Lock.h">
+      <Filter>mdk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mdk\mapi.h">
+      <Filter>mdk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mdk\Signal.h">
+      <Filter>mdk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mdk\Task.h">
+      <Filter>mdk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mdk\Thread.h">
+      <Filter>mdk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Client.h">
+      <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PROTOCL_H
+#define PROTOCL_H
 
 #define MAX_MSG_SIZE 10240	//报文最大长度
 #define BYTE_ORDER	net::smallOrder	//字节序
@@ -121,3 +122,5 @@ namespace ItemBigType
 		luckGift = 3,//幸运礼物
 	};
 }
+
+#endif //PROTOCL_H
