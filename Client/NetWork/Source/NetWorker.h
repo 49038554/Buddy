@@ -21,9 +21,10 @@ public:
 	bool Connect( int svrType, const std::string &ip, int port );
 	bool Start();
 	bool Stop();
-	void* RemoteCall Main(void *param);
+	void* RemoteCall TMain(void *param);
 
 protected:
+	virtual void Main();
 	virtual void OnConnect(int svrType, net::Socket &svr);
 	virtual void OnClose(int svrType);
 	virtual void OnMsg(int svrType, net::Socket &svr, msg::Buffer &buffer);

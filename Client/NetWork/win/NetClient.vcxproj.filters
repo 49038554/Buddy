@@ -63,9 +63,6 @@
     <ClCompile Include="..\..\..\Protocl\cpp\Object\Auth\UserRelogin.cpp">
       <Filter>Protocl\Object\Auth</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Protocl\cpp\Object\Notify\Event.cpp">
-      <Filter>Protocl\Object\MsgCenter</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Protocl\cpp\Object\Notify\GetEvent.cpp">
       <Filter>Protocl\Object\MsgCenter</Filter>
     </ClCompile>
@@ -140,9 +137,6 @@
       <Filter>Protocl\Object\Auth</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Protocl\cpp\Object\Notify\GetEvent.h">
-      <Filter>Protocl\Object\MsgCenter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Protocl\cpp\Object\Notify\Event.h">
       <Filter>Protocl\Object\MsgCenter</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\AddBuddy.h">

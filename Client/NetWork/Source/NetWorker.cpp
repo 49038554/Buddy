@@ -11,6 +11,10 @@ NetWorker::~NetWorker(void)
 {
 }
 
+void NetWorker::Main()
+{
+}
+
 bool NetWorker::Connect( int svrType, const std::string &ip, int port )
 {
 	if ( m_services.end() != m_services.find(svrType) ) return false;
@@ -25,8 +29,7 @@ bool NetWorker::Connect( int svrType, const std::string &ip, int port )
 bool NetWorker::Start()
 {
 	m_running = true;
-	m_mainThread.Run(mdk::Executor::Bind(&NetWorker::Main), this, NULL);
-	m_mainThread.WaitStop();
+	m_mainThread.Run(mdk::Executor::Bind(&NetWorker::TMain), this, NULL);
 	return false;
 }
 
@@ -40,7 +43,7 @@ bool NetWorker::Stop()
 	return false;
 }
 
-void* NetWorker::Main(void *param)
+void* NetWorker::TMain(void *param)
 {
 	msg::Buffer buffer;
 	int list[65];
@@ -49,6 +52,7 @@ void* NetWorker::Main(void *param)
 	std::map<int, SVR>::iterator it;
 	while ( m_running )
 	{
+		Main();
 		//自动重连服务器，并加入监听
 		count = 0;
 		for ( it = m_services.begin(); it != m_services.end(); it++ )
@@ -78,6 +82,7 @@ void* NetWorker::Main(void *param)
 			}
 			if ( it == m_services.end() ) continue;
 
+			buffer.ReInit();
 			int result = it->second.svr.Receive(buffer, buffer.HeaderSize(), true);
 			if ( 0 > result )
 			{
@@ -97,6 +102,7 @@ void* NetWorker::Main(void *param)
 				OnClose(it->first);
 				continue;
 			}
+			if ( !buffer.Parse() ) continue;
 			OnMsg(it->first, it->second.svr, buffer);
 		}
 	}

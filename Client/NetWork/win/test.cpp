@@ -15,64 +15,122 @@
 #include "common/MD5Helper.h"
 #include "Source/Client.h"
 
+#include "Console.h"
+
+Client g_cli;
+
+char* OnCommand(std::vector<std::string> *cmd);
+
 int main(int argc, char* argv[])
 {
-	Client t;
-	t.Connect(1, "127.0.0.1", 6601);
-	t.Start();
-	net::Socket::SocketInit();
-	net::Socket c;
-	bool b = c.Init(net::Socket::tcp);
-	b = c.Connect("192.168.11.109", 6601);
+	g_cli.Connect(Client::TcpSvr, "127.0.0.1", 6601);
+	g_cli.Start();
 
-	bool ret = false;
-	MD5Helper md5;
-	/*
-	test0001 16777223
-	test0002 16777224
-	*/
-	{
-		msg::UserLogin msg;
-		msg.m_clientType = ClientType::android;
-		msg.m_accountType = AccountType::mobile;
-		msg.m_account = "test0002";
-		msg.m_pwd = md5.HashString("111111", 6);
-		msg.Build();
-		c.Send(msg, msg.Size());
-		msg.ReInit();
-		c.Receive(msg, 1024);
-		ret = msg.Parse();
-	}
-	{
-		msg::GetEvent msg;
-		ret = msg.Build();
-		c.Send(msg, msg.Size());
-	}
+	mdk::Console cmd("Buddy", 256);
+	cmd.Start((mdk::FuntionPointer)OnCommand);
+	cmd.WaitStop();
 
-	msg::Buffer buffer;
-	while ( true )
-	{
-		buffer.ReInit();
-		c.Receive(buffer, buffer.HeaderSize(), true);
-		c.Receive(buffer, buffer.Size());
-		if ( !buffer.Parse() ) return 0;
-		if ( Moudle::SNS != buffer.MoudleId() ) continue;
-
-		if ( MsgId::addBuddy == buffer.Id() ) 
-		{
-			msg::AddBuddy msg;
-			memcpy(msg, buffer, buffer.Size());
-			if ( !msg.Parse() )
-			{
-				return 0;
-			}
-			msg.m_step = 1;
-			msg.m_accepted = true;
-			msg.m_buddyId = msg.m_userId;
-			msg.Build();
-			c.Send(msg, msg.Size());
-		}
-	}
 	return 0;
 }
 
+void Helper();
+char* OnCommand(std::vector<std::string> *param)
+{
+	std::vector<std::string> &cmd = *param;
+
+	if ( "register" == cmd[0] )
+	{
+		if ( 3 > cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		bool isMobile = false;
+		if ( 3 < cmd.size() && "true" == cmd[3] ) isMobile = true;
+		g_cli.Register(isMobile, cmd[1], cmd[2]);
+	}
+	else if ( "login" == cmd[0] )
+	{
+		if ( 3 > cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		bool isMobile = false;
+		if ( 3 < cmd.size() && "true" == cmd[3] ) isMobile = true;
+		g_cli.Login(isMobile, cmd[1], cmd[2]);
+	}
+	else if ( "bind" == cmd[0] )
+	{
+		if ( 2 > cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		g_cli.BindPhone( cmd[1] );
+	}
+	else if ( "addBuddy" == cmd[0] )
+	{
+		if ( 2 > cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		std::string talk = "play";
+		if ( 2 < cmd.size() ) talk = cmd[2];
+		unsigned int bid;
+		sscanf(cmd[1].c_str(), "%u", &bid);
+		if ( 0 >= bid )
+		{
+			Helper();
+			return NULL;
+		}
+		g_cli.AddBuddy( bid, talk );
+	}
+	else if ( "acceptBuddy" == cmd[0] )
+	{
+		if ( 2 > cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		bool accept = false;
+		if ( 2 < cmd.size() ) accept = "true" == cmd[3]?true:false;
+		std::string talk = "play";
+		if ( 3 < cmd.size() ) talk = cmd[2];
+		unsigned int bid;
+		sscanf(cmd[1].c_str(), "%u", &bid);
+		if ( 0 >= bid )
+		{
+			Helper();
+			return NULL;
+		}
+		g_cli.AcceptBuddy( bid, talk, accept );
+	}
+	else if ( "setPwd" == cmd[0] )
+	{
+		if ( 3 > cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		std::string talk = "play";
+		if ( cmd[1] != cmd[2] ) return "2¥Œ√‹¬Î≤ª“ª÷¬";
+		g_cli.SetPassword( cmd[1] );
+	}
+	else Helper();
+
+	return NULL;
+}
+
+void Helper()
+{
+	printf( "cmd fromat:\n" );
+	printf( "\t\tregister username pwd [true/false]\n" );
+	printf( "\t\tlogin username pwd [true/false]\n" );
+	printf( "\t\tbind phone\n" );
+	printf( "\t\taddBuddy buddyId [talk]\n" );
+	printf( "\t\tacceptBuddy buddyId [talk] [true/false]\n" );
+	printf( "\t\tsetPwd pwd1 pwd2\n" );
+	
+}
