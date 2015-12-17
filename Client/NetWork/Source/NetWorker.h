@@ -29,6 +29,7 @@ protected:
 	virtual void OnClose(int svrType);
 	virtual void OnMsg(int svrType, net::Socket &svr, msg::Buffer &buffer);
 	int Svr(int svrType);
+	void Close(int svrType);
 
 private:
 	bool			m_running;

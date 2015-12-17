@@ -11,6 +11,7 @@
 #include "DBCenter/CacheInterface.h"
 #include "Interface/ClusterMgr/cpp/ClusterMgr.h"
 #include "common/HostCluster.h"
+#include "Protocl/cpp/Object/Auth/UserLogin.h"
 
 class Worker : public mdk::NetServer
 {
@@ -55,6 +56,7 @@ private:
 	bool DelUser( mdk::uint32 userId );
 	bool GetUser(mdk::uint32 userId, mdk::NetHost& host);
 
+	void NotifyRelogin(msg::UserLogin &msg);//通知重复登录
 	//用户登出
 	bool UserLogout(mdk::NetHost &host);
 	//选择Auth结点,randNode = true随机选择一个结点

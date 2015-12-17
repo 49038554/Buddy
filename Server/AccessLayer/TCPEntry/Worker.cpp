@@ -517,24 +517,12 @@ bool Worker::OnUserLogin(mdk::NetHost &host, msg::Buffer &buffer)
 		pUser->accountType = msg.m_accountType;
 		pUser->account = msg.m_account;
 		userHost.SetData(pUser);
-		mdk::NetHost oldUser = AddUser(userHost);
-		if ( -1 != oldUser.ID() )//通知旧的登录连接，异地登录
-		{
-			msg::UserRelogin msg;
-			std::string ip;
-			int port;
-			userHost.GetAddress(ip, port);
-			char temp[64];
-			sprintf(temp, "%s:%d", ip.c_str(), port);
-			msg.m_position = "位置";
-			msg.m_position += temp;
-			msg.Build(true);
-			oldUser.Send(msg, msg.Size());
-		}
+		AddUser(userHost);
 		SetHostRecv(userHost, true);
 	}
 	else
 	{
+		if ( "已在其它地方登录" == msg.m_reason ) NotifyRelogin(msg);
 		if ( !GetConnect(msg.m_connectId, userHost) ) 
 		{
 			m_log.Info("Waring","请求方已断开");
@@ -543,6 +531,61 @@ bool Worker::OnUserLogin(mdk::NetHost &host, msg::Buffer &buffer)
 	}
 	userHost.Send(buffer, buffer.Size());
 	return true;
+}
+
+void Worker::NotifyRelogin(msg::UserLogin &msg)
+{
+	mdk::uint32 userId = 0;
+	if ( Redis::success != m_cache.GetUserId(msg.m_accountType, msg.m_account, userId) )
+	{
+		m_log.Info("Error", "查询用户id失败，无法通知已登录用户(%u)下线", userId);
+		return;
+	}
+	mdk::int32 tcpEntryId;
+	Redis::Result ret = m_cache.GetUserNode(userId, tcpEntryId);
+	if ( Redis::unsvr == ret )
+	{
+		m_log.Info("Error", "无法访问redis，无法将用户(%u)踢下线", userId);
+		return;
+	}
+	if ( Redis::nullData == ret ) 
+	{
+		m_log.Info("Error", "用户(%u)已下线,放弃踢人动作", userId);
+		return;
+	}
+	mdk::NetHost userHost;
+	std::string position = "未知";
+	if ( GetConnect(msg.m_connectId, userHost) ) 
+	{
+		std::string ip;
+		int port;
+		userHost.GetAddress(ip, port);
+		char temp[64];
+		sprintf(temp, "%s:%d", ip.c_str(), port);
+		position = temp;
+	}
+
+	mdk::NetHost notifyHost;
+	if ( 0 == m_notifyCluster.Node(userId, notifyHost) )
+	{
+		m_log.Info("Error", "消息中心未连接，放弃踢用户(%u)下线", userId);
+		return;
+	}
+
+	msg::UserRelogin relogin;
+	relogin.m_position = position;
+	relogin.Build();
+
+	msg::Event e;
+	e.m_senderId = userId;
+	e.m_recvType = msg::Event::user;
+	e.m_recverId = userId;
+	e.m_holdTime = time(NULL);
+	memcpy(e.m_msg, relogin, relogin.Size());
+	e.Build();
+	notifyHost.Send(e, e.Size());
+
+	return;
 }
 
 bool Worker::UserLogout(mdk::NetHost &host)

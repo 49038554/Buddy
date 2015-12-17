@@ -24,7 +24,7 @@ public:
 	Worker(void);
 	virtual ~Worker(void);
 
-	// 忽略不处理的消息，并记录Log
+	virtual void OnCloseConnect(mdk::NetHost &host);
 	virtual void OnMsg(mdk::NetHost& host);
 
 	bool OnUserRegister(mdk::NetHost& host, msg::Buffer& buffer);            // 处理用户注册消息
@@ -35,12 +35,16 @@ public:
 
 private:
 	friend int main(int argc, char* argv[]);
+	bool SetLoginState( mdk::uint64 tcpEntryId, mdk::uint32 userId, ClientType::ClientType type, bool online);
 
 private:
 	mdk::Logger					m_log;
 	mdk::ConfigFile				m_cfg;
 	ClusterMgr					m_cluster;
 	CacheInterface				m_cache;
+
+	mdk::Mutex m_usersLock;
+	std::map<mdk::uint64, std::map<mdk::uint32, Cache::LoginState> >	m_users;
 };
 
 #endif // __WORKER_H__

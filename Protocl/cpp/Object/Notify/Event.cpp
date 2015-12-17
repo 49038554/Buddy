@@ -8,6 +8,7 @@ Event::Event()
 {
 	BindSetting(m_buffer, MAX_MSG_SIZE, BYTE_ORDER, Moudle::Notify);
 	m_holdTime = -1;
+	m_sender = "ϵͳ";
 }
 
 Event::~Event()

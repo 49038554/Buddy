@@ -31,6 +31,7 @@ void Client::OnConnect(int svrType, net::Socket &svr)
 
 void Client::OnClose(int svrType)
 {
+	m_user.logined = false;
 }
 
 void Client::OnMsg(int svrType, net::Socket &svr, msg::Buffer &buffer)
@@ -153,6 +154,7 @@ void Client::OnRelogin(msg::Buffer &buffer)
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
 	printf( "user(%u)ÒìµØµÇÂ¼£ºµÇÂ¼Î»ÖÃ%s\n", m_user.id, msg.m_position.c_str() );
+	Close(TcpSvr);
 	return;
 }
 

@@ -116,6 +116,15 @@ int NetWorker::Svr(int svrType)
 	return m_services[svrType].svr.GetSocket();
 }
 
+void NetWorker::Close(int svrType)
+{
+	if ( m_services.end() == m_services.find(svrType) ) return;
+	m_services[svrType].isConnected = false;
+	m_services[svrType].svr.Close();
+	m_services[svrType].svr.Init(net::Socket::tcp);
+	OnClose(svrType);
+}
+
 void NetWorker::OnConnect(int svrType, net::Socket &svr)
 {
 	return;

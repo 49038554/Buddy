@@ -89,12 +89,8 @@ namespace ErrorCode
 		EC_TokenError       = 111,// Token错误！
 		EC_AccountNotExist  = 112,// 账号不存在！
 		EC_PwdError         = 113,// 登陆密码错误！
+		EC_ReLogin			= 114,// 重复登陆！
 
-		// 互动模块
-		EC_IsBacklist       = 121,// 用户是黑名单
-		EC_RoomNotExist     = 122,// 房间不存在
-		EC_RoomFrozen       = 123,// 房间被冻结
-		EC_CoinNotEnough    = 124,// 虚拟币余额不足
 	};
 }
 

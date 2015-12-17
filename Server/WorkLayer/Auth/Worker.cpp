@@ -132,6 +132,16 @@ Worker::~Worker(void)
 {
 }
 
+void Worker::OnCloseConnect(mdk::NetHost &host)
+{
+	//下线所有该结点上的client
+	mdk::AutoLock lock(&m_usersLock);
+	std::map<mdk::uint64, std::map<mdk::uint32, Cache::LoginState> >::iterator it;
+	it = m_users.find(host.ID());
+	if ( it == m_users.end() ) return;
+	it->second.clear();
+}
+
 void Worker::OnMsg(mdk::NetHost& host)
 {
 	msg::Buffer buffer;
@@ -209,6 +219,33 @@ bool Worker::OnUserLogin(mdk::NetHost& host, msg::Buffer& buffer)
 			msg.m_reason = "获取用户id失败！";
 			break;
 		}
+		{//检查重复登录
+			bool logined = false;
+			mdk::AutoLock lock(&m_usersLock);
+			std::map<mdk::uint64, std::map<mdk::uint32, Cache::LoginState> >::iterator it;
+			for ( it = m_users.begin(); it != m_users.end(); it++)
+			{
+				if ( it->second.end() != it->second.find(userId) )
+				{
+					Cache::LoginState &loginState = it->second[userId];
+					if ( 
+						(ClientType::android == msg.m_clientType && loginState.androidOnline)
+						|| (ClientType::iphone == msg.m_clientType && loginState.androidOnline)
+						) 
+					{
+						logined = true;
+					}
+					break;
+				}
+			}
+			if ( logined )
+			{
+				msg.m_code = ResultCode::Refuse;
+				msg.m_reason = "已在其它地方登录";
+				break;
+			}
+		}
+
 		//取出用户信息
 		Cache::User userInfo;
 		userInfo.id = userId;
@@ -227,25 +264,12 @@ bool Worker::OnUserLogin(mdk::NetHost& host, msg::Buffer& buffer)
 		}
 
 		// 设置登陆状态
-		Cache::LoginState state;
-		state.flashOnline = false;		//flash端在线
-		state.androidOnline = false;		//android端在线
-		state.iphoneOnline = false;		//iphone端在线
-		if ( Redis::unsvr == m_cache.GetLoginState(userId, state)) 
+		if ( !SetLoginState(host.ID(), userId, msg.m_clientType, true) )
 		{
 			msg.m_code = ResultCode::DBError;
-			msg.m_reason = "Redis服务异常";
-			break;
+			msg.m_reason = "保存登录状态失败！";
 		}
-		if (ClientType::android   == msg.m_clientType) state.androidOnline = true;
-		else if (ClientType::iphone   == msg.m_clientType) state.iphoneOnline =  true;
-		else if (ClientType::flash == msg.m_clientType) state.flashOnline =  true;
-		if (!m_cache.SetLoginState(userId, state)) 
-		{
-			msg.m_code = ResultCode::DBError;
-			msg.m_reason = "保存Redis失败！";
-			break;
-		}
+
 		// 成功，填充回复消息
 		msg.m_userId = userId;
 	}
@@ -260,6 +284,28 @@ bool Worker::OnUserLogin(mdk::NetHost& host, msg::Buffer& buffer)
 	return msg.m_code?false:true;
 }
 
+bool Worker::SetLoginState( mdk::uint64 tcpEntryId, mdk::uint32 userId, ClientType::ClientType type, bool online)
+{
+	mdk::AutoLock lock(&m_usersLock);
+	if ( m_users[tcpEntryId].end() == m_users[tcpEntryId].find(userId) )
+	{
+		m_users[tcpEntryId][userId].androidOnline = false;
+		m_users[tcpEntryId][userId].iphoneOnline = false;
+	}
+	Cache::LoginState &state = m_users[tcpEntryId][userId];
+	if (ClientType::android == type) state.androidOnline = online;
+	else if (ClientType::iphone == type) state.iphoneOnline =  online;
+
+	if (!m_cache.SetLoginState(userId, state)) 
+	{
+		if (ClientType::android == type) state.androidOnline = false;
+		else if (ClientType::iphone == type) state.iphoneOnline = false;
+		return false;
+	}
+
+	return true;
+}
+
 bool Worker::OnUserLogout(mdk::NetHost& host, msg::Buffer& buffer)
 {
 	msg::UserLogout msg;
@@ -272,15 +318,7 @@ bool Worker::OnUserLogout(mdk::NetHost& host, msg::Buffer& buffer)
 		return true;
 	}
 	// 重置登陆状态
-	Cache::LoginState state;
-	if ( Redis::unsvr == m_cache.GetLoginState(msg.m_objectId, state) )
-	{
-		m_log.Info("Waring", "Logout失败：redis服务异常！");
-		return true;
-	}
-	if ( ClientType::android == msg.m_clientType ) state.androidOnline = false;
-	else if ( ClientType::iphone == msg.m_clientType ) state.iphoneOnline  = false;
-	if ( !m_cache.SetLoginState(msg.m_objectId, state) )
+	if ( !SetLoginState(host.ID(), msg.m_objectId, msg.m_clientType, false) )
 	{
 		m_log.Info("Waring", "Logout失败：保存状态失败！");
 	}
