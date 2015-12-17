@@ -10,10 +10,23 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2015-12-07 12:14:13
+Date: 2015-12-17 15:42:16
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for `buddy`
+-- ----------------------------
+DROP TABLE IF EXISTS `buddy`;
+CREATE TABLE `buddy` (
+  `userId` int(11) DEFAULT NULL COMMENT '用户id',
+  `buddyId` int(11) DEFAULT NULL COMMENT '小伙伴id'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of buddy
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `user_info`

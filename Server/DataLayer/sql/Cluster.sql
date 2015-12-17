@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2015-12-04 14:46:51
+Date: 2015-12-17 15:42:32
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -54,6 +54,7 @@ CREATE TABLE `node` (
 -- ----------------------------
 -- Records of node
 -- ----------------------------
+INSERT INTO `node` VALUES ('sns服务', '1', '移动', '192.168.11.109', '6702');
 INSERT INTO `node` VALUES ('Tcp入口', '1', '电信', '192.168.11.109', '6601');
 INSERT INTO `node` VALUES ('数据入口', '1', '电信', '192.168.11.109', '6901');
 INSERT INTO `node` VALUES ('认证服务', '1', '电信', '192.168.11.109', '6701');
@@ -73,6 +74,7 @@ CREATE TABLE `node_type` (
 -- ----------------------------
 -- Records of node_type
 -- ----------------------------
+INSERT INTO `node_type` VALUES ('7', 'sns服务');
 INSERT INTO `node_type` VALUES ('2', 'Tcp入口');
 INSERT INTO `node_type` VALUES ('5', '数据入口');
 INSERT INTO `node_type` VALUES ('3', '认证服务');

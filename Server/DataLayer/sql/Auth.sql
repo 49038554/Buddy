@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2015-12-07 12:14:20
+Date: 2015-12-17 15:42:06
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -28,7 +28,6 @@ CREATE TABLE `bind_imei` (
 -- ----------------------------
 -- Records of bind_imei
 -- ----------------------------
-INSERT INTO `bind_imei` VALUES ('NULL', '0');
 
 -- ----------------------------
 -- Table structure for `bind_mobile`
