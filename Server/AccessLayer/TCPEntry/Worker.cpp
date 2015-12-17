@@ -489,8 +489,28 @@ bool Worker::OnUserLogin(mdk::NetHost &host, msg::Buffer &buffer)
 
 	if ( !msg.IsResult() )//登录请求，执行转发
 	{
+		mdk::uint32 userId = 0;
+		Redis::Result ret = m_cache.GetUserId(msg.m_accountType, msg.m_account, userId);
+		if ( Redis::unsvr == ret )
+		{
+			msg.m_code = ResultCode::DBError;
+			msg.m_reason = "Redis未连接";
+			m_log.Info("Error", "登录失败：GetUserId，Redis未连接");
+			msg.Build(true);
+			host.Send(msg, msg.Size());
+			return false;
+		}
+		if ( Redis::nullData == ret )
+		{
+			msg.m_code = ResultCode::Refuse;
+			msg.m_reason = "账号不存在";
+			m_log.Info("Error", "账号(%s)不存在", msg.m_account.c_str());
+			msg.Build(true);
+			host.Send(msg, msg.Size());
+			return false;
+		}
 		mdk::NetHost auth;
-		int nodeId = m_authCluster.Node(msg.m_account, auth);
+		int nodeId = m_authCluster.Node(userId, auth);
 		if ( 0 == nodeId )
 		{
 			m_log.Info("Error", "Auth结点未连接");
@@ -601,7 +621,7 @@ bool Worker::UserLogout(mdk::NetHost &host)
 
 	//转发登出消息到Auth
 	mdk::NetHost auth;
-	int nodeId = m_authCluster.Node(pUser->account, auth);
+	int nodeId = m_authCluster.Node(pUser->id, auth);
 	if ( 0 == nodeId )
 	{
 		m_log.Info("Error", "Auth结点未连接");
@@ -786,4 +806,3 @@ bool Worker::NotifyUser(msg::Buffer &buffer)
 	clientHost.Send(buffer, buffer.Size());
 	return true;
 }
-
