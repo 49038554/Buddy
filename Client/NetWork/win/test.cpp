@@ -145,7 +145,7 @@ char* OnCommand(std::vector<std::string> *param)
 	}
 	else if ( "Chat" == cmd[0] )
 	{
-		if ( 3 != cmd.size() ) 
+		if ( 3 > cmd.size() ) 
 		{
 			Helper();
 			return NULL;
@@ -157,7 +157,17 @@ char* OnCommand(std::vector<std::string> *param)
 			Helper();
 			return NULL;
 		}
-		g_cli.Chat(bid, cmd[2]);
+		unsigned char recvType = 0;
+		if ( 3 > cmd.size() ) 
+		{
+			sscanf(cmd[3].c_str(), "%u", &recvType);
+			if ( 0 > recvType || 2 < recvType )
+			{
+				Helper();
+				return NULL;
+			}
+		}
+		g_cli.Chat(bid, recvType, cmd[2]);
 	}
 	else Helper();
 
@@ -175,5 +185,5 @@ void Helper()
 	printf( "\t\tacceptBuddy buddyId [talk] [true/false]\n" );
 	printf( "\t\tdelBuddy buddyId\n" );
 	printf( "\t\tgetBuddys buddyId\n" );
-	printf( "\t\tchat buddyId talk\n" );
+	printf( "\t\tchat buddyId talk [recvType]\n" );
 }

@@ -13,10 +13,19 @@ namespace msg
 class Chat : public Buffer
 {
 public:
+	enum RecvType
+	{
+		buddy = 0,
+		buddys = 1,
+		group = 2,
+	};
 	//请求参数
 	unsigned int	m_senderId;//发言人Id	SNS服务填写
-	char			m_chatType;//聊天类型，单聊，群聊，...
+	std::string		m_senderName;//发言人昵称	SNS服务填写
+	std::string		m_senderFace;//发言人头像	SNS服务填写
+	RecvType		m_recvType;//接收方类型
 	unsigned int	m_recverId;//接收方Id
+	std::string		m_talk;//聊天内容
 	//回应参数
 
 public:

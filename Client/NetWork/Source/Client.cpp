@@ -439,13 +439,62 @@ void Client::OnBuddys(msg::Buffer &buffer)
 	return;
 }
 
-bool Client::Chat(unsigned int userId, const std::string &talk)
+static char* RecvType(msg::Chat::RecvType recvType)
 {
+	if ( msg::Chat::RecvType::buddy == recvType ) return "小伙伴";
+	if ( msg::Chat::RecvType::buddys == recvType ) return "所有小伙伴";
+	if ( msg::Chat::RecvType::group == recvType ) return "分组";
+	return "";
+}
+
+bool Client::Chat(unsigned int recverId, unsigned char recvType, const std::string &talk)
+{
+	if ( !m_user.logined ) return false;
+
+	printf( "user(%u)发聊天消息到%s(%u)...\n", m_user.id, RecvType((msg::Chat::RecvType)recvType), recverId );
+	int sock = Svr(TcpSvr);
+	if ( -1 == sock ) return false;
+	net::Socket svr;
+	svr.Attach(sock);
+	msg::Chat msg;
+	msg.m_recvType = (msg::Chat::RecvType)recvType;//接收方类型
+	msg.m_recverId = recverId;//接收方Id
+	msg.Build();
+	svr.Send(msg, msg.Size());
+
 	return true;
 }
 
 void Client::OnChat(msg::Buffer &buffer)
 {
+	msg::Chat msg;
+	memcpy(msg, buffer, buffer.Size());
+	if ( !msg.Parse() ) return;
+	if ( msg.IsResult() )
+	{
+		if ( m_user.id != msg.m_senderId )
+		{
+			printf( "不是自己发的聊天\n" );
+			return;
+		}
+		if ( msg::Chat::buddy != msg.m_recvType ) return;
+		if ( ResultCode::Refuse != msg.m_code ) return;
+		printf( "你不是对方的小伙伴，不能与用户(%u)聊天\n", msg.m_recverId );
+		return;
+	}
+	if ( msg::Chat::buddy == msg.m_recvType || msg::Chat::buddys == msg.m_recvType )
+	{
+		printf( "%s(%d)对你说：%s\n", msg.m_senderName.c_str(), msg.m_senderId, msg.m_talk.c_str() );
+		return;
+	}
+	if ( msg::Chat::group == msg.m_recvType )
+	{
+		printf( "%s(%d)在群(%u)里说：%s\n", msg.m_senderName.c_str(), 
+			msg.m_senderId, msg.m_talk.c_str(), msg.m_recverId );
+		return;
+	}
+
+	return;
 }
 
 void Client::OnSNS(msg::Buffer &buffer)
@@ -460,6 +509,9 @@ void Client::OnSNS(msg::Buffer &buffer)
 		break;
 	case MsgId::buddys :
 		OnBuddys(buffer);
+		break;
+	case MsgId::chat :
+		OnChat(buffer);
 		break;
 	default:
 		break;

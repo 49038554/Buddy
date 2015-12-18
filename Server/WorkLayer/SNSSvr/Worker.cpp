@@ -211,17 +211,17 @@ void Worker::OnMsg(mdk::NetHost& host)
 	}
 }
 
-bool Worker::NotifyUser(mdk::uint32 userId, msg::Buffer *pMsg, time_t holdTime, mdk::uint32 sender, const std::string &senderName)
+bool Worker::SendNotify(mdk::uint32 recverId, unsigned char recvType, msg::Buffer *pMsg, time_t holdTime, mdk::uint32 sender, const std::string &senderName)
 {
 	mdk::NetHost notifyHost;
-	int nodeId = m_notifyCluster.Node(userId, notifyHost);
+	int nodeId = m_notifyCluster.Node(recverId, notifyHost);
 	if ( 0 == nodeId ) return false;
 
 	msg::Event notify;
 	notify.m_senderId = sender;
 	notify.m_sender = senderName;
 	notify.m_recvType = msg::Event::user;
-	notify.m_recverId = userId;
+	notify.m_recverId = recverId;
 	notify.m_holdTime = holdTime;
 	memcpy(notify.m_msg, *pMsg, pMsg->Size());
 	notify.Build();
@@ -230,7 +230,7 @@ bool Worker::NotifyUser(mdk::uint32 userId, msg::Buffer *pMsg, time_t holdTime, 
 	return true;
 }
 
-bool Worker::OnAddBuddy(mdk::NetHost& host, msg::Buffer& buffer)
+bool Worker::OnAddBuddy(mdk::NetHost& host, msg::Buffer &buffer)
 {
 	msg::AddBuddy msg;
 	memcpy(msg, buffer, buffer.Size());
@@ -271,7 +271,7 @@ bool Worker::OnAddBuddy(mdk::NetHost& host, msg::Buffer& buffer)
 	if ( Redis::success != m_cache.GetUserInfo(ui) )
 	{
 		m_log.Info("Error", "添加小伙伴失败：读用户信息失败");
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code   = ResultCode::DBError;
 		msg.m_reason = "读用户信息失败";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -294,7 +294,7 @@ bool Worker::OnAddBuddy(mdk::NetHost& host, msg::Buffer& buffer)
 			msg.Build();
 		}
 	}
-	if ( !NotifyUser(msg.m_buddyId, &msg, -1, msg.m_userId, msg.m_nickName) )
+	if ( !SendNotify(msg.m_buddyId, msg::Event::user, &msg, -1, msg.m_userId, msg.m_nickName) )
 	{
 		m_log.Info("Error", "添加小伙伴失败：消息中心无可用服务");
 	}
@@ -302,7 +302,7 @@ bool Worker::OnAddBuddy(mdk::NetHost& host, msg::Buffer& buffer)
 	return true;
 }
 
-bool Worker::OnDelBuddy(mdk::NetHost& host, msg::Buffer& buffer)
+bool Worker::OnDelBuddy(mdk::NetHost& host, msg::Buffer &buffer)
 {
 	msg::DelBuddy msg;
 	memcpy(msg, buffer, buffer.Size());
@@ -321,7 +321,7 @@ bool Worker::OnDelBuddy(mdk::NetHost& host, msg::Buffer& buffer)
 	pDBCenter->DelBuddy(msg);
 	if ( ResultCode::Success == msg.m_code ) 
 	{
-		if ( !NotifyUser(msg.m_buddyId, &msg, time(NULL) + 86400 * 7) )
+		if ( !SendNotify(msg.m_buddyId, msg::Event::user, &msg, time(NULL) + 86400 * 7) )
 		{
 			m_log.Info("Error", "小伙伴已经删除，无法通知对方：消息中心无可用服务");
 		}
@@ -333,7 +333,7 @@ bool Worker::OnDelBuddy(mdk::NetHost& host, msg::Buffer& buffer)
 	return true;
 }
 
-bool Worker::OnGetBuddys(mdk::NetHost& host, msg::Buffer& buffer)
+bool Worker::OnGetBuddys(mdk::NetHost& host, msg::Buffer &buffer)
 {
 	msg::GetBuddys msg;
 	memcpy(msg, buffer, buffer.Size());
@@ -397,9 +397,9 @@ bool Worker::OnGetBuddys(mdk::NetHost& host, msg::Buffer& buffer)
 	return true;
 }
 
-bool Worker::OnChat(mdk::NetHost& host, msg::Buffer& buffer)
+bool Worker::OnChat(mdk::NetHost& host, msg::Buffer &buffer)
 {
-	msg::AddBuddy msg;
+	msg::Chat msg;
 	memcpy(msg, buffer, buffer.Size());
 
 	if ( !msg.Parse() )
@@ -410,66 +410,69 @@ bool Worker::OnChat(mdk::NetHost& host, msg::Buffer& buffer)
 		host.Send(msg, msg.Size());
 		return true;
 	}
-	mdk::NetHost notifyHost;
-	int nodeId = m_notifyCluster.Node(msg.m_buddyId, notifyHost);
-	if ( 0 == nodeId )
+	msg.m_senderId = msg.m_objectId;
+	if ( msg::Chat::buddy == msg.m_recvType )
 	{
-		m_log.Info("Error", "添加小伙伴失败：消息中心无可用服务");
-		return true;
-	}
-	if ( 0 == msg.m_step )
-	{
-		std::map<mdk::uint32, mdk::uint32> buddyIds;
-		if ( Redis::unsvr == m_cache.GetBuddys(msg.m_objectId, buddyIds) )
+		std::map<mdk::uint32,mdk::uint32> buddyIds;
+		Redis::Result ret = m_cache.GetBuddys(msg.m_senderId, buddyIds);
+		if ( Redis::unsvr == ret )
 		{
-			msg.m_code   = ResultCode::DBError;
-			msg.m_reason = "Redis服务异常";
-			msg.Build(true);
-			host.Send(msg, msg.Size());
-			return true;
+			m_log.Info("Error", "访问伙伴列表失败");
+			return false;
 		}
-		if ( buddyIds.end() != buddyIds.find(msg.m_buddyId) )
+		if ( Redis::nullData == ret || buddyIds.end() == buddyIds.find(msg.m_recverId) )
 		{
-			msg.m_code   = ResultCode::Refuse;
-			msg.m_reason = "已经是小伙伴";
+			m_log.Info("Error", "不是伙伴不能发消息");
+			msg.m_code = ResultCode::Refuse;
+			msg.m_reason = "不是小伙伴";
 			msg.Build(true);
 			host.Send(msg, msg.Size());
-			return true;
+			return false;
+		}
+	}
+	else if ( msg::Chat::buddys == msg.m_recvType )
+	{
+		std::map<mdk::uint32,mdk::uint32> buddyIds;
+		Redis::Result ret = m_cache.GetBuddys(msg.m_senderId, buddyIds);
+		if ( Redis::unsvr == ret )
+		{
+			m_log.Info("Error", "访问伙伴列表失败");
+			return false;
+		}
+		if ( Redis::nullData == ret ) return false;
+	}
+	else if ( msg::Chat::group == msg.m_recvType )
+	{
+		std::map<mdk::uint32,mdk::uint32> ids;
+		Redis::Result ret = m_cache.GetGroupMember(msg.m_recverId, ids);
+		if ( Redis::unsvr == ret )
+		{
+			m_log.Info("Error", "访问分组列表失败");
+			return false;
+		}
+		if ( Redis::nullData == ret || ids.end() == ids.find(msg.m_senderId) ) 
+		{
+			m_log.Info("Error", "用户不在分组中，拒绝向该分组发送消息");
+			return false;
 		}
 	}
 
+	while ( false );
 	Cache::User ui;
-	ui.id = msg.m_objectId;
+	ui.id = msg.m_senderId;
 	if ( Redis::success != m_cache.GetUserInfo(ui) )
 	{
-		m_log.Info("Error", "添加小伙伴失败：读用户信息失败");
+		m_log.Info("Error", "聊天失败：读用户信息失败");
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "读用户信息失败";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
 		return true;
 	}
-	msg.m_userId = ui.id;
-	msg.m_nickName = ui.nickName;
+	msg.m_senderName = ui.nickName;
+	msg.m_senderFace = ui.headIco;
 	msg.Build();
-	msg::Event notify;
-	notify.m_senderId = msg.m_userId;
-	notify.m_sender = msg.m_nickName;
-	notify.m_recvType = msg::Event::user;
-	notify.m_recverId = msg.m_buddyId;
-	if ( 1 == msg.m_step )//对方回应
-	{
-		if ( msg.m_accepted )//对方接受
-		{
-			DBCenter *pDBCenter = ((DBCenterCluster*)SafeObject())->Node(msg.m_objectId);
-			pDBCenter->AddBuddy(msg);
-		}
-		else //对方拒绝
-		{
-			msg.m_code = ResultCode::Refuse;
-			msg.m_reason = "对方拒绝";
-			msg.Build();
-		}
-	}
-	memcpy(notify.m_msg, msg, msg.Size());
-	notify.Build();
-	notifyHost.Send(notify, notify.Size());
+	SendNotify(msg.m_recverId, msg.m_recvType, &msg, time(NULL) + 86400 * 7, msg.m_senderId, msg.m_senderName);
 
 	return true;
 }

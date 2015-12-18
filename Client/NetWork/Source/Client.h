@@ -36,7 +36,7 @@ public:
 	void OnDelBuddy(msg::Buffer &buffer);
 	bool GetBuddys();
 	void OnBuddys(msg::Buffer &buffer);
-	bool Chat(unsigned int userId, const std::string &talk);
+	bool Chat(unsigned int recverId, unsigned char recvType, const std::string &talk);
 	void OnChat(msg::Buffer &buffer);
 
 protected:
