@@ -30,10 +30,13 @@ public:
 	virtual void OnMsg(mdk::NetHost& host);
 
 	bool OnAddBuddy(mdk::NetHost& host, msg::Buffer& buffer);
+	bool OnDelBuddy(mdk::NetHost& host, msg::Buffer& buffer);
+	bool OnGetBuddys(mdk::NetHost& host, msg::Buffer& buffer);
+	bool OnChat(mdk::NetHost& host, msg::Buffer& buffer);
 
 private:
 	friend int main(int argc, char* argv[]);
-
+	bool NotifyUser(mdk::uint32 userId, msg::Buffer *pMsg, time_t holdTime = -1, mdk::uint32 sender = 0, const std::string &senderName = "系统");
 	//结点信息
 	class ConnectInfo : public mdk::HostData
 	{

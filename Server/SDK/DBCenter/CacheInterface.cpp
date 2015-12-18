@@ -208,57 +208,85 @@ RedisClient& CacheInterface::PollingNode()
 	return m_cacheCluster[pos]->redis;
 }
 
-bool CacheInterface::SetBuddys(mdk::uint32 userId, Cache::IdList &list)
+bool CacheInterface::AddBuddy(mdk::uint32 userId, mdk::uint32 buddyId)
 {
 	RedisClient &node = GetNode(userId);
 	char key[256];
 	sprintf( key, "buddy_%u", userId );
-	std::string data;
-	if ( !list.Build() ) return false;
-	data.assign((char*)list, list.Size());
-	return node.Set(key, data);
+	char itemKey[256];
+	sprintf(itemKey, "%u", buddyId);
+	return node.SetMapItem(key, itemKey, itemKey);
 }
 
-Redis::Result CacheInterface::GetBuddys(mdk::uint32 userId, Cache::IdList &list)
+bool CacheInterface::DelBuddy(mdk::uint32 userId, mdk::uint32 buddyId)
 {
 	RedisClient &node = GetNode(userId);
 	char key[256];
 	sprintf( key, "buddy_%u", userId );
-	std::string data;
-	Redis::Result ret = node.Get(key, data);
-	if ( Redis::success != ret ) return ret;
-	list.Clear();
-	memcpy(list, data.c_str(), data.size());
-	if ( !list.Parse() ) return Redis::nullData;
-
-	return ret;
+	char itemKey[256];
+	sprintf(itemKey, "%u", buddyId);
+	return node.DelMapItem(key, itemKey);
 }
 
-//进群
-bool CacheInterface::SetGroupMember(mdk::uint32 groupId, Cache::IdList &list)
+Redis::Result CacheInterface::GetBuddys(mdk::uint32 userId, std::map<mdk::uint32,mdk::uint32> &buddyIds)
+{
+	buddyIds.clear();
+	RedisClient &node = GetNode(userId);
+	char key[256];
+	sprintf( key, "buddy_%u", userId );
+	std::map<std::string,std::string> items;
+	Redis::Result ret = node.GetMap(key, items);
+	if ( Redis::success != ret ) return ret;
+
+	std::map<std::string,std::string>::iterator it;
+	mdk::uint32 buddyId;
+	for ( it = items.begin(); it != items.end(); it++ )
+	{
+		sscanf( it->second.c_str(), "%u", &buddyId );
+		buddyIds[buddyId] = buddyId;
+	}
+	return Redis::success;
+}
+
+bool CacheInterface::JoinGroup(mdk::uint32 groupId, mdk::uint32 userId)
 {
 	RedisClient &node = GetNode(groupId);
 	char key[256];
 	sprintf( key, "group_%u", groupId );
-	std::string data;
-	if ( !list.Build() ) return false;
-	data.assign((char*)list, list.Size());
-	return node.SetMapItem(key, "member", data);
+	char itemKey[256];
+	sprintf(itemKey, "%u", userId);
+	return node.SetMapItem(key, itemKey, itemKey);
 }
 
-Redis::Result CacheInterface::GetGroupMember(mdk::uint32 groupId, Cache::IdList &list)
+bool CacheInterface::LeaveGroup(mdk::uint32 groupId, mdk::uint32 userId)
 {
 	RedisClient &node = GetNode(groupId);
 	char key[256];
 	sprintf( key, "group_%u", groupId );
-	std::string data;
-	Redis::Result ret = node.GetMapItem(key, "member", data);
-	if ( Redis::success != ret ) return ret;
-	list.Clear();
-	memcpy(list, data.c_str(), data.size());
-	if ( !list.Parse() ) return Redis::nullData;
+	char itemKey[256];
+	sprintf(itemKey, "%u", userId);
+	return node.DelMapItem(key, itemKey);
+}
 
-	return ret;
+Redis::Result CacheInterface::GetGroupMember(mdk::uint32 groupId, std::map<mdk::uint32, mdk::uint32> ids)
+{
+	ids.clear();
+	RedisClient &node = GetNode(groupId);
+	char key[256];
+	sprintf( key, "group_%u", groupId );
+	std::map<std::string,std::string> items;
+	Redis::Result ret = node.GetMap(key, items);
+	if ( Redis::success != ret ) return ret;
+
+	std::map<std::string,std::string>::iterator it;
+	mdk::uint32 userId;
+	for ( it = items.begin(); it != items.end(); it++ )
+	{
+		sscanf( it->second.c_str(), "%u", &userId );
+		ids[userId] = userId;
+	}
+
+	return Redis::success;
 }
 
 //用户粉丝列表
@@ -318,7 +346,7 @@ Redis::Result CacheInterface::GetEvents(mdk::uint32 userId, std::vector<std::str
 	{
 		events.push_back(it->second);
 	}
-//	if ( !node.DelData(key) ) return Redis::unsvr;
+	if ( !node.DelData(key) ) return Redis::unsvr;
 
 	return Redis::success;
 }

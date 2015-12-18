@@ -26,6 +26,10 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\Buddys.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\DelBuddy.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\GetBuddys.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\Chat.cpp" />
     <ClCompile Include="..\..\..\SDK\common\common.cpp" />
     <ClCompile Include="..\..\..\SDK\common\HostCluster.cpp" />
     <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp" />
@@ -50,6 +54,10 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\Buddys.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\DelBuddy.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\GetBuddys.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\Chat.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h" />
     <ClInclude Include="..\..\..\SDK\common\common.h" />
     <ClInclude Include="..\..\..\SDK\common\HostCluster.h" />

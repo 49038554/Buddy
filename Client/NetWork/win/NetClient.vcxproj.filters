@@ -101,6 +101,18 @@
     <ClCompile Include="..\Source\Client.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\Buddys.cpp">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\Chat.cpp">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\DelBuddy.cpp">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\GetBuddys.cpp">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Protocl\cpp\Buffer.h">
@@ -178,6 +190,18 @@
     </ClInclude>
     <ClInclude Include="..\Source\Client.h">
       <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\Buddys.h">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\Chat.h">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\DelBuddy.h">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\GetBuddys.h">
+      <Filter>Protocl\Object\SNS</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

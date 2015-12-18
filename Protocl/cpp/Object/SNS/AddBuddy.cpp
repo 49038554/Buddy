@@ -20,7 +20,7 @@ AddBuddy::~AddBuddy()
 
 bool AddBuddy::Build(bool isResult)
 {
-	SetId(MsgId::event, isResult);
+	SetId(MsgId::addBuddy, isResult);
 	if ( !FillTransmitParam() ) return false;//Tcp服务填写参数
 	//请求参数
 	

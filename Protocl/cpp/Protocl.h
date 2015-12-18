@@ -38,6 +38,10 @@ namespace MsgId
 		bindingPhone = 1006,//绑定手机号
 		//SNS模块
 		addBuddy = 1001,	//添加伙伴
+		delBuddy = 1002,	//删除伙伴
+		getBuddys = 1003,	//取伙伴
+		buddys = 2001,	//伙伴
+		chat = 1004,	//聊天
 		//通知模块
 		event = 1001,//转发事件
 		getEvent = 1002,//读取事件

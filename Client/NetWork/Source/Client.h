@@ -32,6 +32,12 @@ public:
 	bool AcceptBuddy(unsigned int buddyId, const std::string &talk, bool accept);
 	void OnAddBuddy(msg::Buffer &buffer);
 	bool GetEvent();
+	bool DelBuddy( unsigned int buddyId );
+	void OnDelBuddy(msg::Buffer &buffer);
+	bool GetBuddys();
+	void OnBuddys(msg::Buffer &buffer);
+	bool Chat(unsigned int userId, const std::string &talk);
+	void OnChat(msg::Buffer &buffer);
 
 protected:
 	virtual void Main();
@@ -42,7 +48,14 @@ protected:
 	void OnAuth(msg::Buffer &buffer);
 	void OnSNS(msg::Buffer &buffer);
 
+	void ClientInfo();
 private:
+	typedef struct BUDDY_DATA
+	{
+		unsigned int id;
+		std::string face;
+		std::string nickName;
+	}BUDDY_DATA;
 	typedef struct USER_DATA
 	{
 		bool			logined;
@@ -51,6 +64,7 @@ private:
 		std::string		account;
 		std::string		pwd;
 		std::string		newPwd;
+		std::map<mdk::uint32, BUDDY_DATA>	buddys;
 	}USER_DATA;
 
 	USER_DATA	m_user;

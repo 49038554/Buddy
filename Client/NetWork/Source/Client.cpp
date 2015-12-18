@@ -11,6 +11,10 @@
 #include "Protocl/cpp/Object/Notify/GetEvent.h"
 
 #include "Protocl/cpp/Object/SNS/AddBuddy.h"
+#include "Protocl/cpp/Object/SNS/DelBuddy.h"
+#include "Protocl/cpp/Object/SNS/GetBuddys.h"
+#include "Protocl/cpp/Object/SNS/Buddys.h"
+#include "Protocl/cpp/Object/SNS/Chat.h"
 
 Client::Client(void)
 {
@@ -77,6 +81,26 @@ void Client::OnRegister(msg::Buffer &buffer)
 	Login(m_user.isMobileLogin, m_user.account, m_user.pwd);
 }
 
+void Client::ClientInfo()
+{
+	system( "cls" );
+	if ( !m_user.logined )	
+	{
+		printf( "请登录\n" );
+		return;
+	}
+	printf( "用户%u\n", m_user.id );
+	printf( "\t%s登录%s\n", m_user.isMobileLogin?"手机":"imei", m_user.account.c_str());
+	printf( "\t密码%s\n", m_user.pwd.c_str() );
+	printf( "\t小伙伴%d个:\n", m_user.buddys.size() );
+	std::map<mdk::uint32, BUDDY_DATA>::iterator it;
+	for ( it = m_user.buddys.begin(); it != m_user.buddys.end(); it++ )
+	{
+		printf( "\t\t%s(%u) face(%s)\n", it->second.nickName.c_str(), it->second.id, it->second.face.c_str() );
+	}
+	printf( "\n" );
+}
+
 bool Client::Login(bool isMobile, const std::string &account, const std::string &pwd)
 {
 	if ( m_user.logined ) return false;
@@ -114,6 +138,7 @@ void Client::OnLogin(msg::Buffer &buffer)
 	}
 	m_user.id = msg.m_userId;
 	m_user.logined = true;
+	ClientInfo();
 	printf( "user(%u)已登录\n", msg.m_userId );
 	GetEvent();
 }
@@ -144,6 +169,7 @@ void Client::OnBindPhone(msg::Buffer &buffer)
 		printf( "绑定失败：%s\n", msg.m_reason.c_str() );
 		return;
 	}
+	ClientInfo();
 	printf( "user(%u)绑定手机%s\n", m_user.id, msg.m_phone.c_str() );
 	return;
 }
@@ -155,6 +181,7 @@ void Client::OnRelogin(msg::Buffer &buffer)
 	if ( !msg.Parse() ) return;
 	printf( "user(%u)异地登录：登录位置%s\n", m_user.id, msg.m_position.c_str() );
 	Close(TcpSvr);
+	ClientInfo();
 	return;
 }
 
@@ -187,8 +214,9 @@ void Client::OnResetPassword(msg::Buffer &buffer)
 		printf( "修改密码失败：%s\n", msg.m_reason.c_str() );
 		return;
 	}
-	printf( "修改密码成功：%s\n" );
 	m_user.pwd = m_user.newPwd;
+	ClientInfo();
+	printf( "修改密码成功,新密码：%s\n", m_user.pwd.c_str() );
 
 	return;
 }
@@ -243,14 +271,21 @@ void Client::OnAddBuddy(msg::Buffer &buffer)
 	if ( !msg.Parse() ) return;
 	if ( 1 == msg.m_step )
 	{
-		if ( msg.m_accepted ) printf( "%d同意与你成为好友\n", msg.m_userId );
-		else printf( "%d拒绝与你成为好友:%s\n", msg.m_userId, msg.m_msg.c_str() );
+		if ( msg.m_accepted ) 
+		{
+			m_user.buddys[msg.m_userId].id = msg.m_userId;
+			m_user.buddys[msg.m_userId].nickName = msg.m_nickName;
+			m_user.buddys[msg.m_userId].face = "---";
+			ClientInfo();
+			printf( "%d同意与你成为小伙伴\n", msg.m_userId );
+		}
+		else printf( "%d拒绝与你成为小伙伴:%s\n", msg.m_userId, msg.m_msg.c_str() );
 		return;
 	}
 
 	if ( ResultCode::Success != msg.m_code )
 	{
-		printf( "添加好友失败：%s\n", msg.m_reason.c_str() );
+		printf( "添加小伙伴失败：%s\n", msg.m_reason.c_str() );
 		return;
 	}
 	if ( m_user.id == msg.m_userId )
@@ -263,7 +298,7 @@ void Client::OnAddBuddy(msg::Buffer &buffer)
 		printf( "错误：请求添加别人\n" );
 		return;
 	}
-	printf( "%d请求添加你为好友\n", msg.m_userId );
+	printf( "%d请求添加你为小伙伴\n", msg.m_userId );
 	
 	return;
 }
@@ -284,6 +319,13 @@ bool Client::AcceptBuddy(unsigned int buddyId, const std::string &talk, bool acc
 	msg.Build();
 	svr.Send(msg, msg.Size());
 
+	if ( accept ) 
+	{
+		ClientInfo();
+		printf( "接受\n" );
+	}
+	else printf( "拒绝\n" );
+
 	return true;
 }
 
@@ -303,12 +345,121 @@ bool Client::GetEvent()
 	return true;
 }
 
+bool Client::DelBuddy( unsigned int buddyId )
+{
+	if ( !m_user.logined ) return false;
+	if ( m_user.buddys.end() == m_user.buddys.find(buddyId) )
+	{
+		printf("错误：用户(%d)不是小伙伴，不能与之绝交\n", buddyId);
+		return false;
+	}
+
+	printf( "user(%u)与小伙伴(%u)绝交...\n", m_user.id, buddyId );
+	int sock = Svr(TcpSvr);
+	if ( -1 == sock ) return false;
+	net::Socket svr;
+	svr.Attach(sock);
+	msg::DelBuddy msg;
+	msg.m_buddyId = buddyId;
+	msg.Build();
+	svr.Send(msg, msg.Size());
+
+	return true;
+}
+
+void Client::OnDelBuddy(msg::Buffer &buffer)
+{
+	msg::DelBuddy msg;
+	memcpy(msg, buffer, buffer.Size());
+	if ( !msg.Parse() ) return;
+	if ( m_user.id == msg.m_buddyId )
+	{
+		if ( m_user.buddys.end() == m_user.buddys.find(msg.m_userId) )
+		{
+			printf("用户(%d)已与你绝交\n", msg.m_userId);
+			return;
+		}
+		BUDDY_DATA buddy = m_user.buddys[msg.m_buddyId];
+		m_user.buddys.erase(msg.m_buddyId);
+		ClientInfo();
+		printf( "%s(%d)已与你绝交\n", buddy.nickName.c_str(), buddy.id );
+	}
+	else
+	{
+		BUDDY_DATA buddy = m_user.buddys[msg.m_buddyId];
+		m_user.buddys.erase(msg.m_buddyId);
+		ClientInfo();
+		printf( "你已与%s(%d)绝交\n", buddy.nickName.c_str(), buddy.id );
+	}
+
+	return;
+}
+
+bool Client::GetBuddys()
+{
+	if ( !m_user.logined ) return false;
+
+	printf( "user(%u)取小伙伴...\n", m_user.id );
+	int sock = Svr(TcpSvr);
+	if ( -1 == sock ) return false;
+	net::Socket svr;
+	svr.Attach(sock);
+	msg::GetBuddys msg;
+	msg.Build();
+	svr.Send(msg, msg.Size());
+
+	return true;
+}
+
+void Client::OnBuddys(msg::Buffer &buffer)
+{
+	msg::Buddys msg;
+	memcpy(msg, buffer, buffer.Size());
+	if ( !msg.Parse() ) return;
+	if ( m_user.id != msg.m_userId )
+	{
+		printf( "小伙伴列表不属于自己\n" );
+		return;
+	}
+	if ( msg::Buddys::buddyList == msg.m_type )
+	{
+		BUDDY_DATA buddy;
+		int i = 0;
+		for ( i = 0; i < msg.m_buddys.size(); i++ )
+		{
+			buddy.id = msg.m_buddys[i].id;
+			buddy.nickName = msg.m_buddys[i].nickName;
+			buddy.face = msg.m_buddys[i].face;
+			m_user.buddys[buddy.id] = buddy;
+		}
+		ClientInfo();
+	}
+	printf( "刷新小伙伴列表\n" );
+
+	return;
+}
+
+bool Client::Chat(unsigned int userId, const std::string &talk)
+{
+	return true;
+}
+
+void Client::OnChat(msg::Buffer &buffer)
+{
+}
+
 void Client::OnSNS(msg::Buffer &buffer)
 {
 	switch ( buffer.Id() )
 	{
 	case MsgId::addBuddy :
 		OnAddBuddy(buffer);
+		break;
+	case MsgId::delBuddy :
+		OnDelBuddy(buffer);
+		break;
+	case MsgId::buddys :
+		OnBuddys(buffer);
 		break;
 	default:
 		break;

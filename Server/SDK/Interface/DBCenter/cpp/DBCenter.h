@@ -6,6 +6,7 @@
 #include "Protocl/cpp/Object/Auth/ResetPassword.h"
 #include "Protocl/cpp/Object/Auth/BindingPhone.h"
 #include "Protocl/cpp/Object/SNS/AddBuddy.h"
+#include "Protocl/cpp/Object/SNS/DelBuddy.h"
 #include "mdk/Lock.h"
 
 #include <vector>
@@ -27,7 +28,9 @@ public:
 	bool BindingPhone(msg::BindingPhone& msg);
 	// 添加小伙伴
 	bool AddBuddy(msg::AddBuddy& msg);
-
+	// 删除小伙伴（双向）
+	bool DelBuddy(msg::DelBuddy& msg);
+	
 	// 设置服务器连接信息(IP, PORT)
 	void SetServerInfo(const std::string& strIP, int nPort);
 	// 获取服务器连接信息(IP, PORT)

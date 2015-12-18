@@ -69,6 +69,17 @@ char* OnCommand(std::vector<std::string> *param)
 		}
 		g_cli.BindPhone( cmd[1] );
 	}
+	else if ( "setPwd" == cmd[0] )
+	{
+		if ( 3 > cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		std::string talk = "play";
+		if ( cmd[1] != cmd[2] ) return "2次密码不一致";
+		g_cli.SetPassword( cmd[1] );
+	}
 	else if ( "addBuddy" == cmd[0] )
 	{
 		if ( 2 > cmd.size() ) 
@@ -95,9 +106,9 @@ char* OnCommand(std::vector<std::string> *param)
 			return NULL;
 		}
 		bool accept = false;
-		if ( 2 < cmd.size() ) accept = "true" == cmd[3]?true:false;
+		if ( 2 < cmd.size() ) accept = "true" == cmd[2]?true:false;
 		std::string talk = "play";
-		if ( 3 < cmd.size() ) talk = cmd[2];
+		if ( 3 < cmd.size() ) talk = cmd[3];
 		unsigned int bid;
 		sscanf(cmd[1].c_str(), "%u", &bid);
 		if ( 0 >= bid )
@@ -107,16 +118,46 @@ char* OnCommand(std::vector<std::string> *param)
 		}
 		g_cli.AcceptBuddy( bid, talk, accept );
 	}
-	else if ( "setPwd" == cmd[0] )
+	else if ( "delBuddy" == cmd[0] )
 	{
-		if ( 3 > cmd.size() ) 
+		if ( 2 > cmd.size() ) 
 		{
 			Helper();
 			return NULL;
 		}
-		std::string talk = "play";
-		if ( cmd[1] != cmd[2] ) return "2次密码不一致";
-		g_cli.SetPassword( cmd[1] );
+		unsigned int bid;
+		sscanf(cmd[1].c_str(), "%u", &bid);
+		if ( 0 >= bid )
+		{
+			Helper();
+			return NULL;
+		}
+		g_cli.DelBuddy( bid );
+	}
+	else if ( "getBuddys" == cmd[0] )
+	{
+		if ( 1 != cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		g_cli.GetBuddys();
+	}
+	else if ( "Chat" == cmd[0] )
+	{
+		if ( 3 != cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		unsigned int bid;
+		sscanf(cmd[1].c_str(), "%u", &bid);
+		if ( 0 >= bid )
+		{
+			Helper();
+			return NULL;
+		}
+		g_cli.Chat(bid, cmd[2]);
 	}
 	else Helper();
 
@@ -129,8 +170,10 @@ void Helper()
 	printf( "\t\tregister username pwd [true/false]\n" );
 	printf( "\t\tlogin username pwd [true/false]\n" );
 	printf( "\t\tbind phone\n" );
+	printf( "\t\tsetPwd pwd1 pwd2\n" );
 	printf( "\t\taddBuddy buddyId [talk]\n" );
 	printf( "\t\tacceptBuddy buddyId [talk] [true/false]\n" );
-	printf( "\t\tsetPwd pwd1 pwd2\n" );
-	
+	printf( "\t\tdelBuddy buddyId\n" );
+	printf( "\t\tgetBuddys buddyId\n" );
+	printf( "\t\tchat buddyId talk\n" );
 }

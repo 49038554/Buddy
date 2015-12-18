@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ADD_BUDDY_H
+#define ADD_BUDDY_H
+
 #include "../../Buffer.h"
 #include "../../Protocl.h"
 
@@ -33,5 +35,6 @@ private:
 	unsigned char m_buffer[MAX_MSG_SIZE];
 };
 
-
 }
+
+#endif //ADD_BUDDY_H

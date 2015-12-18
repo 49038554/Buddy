@@ -34,11 +34,13 @@ public:
 	bool SetUserInfo(Cache::User &userInfo);
 	Redis::Result GetUserInfo(Cache::User &userInfo);
 	//小伙伴列表
-	bool SetBuddys(mdk::uint32 userId, Cache::IdList &list);
-	Redis::Result GetBuddys(mdk::uint32 userId, Cache::IdList &list);
-	//设置群成员
-	bool SetGroupMember(mdk::uint32 groupId, Cache::IdList &list);
-	Redis::Result GetGroupMember(mdk::uint32 groupId, Cache::IdList &list);
+	bool AddBuddy(mdk::uint32 userId, mdk::uint32 buddyId);
+	bool DelBuddy(mdk::uint32 userId, mdk::uint32 buddyId);
+	Redis::Result GetBuddys(mdk::uint32 userId, std::map<mdk::uint32,mdk::uint32> &list);
+	//群成员操作
+	bool JoinGroup(mdk::uint32 groupId, mdk::uint32 userId);
+	bool LeaveGroup(mdk::uint32 groupId, mdk::uint32 userId);
+	Redis::Result GetGroupMember(mdk::uint32 groupId, std::map<mdk::uint32, mdk::uint32> ids);
 	//事件缓存
 	bool AddEvent(mdk::uint32 userId, mdk::uint32 msgIndex, char *event, int size);
 	Redis::Result GetEvents(mdk::uint32 userId, std::vector<std::string> &events);

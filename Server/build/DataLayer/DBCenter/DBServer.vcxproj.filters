@@ -108,6 +108,9 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp">
       <Filter>Message\Object\SNS</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\DelBuddy.cpp">
+      <Filter>Message\Object\SNS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\DataLayer\DBCenter\Main.h">
@@ -177,6 +180,9 @@
       <Filter>DBCenter\Data</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.h">
+      <Filter>Message\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\DelBuddy.h">
       <Filter>Message\Object\SNS</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,6 +5,7 @@
 #include "Protocl/cpp/Object/Notify/GetEvent.h"
 #include "Protocl/cpp/Object/ConnectAuth.h"
 #include "Protocl/cpp/Object/SNS/AddBuddy.h"
+#include <map>
 
 #ifdef WIN32
 #ifdef _DEBUG
@@ -251,7 +252,7 @@ void Worker::NotifyUser(msg::Event &msg)
 
 void Worker::NotifyBuddys(msg::Event &msg)
 {
-	Cache::IdList ids;
+	std::map<mdk::uint32, mdk::uint32> ids;
 	Redis::Result ret = m_cache.GetBuddys(msg.m_recverId, ids);
 	if ( Redis::nullData == ret ) return;
 	if ( Redis::success != ret ) 
@@ -260,10 +261,10 @@ void Worker::NotifyBuddys(msg::Event &msg)
 		return;
 	}
 	msg.m_recvType = msg::Event::user;
-	int i = 0;
-	for ( i = 0; i < ids.m_ids.size(); i++ )
+	std::map<mdk::uint32, mdk::uint32>::iterator it;
+	for ( it = ids.begin(); it != ids.end(); it++ )
 	{
-		msg.m_recverId = ids.m_ids[i];
+		msg.m_recverId = it->second;
 		msg.Build();
 		NotifyUser(msg);
 	}
@@ -272,7 +273,7 @@ void Worker::NotifyBuddys(msg::Event &msg)
 
 void Worker::NotifyGroup(msg::Event &msg)
 {
-	Cache::IdList ids;
+	std::map<mdk::uint32, mdk::uint32> ids;
 	Redis::Result ret = m_cache.GetGroupMember(msg.m_recverId, ids);
 	if ( Redis::nullData == ret ) return;
 	if ( Redis::success != ret ) 
@@ -281,10 +282,10 @@ void Worker::NotifyGroup(msg::Event &msg)
 		return;
 	}
 	msg.m_recvType = msg::Event::user;
-	int i = 0;
-	for ( i = 0; i < ids.m_ids.size(); i++ )
+	std::map<mdk::uint32, mdk::uint32>::iterator it;
+	for ( it = ids.begin(); it != ids.end(); it++ )
 	{
-		msg.m_recverId = ids.m_ids[i];
+		msg.m_recverId = it->second;
 		msg.Build();
 		NotifyUser(msg);
 	}
