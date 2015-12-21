@@ -483,9 +483,14 @@ void Client::OnChat(msg::Buffer &buffer)
 		printf( "你不是对方的小伙伴，不能与用户(%u)聊天\n", msg.m_recverId );
 		return;
 	}
-	if ( msg::Chat::buddy == msg.m_recvType || msg::Chat::buddys == msg.m_recvType )
+	if ( msg::Chat::buddy == msg.m_recvType )
 	{
 		printf( "%s(%d)对你说：%s\n", msg.m_senderName.c_str(), msg.m_senderId, msg.m_talk.c_str() );
+		return;
+	}
+	if ( msg::Chat::buddys == msg.m_recvType )
+	{
+		printf( "%s(%d)：%s\n", msg.m_senderName.c_str(), msg.m_senderId, msg.m_talk.c_str() );
 		return;
 	}
 	if ( msg::Chat::group == msg.m_recvType )

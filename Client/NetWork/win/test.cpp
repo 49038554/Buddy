@@ -143,7 +143,7 @@ char* OnCommand(std::vector<std::string> *param)
 		}
 		g_cli.GetBuddys();
 	}
-	else if ( "Chat" == cmd[0] )
+	else if ( "chat" == cmd[0] )
 	{
 		if ( 3 > cmd.size() ) 
 		{
@@ -158,14 +158,16 @@ char* OnCommand(std::vector<std::string> *param)
 			return NULL;
 		}
 		unsigned char recvType = 0;
-		if ( 3 > cmd.size() ) 
+		unsigned int val;
+		if ( 3 < cmd.size() ) 
 		{
-			sscanf(cmd[3].c_str(), "%u", &recvType);
+			sscanf(cmd[3].c_str(), "%u", &val);
 			if ( 0 > recvType || 2 < recvType )
 			{
 				Helper();
 				return NULL;
 			}
+			recvType = val;
 		}
 		g_cli.Chat(bid, recvType, cmd[2]);
 	}

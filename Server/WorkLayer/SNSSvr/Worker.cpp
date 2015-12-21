@@ -220,7 +220,7 @@ bool Worker::SendNotify(mdk::uint32 recverId, unsigned char recvType, msg::Buffe
 	msg::Event notify;
 	notify.m_senderId = sender;
 	notify.m_sender = senderName;
-	notify.m_recvType = msg::Event::user;
+	notify.m_recvType = (msg::Event::RecvType)recvType;
 	notify.m_recverId = recverId;
 	notify.m_holdTime = holdTime;
 	memcpy(notify.m_msg, *pMsg, pMsg->Size());
