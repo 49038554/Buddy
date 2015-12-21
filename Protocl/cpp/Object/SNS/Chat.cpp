@@ -7,6 +7,8 @@ namespace msg
 Chat::Chat()
 {
 	BindSetting(m_buffer, MAX_MSG_SIZE, BYTE_ORDER, Moudle::SNS);
+	m_senderName = "未获取";
+	m_senderFace = "未获取"; 
 }
 
 Chat::~Chat()

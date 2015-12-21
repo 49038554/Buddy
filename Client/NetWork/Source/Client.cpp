@@ -459,7 +459,8 @@ bool Client::Chat(unsigned int recverId, unsigned char recvType, const std::stri
 	msg::Chat msg;
 	msg.m_recvType = (msg::Chat::RecvType)recvType;//接收方类型
 	msg.m_recverId = recverId;//接收方Id
-	msg.Build();
+	msg.m_talk = talk;
+	if ( !msg.Build() ) return false;
 	svr.Send(msg, msg.Size());
 
 	return true;
