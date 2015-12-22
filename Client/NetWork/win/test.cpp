@@ -171,6 +171,22 @@ char* OnCommand(std::vector<std::string> *param)
 		}
 		g_cli.Chat(bid, recvType, cmd[2]);
 	}
+	else if ( "getUser" == cmd[0] )
+	{
+		if ( 2 != cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		unsigned int uid;
+		sscanf(cmd[1].c_str(), "%u", &uid);
+		if ( 0 >= uid )
+		{
+			Helper();
+			return NULL;
+		}
+		g_cli.GetUserData(uid);
+	}
 	else Helper();
 
 	return NULL;
@@ -188,4 +204,5 @@ void Helper()
 	printf( "\t\tdelBuddy buddyId\n" );
 	printf( "\t\tgetBuddys buddyId\n" );
 	printf( "\t\tchat buddyId talk [recvType]\n" );
+	printf( "\t\tgetUser userId\n" );
 }

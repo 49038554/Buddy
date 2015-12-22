@@ -159,3 +159,9 @@ bool DBCenter::DelBuddy(msg::DelBuddy& msg)
 {
 	return doLogic(msg);
 }
+
+bool DBCenter::SetUserData(msg::SetUserData& msg)
+{
+	return doLogic(msg);
+}
+

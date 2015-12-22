@@ -14,12 +14,9 @@ public:
 	std::string		pwd;            // 密码
 	std::string		randKey;        // 随机key pwd == md5(md5(用户传递pwd)+randKey)登录成功
 	std::string		nickName;       // 昵称
-	std::string		signature;      // 签名
+	std::string		headIco;         // 头像URL
 	bool			sex;            // 性别true = 男 false = 女
 	int				coin;           // 柚元（由RMB充值产生）
-	std::string		headIco;         // 头像URL
-	int				level;          // 等级
-	std::string		realName;         // 头像URL
 
 	// 内存数据
 	std::string		bindImei;		//账号：Imei

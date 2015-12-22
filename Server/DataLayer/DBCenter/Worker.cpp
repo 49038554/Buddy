@@ -486,6 +486,7 @@ void Worker::OnSNS(mdk::STNetHost &host, msg::Buffer &buffer)
 {
 	if (MsgId::addBuddy == buffer.Id()) OnAddBuddy(host, buffer);
 	if (MsgId::delBuddy == buffer.Id()) OnDelBuddy(host, buffer);
+	if (MsgId::setUserData == buffer.Id()) OnSetUserData(host, buffer);
 }
 
 void Worker::OnAddBuddy(mdk::STNetHost &host, msg::Buffer &buffer)
@@ -606,3 +607,105 @@ bool Worker::DelBuddy(mdk::uint32 userId, mdk::uint32 buddyId, msg::DelBuddy &ms
 	}
 	return true;
 }
+
+void Worker::OnSetUserData(mdk::STNetHost &host, msg::Buffer &buffer)
+{
+	msg::SetUserData msg;
+	memcpy(msg, buffer, buffer.Size());
+
+	do 
+	{
+		if ( !msg.Parse() )
+		{
+			msg.m_code   = ResultCode::FormatInvalid;
+			msg.m_reason = "报文格式非法";
+			break;
+		}
+		SetUserData(msg);
+	}
+	while ( false );
+	if ( msg.m_code )
+	{
+		m_log.Info("Error", "设置用户信息失败:%s!", msg.m_reason.c_str());
+	}
+	msg.Build(true);
+	host.Send(msg, msg.Size());
+}
+
+bool Worker::SetUserData(msg::SetUserData &msg)
+{
+	Cache::User ui;
+	ui.id = msg.m_userId;
+	Redis::Result ret = m_cache.GetUserInfo(ui);
+	if ( Redis::unsvr == ret )
+	{
+		msg.m_code   = ResultCode::SvrError;
+		msg.m_reason = "redis无法访问";
+		return false;
+	}
+	if ( Redis::nullData == ret )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "用户数据不存在";
+		return false;
+	}
+
+	char sql[256];
+	sprintf( sql, "update user_info set "  );
+	bool frist = true;
+	if ( msg.m_pwdOpt ) 
+	{
+		sprintf( sql, "%spwd = \'%s\'", sql, frist?" ":", ", msg.m_pwd.c_str() );
+		frist = false;
+		ui.pwd = msg.m_pwd;
+	}
+	if ( msg.m_nickNameOpt ) 
+	{
+		sprintf( sql, "%s%snickname = \'%s\'", sql, frist?" ":", ", msg.m_nickName.c_str() );
+		frist = false;
+		ui.nickName = msg.m_nickName;
+	}
+	if ( msg.m_faceOpt ) 
+	{
+		sprintf( sql, "%s%sheadIco = \'%s\'", sql, frist?" ":", ", msg.m_face.c_str() );
+		frist = false;
+		ui.headIco = msg.m_face;
+	}
+	if ( msg.m_sexOpt ) 
+	{
+		sprintf( sql, "%s%ssex = \'%d\'", sql, frist?" ":", ", msg.m_sex?1:0 );
+		frist = false;
+		ui.sex = msg.m_sex;
+	}
+	if ( msg.m_coinOpt ) 
+	{
+		sprintf( sql, "%s%scoin = \'%d\'", sql, frist?" ":", ", msg.m_coin );
+		frist = false;
+		ui.coin = msg.m_coin;
+	}
+	if ( msg.m_bindImeiOpt ) ui.bindImei = msg.m_bindImei;
+	if ( msg.m_bindMobileOpt ) ui.bindMobile = msg.m_bindMobile;
+	sprintf( sql, "%s where id = %u", sql, msg.m_userId );
+	MySqlClient *pMysql = m_mySQLCluster.Node("Buddy", msg.m_userId);
+	if (!pMysql)
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "找不到Buddy数据库结点";
+		return false;
+	}
+	if ( !pMysql->ExecuteSql(sql) )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "修改数据库失败:";
+		msg.m_reason += pMysql->GetLastError();
+		return false;
+	}
+	if ( !m_cache.SetUserInfo(ui) )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "写缓存失败";
+		return false;
+	}
+	return true;
+}
+

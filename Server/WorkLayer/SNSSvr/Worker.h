@@ -33,6 +33,8 @@ public:
 	bool OnDelBuddy(mdk::NetHost& host, msg::Buffer &buffer);
 	bool OnGetBuddys(mdk::NetHost& host, msg::Buffer &buffer);
 	bool OnChat(mdk::NetHost& host, msg::Buffer &buffer);
+	bool OnSetUserData(mdk::NetHost& host, msg::Buffer &buffer);
+	bool OnGetUserData(mdk::NetHost& host, msg::Buffer &buffer);
 
 private:
 	friend int main(int argc, char* argv[]);

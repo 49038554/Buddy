@@ -111,6 +111,15 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\DelBuddy.cpp">
       <Filter>Message\Object\SNS</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\GetUserData.cpp">
+      <Filter>Message\Object\SNS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\SetUserData.cpp">
+      <Filter>Message\Object\SNS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\UserData.cpp">
+      <Filter>Message\Object\SNS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\DataLayer\DBCenter\Main.h">
@@ -183,6 +192,15 @@
       <Filter>Message\Object\SNS</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\DelBuddy.h">
+      <Filter>Message\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\GetUserData.h">
+      <Filter>Message\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\SetUserData.h">
+      <Filter>Message\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\UserData.h">
       <Filter>Message\Object\SNS</Filter>
     </ClInclude>
   </ItemGroup>

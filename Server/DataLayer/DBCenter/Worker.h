@@ -11,6 +11,7 @@
 #include "Interface/ClusterMgr/cpp/ClusterMgr.h"
 #include "Protocl/cpp/Object/SNS/AddBuddy.h"
 #include "Protocl/cpp/Object/SNS/DelBuddy.h"
+#include "Protocl/cpp/Object/SNS/SetUserData.h"
 
 
 /**
@@ -44,6 +45,8 @@ protected:
 	//添加伙伴
 	void OnAddBuddy(mdk::STNetHost &host, msg::Buffer &buffer);
 	void OnDelBuddy(mdk::STNetHost &host, msg::Buffer &buffer);
+	//设置用户数据
+	void OnSetUserData(mdk::STNetHost &host, msg::Buffer &buffer);
 
 private:
 	friend int main(int argc, char* argv[]);
@@ -61,6 +64,7 @@ private:
 	void RandNickname(std::string& nickname, int userId);
 	bool SetBuddy(mdk::uint32 userid, mdk::uint32 buddyId, msg::AddBuddy &msg);
 	bool DelBuddy(mdk::uint32 userId, mdk::uint32 buddyId, msg::DelBuddy &msg);
+	bool SetUserData(msg::SetUserData &msg);
 
 private:
 	mdk::Logger     m_log;

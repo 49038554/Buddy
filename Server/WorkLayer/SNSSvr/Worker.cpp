@@ -8,6 +8,9 @@
 #include "Protocl/cpp/Object/SNS/GetBuddys.h"
 #include "Protocl/cpp/Object/SNS/Buddys.h"
 #include "Protocl/cpp/Object/SNS/Chat.h"
+#include "Protocl/cpp/Object/SNS/SetUserData.h"
+#include "Protocl/cpp/Object/SNS/GetUserData.h"
+#include "Protocl/cpp/Object/SNS/UserData.h"
 
 #ifdef WIN32
 #ifdef _DEBUG
@@ -202,6 +205,8 @@ void Worker::OnMsg(mdk::NetHost& host)
 	else if (MsgId::delBuddy == msgId) OnDelBuddy(host, buffer);
 	else if (MsgId::getBuddys == msgId) OnGetBuddys(host, buffer);
 	else if (MsgId::chat == msgId) OnChat(host, buffer);
+	else if (MsgId::setUserData == msgId) OnSetUserData(host, buffer);
+	else if (MsgId::getUserData == msgId) OnGetUserData(host, buffer);
 	else
 	{
 		std::string strIP;  // IP
@@ -477,3 +482,74 @@ bool Worker::OnChat(mdk::NetHost& host, msg::Buffer &buffer)
 	return true;
 }
 
+bool Worker::OnSetUserData(mdk::NetHost& host, msg::Buffer &buffer)
+{
+	msg::SetUserData msg;
+	memcpy(msg, buffer, buffer.Size());
+
+	if ( !msg.Parse() )
+	{
+		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_reason = "报文格式非法";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return true;
+	}
+	DBCenter *pDBCenter = ((DBCenterCluster*)SafeObject())->Node(msg.m_userId);
+	pDBCenter->SetUserData(msg);
+	return true;
+}
+
+bool Worker::OnGetUserData(mdk::NetHost& host, msg::Buffer &buffer)
+{
+	msg::GetUserData msg;
+	memcpy(msg, buffer, buffer.Size());
+
+	if ( !msg.Parse() )
+	{
+		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_reason = "报文格式非法";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	if ( msg.m_objectId != msg.m_userId )//权限检查
+	{
+		std::map<mdk::uint32,mdk::uint32> ids;
+		Redis::Result ret = m_cache.GetBuddys(msg.m_objectId, ids);
+		if ( Redis::unsvr == ret )
+		{
+			m_log.Info("Error", "查询用户信息失败：无法获取用户伙伴列表");
+			return false;
+		}
+		if ( Redis::nullData == ret )
+		{
+			msg.m_code   = ResultCode::Refuse;
+			msg.m_reason = "不能查询陌生人信息";
+			msg.Build(true);
+			host.Send(msg, msg.Size());
+			return false;
+		}
+	}
+	Cache::User ui;
+	ui.id = msg.m_userId;
+	Redis::Result ret = m_cache.GetUserInfo(ui);
+	if ( Redis::success != ret ) 
+	{
+		m_log.Info("Error", "查询用户信息失败：读缓存失败");
+		return false;
+	}
+	msg::UserData data;
+	data.m_objectId = msg.m_objectId;
+	data.m_userId = ui.id;
+	data.m_nickName = ui.nickName;
+	data.m_sex = ui.sex;
+	data.m_coin = ui.coin;
+	data.m_face = ui.headIco;
+	data.m_bindImei = ui.bindImei;
+	data.m_bindMobile = ui.bindMobile;
+	data.Build();
+	host.Send(data, data.Size());
+
+	return true;
+}

@@ -15,6 +15,9 @@
 #include "Protocl/cpp/Object/SNS/GetBuddys.h"
 #include "Protocl/cpp/Object/SNS/Buddys.h"
 #include "Protocl/cpp/Object/SNS/Chat.h"
+#include "Protocl/cpp/Object/SNS/SetUserData.h"
+#include "Protocl/cpp/Object/SNS/GetUserData.h"
+#include "Protocl/cpp/Object/SNS/UserData.h"
 
 Client::Client(void)
 {
@@ -503,6 +506,51 @@ void Client::OnChat(msg::Buffer &buffer)
 	return;
 }
 
+bool Client::SetUserData(unsigned int userId)
+{
+	if ( !m_user.logined ) return false;
+
+	int sock = Svr(TcpSvr);
+	if ( -1 == sock ) return false;
+	net::Socket svr;
+	svr.Attach(sock);
+	msg::SetUserData msg;
+	msg.m_userId = userId;
+	msg.m_face = "face";				// 头像URL
+	msg.m_sex = 0;				// 性别true = 男 false = 女
+	if ( !msg.Build() ) return false;
+	svr.Send(msg, msg.Size());
+
+	return true;
+}
+
+bool Client::GetUserData(unsigned int userId)
+{
+	if ( !m_user.logined ) return false;
+
+	printf( "user(%u)查询用户(%u)...\n", m_user.id, userId );
+	int sock = Svr(TcpSvr);
+	if ( -1 == sock ) return false;
+	net::Socket svr;
+	svr.Attach(sock);
+	msg::GetUserData msg;
+	msg.m_userId = userId;
+	if ( !msg.Build() ) return false;
+	svr.Send(msg, msg.Size());
+
+	return true;
+}
+
+void Client::OnUserData(msg::Buffer &buffer)
+{
+	msg::UserData msg;
+	memcpy(msg, buffer, buffer.Size());
+	if ( !msg.Parse() || !msg.IsResult() ) return;
+	printf( "User:id(%u) 昵称(%s) 头像(%s) 性别(%s) 币(%d) 绑定Imei(%s) 绑定手机号(%s)", 
+		msg.m_userId, msg.m_nickName.c_str(), msg.m_face.c_str(), 
+		msg.m_sex?"男":"女", msg.m_coin, msg.m_bindImei.c_str(), msg.m_bindMobile.c_str() );
+}
+
 void Client::OnSNS(msg::Buffer &buffer)
 {
 	switch ( buffer.Id() )
@@ -518,6 +566,9 @@ void Client::OnSNS(msg::Buffer &buffer)
 		break;
 	case MsgId::chat :
 		OnChat(buffer);
+		break;
+	case MsgId::userData :
+		OnUserData(buffer);
 		break;
 	default:
 		break;

@@ -42,6 +42,9 @@ namespace MsgId
 		getBuddys = 1003,	//取伙伴
 		buddys = 2001,	//伙伴
 		chat = 1004,	//聊天
+		setUserData = 1005,//设置用户资料
+		getUserData = 1006,//取用户资料
+		userData = 2002,//用户资料
 		//通知模块
 		event = 1001,//转发事件
 		getEvent = 1002,//读取事件

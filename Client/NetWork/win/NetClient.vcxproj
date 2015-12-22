@@ -27,6 +27,9 @@
     <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\Chat.cpp" />
     <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\DelBuddy.cpp" />
     <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\GetBuddys.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\GetUserData.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\SetUserData.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\UserData.cpp" />
     <ClCompile Include="..\..\common\MD5Helper.cpp" />
     <ClCompile Include="..\..\mdk\ConfigFile.cpp" />
     <ClCompile Include="..\..\mdk\Executor.cpp" />
@@ -57,6 +60,9 @@
     <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\Chat.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\DelBuddy.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\GetBuddys.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\GetUserData.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\SetUserData.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\UserData.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Protocl.h" />
     <ClInclude Include="..\..\common\MD5Helper.h" />
     <ClInclude Include="..\..\mdk\atom.h" />

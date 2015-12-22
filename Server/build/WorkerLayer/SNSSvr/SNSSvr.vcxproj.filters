@@ -49,6 +49,12 @@
     <Filter Include="Protocl\Object\Notify">
       <UniqueIdentifier>{ce01450e-aece-403f-b173-c3dd77fcb8fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Protocl\Object\SNS\User">
+      <UniqueIdentifier>{9b5520da-9eec-4855-adb4-bf6d7efa0cdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object\SNS\Buddy">
+      <UniqueIdentifier>{a70c094b-71f2-4dd1-820f-89ea809eaa06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\WorkLayer\SNSSvr\bin\list.sh" />
@@ -66,9 +72,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Protocl\cpp\Buffer.cpp">
       <Filter>Protocl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp">
-      <Filter>Protocl\Object\SNS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp">
       <Filter>Protocl\base</Filter>
@@ -124,17 +127,29 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.cpp">
       <Filter>Protocl\Object\Notify</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\Buddys.cpp">
-      <Filter>Protocl\Object\SNS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\DelBuddy.cpp">
-      <Filter>Protocl\Object\SNS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\GetBuddys.cpp">
-      <Filter>Protocl\Object\SNS</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\Chat.cpp">
       <Filter>Protocl\Object\SNS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp">
+      <Filter>Protocl\Object\SNS\Buddy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\Buddys.cpp">
+      <Filter>Protocl\Object\SNS\Buddy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\DelBuddy.cpp">
+      <Filter>Protocl\Object\SNS\Buddy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\GetBuddys.cpp">
+      <Filter>Protocl\Object\SNS\Buddy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\SetUserData.cpp">
+      <Filter>Protocl\Object\SNS\User</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\UserData.cpp">
+      <Filter>Protocl\Object\SNS\User</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\GetUserData.cpp">
+      <Filter>Protocl\Object\SNS\User</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,9 +164,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h">
       <Filter>Protocl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.h">
-      <Filter>Protocl\Object\SNS</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h">
       <Filter>Protocl\base</Filter>
@@ -207,17 +219,29 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.h">
       <Filter>Protocl\Object\Notify</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\Buddys.h">
-      <Filter>Protocl\Object\SNS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\DelBuddy.h">
-      <Filter>Protocl\Object\SNS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\GetBuddys.h">
-      <Filter>Protocl\Object\SNS</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\Chat.h">
       <Filter>Protocl\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\Buddys.h">
+      <Filter>Protocl\Object\SNS\Buddy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.h">
+      <Filter>Protocl\Object\SNS\Buddy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\GetBuddys.h">
+      <Filter>Protocl\Object\SNS\Buddy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\DelBuddy.h">
+      <Filter>Protocl\Object\SNS\Buddy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\SetUserData.h">
+      <Filter>Protocl\Object\SNS\User</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\UserData.h">
+      <Filter>Protocl\Object\SNS\User</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\GetUserData.h">
+      <Filter>Protocl\Object\SNS\User</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

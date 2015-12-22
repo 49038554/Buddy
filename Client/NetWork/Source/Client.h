@@ -38,7 +38,10 @@ public:
 	void OnBuddys(msg::Buffer &buffer);
 	bool Chat(unsigned int recverId, unsigned char recvType, const std::string &talk);
 	void OnChat(msg::Buffer &buffer);
-
+	bool GetUserData(unsigned int userId);
+	void OnUserData(msg::Buffer &buffer);
+	bool SetUserData(unsigned int userId);
+	
 protected:
 	virtual void Main();
 	virtual void OnConnect(int svrType, net::Socket &svr);

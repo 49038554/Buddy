@@ -113,6 +113,15 @@
     <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\GetBuddys.cpp">
       <Filter>Protocl\Object\SNS</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\GetUserData.cpp">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\SetUserData.cpp">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\UserData.cpp">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Protocl\cpp\Buffer.h">
@@ -201,6 +210,15 @@
       <Filter>Protocl\Object\SNS</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\GetBuddys.h">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\GetUserData.h">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\SetUserData.h">
+      <Filter>Protocl\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\UserData.h">
       <Filter>Protocl\Object\SNS</Filter>
     </ClInclude>
   </ItemGroup>
