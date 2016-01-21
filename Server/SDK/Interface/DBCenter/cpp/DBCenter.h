@@ -10,6 +10,11 @@
 #include "Protocl/cpp/Object/SNS/SetUserData.h"
 #include "mdk/Lock.h"
 
+#include "Protocl/cpp/Object/Game/SkillBook.h"
+#include "Protocl/cpp/Object/Game/ItemBook.h"
+#include "Protocl/cpp/Object/Game/BuddyBook.h"
+#include "Protocl/cpp/Object/Game/BuddyMap.h"
+
 #include <vector>
 #include <string>
 #include <map>
@@ -33,7 +38,16 @@ public:
 	bool DelBuddy(msg::DelBuddy& msg);
 	// 设置用户数据
 	bool SetUserData(msg::SetUserData& msg);
-	
+
+	//获取安装数据
+	bool GetGameSetupData( 
+		unsigned short &raceVersion, std::map<unsigned char, std::string> &races,
+		unsigned short &skillVersion, std::vector<data::SKILL> &skills,
+		unsigned short &itemVersion, std::vector<data::ITEM> &items,
+		unsigned short &buddyVersion, std::vector<data::BUDDY> &buddys,
+		unsigned short &lbsVersion, std::vector<data::BUDDY_MAP> &buddyMaps
+		);
+
 	// 设置服务器连接信息(IP, PORT)
 	void SetServerInfo(const std::string& strIP, int nPort);
 	// 获取服务器连接信息(IP, PORT)

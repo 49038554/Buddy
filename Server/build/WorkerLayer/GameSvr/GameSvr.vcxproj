@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\WorkLayer\GameSvr\bin\GameSvr.cfg" />
+    <None Include="..\..\..\WorkLayer\GameSvr\bin\list.sh" />
+    <None Include="..\..\..\WorkLayer\GameSvr\bin\run.sh" />
+    <None Include="..\..\..\WorkLayer\GameSvr\bin\stop.sh" />
+    <None Include="..\..\..\WorkLayer\GameSvr\makefile" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Buffer.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\RaceMap.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SkillBook.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\ItemBook.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuildHouse.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CatchStar.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\DelHouse.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Devour.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyBook.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\GrowUp.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\KillBeast.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\PutPet.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CityBuildInit.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\TameBeast.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CityBuilding.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Pick.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Buy.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CreatePlayer.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\NearInfo.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CreateShop.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyMap.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\UseItem.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\TreePlant.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp" />
+    <ClCompile Include="..\..\..\SDK\common\common.cpp" />
+    <ClCompile Include="..\..\..\SDK\common\HostCluster.cpp" />
+    <ClCompile Include="..\..\..\SDK\common\MD5Helper.cpp" />
+    <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp" />
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp" />
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp" />
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp" />
+    <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp" />
+    <ClCompile Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenter.cpp" />
+    <ClCompile Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.cpp" />
+    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp" />
+    <ClCompile Include="..\..\..\SDK\mdk_ex\Console.cpp" />
+    <ClCompile Include="..\..\..\SDK\mdk_ex\ServerEx.cpp" />
+    <ClCompile Include="..\..\..\WorkLayer\GameSvr\Main.cpp" />
+    <ClCompile Include="..\..\..\WorkLayer\GameSvr\Worker.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Buffer.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\RaceMap.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SkillBook.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\ItemBook.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuildHouse.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\CatchStar.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\DelHouse.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Devour.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyBook.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\GrowUp.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\KillBeast.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\PutPet.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\TameBeast.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\CityBuilding.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Pick.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Buy.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\CreatePlayer.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\NearInfo.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\CreateShop.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyMap.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\UseItem.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\TreePlant.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h" />
+    <ClInclude Include="..\..\..\SDK\common\common.h" />
+    <ClInclude Include="..\..\..\SDK\common\HostCluster.h" />
+    <ClInclude Include="..\..\..\SDK\common\MD5Helper.h" />
+    <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h" />
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h" />
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h" />
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h" />
+    <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h" />
+    <ClInclude Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenter.h" />
+    <ClInclude Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.h" />
+    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h" />
+    <ClInclude Include="..\..\..\SDK\mdk_ex\Console.h" />
+    <ClInclude Include="..\..\..\SDK\mdk_ex\ServerEx.h" />
+    <ClInclude Include="..\..\..\WorkLayer\GameSvr\Main.h" />
+    <ClInclude Include="..\..\..\WorkLayer\GameSvr\Worker.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{61CF21A3-6075-4473-88D4-BCEFD3ABA7FA}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>GameSvr</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\..\WorkLayer\GameSvr\bin</OutDir>
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>..\..\..\..;..\..\..\SDK\Micro-Development-Kit\include;..\..\..\SDK;..\..\..\SDK\hiredis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\..\..\SDK\Micro-Development-Kit\lib;..\..\..\SDK\hiredis\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..;..\..\..\SDK\Micro-Development-Kit\include;..\..\..\SDK;..\..\..\SDK\hiredis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>..\..\..\SDK\Micro-Development-Kit\lib;..\..\..\SDK\hiredis\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

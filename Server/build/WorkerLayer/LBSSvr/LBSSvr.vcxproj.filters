@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="SDK">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="SDK\common">
+      <UniqueIdentifier>{70779d50-0c7f-44ba-9a05-39d8cb5d7275}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\mdk_ex">
+      <UniqueIdentifier>{196d25e2-4eb2-46e1-94e0-3d37971d665b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Cache">
+      <UniqueIdentifier>{70f3d6c7-88d6-43d7-b922-f3d5a8bfae59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Cache\Data">
+      <UniqueIdentifier>{6a1ac615-da97-4cb4-ac18-bfb12bbdf2f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\InterFace">
+      <UniqueIdentifier>{edef67ef-fb5b-44ea-84ea-a20d213d3a82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\InterFace\Cluster">
+      <UniqueIdentifier>{e638cce0-9e3b-4113-aeb6-01e476869164}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\InterFace\DBCenter">
+      <UniqueIdentifier>{ea1bede5-2361-4c1b-be72-1265b96eca14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Protocl\Object">
+      <UniqueIdentifier>{86b1b298-30a0-4772-8629-410a87368376}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object\Cluster">
+      <UniqueIdentifier>{5ed2183a-c7e8-40c7-b824-97ad18a210ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object\MsgCenter">
+      <UniqueIdentifier>{d92db665-f02b-429d-baf9-11805303221f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\base">
+      <UniqueIdentifier>{232f2daf-acd7-4574-8779-5deb64e1571f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\WorkLayer\LBSSvr\Main.cpp">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WorkLayer\LBSSvr\Worker.cpp">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Buffer.cpp">
+      <Filter>Protocl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\common.cpp">
+      <Filter>SDK\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\HostCluster.cpp">
+      <Filter>SDK\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\MD5Helper.cpp">
+      <Filter>SDK\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\Console.cpp">
+      <Filter>SDK\mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\ServerEx.cpp">
+      <Filter>SDK\mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp">
+      <Filter>SDK\Cache</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp">
+      <Filter>SDK\Cache\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp">
+      <Filter>SDK\Cache\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp">
+      <Filter>SDK\Cache\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp">
+      <Filter>SDK\InterFace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp">
+      <Filter>SDK\InterFace\Cluster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenter.cpp">
+      <Filter>SDK\InterFace\DBCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.cpp">
+      <Filter>SDK\InterFace\DBCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp">
+      <Filter>Protocl\Object\Cluster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp">
+      <Filter>Protocl\Object\Cluster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.cpp">
+      <Filter>Protocl\Object\MsgCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\WorkLayer\LBSSvr\Main.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WorkLayer\LBSSvr\Worker.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Buffer.h">
+      <Filter>Protocl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h">
+      <Filter>Protocl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\common.h">
+      <Filter>SDK\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\HostCluster.h">
+      <Filter>SDK\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\MD5Helper.h">
+      <Filter>SDK\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\ServerEx.h">
+      <Filter>SDK\mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\Console.h">
+      <Filter>SDK\mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h">
+      <Filter>SDK\Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h">
+      <Filter>SDK\Cache\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h">
+      <Filter>SDK\Cache\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h">
+      <Filter>SDK\Cache\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h">
+      <Filter>SDK\InterFace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h">
+      <Filter>SDK\InterFace\Cluster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.h">
+      <Filter>SDK\InterFace\DBCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenter.h">
+      <Filter>SDK\InterFace\DBCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h">
+      <Filter>Protocl\Object\Cluster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h">
+      <Filter>Protocl\Object\Cluster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.h">
+      <Filter>Protocl\Object\MsgCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\WorkLayer\LBSSvr\bin\list.sh" />
+    <None Include="..\..\..\WorkLayer\LBSSvr\makefile" />
+    <None Include="..\..\..\WorkLayer\LBSSvr\bin\run.sh" />
+    <None Include="..\..\..\WorkLayer\LBSSvr\bin\stop.sh" />
+    <None Include="..\..\..\WorkLayer\LBSSvr\bin\LBSSvr.cfg" />
+  </ItemGroup>
+</Project>

@@ -8,6 +8,13 @@
 #include "Protocl/cpp/Object/Auth/ResetPassword.h"
 #include "Protocl/cpp/Object/Auth/BindingPhone.h"
 
+#include "Protocl/cpp/Object/Game/SetupVersion.h"
+#include "Protocl/cpp/Object/Game/RaceMap.h"
+#include "Protocl/cpp/Object/Game/SkillBook.h"
+#include "Protocl/cpp/Object/Game/ItemBook.h"
+#include "Protocl/cpp/Object/Game/BuddyBook.h"
+#include "Protocl/cpp/Object/Game/BuddyMap.h"
+
 static MD5Helper gs_md5helper;
 
 /**
@@ -179,6 +186,9 @@ void Worker::OnMsg(mdk::STNetHost& host)
 		break;
 	case Moudle::SNS :
 		OnSNS(host, buffer);
+		break;
+	case Moudle::Game :
+		OnGame(host, buffer);
 		break;
 	default:
 		m_log.Info("Error", "未预料的报文! 强制断开");
@@ -709,3 +719,378 @@ bool Worker::SetUserData(msg::SetUserData &msg)
 	return true;
 }
 
+void Worker::OnGame(mdk::STNetHost &host, msg::Buffer &buffer)
+{
+	if (MsgId::setupVersion == buffer.Id()) OnSetupVersion(host, buffer);
+}
+
+bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
+{
+	msg::SetupVersion msg;
+	memcpy(msg, buffer, buffer.Size());
+	if ( !msg.Parse() )
+	{
+		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_reason = "报文格式非法";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+
+	char sql[1024];
+	MySqlClient *pMysql = m_mySQLCluster.Node("GameInit");
+	if (!pMysql)
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "找不到GameInit数据库结点";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	//取属性
+	if ( !pMysql->ExecuteSql("select * from race ORDER BY id") )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "访问属性表失败:";
+		msg.m_reason += pMysql->GetLastError();
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	if ( pMysql->IsEmpty() )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "属性表为空";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	{
+		msg::RaceMap msg;
+		msg.m_raceVersion = 0;
+		pMysql->MoveFirst();
+		int id;
+		std::string name;
+		while ( !pMysql->IsEof() )
+		{
+			pMysql->GetValue("id", id);
+			pMysql->GetValue("name", name);
+			pMysql->MoveNext();
+			msg.m_races[id] = name;
+			msg.m_raceVersion++;
+		}
+		msg.Build();
+		host.Send(msg, msg.Size());
+	}
+	//取技能
+	if ( !pMysql->ExecuteSql("select race.id as raceId , ex_effect.id as effectId, skill_book.* "
+		"from skill_book " 
+		"left join race on(skill_book.race = race.name) "
+		"left join ex_effect on(skill_book.exEffect = ex_effect.name) "
+		"ORDER BY skill_book.id") )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "访问技能表失败:";
+		msg.m_reason += pMysql->GetLastError();
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	if ( pMysql->IsEmpty() )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "技能表为空";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	{
+		msg::SkillBook msg;
+		msg.m_skillVersion = 0;
+		pMysql->MoveFirst();
+		data::SKILL info;
+		int iVal;
+		int i = 0;
+		while ( !pMysql->IsEof() )
+		{
+			pMysql->GetValue("id", info.id);
+			pMysql->GetValue("name", info.name);
+			pMysql->GetValue("raceId", info.race);//属性
+			pMysql->GetValue("power", info.power);//威力0~300
+			pMysql->GetValue("isPhysical", iVal);//物理
+			info.isPhysical = 0 == iVal?false:true;
+			pMysql->GetValue("hitRate", info.hitRate);//命中率30~101, 101必中技
+			pMysql->GetValue("effectId", info.exEffect);//特效0~20
+			pMysql->GetValue("isMapSkill", iVal);//是地图技能
+			info.isMapSkill = 0 == iVal?false:true;
+			pMysql->GetValue("priority", info.priority);//先手级别0~6
+			pMysql->GetValue("descript", info.descript);//最大60byte
+			pMysql->MoveNext();
+			msg.m_skills.push_back(info);
+			msg.m_skillVersion++;
+			i++;
+			if ( i == 50 )
+			{
+				msg.Build();
+				host.Send(msg, msg.Size());
+				i = 0;
+				msg.m_skills.clear();
+			}
+		}
+		if ( i > 0 )
+		{
+			msg.Build();
+			host.Send(msg, msg.Size());
+		}
+	}
+	//取物品
+	if ( !pMysql->ExecuteSql("select * from item_book ORDER BY id") )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "访问物品表失败:";
+		msg.m_reason += pMysql->GetLastError();
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	if ( pMysql->IsEmpty() )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "物品表为空";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	{
+		msg::ItemBook msg;
+		msg.m_itemVersion = 0;
+		pMysql->MoveFirst();
+		data::ITEM info;
+		int iVal;
+		int i = 0;
+		while ( !pMysql->IsEof() )
+		{
+			pMysql->GetValue("id", info.id);
+			pMysql->GetValue("name", info.name);
+			pMysql->GetValue("coin", info.coin);
+			pMysql->GetValue("descript", info.descript);
+
+ 			pMysql->MoveNext();
+ 			msg.m_items.push_back(info);
+ 			msg.m_itemVersion++;
+ 			i++;
+			if ( i == 50 )
+			{
+				msg.Build();
+				host.Send(msg, msg.Size());
+				i = 0;
+				msg.m_items.clear();
+			}
+		}
+		if ( i > 0 )
+		{
+			msg.Build();
+			host.Send(msg, msg.Size());
+		}
+	}
+	//取巴迪兽
+	if ( !pMysql->ExecuteSql("select r1.id as raceId1, r2.id as raceId2, "
+					"t1.id as talent1, t2.id as talent2, t3.id as talent3, "
+					"buddy_book_info.* from buddy_book_info "
+					"left join race as r1 on(buddy_book_info.race1 = r1.`name`) "
+					"left join race as r2 on(buddy_book_info.race2 = r2.`name`) "
+					"left join talent as t1 on(buddy_book_info.talent1 = t1.`name`) "
+					"left join talent as t2 on(buddy_book_info.talent2 = t2.`name`) "
+					"left join talent as t3 on(buddy_book_info.talent3 = t3.`name`) "
+					"order by buddy_book_info.number") )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "访问巴迪兽表失败:";
+		msg.m_reason += pMysql->GetLastError();
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	if ( pMysql->IsEmpty() )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "巴迪兽表为空";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	std::vector<data::BUDDY>	buddys;
+	{
+		pMysql->MoveFirst();
+		data::BUDDY info;
+		while ( !pMysql->IsEof() )
+		{
+			pMysql->GetValue("number", info.number);//全国编号
+			pMysql->GetValue("name", info.name);//名字
+			pMysql->GetValue("descript", info.descript);//描述,最大60byte
+			pMysql->GetValue("raceId1", info.race1);//属性1
+			pMysql->GetValue("raceId2", info.race2);//属性2
+			pMysql->GetValue("talent1", info.talent1);//特性1
+			pMysql->GetValue("talent2", info.talent2);//特性2
+			pMysql->GetValue("talent3", info.talent3);//梦特性
+			pMysql->GetValue("itemId", info.itemId);//专属物品，0没有专属物品
+			pMysql->GetValue("hitPoint", info.hitPoint);//血
+			pMysql->GetValue("physicalA", info.physicalA);//攻
+			pMysql->GetValue("physicalD", info.physicalD);//防
+			pMysql->GetValue("specialA", info.specialA);//特攻
+			pMysql->GetValue("specialD", info.specialD);//特防
+			pMysql->GetValue("speed", info.speed);//速度
+			pMysql->GetValue("rare", info.rare);	//出现率 1~99
+			pMysql->GetValue("tame", info.tame);	//驯化率 1~99
+			pMysql->GetValue("upMumber", info.upMumber);//进化后编号，0无进化态
+			pMysql->MoveNext();
+			buddys.push_back(info);
+		}
+	}
+	//取巴迪兽技能
+	bool succ = true;
+	{
+		int i = 0;
+		msg::BuddyBook msg;
+		msg.m_buddyVersion = 0;
+		for ( ; i < buddys.size(); i++ )
+		{
+			sprintf( sql, "select skill_book.id as skillId, buddy_book_skill.isInit "
+							"from buddy_book_skill "
+							"LEFT JOIN skill_book on(skill_book.`name` = buddy_book_skill.skill) "
+							"LEFT JOIN buddy_book_info on(buddy_book_info.`name` = buddy_book_skill.buddy) "
+							"where buddy_book_info.number = %d "
+							"order by buddy_book_skill.isInit ", buddys[i].number );
+			if ( !pMysql->ExecuteSql(sql) || pMysql->IsEmpty() )
+			{
+				succ = false;
+				break;
+			}
+			pMysql->MoveFirst();
+			int skillId;
+			int isInit;
+			while ( !pMysql->IsEof() )
+			{
+				pMysql->GetValue("skillId", skillId);
+				pMysql->GetValue("isInit", isInit);
+				buddys[i].skills[skillId] = 0 == isInit?false:true;
+				pMysql->MoveNext();
+			}
+			msg.m_buddyVersion++;
+ 			msg.m_buddys.push_back(buddys[i]);
+			if ( 20 == msg.m_buddys.size() )
+			{
+				msg.Build();
+				host.Send(msg, msg.Size());
+				msg.m_buddys.clear();
+			}
+		}
+		if ( msg.m_buddys.size() > 0 && succ )
+		{
+			msg.Build();
+			host.Send(msg, msg.Size());
+		}
+	}
+	if ( !succ )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "访问巴迪兽技能失败";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	//取巴迪兽分布图
+	if ( !pMysql->ExecuteSql("select buddy_map_lbs.*, city.id as cityId from buddy_map_lbs "
+							"JOIN city on(buddy_map_lbs.city = city.`name`) "
+							"ORDER BY cityId, buddy_map_lbs.spot, buddy_map_lbs.id") )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "访问巴迪兽分布图失败:";
+		msg.m_reason += pMysql->GetLastError();
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	if ( pMysql->IsEmpty() )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "巴迪兽分布图为空";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	std::vector<data::BUDDY_MAP>	buddyMaps;
+	{
+		pMysql->MoveFirst();
+		data::BUDDY_MAP info;
+		int iVal;
+		while ( !pMysql->IsEof() )
+		{
+			pMysql->GetValue("id", info.id);
+			pMysql->GetValue("shape", info.shape);//形状：0圆形，1矩形
+			pMysql->GetValue("x", info.x);//latitude
+			pMysql->GetValue("y", info.y);//longitude
+			pMysql->GetValue("radius", info.radius);
+			pMysql->GetValue("right", info.right);//latitude
+			pMysql->GetValue("bottom", info.bottom);//longitude
+			pMysql->GetValue("cityId", info.city);//城市
+			pMysql->GetValue("spot", iVal);//景区
+			info.spot = 0 == iVal?false:true;
+			pMysql->MoveNext();
+			buddyMaps.push_back(info);
+		}
+	}
+	//取地区巴迪兽
+	{
+		succ = true;
+		int i = 0;
+		msg::BuddyMap msg;
+		msg.m_lbsVersion = 0;
+		for ( ; i < buddyMaps.size(); i++ )
+		{
+			sprintf( sql, "select buddy_map_pet.*, buddy_book_info.number as number from buddy_map_pet "
+				"join buddy_book_info on (buddy_map_pet.buddy = buddy_book_info.`name`) "
+				"where buddy_map_pet.id = %d "
+				"ORDER BY buddy_map_pet.id, buddy_book_info.number", buddyMaps[i].id );
+			if ( !pMysql->ExecuteSql(sql) || pMysql->IsEmpty() ) 
+			{
+				succ = false;
+				break;
+			}
+			pMysql->MoveFirst();
+			short number;
+			while ( !pMysql->IsEof() )
+			{
+				pMysql->GetValue("number", number);
+				buddyMaps[i].buddys.push_back(number);
+				pMysql->MoveNext();
+			}
+			msg.m_lbsVersion++;
+			msg.m_buddyMaps.push_back(buddyMaps[i]);
+			if ( 10 == msg.m_buddyMaps.size() )
+			{
+				msg.Build();
+				host.Send(msg, msg.Size());
+				msg.m_buddyMaps.clear();
+			}
+		}
+		if ( msg.m_buddyMaps.size() > 0 && succ )
+		{
+			msg.Build();
+			host.Send(msg, msg.Size());
+		}
+	}
+	if ( !succ )
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "访问地区巴迪失败兽";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+
+	msg.m_code = ResultCode::Success;
+	msg.Build(true);
+	host.Send(msg, msg.Size());
+	return true;
+}

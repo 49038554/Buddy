@@ -40,6 +40,9 @@
     <Filter Include="Message\Object\SNS">
       <UniqueIdentifier>{bdab649c-3c65-4d46-a8f4-cf04add31fcc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Message\Object\Game">
+      <UniqueIdentifier>{b6b0c859-1f1a-4327-88db-ecdb1874de42}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\DataLayer\DBCenter\Main.cpp">
@@ -119,6 +122,24 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\UserData.cpp">
       <Filter>Message\Object\SNS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyBook.cpp">
+      <Filter>Message\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyMap.cpp">
+      <Filter>Message\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\ItemBook.cpp">
+      <Filter>Message\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\RaceMap.cpp">
+      <Filter>Message\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SkillBook.cpp">
+      <Filter>Message\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.cpp">
+      <Filter>Message\Object\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +223,24 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\UserData.h">
       <Filter>Message\Object\SNS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyBook.h">
+      <Filter>Message\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyMap.h">
+      <Filter>Message\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\ItemBook.h">
+      <Filter>Message\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\RaceMap.h">
+      <Filter>Message\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SkillBook.h">
+      <Filter>Message\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.h">
+      <Filter>Message\Object\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,12 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\BindingPhone.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\ResetPassword.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRegister.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyBook.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyMap.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\ItemBook.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\RaceMap.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SkillBook.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp" />
@@ -46,6 +52,12 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\BindingPhone.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\ResetPassword.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRegister.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyBook.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyMap.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\ItemBook.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\RaceMap.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SkillBook.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\AddBuddy.h" />

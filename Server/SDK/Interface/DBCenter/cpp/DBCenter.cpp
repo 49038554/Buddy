@@ -1,4 +1,6 @@
 #include "DBCenter.h"
+#include "Protocl/cpp/Object/Game/SetupVersion.h"
+#include "Protocl/cpp/Object/Game/RaceMap.h"
 
 //将一个整数存储到字节流buf，按照小端字节序(低位在前，高位在后)
 static void itomemSmall( unsigned char *buf, uint64 value, int size )
@@ -165,3 +167,130 @@ bool DBCenter::SetUserData(msg::SetUserData& msg)
 	return doLogic(msg);
 }
 
+bool DBCenter::GetGameSetupData( 
+	unsigned short &raceVersion, std::map<unsigned char, std::string> &races,
+	unsigned short &skillVersion, std::vector<data::SKILL> &skills,
+	unsigned short &itemVersion, std::vector<data::ITEM> &items,
+	unsigned short &buddyVersion, std::vector<data::BUDDY> &buddys,
+	unsigned short &lbsVersion, std::vector<data::BUDDY_MAP> &buddyMaps
+	)
+{
+	raceVersion = 0;
+	races.clear();
+	itemVersion = 0;
+	items.clear();
+	skillVersion = 0;
+	skills.clear();
+	buddyVersion = 0;
+	buddys.clear();
+	lbsVersion = 0;
+	buddyMaps.clear();
+
+	if ( !Connect() ) return false;
+	msg::SetupVersion query;
+	query.Build();
+	if ( !Send(query) )
+	{
+		Close();
+		return false;
+	}
+
+	msg::Buffer buf;
+	while ( true )
+	{
+		if ( !Receive(buf) )
+		{
+			Close();
+			return false;
+		}
+		if ( !buf.Parse() )
+		{
+			Close();
+			return false;
+		}
+		int i = 0;
+		int count = 0;
+		if ( MsgId::raceMap == buf.Id() )
+		{
+			msg::RaceMap reply;
+			memcpy(reply, buf, buf.Size());
+			if ( !reply.Parse() )
+			{
+				Close();
+				return false;
+			}
+			raceVersion = reply.m_raceVersion;
+			races = reply.m_races;
+		}
+		else if ( MsgId::skillBook == buf.Id() )
+		{
+			msg::SkillBook reply;
+			memcpy(reply, buf, buf.Size());
+			if ( !reply.Parse() )
+			{
+				Close();
+				return false;
+			}
+			skillVersion = reply.m_skillVersion;
+			count = reply.m_skills.size();
+			for ( i = 0; i < count; i++ ) skills.push_back(reply.m_skills[i]);
+		}
+		else if ( MsgId::itemBook == buf.Id() )
+		{
+			msg::ItemBook reply;
+			memcpy(reply, buf, buf.Size());
+			if ( !reply.Parse() )
+			{
+				Close();
+				return false;
+			}
+			itemVersion = reply.m_itemVersion;
+			count = reply.m_items.size();
+			for ( i = 0; i < count; i++ ) items.push_back(reply.m_items[i]);
+		}
+		else if ( MsgId::buddyBook == buf.Id() )
+		{
+			msg::BuddyBook reply;
+			memcpy(reply, buf, buf.Size());
+			if ( !reply.Parse() )
+			{
+				Close();
+				return false;
+			}
+			buddyVersion = reply.m_buddyVersion;
+			count = reply.m_buddys.size();
+			for ( i = 0; i < count; i++ ) buddys.push_back(reply.m_buddys[i]);
+		}
+		else if ( MsgId::buddyMap == buf.Id() )
+		{
+			msg::BuddyMap reply;
+			memcpy(reply, buf, buf.Size());
+			if ( !reply.Parse() )
+			{
+				Close();
+				return false;
+			}
+			lbsVersion = reply.m_lbsVersion;
+			count = reply.m_buddyMaps.size();
+			for ( i = 0; i < count; i++ ) buddyMaps.push_back(reply.m_buddyMaps[i]);
+		}
+		else if ( MsgId::setupVersion == buf.Id() )
+		{
+			msg::SetupVersion reply;
+			memcpy(reply, buf, buf.Size());
+			if ( !reply.Parse() )
+			{
+				Close();
+				return false;
+			}
+			if ( ResultCode::Success != reply.m_code )
+			{
+				Close();
+				return false;
+			}
+			break;
+		}
+	}
+
+	return true;
+}

@@ -16,6 +16,8 @@ namespace Moudle
 		DBEntry = 5,		//数据中心
 		Client = 6,			//客户端
 		SNS = 7,			//社交模块
+		Game = 8,			//游戏模块
+		LBS = 9,			//Lbs模块
 	};
 }
 
@@ -49,6 +51,32 @@ namespace MsgId
 		event = 1001,//转发事件
 		getEvent = 1002,//读取事件
 		//数据中心
+
+		//游戏模块
+		setupVersion = 1001,//安装版本,地图数据，巴迪图鉴，物品图鉴
+		createPlayer = 1002,//创建玩家
+		killBeast = 1003,//杀死野怪
+		useItem = 1004,//使用物品
+		growUp = 1005,//进化
+		tameBeast = 1006,//驯服野怪
+		buildHouse = 1007,//地图技能：光墙，造房子
+		putPet = 1008,//放置宠物
+		treePlant = 1009,//种树
+		pick = 1010,//采摘
+		nearInfo = 1011,//周边信息
+		createShop = 1012,//开店
+		buy = 1013,//购买
+		devour = 1014,//地图技能：吞噬，物品转换正能量
+		catchStar = 1015,//地图技能：摘星术，将天上的法宝打下来
+		cityBuildInit = 1016,//开始城市建设
+		cityBuilding = 1017,//为城市建设添砖加瓦
+		delHouse = 1018,//地图技能：瓦割，拆房子
+
+		raceMap = 2001,//属性表
+		skillBook = 2002,//技能图鉴
+		itemBook = 2003,//物品图鉴
+		buddyBook = 2004,//巴迪图鉴
+		buddyMap = 2005,//巴迪分布地图
 	};
 }
 

@@ -1,0 +1,334 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="SDK">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="SDK\common">
+      <UniqueIdentifier>{05786f94-d71a-415c-ad74-66d3bfbb649a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Cache">
+      <UniqueIdentifier>{2c165804-72a8-4c62-bb51-b6d7e96f6d16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\Cache\Data">
+      <UniqueIdentifier>{7b50a624-c530-468c-b350-e28813889e26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\InterFace">
+      <UniqueIdentifier>{dbefdae9-93ab-404a-ab24-88c6b4f1ed1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\InterFace\ClusterMgr">
+      <UniqueIdentifier>{f6199c14-0215-43d9-b34a-833addf82970}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\InterFace\DBCenter">
+      <UniqueIdentifier>{fdaaa786-9f50-4bfa-8468-b8f3d8c8ef9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\mdk_ex">
+      <UniqueIdentifier>{9c530423-a033-4efb-9d32-bc535ea61308}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Protocl\base">
+      <UniqueIdentifier>{ceb689b0-4fa8-4a80-a1fb-bfe1c4573f1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object">
+      <UniqueIdentifier>{43d18c09-b4f4-4c82-9c06-6a358131c37d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object\Cluster">
+      <UniqueIdentifier>{308fb654-22e4-468b-b7f5-5a3446858da6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object\MsgCenter">
+      <UniqueIdentifier>{4baea0bf-cbef-4162-83fd-b37d4e139cfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Protocl\Object\Game">
+      <UniqueIdentifier>{a5de57e4-331f-4091-8fa9-b8baee08a9f2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\WorkLayer\GameSvr\bin\GameSvr.cfg" />
+    <None Include="..\..\..\WorkLayer\GameSvr\bin\stop.sh" />
+    <None Include="..\..\..\WorkLayer\GameSvr\bin\list.sh" />
+    <None Include="..\..\..\WorkLayer\GameSvr\makefile" />
+    <None Include="..\..\..\WorkLayer\GameSvr\bin\run.sh" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\WorkLayer\GameSvr\Main.cpp">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WorkLayer\GameSvr\Worker.cpp">
+      <Filter>资源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\common.cpp">
+      <Filter>SDK\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\HostCluster.cpp">
+      <Filter>SDK\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\common\MD5Helper.cpp">
+      <Filter>SDK\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\CacheInterface.cpp">
+      <Filter>SDK\Cache</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp">
+      <Filter>SDK\Cache\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp">
+      <Filter>SDK\Cache\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp">
+      <Filter>SDK\Cache\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp">
+      <Filter>SDK\InterFace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp">
+      <Filter>SDK\InterFace\ClusterMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenter.cpp">
+      <Filter>SDK\InterFace\DBCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.cpp">
+      <Filter>SDK\InterFace\DBCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\Console.cpp">
+      <Filter>SDK\mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\ServerEx.cpp">
+      <Filter>SDK\mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Buffer.cpp">
+      <Filter>Protocl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp">
+      <Filter>Protocl\Object\Cluster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp">
+      <Filter>Protocl\Object\Cluster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.cpp">
+      <Filter>Protocl\Object\MsgCenter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\TameBeast.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\KillBeast.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\PutPet.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\GrowUp.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CityBuildInit.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CityBuilding.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuildHouse.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\DelHouse.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\TreePlant.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Pick.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Buy.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CatchStar.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\UseItem.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\NearInfo.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CreatePlayer.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CreateShop.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Devour.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyMap.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyBook.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\ItemBook.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SkillBook.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\RaceMap.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\WorkLayer\GameSvr\Main.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WorkLayer\GameSvr\Worker.h">
+      <Filter>资源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\MD5Helper.h">
+      <Filter>SDK\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\common.h">
+      <Filter>SDK\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\common\HostCluster.h">
+      <Filter>SDK\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\CacheInterface.h">
+      <Filter>SDK\Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h">
+      <Filter>SDK\Cache\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h">
+      <Filter>SDK\Cache\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h">
+      <Filter>SDK\Cache\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h">
+      <Filter>SDK\InterFace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h">
+      <Filter>SDK\InterFace\ClusterMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenter.h">
+      <Filter>SDK\InterFace\DBCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.h">
+      <Filter>SDK\InterFace\DBCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\Console.h">
+      <Filter>SDK\mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\ServerEx.h">
+      <Filter>SDK\mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Buffer.h">
+      <Filter>Protocl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h">
+      <Filter>Protocl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h">
+      <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h">
+      <Filter>Protocl\Object\Cluster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h">
+      <Filter>Protocl\Object\Cluster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.h">
+      <Filter>Protocl\Object\MsgCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\TameBeast.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\KillBeast.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\PutPet.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\GrowUp.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\CityBuilding.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuildHouse.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\DelHouse.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\TreePlant.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Pick.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Buy.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\CatchStar.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\UseItem.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\NearInfo.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\CreatePlayer.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\CreateShop.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Devour.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyMap.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyBook.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\ItemBook.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SkillBook.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\RaceMap.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

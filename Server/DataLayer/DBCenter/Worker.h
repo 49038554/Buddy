@@ -31,6 +31,7 @@ protected:
 	virtual void OnMsg(mdk::STNetHost& host);
 	void OnAuth(mdk::STNetHost &host, msg::Buffer &buffer);//认证模块消息响应
 	void OnSNS(mdk::STNetHost &host, msg::Buffer &buffer);//社交模块消息响应
+	void OnGame(mdk::STNetHost &host, msg::Buffer &buffer);//游戏模酷开消息响应
 	//////////////////////////////////////////////////////////////////////////
 	// 认证服模块
 	//////////////////////////////////////////////////////////////////////////
@@ -47,6 +48,11 @@ protected:
 	void OnDelBuddy(mdk::STNetHost &host, msg::Buffer &buffer);
 	//设置用户数据
 	void OnSetUserData(mdk::STNetHost &host, msg::Buffer &buffer);
+	//////////////////////////////////////////////////////////////////////////
+	//游戏模块
+	//安装版本数据
+	bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer);
+
 
 private:
 	friend int main(int argc, char* argv[]);
