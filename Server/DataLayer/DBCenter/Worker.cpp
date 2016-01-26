@@ -783,11 +783,16 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 		host.Send(msg, msg.Size());
 	}
 	//取技能
-	if ( !pMysql->ExecuteSql("select race.id as raceId , ex_effect.id as effectId, skill_book.* "
-		"from skill_book " 
-		"left join race on(skill_book.race = race.name) "
-		"left join ex_effect on(skill_book.exEffect = ex_effect.name) "
-		"ORDER BY skill_book.id") )
+	if ( !pMysql->ExecuteSql("select race.id as raceId , "
+		"e1.id as effect1, e2.id as effect2, e3.id as effect3, e4.id as effect4, e5.id as effect5, skill_book.* "
+		"from skill_book "
+		"left join race on(skill_book.race = race.name) " 
+		"left join ex_effect as e1 on(skill_book.effect1 = e1.name) " 
+		"left join ex_effect as e2 on(skill_book.effect2 = e2.name) " 
+		"left join ex_effect as e3 on(skill_book.effect3 = e3.name) " 
+		"left join ex_effect as e4 on(skill_book.effect4 = e4.name) " 
+		"left join ex_effect as e5 on(skill_book.effect5 = e5.name) " 
+		"ORDER BY skill_book.id ") )
 	{
 		msg.m_code   = ResultCode::DBError;
 		msg.m_reason = "访问技能表失败:";
@@ -817,15 +822,22 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 			pMysql->GetValue("name", info.name);
 			pMysql->GetValue("raceId", info.race);//属性
 			pMysql->GetValue("power", info.power);//威力0~300
-			pMysql->GetValue("isPhysical", iVal);//物理
-			info.isPhysical = 0 == iVal?false:true;
+			pMysql->GetValue("type", info.type);//物理
 			pMysql->GetValue("hitRate", info.hitRate);//命中率30~101, 101必中技
-			pMysql->GetValue("effectId", info.exEffect);//特效0~20
 			pMysql->GetValue("isMapSkill", iVal);//是地图技能
 			info.isMapSkill = 0 == iVal?false:true;
 			pMysql->GetValue("priority", info.priority);//先手级别0~6
 			pMysql->GetValue("descript", info.descript);//最大60byte
-			pMysql->MoveNext();
+			pMysql->GetValue("effect1", iVal);//特效0~20
+			if ( 0 < iVal ) info.effects.push_back(iVal);
+			pMysql->GetValue("effect2", iVal);//特效0~20
+			if ( 0 < iVal ) info.effects.push_back(iVal);
+			pMysql->GetValue("effect3", iVal);//特效0~20
+			if ( 0 < iVal ) info.effects.push_back(iVal);
+			pMysql->GetValue("effect4", iVal);//特效0~20
+			if ( 0 < iVal ) info.effects.push_back(iVal);
+			pMysql->GetValue("effect5", iVal);//特效0~20
+			if ( 0 < iVal ) info.effects.push_back(iVal);
 			msg.m_skills.push_back(info);
 			msg.m_skillVersion++;
 			i++;
