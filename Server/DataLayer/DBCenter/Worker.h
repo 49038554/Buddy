@@ -13,6 +13,16 @@
 #include "Protocl/cpp/Object/SNS/DelBuddy.h"
 #include "Protocl/cpp/Object/SNS/SetUserData.h"
 
+#include "Protocl/cpp/Object/Game/SetupVersion.h"
+#include "Protocl/cpp/Object/Game/RaceMap.h"
+#include "Protocl/cpp/Object/Game/SkillBook.h"
+#include "Protocl/cpp/Object/Game/ItemBook.h"
+#include "Protocl/cpp/Object/Game/TalentBook.h"
+#include "Protocl/cpp/Object/Game/BuddyBook.h"
+#include "Protocl/cpp/Object/Game/BuddyMap.h"
+#include "Protocl/cpp/Object/Game/GetPlayerData.h"
+#include "Protocl/cpp/Object/Game/Pets.h"
+#include "Protocl/cpp/Object/Game/PlayerItems.h"
 
 /**
  * Worker
@@ -24,6 +34,8 @@ public:
 	virtual ~Worker(void);
 	
 protected:
+	virtual void OnConnect(mdk::STNetHost &host);
+	virtual void OnCloseConnect(mdk::STNetHost &host);
 	/**
 	 * 功能：消息处理函数
 	 * 说明：该处理会过滤掉除了要处理之外的消息，并记录Log
@@ -51,7 +63,8 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	//游戏模块
 	//安装版本数据
-	bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer);
+	bool OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer);
+	void OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer);
 
 
 private:
@@ -72,6 +85,22 @@ private:
 	bool DelBuddy(mdk::uint32 userId, mdk::uint32 buddyId, msg::DelBuddy &msg);
 	bool SetUserData(msg::SetUserData &msg);
 
+	//创建玩家
+	bool CreatePlayer(unsigned int userId);
+	//读取技能数据
+	bool ReadSkill(MySqlClient *pMysql, std::vector<data::SKILL> &skills, ResultCode::ResultCode &result, std::string &reason);
+	//读取物品数据
+	bool ReadItem(MySqlClient *pMysql, std::vector<data::ITEM> &imtes, ResultCode::ResultCode &result, std::string &reason);
+	//读取特性数据
+	bool ReadTalent(MySqlClient *pMysql, std::vector<data::TALENT> &talents, ResultCode::ResultCode &result, std::string &reason);
+	//读取巴迪兽数据
+	bool ReadBuddy(MySqlClient *pMysql, std::vector<data::BUDDY> &buddys, ResultCode::ResultCode &result, std::string &reason);
+	//取巴迪兽地理数据 
+	bool ReadBuddyLBS(MySqlClient *pMysql, std::vector<data::BUDDY_MAP> &buddyMaps, ResultCode::ResultCode &result, std::string &reason);
+	//取宠物
+	bool ReadPets(MySqlClient *pMysql, unsigned int userId, std::vector<data::PET> &pets, ResultCode::ResultCode &result, std::string &reason);
+	//取玩家物品 
+	bool ReadPlayerItems(MySqlClient *pMysql, unsigned int userId, std::vector<data::PLAYER_ITEM> &items, ResultCode::ResultCode &result, std::string &reason);
 private:
 	mdk::Logger     m_log;
 	mdk::ConfigFile m_cfg;

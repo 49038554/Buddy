@@ -15,12 +15,11 @@ BuddyMap::~BuddyMap()
 bool BuddyMap::Build()
 {
 	unsigned char count = m_buddyMaps.size();
-	if ( 0 >= count || count > 10 ) return false;
+	if ( 0 >= count || count > 30 ) return false;
 	SetId(MsgId::buddyMap, true);
 	if ( !FillTransmitParam() ) return false;//Tcp服务填写参数
 
 	//回应参数
-	if ( !AddData(m_lbsVersion) ) return false;
 	if ( !AddData(count) ) return false;
 	int i = 0;
 	for ( ; i < count; i++ )
@@ -49,10 +48,9 @@ bool BuddyMap::Parse()
 	if ( !Buffer::Parse() ) return false;
 
 	//回应参数
-	if ( !GetData(m_lbsVersion) ) return false;
 	unsigned char count;
 	if ( !GetData(count) ) return false;
-	if ( 0 >= count || count > 10 ) return false;
+	if ( 0 >= count || count > 30 ) return false;
 
 	int i = 0;
 	data::BUDDY_MAP bmap;

@@ -14,18 +14,32 @@ RaceMap::~RaceMap()
 
 bool RaceMap::Build()
 {
-	if ( 0 >= m_races.size() ) return false;
+	if ( 0 >= m_races.size() ) 
+	{
+		return false;
+	}
 	SetId(MsgId::raceMap, true);
-	if ( !FillTransmitParam() ) return false;//Tcp服务填写参数
+	if ( !FillTransmitParam() ) //Tcp服务填写参数
+	{
+		return false;
+	}
 
 	//回应参数
-	if ( !AddData(m_raceVersion) ) return false;
-	if ( !AddData((char)m_races.size()) ) return false;
+	if ( !AddData((char)m_races.size()) ) 
+	{
+		return false;
+	}
 	std::map<unsigned char, std::string>::iterator it = m_races.begin();
 	for ( ; it != m_races.end(); it++ )
 	{
-		if ( !AddData(it->first) ) return false;//全国编号
-		if ( !AddData(it->second) ) return false;//名字
+		if ( !AddData(it->first) ) //id
+		{
+			return false;
+		}
+		if ( !AddData(it->second) ) //名字
+		{
+			return false;
+		}
 	}
 
 
@@ -36,7 +50,6 @@ bool RaceMap::Parse()
 {
 	if ( !Buffer::Parse() ) return false;
 	//回应参数
-	if ( !GetData(m_raceVersion) ) return false;
 	unsigned char count;
 	if ( !GetData(count) ) return false;
 	if ( 0 >= count ) return false;

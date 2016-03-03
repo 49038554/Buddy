@@ -141,6 +141,18 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.cpp">
       <Filter>Message\Object\Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\TalentBook.cpp">
+      <Filter>Message\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\GetPlayerData.cpp">
+      <Filter>Message\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Pets.cpp">
+      <Filter>Message\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\PlayerItems.cpp">
+      <Filter>Message\Object\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\DataLayer\DBCenter\Main.h">
@@ -240,6 +252,18 @@
       <Filter>Message\Object\Game</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.h">
+      <Filter>Message\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\TalentBook.h">
+      <Filter>Message\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\GetPlayerData.h">
+      <Filter>Message\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Pets.h">
+      <Filter>Message\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\PlayerItems.h">
       <Filter>Message\Object\Game</Filter>
     </ClInclude>
   </ItemGroup>

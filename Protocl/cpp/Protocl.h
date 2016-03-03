@@ -53,8 +53,10 @@ namespace MsgId
 		//数据中心
 
 		//游戏模块
-		setupVersion = 1001,//安装版本,地图数据，巴迪图鉴，物品图鉴
-		createPlayer = 1002,//创建玩家
+		setupVersion = 1001,//安装版本
+		getPlayerData = 1002,//取玩家数据
+		pets = 2001,//宠物数据
+		playerItems = 2002,//玩家物品
 		killBeast = 1003,//杀死野怪
 		useItem = 1004,//使用物品
 		growUp = 1005,//进化
@@ -75,8 +77,9 @@ namespace MsgId
 		raceMap = 2001,//属性表
 		skillBook = 2002,//技能图鉴
 		itemBook = 2003,//物品图鉴
-		buddyBook = 2004,//巴迪图鉴
-		buddyMap = 2005,//巴迪分布地图
+		talentBook = 2004,//特性图鉴
+		buddyBook = 2005,//巴迪图鉴
+		buddyMap = 2006,//巴迪分布地图
 	};
 }
 
@@ -152,6 +155,18 @@ namespace ItemBigType
 		commodity = 2,//商品
 		luckGift = 3,//幸运礼物
 	};
+}
+
+namespace data
+{
+	//特效
+	typedef struct EFFECT
+	{
+		unsigned char id;	//id
+		char step;			//触发时机
+		char probability;	//机率
+		char agent;			//作用对象
+	}EFFECT;
 }
 
 #endif //PROTOCL_H

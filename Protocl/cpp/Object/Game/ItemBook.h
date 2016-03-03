@@ -13,6 +13,7 @@ namespace data
 		short			id;
 		std::string		name;
 		int				coin;//价值
+		std::vector<EFFECT>	effects;//特效,最多5个
 		std::string		descript;//最大60byte
 	}ITEM;
 }
@@ -25,7 +26,6 @@ class ItemBook : public Buffer
 {
 public:
 	//回应参数
-	unsigned short					m_itemVersion;
 	std::vector<data::ITEM>			m_items;//最大50个
 
 public:

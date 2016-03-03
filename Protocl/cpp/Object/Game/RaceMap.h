@@ -15,7 +15,6 @@ class RaceMap : public Buffer
 {
 public:
 	//回应参数
-	unsigned short								m_raceVersion;
 	std::map<unsigned char, std::string>		m_races;
 
 public:

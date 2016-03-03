@@ -29,7 +29,7 @@ namespace data
 		std::map<unsigned short, bool> skills;//最大30个
 		char		rare;	//出现率 1~99
 		char		tame;	//驯化率 1~99
-		short		upMumber;//进化后编号，0无进化态
+		std::vector<short>		upBuddys;//进化后编号最多10种进化
 	}BUDDY;
 }
 
@@ -41,7 +41,6 @@ class BuddyBook : public Buffer
 {
 public:
 	//回应参数
-	unsigned short					m_buddyVersion;
 	std::vector<data::BUDDY>		m_buddys;//最大20个
 
 public:

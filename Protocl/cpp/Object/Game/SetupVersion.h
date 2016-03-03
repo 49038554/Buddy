@@ -12,11 +12,7 @@ class SetupVersion : public Buffer
 {
 public:
 	//请求参数
-	unsigned short	m_raceVersion;
-	unsigned short	m_skillVersion;
-	unsigned short	m_itemVersion;
-	unsigned short	m_buddyVersion;
-	unsigned short	m_lbsVersion;
+	unsigned short	m_dataVersion;
 	//回应参数
 
 public:

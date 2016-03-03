@@ -8,6 +8,7 @@
 
 namespace data
 {
+	//技能
 	typedef struct SKILL
 	{
 		short				id;
@@ -16,9 +17,8 @@ namespace data
 		short				power;//威力0~300
 		char				type;//1物理，2变化，3特殊
 		char				hitRate;//命中率30~101, 101必中技
-		std::vector<char>	effects;//特效,最多5个
+		std::vector<EFFECT>	effects;//特效,最多5个
 		bool				isMapSkill;//是地图技能
-		char				priority;//先手级别0~6
 		std::string			descript;//最大60byte
 	}SKILL;
 }
@@ -31,7 +31,6 @@ class SkillBook : public Buffer
 {
 public:
 	//回应参数
-	unsigned short					m_skillVersion;
 	std::vector<data::SKILL>		m_skills;//最大50个
 
 public:

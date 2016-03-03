@@ -31,8 +31,7 @@ class BuddyMap : public Buffer
 {
 public:
 	//回应参数
-	unsigned short					m_lbsVersion;
-	std::vector<data::BUDDY_MAP>	m_buddyMaps;//最大10
+	std::vector<data::BUDDY_MAP>	m_buddyMaps;//最大30
 
 public:
 	BuddyMap();
