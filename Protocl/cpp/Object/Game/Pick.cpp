@@ -14,9 +14,9 @@ Pick::~Pick()
 
 bool Pick::Build(bool isResult)
 {
-	if ( m_itemId.size() > 200 ) return false;
+	if ( m_itemIds.size() > 200 ) return false;
 
-	unsigned char count = m_itemId.size();
+	unsigned char count = m_itemIds.size();
 	SetId(MsgId::pick, isResult);
 	if ( !FillTransmitParam() ) return false;//Tcp服务填写参数
 	//请求参数
@@ -25,12 +25,11 @@ bool Pick::Build(bool isResult)
 	int i = 0;
 	for ( ; i < count; i++ )
 	{
-		if ( !AddData((short)m_itemId[i]) ) return false;
+		if ( !AddData((short)m_itemIds[i]) ) return false;
 	}
 
 	//回应参数
 	if ( !isResult || ResultCode::Success != m_code ) return true;
-	if ( !AddData(m_nextTime) ) return false;
 
 	return true;
 }
@@ -47,12 +46,11 @@ bool Pick::Parse()
 	for ( ; i < count; i++ )
 	{
 		if ( !GetData(itemId) ) return false;
-		m_itemId.push_back(itemId);
+		m_itemIds.push_back(itemId);
 	}
 
 	//回应参数
 	if ( !IsResult() || ResultCode::Success != m_code ) return true;
-	if ( !GetData(m_nextTime) ) return false;
 
 	return true;
 }

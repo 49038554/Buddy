@@ -10,10 +10,51 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2016-03-04 10:52:29
+Date: 2016-03-04 19:37:40
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for `fruit`
+-- ----------------------------
+DROP TABLE IF EXISTS `fruit`;
+CREATE TABLE `fruit` (
+  `owner` int(11) NOT NULL DEFAULT '0' COMMENT '用户',
+  `treeId` int(11) NOT NULL DEFAULT '0' COMMENT '果树id',
+  `coin` int(11) NOT NULL DEFAULT '0' COMMENT '价值',
+  `itemId` int(11) DEFAULT NULL COMMENT '果实（道具Id）',
+  `createTime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '生成时间',
+  PRIMARY KEY (`owner`,`treeId`,`coin`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of fruit
+-- ----------------------------
+INSERT INTO `fruit` VALUES ('1', '1', '50', '2', '2016-03-04 16:12:36');
+
+-- ----------------------------
+-- Table structure for `house`
+-- ----------------------------
+DROP TABLE IF EXISTS `house`;
+CREATE TABLE `house` (
+  `owner` int(11) NOT NULL DEFAULT '0' COMMENT '用户id',
+  `houseId` int(11) NOT NULL DEFAULT '0',
+  `name` varchar(255) DEFAULT NULL COMMENT '名字',
+  `longitude` double DEFAULT NULL COMMENT '经度',
+  `latitude` double DEFAULT NULL COMMENT '纬度',
+  `address` varchar(255) DEFAULT NULL COMMENT '地址',
+  `radius` int(11) DEFAULT NULL COMMENT '半径，最小100米',
+  `coin` int(11) DEFAULT NULL COMMENT '花费虚拟币数量',
+  PRIMARY KEY (`houseId`,`owner`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of house
+-- ----------------------------
+INSERT INTO `house` VALUES ('1', '1', '火羽1', '1.12121', '20.12121', '北京通州1', '100', '300000');
+INSERT INTO `house` VALUES ('1', '2', '火羽2', '2.12121', '20.12121', '北京通州2', '100', '300000');
+INSERT INTO `house` VALUES ('1', '3', '火羽3', '3.12121', '20.12121', '北京通州3', '100', '300000');
 
 -- ----------------------------
 -- Table structure for `pet`
@@ -48,12 +89,12 @@ CREATE TABLE `pet` (
 -- ----------------------------
 -- Records of pet
 -- ----------------------------
-INSERT INTO `pet` VALUES ('1', '56', '1', '1', '98', '26', '68', '70', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
-INSERT INTO `pet` VALUES ('1', '98', '2', '76', '68', '74', '35', '531', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
-INSERT INTO `pet` VALUES ('1', '99', '3', '30', '88', '16', '322', '340', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
-INSERT INTO `pet` VALUES ('1', '102', '4', '46', '68', '14', '16', '357', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
-INSERT INTO `pet` VALUES ('1', '104', '5', '44', '68', '74', '99', '520', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
-INSERT INTO `pet` VALUES ('1', '105', '6', '4', '68', '57', '133', '264', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('1', '56', '1', '1', '0', '19', '26', '42', '60', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('1', '98', '2', '115', '0', '12', '35', '43', '57', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('1', '99', '3', '30', '0', '12', '16', '60', '63', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('1', '102', '4', '46', '0', '14', '16', '41', '59', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('1', '104', '5', '44', '0', '54', '60', '63', '68', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('1', '105', '6', '4', '0', '10', '11', '35', '57', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
 
 -- ----------------------------
 -- Table structure for `pet_skill`
@@ -86,5 +127,25 @@ CREATE TABLE `player_item` (
 -- ----------------------------
 -- Records of player_item
 -- ----------------------------
+INSERT INTO `player_item` VALUES ('1', '2', '2');
 INSERT INTO `player_item` VALUES ('1', '4', '1000');
 INSERT INTO `player_item` VALUES ('1', '8', '1');
+
+-- ----------------------------
+-- Table structure for `tree`
+-- ----------------------------
+DROP TABLE IF EXISTS `tree`;
+CREATE TABLE `tree` (
+  `owner` int(11) NOT NULL DEFAULT '0' COMMENT '用户id',
+  `treeId` int(11) NOT NULL DEFAULT '0' COMMENT '果树id',
+  `houseId` int(11) DEFAULT NULL COMMENT '据点id',
+  `createTime` datetime DEFAULT NULL COMMENT '种下日期',
+  PRIMARY KEY (`owner`,`treeId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of tree
+-- ----------------------------
+INSERT INTO `tree` VALUES ('1', '1', '1', '2016-03-04 14:46:21');
+INSERT INTO `tree` VALUES ('1', '2', '2', '2016-03-04 14:46:34');
+INSERT INTO `tree` VALUES ('1', '3', '3', '2016-03-04 14:46:36');

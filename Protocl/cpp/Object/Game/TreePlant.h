@@ -13,12 +13,10 @@ class TreePlant : public Buffer
 {
 public:
 	//请求参数
-	std::string		m_longitude;	//经度
-	std::string		m_latitude;		//纬度
-	std::string		m_address;		//地址
+	int		m_houseId;		//据点id
 
 	//回应参数
-	int					m_treeId;		//树id
+	int		m_treeId;		//树id
 
 public:
 	TreePlant();

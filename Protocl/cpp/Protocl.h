@@ -55,21 +55,21 @@ namespace MsgId
 		//游戏模块
 		setupVersion = 1001,//安装版本
 		getPlayerData = 1002,//取玩家数据
-		pets = 2001,//宠物数据
-		playerItems = 2002,//玩家物品
-		killBeast = 1003,//杀死野怪
-		useItem = 1004,//使用物品
-		growUp = 1005,//进化
-		tameBeast = 1006,//驯服野怪
-		buildHouse = 1007,//地图技能：光墙，造房子
-		putPet = 1008,//放置宠物
-		treePlant = 1009,//种树
-		pick = 1010,//采摘
-		nearInfo = 1011,//周边信息
-		createShop = 1012,//开店
-		buy = 1013,//购买
+		buildHouse = 1009,//地图技能：光墙，造房子
+		treePlant = 1003,//种树
+		pick = 1005,//采摘
 		devour = 1014,//地图技能：吞噬，物品转换正能量
 		catchStar = 1015,//地图技能：摘星术，将天上的法宝打下来
+		useItem = 1004,//使用物品
+		buy = 1013,//购买
+
+		killBeast = 1006,//杀死野怪
+		growUp = 1007,//进化
+		tameBeast = 1008,//驯服野怪
+
+		putPet = 1010,//放置宠物
+		nearInfo = 1011,//周边信息
+		createShop = 1012,//开店
 		cityBuildInit = 1016,//开始城市建设
 		cityBuilding = 1017,//为城市建设添砖加瓦
 		delHouse = 1018,//地图技能：瓦割，拆房子
@@ -80,6 +80,8 @@ namespace MsgId
 		talentBook = 2004,//特性图鉴
 		buddyBook = 2005,//巴迪图鉴
 		buddyMap = 2006,//巴迪分布地图
+		pets = 2007,//宠物数据
+		playerItems = 2008,//玩家物品
 	};
 }
 

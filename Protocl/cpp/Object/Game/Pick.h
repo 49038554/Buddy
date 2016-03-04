@@ -14,10 +14,9 @@ class Pick : public Buffer
 public:
 	//请求参数
 	int					m_treeId;			//树id
-	std::vector<short>	m_itemId;			//道具id
+	std::vector<short>	m_itemIds;			//要采摘得道具id
 
 	//回应参数
-	int					m_nextTime;			//下个果实成熟时间
 
 public:
 	Pick();

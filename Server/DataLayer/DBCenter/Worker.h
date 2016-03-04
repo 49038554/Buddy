@@ -65,7 +65,13 @@ protected:
 	//安装版本数据
 	bool OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer);
 	void OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer);
-
+	void OnBuildHouse(mdk::STNetHost &host, msg::Buffer &buffer);//地图技能：光墙，造房子
+	void OnTreePlant(mdk::STNetHost &host, msg::Buffer &buffer);//种树
+	void OnPick(mdk::STNetHost &host, msg::Buffer &buffer);//采摘
+	void OnDevour(mdk::STNetHost &host, msg::Buffer &buffer);//地图技能：吞噬，物品转换正能量
+	void OnCatchStar(mdk::STNetHost &host, msg::Buffer &buffer);//地图技能：摘星术，将天上的法宝打下来
+	void OnUseItem(mdk::STNetHost &host, msg::Buffer &buffer);//使用物品
+	void OnBuy(mdk::STNetHost &host, msg::Buffer &buffer);//购买
 
 private:
 	friend int main(int argc, char* argv[]);
@@ -107,8 +113,20 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	//search
 	data::BUDDY* GetBuddy(const std::string name);
-	bool CreatePet( data::BUDDY *pBuddy, unsigned userId, int petId, 
+	//添加宠物
+	bool AddPet( data::BUDDY *pBuddy, unsigned userId, int petId, 
 		char talent, char nature, char HP, char WG, char WF, char TG, char TF, char SD);
+	//添加房子
+	int AddHouse(unsigned int owner, const std::string &name, const std::string &address,
+		const std::string &longitude, const std::string &latitude,
+		int	radius, int coin );
+	//添加果树
+	int AddTree(unsigned int owner, int houseId );
+	bool PickFruit(unsigned int owner, int treeId, int coin, int itemId);
+	bool AddItem(unsigned int userId, int itemId, int count);
+	bool UseItem(unsigned int userId, int itemId, int count);
+	bool AddCoin(unsigned int userId, int count);
+	data::ITEM* Item( int itemId );
 
 private:
 	mdk::Logger     m_log;

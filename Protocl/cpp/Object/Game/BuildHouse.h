@@ -20,7 +20,7 @@ public:
 	int				m_coin;			//需要虚拟币数量
 
 	//回应参数
-	unsigned int	m_buildId;		//建筑id
+	int	m_buildId;		//建筑id
 
 public:
 	BuildHouse();
