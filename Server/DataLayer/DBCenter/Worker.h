@@ -73,6 +73,8 @@ private:
 	bool CreateId( mdk::uint32 &id, bool now = true );
 	void SaveId( bool now );
 
+	//加载初始化数据
+	bool LoadGameInit();
 	// 创建用户，并根据注册协议的内容，填充用户信息
 	bool CreateUser(msg::UserRegister& userRegister, Cache::User& user);
 	// 创建一个用户ID，用来创建用户时，生成全局唯一的userId
@@ -87,20 +89,27 @@ private:
 
 	//创建玩家
 	bool CreatePlayer(unsigned int userId);
-	//读取技能数据
-	bool ReadSkill(MySqlClient *pMysql, std::vector<data::SKILL> &skills, ResultCode::ResultCode &result, std::string &reason);
 	//读取物品数据
-	bool ReadItem(MySqlClient *pMysql, std::vector<data::ITEM> &imtes, ResultCode::ResultCode &result, std::string &reason);
+	bool ReadItem(MySqlClient *pMysql, std::vector<data::ITEM> &imtes);
 	//读取特性数据
-	bool ReadTalent(MySqlClient *pMysql, std::vector<data::TALENT> &talents, ResultCode::ResultCode &result, std::string &reason);
+	bool ReadTalent(MySqlClient *pMysql, std::vector<data::TALENT> &talents);
+	//读取技能数据
+	bool ReadSkill(MySqlClient *pMysql, std::vector<data::SKILL> &skills);
 	//读取巴迪兽数据
-	bool ReadBuddy(MySqlClient *pMysql, std::vector<data::BUDDY> &buddys, ResultCode::ResultCode &result, std::string &reason);
+	bool ReadBuddy(MySqlClient *pMysql, std::vector<data::BUDDY> &buddys);
 	//取巴迪兽地理数据 
-	bool ReadBuddyLBS(MySqlClient *pMysql, std::vector<data::BUDDY_MAP> &buddyMaps, ResultCode::ResultCode &result, std::string &reason);
+	bool ReadBuddyLBS(MySqlClient *pMysql, std::vector<data::BUDDY_MAP> &buddyMaps);
 	//取宠物
 	bool ReadPets(MySqlClient *pMysql, unsigned int userId, std::vector<data::PET> &pets, ResultCode::ResultCode &result, std::string &reason);
 	//取玩家物品 
 	bool ReadPlayerItems(MySqlClient *pMysql, unsigned int userId, std::vector<data::PLAYER_ITEM> &items, ResultCode::ResultCode &result, std::string &reason);
+
+	//////////////////////////////////////////////////////////////////////////
+	//search
+	data::BUDDY* GetBuddy(const std::string name);
+	bool CreatePet( data::BUDDY *pBuddy, unsigned userId, int petId, 
+		char talent, char nature, char HP, char WG, char WF, char TG, char TF, char SD);
+
 private:
 	mdk::Logger     m_log;
 	mdk::ConfigFile m_cfg;
@@ -111,6 +120,14 @@ private:
 	CacheInterface  m_cache;
 	MysqlCluster    m_mySQLCluster;
 	ClusterMgr      m_cluster;
+
+	int m_gameVersion;
+	std::map<unsigned char, std::string>	m_races;
+	std::vector<data::SKILL>	m_skills;
+	std::vector<data::ITEM>		m_items;
+	std::vector<data::TALENT>	m_talents;
+	std::vector<data::BUDDY>	m_buddys;
+	std::vector<data::BUDDY_MAP> m_buddyMaps;
 };
 
 #endif // __WORKER_H__

@@ -82,6 +82,12 @@ Worker::Worker(void)
 		mdk::mdk_assert(false);
 		exit(EXIT_FAILURE);
 	}
+	if ( !LoadGameInit() )
+	{
+		m_log.Info("Error", "加载游戏数据失败");
+		mdk::mdk_assert(false);
+		exit(EXIT_FAILURE);
+	}
 	mdk::STNetHost h;
 	{
 		msg::GetPlayerData msg;
@@ -747,259 +753,204 @@ void Worker::OnGame(mdk::STNetHost &host, msg::Buffer &buffer)
 	else if (MsgId::getPlayerData == buffer.Id()) OnGetPlayerData(host, buffer);
 }
 
-bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
+bool Worker::LoadGameInit()
 {
-	msg::SetupVersion msg;
-	memcpy(msg, buffer, buffer.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code   = ResultCode::FormatInvalid;
-		msg.m_reason = "报文格式非法";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return false;
-	}
-
 	char sql[1024];
 	MySqlClient *pMysql = m_mySQLCluster.Node("GameInit");
 	if (!pMysql)
 	{
-		msg.m_code   = ResultCode::DBError;
-		msg.m_reason = "找不到GameInit数据库结点";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
+		m_log.Info("Error", "找不到GameInit数据库结点");
 		return false;
 	}
-	//版本
+	//取版本
 	if ( !pMysql->ExecuteSql("select * from version") )
 	{
-		msg.m_code   = ResultCode::DBError;
-		msg.m_reason = "访问版本信息失败:";
-		msg.m_reason += pMysql->GetLastError();
-		msg.Build(true);
-		host.Send(msg, msg.Size());
+		m_log.Info("Error", "访问版本信息失败:%s", pMysql->GetLastError());
 		return false;
 	}
 	if ( pMysql->IsEmpty() )
 	{
-		msg.m_code   = ResultCode::DBError;
-		msg.m_reason = "版本信息为空";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
+		m_log.Info("Error", "版本信息为空");
 		return false;
 	}
 	pMysql->MoveFirst();
-	std::string name;
-	int dataVersion;
 	while ( pMysql->IsEof() )
 	{
-		pMysql->GetValue("name", name);
-		pMysql->GetValue("version", dataVersion);
+		pMysql->GetValue("version", m_gameVersion);
 		pMysql->MoveNext();
 	}
-	if ( dataVersion == msg.m_dataVersion )//版本一致
-	{
-		msg.m_code   = ResultCode::Success;
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return true;
-	}
-	msg.m_dataVersion = dataVersion;
 	//////////////////////////////////////////////////////////////////////////
 	//取数据
 	//取属性
 	if ( !pMysql->ExecuteSql("select * from race ORDER BY id") )
 	{
-		msg.m_code   = ResultCode::DBError;
-		msg.m_reason = "访问属性表失败:";
-		msg.m_reason += pMysql->GetLastError();
-		msg.Build(true);
-		host.Send(msg, msg.Size());
+		m_log.Info("Error", "访问属性表失败:%s", pMysql->GetLastError());
 		return false;
 	}
 	if ( pMysql->IsEmpty() )
 	{
-		msg.m_code   = ResultCode::DBError;
-		msg.m_reason = "属性表为空";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
+		m_log.Info("Error", "属性表为空");
 		return false;
 	}
+	pMysql->MoveFirst();
+	int id;
+	std::string name;
+	while ( !pMysql->IsEof() )
 	{
-		msg::RaceMap msg;
-		pMysql->MoveFirst();
-		int id;
-		std::string name;
-		while ( !pMysql->IsEof() )
-		{
-			pMysql->GetValue("id", id);
-			pMysql->GetValue("name", name);
-			pMysql->MoveNext();
-			msg.m_races[id] = name;
-		}
-		msg.Build();
-//		host.Send(msg, msg.Size());
+		pMysql->GetValue("id", id);
+		pMysql->GetValue("name", name);
+		pMysql->MoveNext();
+		m_races[id] = name;
 	}
-	//取技能
-	std::vector<data::SKILL> skills;//最大50个
-	if ( !ReadSkill(pMysql, skills, msg.m_code, msg.m_reason) )
-	{
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return false;
-	}
+	std::string reason;
 	//取物品
-	std::vector<data::ITEM> items;//最大50个
-	if ( !ReadItem(pMysql, items, msg.m_code, msg.m_reason) )
-	{
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return false;
-	}
+	if ( !ReadItem(pMysql, m_items) ) return false;
 	//取特性
-	std::vector<data::TALENT> talents;//最大100个
-	if ( !ReadTalent(pMysql, talents, msg.m_code, msg.m_reason) )
-	{
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return false;
-	}
+	if ( !ReadTalent(pMysql, m_talents) ) return false;
+	//取技能
+	if ( !ReadSkill(pMysql, m_skills) ) return false;
 	//取巴迪兽
-	std::vector<data::BUDDY> buddys;//最大20个
-	if ( !ReadBuddy(pMysql, buddys, msg.m_code, msg.m_reason) )
-	{
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return false;
-	}
+	if ( !ReadBuddy(pMysql, m_buddys) ) return false;
 	//取巴迪兽分布图
-	std::vector<data::BUDDY_MAP> buddyMaps;//最大10
-	if ( !ReadBuddyLBS(pMysql, buddyMaps, msg.m_code, msg.m_reason) )
-	{
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return false;
-	}
+	if ( !ReadBuddyLBS(pMysql, m_buddyMaps) ) return false;
 
-	//////////////////////////////////////////////////////////////////////////
-	//发送数据
-	{//技能
-		msg::SkillBook msg;
-		int i = 0;
-		for ( i = 0; i < skills.size(); i++ )
-		{
-			msg.m_skills.push_back(skills[i]);
-			if ( 50 == msg.m_skills.size()  )
-			{
-				msg.Build();
-//				host.Send(msg, msg.Size());
-				msg.m_skills.clear();
-			}
-		}
-		if ( msg.m_skills.size() > 0 )
-		{
-			msg.Build();
-//			host.Send(msg, msg.Size());
-		}
-	}
-	{//物品
-		msg::ItemBook msg;
-		int i = 0;
-		for ( i = 0; i < items.size(); i++ )
-		{
-			msg.m_items.push_back(items[i]);
-			if ( 50 == msg.m_items.size()  )
-			{
-				msg.Build();
-//				host.Send(msg, msg.Size());
-				msg.m_items.clear();
-			}
-		}
-		if ( msg.m_items.size() > 0 )
-		{
-			msg.Build();
-//			host.Send(msg, msg.Size());
-		}
-	}
-	{//特性
-		msg::TalentBook msg;
-		int i = 0;
-		for ( i = 0; i < talents.size(); i++ )
-		{
-			msg.m_talents.push_back(talents[i]);
-			if ( 100 == msg.m_talents.size() )
-			{
-				msg.Build();
-//				host.Send(msg, msg.Size());
-				msg.m_talents.clear();
-			}
-		}
-		if ( msg.m_talents.size() > 0 )
-		{
-			msg.Build();
-//			host.Send(msg, msg.Size());
-		}
-	}
-	{//巴迪兽
-		msg::BuddyBook msg;
-		int i = 0;
-		for ( i = 0; i < buddys.size(); i++ )
-		{
-			msg.m_buddys.push_back(buddys[i]);
-			if ( 20 == msg.m_buddys.size()  )
-			{
-				msg.Build();
-//				host.Send(msg, msg.Size());
-				msg.m_buddys.clear();
-			}
-		}
-		if ( msg.m_buddys.size() > 0 )
-		{
-			msg.Build();
-//			host.Send(msg, msg.Size());
-		}
-	}
-	{//地图
-		msg::BuddyMap msg;
-		int i = 0;
-		for ( i = 0; i < buddyMaps.size(); i++ )
-		{
-			msg.m_buddyMaps.push_back(buddyMaps[i]);
-			if ( 30 == msg.m_buddyMaps.size()  )
-			{
-				msg.Build();
-//				host.Send(msg, msg.Size());
-				msg.m_buddyMaps.clear();
-			}
-		}
-		if ( msg.m_buddyMaps.size() > 0 )
-		{
-			msg.Build();
-//			host.Send(msg, msg.Size());
-		}
-	}
-	msg.m_code = ResultCode::Success;
-	msg.Build(true);
-	host.Send(msg, msg.Size());
 	return true;
 }
 
-//读取技能数据
-bool Worker::ReadSkill(MySqlClient *pMysql, std::vector<data::SKILL> &skills, ResultCode::ResultCode &result, std::string &reason)
+bool Worker::ReadItem(MySqlClient *pMysql, std::vector<data::ITEM> &imtes)
 {
-	if ( !pMysql->ExecuteSql("select skill_book_info.*, r1.id as raceId from skill_book_info " 
-								"left join race as r1 on(skill_book_info.race = r1.`name`) "
-								"ORDER BY race, type, power") )
+	if ( !pMysql->ExecuteSql("select * from item_book ORDER BY id") )
 	{
-		result   = ResultCode::DBError;
-		reason = "访问技能表失败:";
-		reason += pMysql->GetLastError();
+		m_log.Info("Error", "访问物品表失败:%s", pMysql->GetLastError());
 		return false;
 	}
 	if ( pMysql->IsEmpty() )
 	{
-		result   = ResultCode::DBError;
-		reason = "技能表为空";
+		m_log.Info("Error", "物品表为空");
+		return false;
+	}
+	pMysql->MoveFirst();
+	data::ITEM info;
+	int iVal;
+	int i = 0;
+	while ( !pMysql->IsEof() )
+	{
+		pMysql->GetValue("id", info.id);
+		pMysql->GetValue("name", info.name);
+		pMysql->GetValue("coin", info.coin);
+		pMysql->GetValue("descript", info.descript);
+		pMysql->MoveNext();
+		imtes.push_back(info);
+	}
+
+	char sql[1024];
+	data::EFFECT effect;
+	for ( i = 0; i < imtes.size(); i++ )
+	{
+		sprintf( sql, "select item_book_effect.*, e1.id as effectId, bs1.id as stepId " 
+			"from item_book_effect  "
+			"left join ex_effect as e1 on(item_book_effect.effect = e1.`name`)  "
+			"left join battle_step as bs1 on(item_book_effect.step = bs1.step)  "
+			"where item_book_effect.item = \'%s\'", imtes[i].name.c_str() );
+		if ( !pMysql->ExecuteSql(sql) )
+		{
+			m_log.Info("Error", "访问物品特效表失败:%s", pMysql->GetLastError());
+			return false;
+		}
+		if ( pMysql->IsEmpty() ) continue;
+		pMysql->MoveFirst();
+		int iVal;
+		while (!pMysql->IsEof())
+		{
+			pMysql->GetValue("effectId", iVal);
+			effect.id = iVal;
+			pMysql->GetValue("stepId", effect.step);
+			pMysql->GetValue("probability", effect.probability);
+			pMysql->GetValue("agent", iVal);
+			effect.agent = iVal;
+			imtes[i].effects.push_back(effect);
+			pMysql->MoveNext();
+		}
+	}
+
+	return true;
+}
+
+//取特性数据
+bool Worker::ReadTalent(MySqlClient *pMysql, std::vector<data::TALENT> &talents)
+{
+	if ( !pMysql->ExecuteSql("select * from talent ORDER BY id") )
+	{
+		m_log.Info("Error", "访问特性表失败:%s", pMysql->GetLastError());
+		return false;
+	}
+	if ( pMysql->IsEmpty() )
+	{
+		m_log.Info("Error", "特性表为空");
+		return false;
+	}
+	pMysql->MoveFirst();
+	data::TALENT info;
+	int iVal;
+	int i = 0;
+	while ( !pMysql->IsEof() )
+	{
+		pMysql->GetValue("id", info.id);
+		pMysql->GetValue("name", info.name);
+		pMysql->GetValue("descript", info.descript);
+		pMysql->MoveNext();
+		talents.push_back(info);
+	}
+
+	char sql[1024];
+	data::EFFECT effect;
+	for ( i = 0; i < talents.size(); i++ )
+	{
+		sprintf( sql, "select talent_book_effect.*, e.id as effectId, bs.id as stepId "
+			"from talent_book_effect " 
+			"left join ex_effect as e on(talent_book_effect.effect = e.`name`)  "
+			"left join battle_step as bs on(talent_book_effect.step = bs.step)  "
+			"where talent_book_effect.talent = \'%s\'", talents[i].name.c_str() );
+		if ( !pMysql->ExecuteSql(sql) )
+		{
+			m_log.Info("Error", "访问特性特效表失败:%s", pMysql->GetLastError());
+			return false;
+		}
+		if ( pMysql->IsEmpty() ) 
+		{
+			m_log.Info("Error", "特性无特效");
+			return false;
+		}
+		pMysql->MoveFirst();
+		int iVal;
+		while (!pMysql->IsEof())
+		{
+			pMysql->GetValue("effectId", iVal);
+			effect.id = iVal;
+			pMysql->GetValue("stepId", effect.step);
+			pMysql->GetValue("probability", effect.probability);
+			pMysql->GetValue("agent", iVal);
+			effect.agent = iVal;
+			talents[i].effects.push_back(effect);
+			pMysql->MoveNext();
+		}
+	}
+
+	return true;
+}
+
+bool Worker::ReadSkill(MySqlClient *pMysql, std::vector<data::SKILL> &skills)
+{
+	if ( !pMysql->ExecuteSql("select skill_book_info.*, r1.id as raceId from skill_book_info " 
+		"left join race as r1 on(skill_book_info.race = r1.`name`) "
+		"ORDER BY race, type, power") )
+	{
+		m_log.Info("Error", "访问技能表失败:%s", pMysql->GetLastError());
+		return false;
+	}
+	if ( pMysql->IsEmpty() )
+	{
+		m_log.Info("Error", "技能表为空");
 		return false;
 	}
 	pMysql->MoveFirst();
@@ -1027,14 +978,12 @@ bool Worker::ReadSkill(MySqlClient *pMysql, std::vector<data::SKILL> &skills, Re
 	for ( i = 0; i < skills.size(); i++ )
 	{
 		sprintf( sql, "select skill_book_effect.*, e1.id as effectId, bs1.id as stepId from skill_book_effect "
-						"left join ex_effect as e1 on(skill_book_effect.effect = e1.`name`) "
-						"left join battle_step as bs1 on(skill_book_effect.step = bs1.step) "
-						"where skill_book_effect.skill = \'%s\'", skills[i].name.c_str() );
+			"left join ex_effect as e1 on(skill_book_effect.effect = e1.`name`) "
+			"left join battle_step as bs1 on(skill_book_effect.step = bs1.step) "
+			"where skill_book_effect.skill = \'%s\'", skills[i].name.c_str() );
 		if ( !pMysql->ExecuteSql(sql) )
 		{
-			result   = ResultCode::DBError;
-			reason = "访问技能特效表失败:";
-			reason += pMysql->GetLastError();
+			m_log.Info("Error", "访问技能特效表失败:%s", pMysql->GetLastError());
 			return false;
 		}
 		if ( pMysql->IsEmpty() ) continue;
@@ -1056,134 +1005,7 @@ bool Worker::ReadSkill(MySqlClient *pMysql, std::vector<data::SKILL> &skills, Re
 	return true;
 }
 
-bool Worker::ReadItem(MySqlClient *pMysql, std::vector<data::ITEM> &imtes, ResultCode::ResultCode &result, std::string &reason)
-{
-	if ( !pMysql->ExecuteSql("select * from item_book ORDER BY id") )
-	{
-		result   = ResultCode::DBError;
-		reason = "访问物品表失败:";
-		reason += pMysql->GetLastError();
-		return false;
-	}
-	if ( pMysql->IsEmpty() )
-	{
-		result   = ResultCode::DBError;
-		reason = "物品表为空";
-		return false;
-	}
-	pMysql->MoveFirst();
-	data::ITEM info;
-	int iVal;
-	int i = 0;
-	while ( !pMysql->IsEof() )
-	{
-		pMysql->GetValue("id", info.id);
-		pMysql->GetValue("name", info.name);
-		pMysql->GetValue("coin", info.coin);
-		pMysql->GetValue("descript", info.descript);
-		pMysql->MoveNext();
-		imtes.push_back(info);
-	}
-
-	char sql[1024];
-	data::EFFECT effect;
-	for ( i = 0; i < imtes.size(); i++ )
-	{
-		sprintf( sql, "select item_book_effect.*, e1.id as effectId, bs1.id as stepId " 
-						"from item_book_effect  "
-						"left join ex_effect as e1 on(item_book_effect.effect = e1.`name`)  "
-						"left join battle_step as bs1 on(item_book_effect.step = bs1.step)  "
-						"where item_book_effect.item = \'%s\'", imtes[i].name.c_str() );
-		if ( !pMysql->ExecuteSql(sql) )
-		{
-			result   = ResultCode::DBError;
-			reason = "访问物品特效表失败:";
-			reason += pMysql->GetLastError();
-			return false;
-		}
-		if ( pMysql->IsEmpty() ) continue;
-		pMysql->MoveFirst();
-		int iVal;
-		while (!pMysql->IsEof())
-		{
-			pMysql->GetValue("effectId", iVal);
-			effect.id = iVal;
-			pMysql->GetValue("stepId", effect.step);
-			pMysql->GetValue("probability", effect.probability);
-			pMysql->GetValue("agent", iVal);
-			effect.agent = iVal;
-			imtes[i].effects.push_back(effect);
-			pMysql->MoveNext();
-		}
-	}
-
-	return true;
-}
-
-bool Worker::ReadTalent(MySqlClient *pMysql, std::vector<data::TALENT> &talents, ResultCode::ResultCode &result, std::string &reason)
-{
-	if ( !pMysql->ExecuteSql("select * from talent ORDER BY id") )
-	{
-		result   = ResultCode::DBError;
-		reason = "访问特性表失败:";
-		reason += pMysql->GetLastError();
-		return false;
-	}
-	if ( pMysql->IsEmpty() )
-	{
-		result   = ResultCode::DBError;
-		reason = "特性表为空";
-		return false;
-	}
-	pMysql->MoveFirst();
-	data::TALENT info;
-	int iVal;
-	int i = 0;
-	while ( !pMysql->IsEof() )
-	{
-		pMysql->GetValue("id", info.id);
-		pMysql->GetValue("name", info.name);
-		pMysql->GetValue("descript", info.descript);
-		pMysql->MoveNext();
-		talents.push_back(info);
-	}
-
-	char sql[1024];
-	data::EFFECT effect;
-	for ( i = 0; i < talents.size(); i++ )
-	{
-		sprintf( sql, "select talent_book_effect.*, e.id as effectId, bs.id as stepId "
-			"from talent_book_effect " 
-			"left join ex_effect as e on(talent_book_effect.effect = e.`name`)  "
-			"left join battle_step as bs on(talent_book_effect.step = bs.step)  "
-			"where talent_book_effect.talent = \'%s\'", talents[i].name.c_str() );
-		if ( !pMysql->ExecuteSql(sql) )
-		{
-			result   = ResultCode::DBError;
-			reason = "访问特性特效表失败:";
-			reason += pMysql->GetLastError();
-			return false;
-		}
-		if ( pMysql->IsEmpty() ) continue;
-		pMysql->MoveFirst();
-		int iVal;
-		while (!pMysql->IsEof())
-		{
-			pMysql->GetValue("effectId", iVal);
-			effect.id = iVal;
-			pMysql->GetValue("stepId", effect.step);
-			pMysql->GetValue("probability", effect.probability);
-			pMysql->GetValue("agent", iVal);
-			effect.agent = iVal;
-			talents[i].effects.push_back(effect);
-			pMysql->MoveNext();
-		}
-	}
-
-	return true;
-}
-
-bool Worker::ReadBuddy(MySqlClient *pMysql, std::vector<data::BUDDY> &buddys, ResultCode::ResultCode &result, std::string &reason)
+bool Worker::ReadBuddy(MySqlClient *pMysql, std::vector<data::BUDDY> &buddys)
 {
 	if ( !pMysql->ExecuteSql("select r1.id as raceId1, r2.id as raceId2, "
 		"t1.id as talent1, t2.id as talent2, t3.id as talent3, "
@@ -1195,15 +1017,12 @@ bool Worker::ReadBuddy(MySqlClient *pMysql, std::vector<data::BUDDY> &buddys, Re
 		"left join talent as t3 on(buddy_book_info.talent3 = t3.`name`) "
 		"order by buddy_book_info.number") )
 	{
-		result = ResultCode::DBError;
-		reason = "访问巴迪兽表失败:";
-		reason += pMysql->GetLastError();
+		m_log.Info("Error", "访问巴迪兽表失败:%s", pMysql->GetLastError());
 		return false;
 	}
 	if ( pMysql->IsEmpty() )
 	{
-		result = ResultCode::DBError;
-		reason = "巴迪兽表为空";
+		m_log.Info("Error", "巴迪兽表为空");
 		return false;
 	}
 	pMysql->MoveFirst();
@@ -1242,12 +1061,17 @@ bool Worker::ReadBuddy(MySqlClient *pMysql, std::vector<data::BUDDY> &buddys, Re
 			"LEFT JOIN buddy_book_info as bi1 on(bi1.`name` = buddy_book_skill.buddy) "
 			"where bi1.number = %d "
 			"order by buddy_book_skill.isInit desc, si1.race, si1.type, si1.power", buddys[i].number );
-		if ( !pMysql->ExecuteSql(sql) || pMysql->IsEmpty() )
+		if ( !pMysql->ExecuteSql(sql) )
 		{
-			result = ResultCode::DBError;
-			reason = "访问巴迪兽技能失败";
+			m_log.Info("Error", "访问巴迪兽技能失败:%s", pMysql->GetLastError());
 			return false;
 		}
+		if ( pMysql->IsEmpty() )
+		{
+			m_log.Info("Error", "访问巴迪兽技能为空");
+			return false;
+		}
+
 		pMysql->MoveFirst();
 		int skillId;
 		int isInit;
@@ -1263,13 +1087,12 @@ bool Worker::ReadBuddy(MySqlClient *pMysql, std::vector<data::BUDDY> &buddys, Re
 	for ( i = 0; i < buddys.size(); i++ )
 	{
 		sprintf( sql, "select buddy_book_update.*, bi.number as upMumber from buddy_book_update "
-						"left join buddy_book_info as bi on(bi.`name` = buddy_book_update.upBuddy) "
-						"where buddy = '%s' "
-						"ORDER BY upMumber", buddys[i].name.c_str() );
+			"left join buddy_book_info as bi on(bi.`name` = buddy_book_update.upBuddy) "
+			"where buddy = '%s' "
+			"ORDER BY upMumber", buddys[i].name.c_str() );
 		if ( !pMysql->ExecuteSql(sql) )
 		{
-			result = ResultCode::DBError;
-			reason = "访问进化信息失败";
+			m_log.Info("Error", "访问进化信息失败:%s", pMysql->GetLastError());
 			return false;
 		}
 		if ( pMysql->IsEmpty() ) continue;
@@ -1286,21 +1109,18 @@ bool Worker::ReadBuddy(MySqlClient *pMysql, std::vector<data::BUDDY> &buddys, Re
 	return true;
 }
 
-bool Worker::ReadBuddyLBS(MySqlClient *pMysql, std::vector<data::BUDDY_MAP> &buddyMaps, ResultCode::ResultCode &result, std::string &reason)
+bool Worker::ReadBuddyLBS(MySqlClient *pMysql, std::vector<data::BUDDY_MAP> &buddyMaps)
 {
 	if ( !pMysql->ExecuteSql("select buddy_map_lbs.*, city.id as cityId from buddy_map_lbs "
 		"JOIN city on(buddy_map_lbs.city = city.`name`) "
 		"ORDER BY cityId, buddy_map_lbs.spot, buddy_map_lbs.id") )
 	{
-		result = ResultCode::DBError;
-		reason = "访问巴迪兽分布图失败";
-		reason += pMysql->GetLastError();
+		m_log.Info("Error", "访问巴迪兽分布图失败:%s", pMysql->GetLastError());
 		return false;
 	}
 	if ( pMysql->IsEmpty() )
 	{
-		result = ResultCode::DBError;
-		reason = "巴迪兽分布图为空";
+		m_log.Info("Error", "无巴迪兽分布图");
 		return false;
 	}
 	pMysql->MoveFirst();
@@ -1321,7 +1141,7 @@ bool Worker::ReadBuddyLBS(MySqlClient *pMysql, std::vector<data::BUDDY_MAP> &bud
 		pMysql->MoveNext();
 		buddyMaps.push_back(info);
 	}
-	
+
 	//取地区巴迪兽
 	int i = 0;
 	msg::BuddyMap msg;
@@ -1332,10 +1152,14 @@ bool Worker::ReadBuddyLBS(MySqlClient *pMysql, std::vector<data::BUDDY_MAP> &bud
 			"join buddy_book_info on (buddy_map_pet.buddy = buddy_book_info.`name`) "
 			"where buddy_map_pet.id = %d "
 			"ORDER BY buddy_map_pet.id, buddy_book_info.number", buddyMaps[i].id );
-		if ( !pMysql->ExecuteSql(sql) || pMysql->IsEmpty() ) 
+		if ( !pMysql->ExecuteSql(sql) ) 
 		{
-			result = ResultCode::DBError;
-			reason = "访问地区巴迪兽失败";
+			m_log.Info("Error", "访问地区巴迪兽失败:%s", pMysql->GetLastError());
+			return false;
+		}
+		if ( pMysql->IsEmpty() )
+		{
+			m_log.Info("Error", "地区无巴迪兽");
 			return false;
 		}
 		pMysql->MoveFirst();
@@ -1347,6 +1171,138 @@ bool Worker::ReadBuddyLBS(MySqlClient *pMysql, std::vector<data::BUDDY_MAP> &bud
 			pMysql->MoveNext();
 		}
 	}
+
+	return true;
+}
+
+bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
+{
+	msg::SetupVersion msg;
+	memcpy(msg, buffer, buffer.Size());
+	if ( !msg.Parse() )
+	{
+		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_reason = "报文格式非法";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return false;
+	}
+	if ( m_gameVersion == msg.m_dataVersion )//版本一致
+	{
+		msg.m_code   = ResultCode::Success;
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return true;
+	}
+	msg.m_dataVersion = m_gameVersion;
+	//////////////////////////////////////////////////////////////////////////
+	//发送数据
+	int i = 0;
+	{
+		std::map<unsigned char, std::string>::iterator it;
+		msg::RaceMap msg;
+		for ( it = m_races.begin(); it != m_races.end(); it++ )
+		{
+			msg.m_races[it->first] = it->second;
+		}
+		msg.Build();
+// 		host.Send(msg, msg.Size());
+	}
+	{//特性
+		msg::TalentBook msg;
+		for ( i = 0; i < m_talents.size(); i++ )
+		{
+			msg.m_talents.push_back(m_talents[i]);
+			if ( 100 == msg.m_talents.size() )
+			{
+				msg.Build();
+				//				host.Send(msg, msg.Size());
+				msg.m_talents.clear();
+			}
+		}
+		if ( msg.m_talents.size() > 0 )
+		{
+			msg.Build();
+			//			host.Send(msg, msg.Size());
+		}
+	}
+	{//物品
+		msg::ItemBook msg;
+		for ( i = 0; i < m_items.size(); i++ )
+		{
+			msg.m_items.push_back(m_items[i]);
+			if ( 50 == msg.m_items.size()  )
+			{
+				msg.Build();
+				//				host.Send(msg, msg.Size());
+				msg.m_items.clear();
+			}
+		}
+		if ( msg.m_items.size() > 0 )
+		{
+			msg.Build();
+			//			host.Send(msg, msg.Size());
+		}
+	}
+	{//技能
+		msg::SkillBook msg;
+		for ( i = 0; i < m_skills.size(); i++ )
+		{
+			msg.m_skills.push_back(m_skills[i]);
+			if ( 50 == msg.m_skills.size()  )
+			{
+				msg.Build();
+//				host.Send(msg, msg.Size());
+				msg.m_skills.clear();
+			}
+		}
+		if ( msg.m_skills.size() > 0 )
+		{
+			msg.Build();
+//			host.Send(msg, msg.Size());
+		}
+	}
+	{//巴迪兽
+		msg::BuddyBook msg;
+		for ( i = 0; i < m_buddys.size(); i++ )
+		{
+			msg.m_buddys.push_back(m_buddys[i]);
+			if ( 20 == msg.m_buddys.size()  )
+			{
+				msg.Build();
+//				host.Send(msg, msg.Size());
+				msg.m_buddys.clear();
+			}
+		}
+		if ( msg.m_buddys.size() > 0 )
+		{
+			msg.Build();
+//			host.Send(msg, msg.Size());
+		}
+	}
+	{//地图
+		msg::BuddyMap msg;
+		int i = 0;
+		for ( i = 0; i < m_buddyMaps.size(); i++ )
+		{
+			msg.m_buddyMaps.push_back(m_buddyMaps[i]);
+			if ( 30 == msg.m_buddyMaps.size()  )
+			{
+				msg.Build();
+//				host.Send(msg, msg.Size());
+				msg.m_buddyMaps.clear();
+			}
+		}
+		if ( msg.m_buddyMaps.size() > 0 )
+		{
+			msg.Build();
+//			host.Send(msg, msg.Size());
+		}
+	}
+	msg.m_code = ResultCode::Success;
+	msg.Build(true);
+	host.Send(msg, msg.Size());
+	return true;
 }
 
 void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
@@ -1485,52 +1441,69 @@ bool Worker::CreatePlayer(unsigned int userId)
 	sprintf( sql, "insert into player_item (userId, itemId, count) values(%d, 8, 1) ", userId );
 	if ( !pMysql->ExecuteSql(sql) ) return false;
 	int petId = 0;
-	/*
-	select buddy_book_skill.*, si.id from buddy_book_skill 
-	left join skill_book_info as si on(si.`name` = buddy_book_skill.skill) 
-	where buddy_book_skill.buddy = '老牛';
-
-	select buddy_book_info.number, buddy_book_info.`name`, t1.*, t2.*, t3.* FROM buddy_book_info
-	left join talent as t1 on(buddy_book_info.talent1 = t1.`name`) 
-	left join talent as t2 on(buddy_book_info.talent2 = t2.`name`) 
-	left join talent as t3 on(buddy_book_info.talent3 = t3.`name`) 
-	where buddy_book_info.name = '老牛';
-	*/
+	data::BUDDY *pBuddy = NULL;
 	//老牛
 	petId++;
-	sprintf( sql, "insert into pet (userId, number, petId, talent, skill1, skill2, skill3, skill4, nature, "
-		"HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy) "
-		"values (%d, 56, %d, 1, 98,26,68,70, 0,25,25,25,25,25,25) ", userId, petId );
-	if ( !pMysql->ExecuteSql(sql) ) return false;
+	pBuddy = GetBuddy("老牛");
+	if ( !CreatePet( pBuddy, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+
 	//贪吃鬼
 	petId++;
-	sprintf( sql, "insert into pet (userId, number, petId, talent, skill1, skill2, skill3, skill4, nature, "
-		"HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy) "
-		"values (%d, 98, %d, 76, 68,74,35,531, 0,25,25,25,25,25,25) ", userId, petId );
-	if ( !pMysql->ExecuteSql(sql) ) return false;
+	pBuddy = GetBuddy("贪吃鬼");
+	if ( !CreatePet( pBuddy, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//虎鲨
 	petId++;
-	sprintf( sql, "insert into pet (userId, number, petId, talent, skill1, skill2, skill3, skill4, nature, "
-		"HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy) "
-		"values (%d, 99, %d, 30, 88,16,322,340, 0,25,25,25,25,25,25) ", userId, petId );
-	if ( !pMysql->ExecuteSql(sql) ) return false;
+	pBuddy = GetBuddy("虎鲨");
+	if ( !CreatePet( pBuddy, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//云雀
 	petId++;
-	sprintf( sql, "insert into pet (userId, number, petId, talent, skill1, skill2, skill3, skill4, nature, "
-		"HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy) "
-		"values (%d, 102, %d, 46, 68,14,16,357, 0,25,25,25,25,25,25) ", userId, petId );
-	if ( !pMysql->ExecuteSql(sql) ) return false;
+	pBuddy = GetBuddy("云雀");
+	if ( !CreatePet( pBuddy, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//悬浮魔偶
 	petId++;
-	sprintf( sql, "insert into pet (userId, number, petId, talent, skill1, skill2, skill3, skill4, nature, "
-		"HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy) "
-		"values (%d, 104, %d, 44, 68,74,99,520, 0,25,25,25,25,25,25) ", userId, petId );
-	if ( !pMysql->ExecuteSql(sql) ) return false;
+	pBuddy = GetBuddy("悬浮魔偶");
+	if ( !CreatePet( pBuddy, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//夜魔人
 	petId++;
+	pBuddy = GetBuddy("夜魔人");
+	if ( !CreatePet( pBuddy, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+
+	return true;
+}
+
+data::BUDDY* Worker::GetBuddy(const std::string name)
+{
+	int i = 0;
+	for ( i = 0; i < m_buddys.size(); i++ )
+	{
+		if ( name == m_buddys[i].name ) return &m_buddys[i];
+	}
+	
+	return NULL;
+}
+
+bool Worker::CreatePet( data::BUDDY *pBuddy, unsigned userId, int petId, 
+	char talent, char nature, char HP, char WG, char WF, char TG, char TF, char SD)
+{
+	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", userId);
+	if ( !pMysql ) return false;
+
+	std::map<unsigned short, bool>::iterator it = pBuddy->skills.begin();
+	unsigned short skill1, skill2, skill3, skill4;
+	skill1 = it->first;
+	it++;
+	skill2 = it->first;
+	it++;
+	skill3 = it->first;
+	it++;
+	skill4 = it->first;
+	it++;
+	char sql[1024];
 	sprintf( sql, "insert into pet (userId, number, petId, talent, skill1, skill2, skill3, skill4, nature, "
 		"HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy) "
-		"values (%d, 105, %d, 4, 68,57,133,264, 0,25,25,25,25,25,25) ", userId, petId );
+		"values (%d, %d, %d, %d, %d,%d,%d,%d, %d, 25,25,25,25,25,25) ", 
+		userId, pBuddy->number, petId, talent, nature,
+		skill1, skill2, skill3, skill4);
 	if ( !pMysql->ExecuteSql(sql) ) return false;
 
 	return true;

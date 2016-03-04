@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2016-03-04 10:52:37
+Date: 2016-03-04 12:12:48
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -169,8 +169,8 @@ INSERT INTO `buddy_book_info` VALUES ('90', '超级鸟', null, '火', '斗', '�
 INSERT INTO `buddy_book_info` VALUES ('91', '大水狗', null, '水', '地', '激流', null, null, null, '100', '110', '90', '85', '90', '60', '5', '100');
 INSERT INTO `buddy_book_info` VALUES ('92', '菠萝鸭', null, '水', '草', '轻快', '雨盘', null, null, '80', '70', '70', '90', '100', '70', '5', '100');
 INSERT INTO `buddy_book_info` VALUES ('93', '斗菇', null, '草', '斗', '毒疗', '技师', '叶绿素', null, '60', '130', '80', '60', '60', '70', '5', '100');
-INSERT INTO `buddy_book_info` VALUES ('94', '臭美猫', null, '普', null, '再生', '变身', '魔法防御', null, '70', '65', '65', '55', '55', '70', '3', '30');
-INSERT INTO `buddy_book_info` VALUES ('95', '修罗女', null, '普', '恶', '柔软', '黑暗气息', '变身', null, '90', '120', '65', '125', '65', '135', '1', '0');
+INSERT INTO `buddy_book_info` VALUES ('94', '臭美猫', null, '普', null, '再生', '胆量', '魔法防御', null, '70', '65', '65', '55', '55', '70', '3', '30');
+INSERT INTO `buddy_book_info` VALUES ('95', '修罗女', null, '普', '恶', '柔软', '黑暗气息', '圣斗士', null, '90', '120', '65', '125', '65', '135', '1', '0');
 INSERT INTO `buddy_book_info` VALUES ('96', '钻石鬼', null, '鬼', '恶', '锐利目光', '分析', '再生', null, '50', '75', '75', '65', '65', '50', '5', '100');
 INSERT INTO `buddy_book_info` VALUES ('97', '瑜伽猴', null, '斗', '超', '暴力', null, null, null, '60', '70', '70', '60', '70', '80', '4', '70');
 INSERT INTO `buddy_book_info` VALUES ('98', '贪吃鬼', null, '毒', null, '暴力', '强运', null, null, '130', '73', '130', '53', '53', '25', '5', '100');
@@ -4925,7 +4925,6 @@ INSERT INTO `talent` VALUES ('89', '圣斗士', '见过的技能无效');
 INSERT INTO `talent` VALUES ('93', '毒手', '物理攻击30%使中毒');
 INSERT INTO `talent` VALUES ('94', '再生', '退场回复1/3体力');
 INSERT INTO `talent` VALUES ('96', '分析', '后手威力翻倍');
-INSERT INTO `talent` VALUES ('98', '变身', '变成对方');
 INSERT INTO `talent` VALUES ('99', '穿透', '无视光墙，反射盾');
 INSERT INTO `talent` VALUES ('101', '魔装反射', '反弹对方变化技能');
 INSERT INTO `talent` VALUES ('102', '沙之力', '沙暴中地岩钢技能威力*1.5');

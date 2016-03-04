@@ -19,7 +19,6 @@ bool SetupVersion::Build(bool isResult)
 	SetId(MsgId::setupVersion, isResult);
 	if ( !FillTransmitParam() ) return false;//Tcp服务填写参数
 	//请求参数
-	//请求参数
 	if ( !AddData(m_dataVersion) ) return false;
 
 	//回应参数
