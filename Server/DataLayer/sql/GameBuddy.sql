@@ -10,28 +10,10 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2016-03-04 19:37:40
+Date: 2016-03-07 18:42:13
 */
 
 SET FOREIGN_KEY_CHECKS=0;
-
--- ----------------------------
--- Table structure for `fruit`
--- ----------------------------
-DROP TABLE IF EXISTS `fruit`;
-CREATE TABLE `fruit` (
-  `owner` int(11) NOT NULL DEFAULT '0' COMMENT '用户',
-  `treeId` int(11) NOT NULL DEFAULT '0' COMMENT '果树id',
-  `coin` int(11) NOT NULL DEFAULT '0' COMMENT '价值',
-  `itemId` int(11) DEFAULT NULL COMMENT '果实（道具Id）',
-  `createTime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '生成时间',
-  PRIMARY KEY (`owner`,`treeId`,`coin`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of fruit
--- ----------------------------
-INSERT INTO `fruit` VALUES ('1', '1', '50', '2', '2016-03-04 16:12:36');
 
 -- ----------------------------
 -- Table structure for `house`
@@ -53,8 +35,20 @@ CREATE TABLE `house` (
 -- Records of house
 -- ----------------------------
 INSERT INTO `house` VALUES ('1', '1', '火羽1', '1.12121', '20.12121', '北京通州1', '100', '300000');
+INSERT INTO `house` VALUES ('100', '1', 'house100', '100.123', '100.456', 'address', '100', '300000');
 INSERT INTO `house` VALUES ('1', '2', '火羽2', '2.12121', '20.12121', '北京通州2', '100', '300000');
+INSERT INTO `house` VALUES ('100', '2', 'house100', '100.123', '100.456', 'address', '100', '300000');
 INSERT INTO `house` VALUES ('1', '3', '火羽3', '3.12121', '20.12121', '北京通州3', '100', '300000');
+INSERT INTO `house` VALUES ('100', '3', 'house100', '100.123', '100.456', 'address', '100', '300000');
+INSERT INTO `house` VALUES ('100', '4', 'house100', '100.123', '100.456', 'address', '100', '300000');
+INSERT INTO `house` VALUES ('100', '5', 'house100', '100.123', '100.456', 'address', '100', '300000');
+INSERT INTO `house` VALUES ('100', '6', 'house100', '100.123', '100.456', 'address', '100', '300000');
+INSERT INTO `house` VALUES ('100', '7', 'house100', '100.123', '100.456', 'address', '100', '300000');
+INSERT INTO `house` VALUES ('100', '8', 'house100', '100.123', '100.456', 'address', '100', '300000');
+INSERT INTO `house` VALUES ('100', '9', 'house100', '100.123', '100.456', 'address', '100', '300000');
+INSERT INTO `house` VALUES ('100', '10', 'house100', '100.123', '100.456', 'address', '100', '300000');
+INSERT INTO `house` VALUES ('100', '11', 'house100', '100.123', '100.456', 'address', '100', '300000');
+INSERT INTO `house` VALUES ('100', '12', 'house100', '100.123', '100.456', 'address', '100', '300000');
 
 -- ----------------------------
 -- Table structure for `pet`
@@ -65,10 +59,6 @@ CREATE TABLE `pet` (
   `number` int(11) NOT NULL COMMENT '用户拥有的巴迪兽全国编号',
   `petId` int(11) NOT NULL COMMENT '宠物id',
   `talent` int(11) NOT NULL COMMENT '特性',
-  `skill1` int(11) NOT NULL,
-  `skill2` int(11) NOT NULL,
-  `skill3` int(11) NOT NULL,
-  `skill4` int(11) NOT NULL,
   `nature` int(11) NOT NULL COMMENT '性格',
   `HPHealthy` int(11) NOT NULL COMMENT 'HP体质',
   `WGHealthy` int(11) NOT NULL COMMENT 'WG体质',
@@ -82,19 +72,24 @@ CREATE TABLE `pet` (
   `TGMuscle` int(11) DEFAULT '0' COMMENT 'TG努力',
   `TFMuscle` int(11) DEFAULT '0' COMMENT 'TF努力',
   `SDMuscle` int(11) DEFAULT '0' COMMENT '速度努力',
-  `itemId` int(11) DEFAULT '0' COMMENT '携带物品',
   PRIMARY KEY (`userId`,`number`,`petId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of pet
 -- ----------------------------
-INSERT INTO `pet` VALUES ('1', '56', '1', '1', '0', '19', '26', '42', '60', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
-INSERT INTO `pet` VALUES ('1', '98', '2', '115', '0', '12', '35', '43', '57', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
-INSERT INTO `pet` VALUES ('1', '99', '3', '30', '0', '12', '16', '60', '63', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
-INSERT INTO `pet` VALUES ('1', '102', '4', '46', '0', '14', '16', '41', '59', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
-INSERT INTO `pet` VALUES ('1', '104', '5', '44', '0', '54', '60', '63', '68', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
-INSERT INTO `pet` VALUES ('1', '105', '6', '4', '0', '10', '11', '35', '57', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('1', '56', '1', '1', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('1', '98', '2', '115', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('1', '99', '3', '30', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('1', '102', '4', '46', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('1', '104', '5', '44', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('1', '105', '6', '4', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('100', '98', '1', '10', '0', '31', '31', '31', '31', '31', '31', '131', '131', '131', '131', '131', '131');
+INSERT INTO `pet` VALUES ('100', '98', '2', '115', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('100', '99', '3', '30', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('100', '102', '4', '46', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('100', '104', '5', '44', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0');
+INSERT INTO `pet` VALUES ('100', '105', '6', '4', '0', '25', '25', '25', '25', '25', '25', '0', '0', '0', '0', '0', '0');
 
 -- ----------------------------
 -- Table structure for `pet_skill`
@@ -110,8 +105,8 @@ CREATE TABLE `pet_skill` (
 -- ----------------------------
 -- Records of pet_skill
 -- ----------------------------
-INSERT INTO `pet_skill` VALUES ('1', '1', '5');
-INSERT INTO `pet_skill` VALUES ('1', '1', '9');
+INSERT INTO `pet_skill` VALUES ('100', '1', '1');
+INSERT INTO `pet_skill` VALUES ('100', '1', '3');
 
 -- ----------------------------
 -- Table structure for `player_item`
@@ -127,9 +122,9 @@ CREATE TABLE `player_item` (
 -- ----------------------------
 -- Records of player_item
 -- ----------------------------
-INSERT INTO `player_item` VALUES ('1', '2', '2');
 INSERT INTO `player_item` VALUES ('1', '4', '1000');
 INSERT INTO `player_item` VALUES ('1', '8', '1');
+INSERT INTO `player_item` VALUES ('100', '4', '1000');
 
 -- ----------------------------
 -- Table structure for `tree`
@@ -149,3 +144,15 @@ CREATE TABLE `tree` (
 INSERT INTO `tree` VALUES ('1', '1', '1', '2016-03-04 14:46:21');
 INSERT INTO `tree` VALUES ('1', '2', '2', '2016-03-04 14:46:34');
 INSERT INTO `tree` VALUES ('1', '3', '3', '2016-03-04 14:46:36');
+INSERT INTO `tree` VALUES ('100', '1', '1', '2016-03-07 17:07:15');
+INSERT INTO `tree` VALUES ('100', '2', '2', '2016-03-07 17:09:55');
+INSERT INTO `tree` VALUES ('100', '3', '3', '2016-03-07 17:11:45');
+INSERT INTO `tree` VALUES ('100', '4', '4', '2016-03-07 17:13:22');
+INSERT INTO `tree` VALUES ('100', '5', '5', '2016-03-07 17:19:12');
+INSERT INTO `tree` VALUES ('100', '6', '6', '2016-03-07 17:20:31');
+INSERT INTO `tree` VALUES ('100', '7', '7', '2016-03-07 17:34:31');
+INSERT INTO `tree` VALUES ('100', '8', '8', '2016-03-07 17:38:18');
+INSERT INTO `tree` VALUES ('100', '9', '9', '2016-03-07 17:39:41');
+INSERT INTO `tree` VALUES ('100', '10', '10', '2016-03-07 17:41:12');
+INSERT INTO `tree` VALUES ('100', '11', '11', '2016-03-07 18:28:04');
+INSERT INTO `tree` VALUES ('100', '12', '12', '2016-03-07 18:37:03');
