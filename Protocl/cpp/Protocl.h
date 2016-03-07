@@ -1,6 +1,8 @@
 #ifndef PROTOCL_H
 #define PROTOCL_H
 
+#include <vector>
+
 #define MAX_MSG_SIZE 10240	//报文最大长度
 #define BYTE_ORDER	net::smallOrder	//字节序
 //模块定义
@@ -55,17 +57,15 @@ namespace MsgId
 		//游戏模块
 		setupVersion = 1001,//安装版本
 		getPlayerData = 1002,//取玩家数据
-		buildHouse = 1009,//地图技能：光墙，造房子
-		treePlant = 1003,//种树
-		pick = 1005,//采摘
-		devour = 1014,//地图技能：吞噬，物品转换正能量
-		catchStar = 1015,//地图技能：摘星术，将天上的法宝打下来
-		useItem = 1004,//使用物品
-		buy = 1013,//购买
+		buildHouse = 1003,//地图技能：光墙，造房子
+		treePlant = 1004,//种树
+		syncItem = 1005,//同步物品
+		syncCoin = 1006,//同步正能量
+		syncPets = 1007,//同步宠物，只添加不减少
 
-		killBeast = 1006,//杀死野怪
-		growUp = 1007,//进化
-		tameBeast = 1008,//驯服野怪
+// 		killBeast = 1006,//杀死野怪
+// 		growUp = 1007,//进化
+// 		tameBeast = 1008,//驯服野怪
 
 		putPet = 1010,//放置宠物
 		nearInfo = 1011,//周边信息
@@ -169,6 +169,41 @@ namespace data
 		char probability;	//机率
 		char agent;			//作用对象
 	}EFFECT;
+
+	typedef struct PET
+	{
+		int		id;
+		bool	sync;
+		short	number;
+		char	talent;//特性
+		char	nature;//性格
+		short	skill1;
+		short	skill2;
+		short	skill3;
+		short	skill4;
+		short	itemId;
+		short	HP;//血
+		short	WG;//攻
+		short	WF;//防
+		short	TG;//特攻
+		short	TF;//特防
+		short	SD;//速度
+		char	HPHealthy;//血先天体质
+		char	WGHealthy;//攻先天体质
+		char	WFHealthy;//防先天体质
+		char	TGHealthy;//特攻先天体质
+		char	TFHealthy;//特防先天体质
+		char	SDHealthy;//速度先天体质
+		unsigned char	HPMuscle;//血后天修炼
+		unsigned char	WGMuscle;//攻后天修炼
+		unsigned char	WFMuscle;//防后天修炼
+		unsigned char	TGMuscle;//特攻后天修炼
+		unsigned char	TFMuscle;//特防后天修炼
+		unsigned char	SDMuscle;//速度后天修炼
+		std::vector<char>	race;//17个属性的恶魔果实是否吃过
+	}PET;
 }
+
+
 
 #endif //PROTOCL_H

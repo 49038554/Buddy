@@ -9,8 +9,12 @@
 #include "Protocl/cpp/Object/Auth/BindingPhone.h"
 #include "Protocl/cpp/Object/Game/BuildHouse.h"
 #include "Protocl/cpp/Object/Game/TreePlant.h"
-#include "Protocl/cpp/Object/Game/Pick.h"
-#include "Protocl/cpp/Object/Game/Devour.h"
+#include "Protocl/cpp/Object/Game/SyncPets.h"
+#include "Protocl/cpp/Object/Game/SyncItem.h"
+#include "Protocl/cpp/Object/Game/SyncCoin.h"
+#include "Protocl/cpp/Object/Game/SavePets.h"
+
+
 
 
 static MD5Helper gs_md5helper;
@@ -94,6 +98,33 @@ Worker::Worker(void)
 	}
 	mdk::STNetHost h;
 	{
+		bool ret = CreatePlayer( 100 );
+		int houseId = AddHouse(100, "house100", "address",
+			"100.123", "100.456",
+			100, 300000 );
+		ret = UseItem(100, 8, 1);
+		int treeId = AddTree(100, houseId );
+		int count = 100;
+		int coin = 0;
+		count = -73;
+		ret = SyncItem(100, 10, count, coin);
+		count = -73;
+		ret = SyncItem(100, 10, count, coin);
+		count = -73;
+		ret = SyncItem(100, 10, count, coin);
+		count = 100;
+		ret = SyncCoin(100, count);
+		ret = false;
+		std::vector<char> race;
+		race.push_back(1);
+		race.push_back(3);
+		ret = SyncPet( 100, 1, 
+			98, 10, 60, 
+			31,31,31,31,31,31,
+			131,131,131,131,131,131,
+			race);
+	}
+	{
 		msg::GetPlayerData msg;
 		msg.m_objectId = 1;
 		msg.Build();
@@ -114,8 +145,6 @@ Worker::Worker(void)
 		OnSetupVersion(h, msg);
 	}
 	{
-		PickFruit(1, 1, 50, 2 );
-		PickFruit(1, 1, 50, 2 );
 		int buildId = AddHouse(1, "火羽1", "北京通州1", "1.12121", "20.12121", 100, 300000 );
 		buildId = AddHouse(1, "火羽2", "北京通州2", "2.12121", "20.12121", 100, 300000 );
 		buildId = AddHouse(1, "火羽3", "北京通州3", "3.12121", "20.12121", 100, 300000 );
@@ -771,11 +800,9 @@ void Worker::OnGame(mdk::STNetHost &host, msg::Buffer &buffer)
 	else if (MsgId::getPlayerData == buffer.Id()) OnGetPlayerData(host, buffer);
 	else if (MsgId::buildHouse == buffer.Id()) OnBuildHouse(host, buffer);//地图技能：光墙，造房子
 	else if (MsgId::treePlant == buffer.Id()) OnTreePlant(host, buffer);//种树
-	else if (MsgId::pick == buffer.Id()) OnPick(host, buffer);//采摘
-	else if (MsgId::devour == buffer.Id()) OnDevour(host, buffer);//地图技能：吞噬，物品转换正能量
-	else if (MsgId::catchStar == buffer.Id()) OnCatchStar(host, buffer);//地图技能：摘星术，将天上的法宝打下来
-	else if (MsgId::useItem == buffer.Id()) OnUseItem(host, buffer);//使用物品
-	else if (MsgId::buy == buffer.Id()) OnBuy(host, buffer);//购买
+	else if (MsgId::syncPets == buffer.Id()) OnSyncPets(host, buffer);//同步宠物
+	else if (MsgId::syncItem == buffer.Id()) OnSyncItem(host, buffer);//同步物品
+	else if (MsgId::syncCoin == buffer.Id()) OnSyncCoin(host, buffer);//同步物品
 }
 
 bool Worker::LoadGameInit()
@@ -901,7 +928,6 @@ bool Worker::ReadItem(MySqlClient *pMysql, std::vector<data::ITEM> &imtes)
 	return true;
 }
 
-//取特性数据
 bool Worker::ReadTalent(MySqlClient *pMysql, std::vector<data::TALENT> &talents)
 {
 	if ( !pMysql->ExecuteSql("select * from talent ORDER BY id") )
@@ -1231,7 +1257,7 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 			msg.m_races[it->first] = it->second;
 		}
 		msg.Build();
-// 		host.Send(msg, msg.Size());
+		host.Send(msg, msg.Size());
 	}
 	{//特性
 		msg::TalentBook msg;
@@ -1241,14 +1267,14 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 			if ( 100 == msg.m_talents.size() )
 			{
 				msg.Build();
-				//				host.Send(msg, msg.Size());
+				host.Send(msg, msg.Size());
 				msg.m_talents.clear();
 			}
 		}
 		if ( msg.m_talents.size() > 0 )
 		{
 			msg.Build();
-			//			host.Send(msg, msg.Size());
+			host.Send(msg, msg.Size());
 		}
 	}
 	{//物品
@@ -1259,14 +1285,14 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 			if ( 50 == msg.m_items.size()  )
 			{
 				msg.Build();
-				//				host.Send(msg, msg.Size());
+				host.Send(msg, msg.Size());
 				msg.m_items.clear();
 			}
 		}
 		if ( msg.m_items.size() > 0 )
 		{
 			msg.Build();
-			//			host.Send(msg, msg.Size());
+			host.Send(msg, msg.Size());
 		}
 	}
 	{//技能
@@ -1277,14 +1303,14 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 			if ( 50 == msg.m_skills.size()  )
 			{
 				msg.Build();
-//				host.Send(msg, msg.Size());
+				host.Send(msg, msg.Size());
 				msg.m_skills.clear();
 			}
 		}
 		if ( msg.m_skills.size() > 0 )
 		{
 			msg.Build();
-//			host.Send(msg, msg.Size());
+			host.Send(msg, msg.Size());
 		}
 	}
 	{//巴迪兽
@@ -1295,14 +1321,14 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 			if ( 20 == msg.m_buddys.size()  )
 			{
 				msg.Build();
-//				host.Send(msg, msg.Size());
+				host.Send(msg, msg.Size());
 				msg.m_buddys.clear();
 			}
 		}
 		if ( msg.m_buddys.size() > 0 )
 		{
 			msg.Build();
-//			host.Send(msg, msg.Size());
+			host.Send(msg, msg.Size());
 		}
 	}
 	{//地图
@@ -1314,19 +1340,19 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 			if ( 30 == msg.m_buddyMaps.size()  )
 			{
 				msg.Build();
-//				host.Send(msg, msg.Size());
+				host.Send(msg, msg.Size());
 				msg.m_buddyMaps.clear();
 			}
 		}
 		if ( msg.m_buddyMaps.size() > 0 )
 		{
 			msg.Build();
-//			host.Send(msg, msg.Size());
+			host.Send(msg, msg.Size());
 		}
 	}
 	msg.m_code = ResultCode::Success;
 	msg.Build(true);
-//	host.Send(msg, msg.Size());
+	host.Send(msg, msg.Size());
 	return true;
 }
 
@@ -1384,14 +1410,14 @@ void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
 			if ( 100 == msg.m_pets.size() )
 			{
 				msg.Build();
-// 				host.Send(msg, msg.Size());
+				host.Send(msg, msg.Size());
 				msg.m_pets.clear();
 			}
 		}
 		if ( msg.m_pets.size() > 0 )
 		{
 			msg.Build();
-//			host.Send(msg, msg.Size());
+			host.Send(msg, msg.Size());
 		}
 	}
 	{
@@ -1403,20 +1429,20 @@ void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
 			if ( 200 == msg.m_items.size() )
 			{
 				msg.Build();
-// 				host.Send(msg, msg.Size());
+				host.Send(msg, msg.Size());
 				msg.m_items.clear();
 			}
 		}
 		if ( msg.m_items.size() > 0 )
 		{
 			msg.Build();
-//			host.Send(msg, msg.Size());
+			host.Send(msg, msg.Size());
 		}
 	}
 
 	msg.m_code = ResultCode::Success;
 	msg.Build(true);
-//	host.Send(msg, msg.Size());
+	host.Send(msg, msg.Size());
 
 	return;
 }
@@ -1469,34 +1495,45 @@ bool Worker::CreatePlayer(unsigned int userId)
 	data::BUDDY *pBuddy = NULL;
 	//老牛
 	petId++;
-	pBuddy = GetBuddy("老牛");
-	if ( !AddPet( pBuddy, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	pBuddy = Buddy("老牛");
+	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 
 	//贪吃鬼
 	petId++;
-	pBuddy = GetBuddy("贪吃鬼");
-	if ( !AddPet( pBuddy, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	pBuddy = Buddy("贪吃鬼");
+	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//虎鲨
 	petId++;
-	pBuddy = GetBuddy("虎鲨");
-	if ( !AddPet( pBuddy, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	pBuddy = Buddy("虎鲨");
+	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//云雀
 	petId++;
-	pBuddy = GetBuddy("云雀");
-	if ( !AddPet( pBuddy, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	pBuddy = Buddy("云雀");
+	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//悬浮魔偶
 	petId++;
-	pBuddy = GetBuddy("悬浮魔偶");
-	if ( !AddPet( pBuddy, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	pBuddy = Buddy("悬浮魔偶");
+	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//夜魔人
 	petId++;
-	pBuddy = GetBuddy("夜魔人");
-	if ( !AddPet( pBuddy, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	pBuddy = Buddy("夜魔人");
+	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 
 	return true;
 }
 
-data::BUDDY* Worker::GetBuddy(const std::string name)
+data::BUDDY* Worker::Buddy(short number)
+{
+	int i = 0;
+	for ( i = 0; i < m_buddys.size(); i++ )
+	{
+		if ( number == m_buddys[i].number ) return &m_buddys[i];
+	}
+
+	return NULL;
+}
+
+data::BUDDY* Worker::Buddy(const std::string name)
 {
 	int i = 0;
 	for ( i = 0; i < m_buddys.size(); i++ )
@@ -1507,31 +1544,15 @@ data::BUDDY* Worker::GetBuddy(const std::string name)
 	return NULL;
 }
 
-bool Worker::AddPet( data::BUDDY *pBuddy, unsigned userId, int petId, 
-	char talent, char nature, char HP, char WG, char WF, char TG, char TF, char SD)
+data::ITEM* Worker::Item( int itemId )
 {
-	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", userId);
-	if ( !pMysql ) return false;
+	int i = 0;
+	for ( i = 0; i < m_items.size(); i++ )
+	{
+		if ( itemId == m_items[i].id ) return &m_items[i];
+	}
 
-	std::map<unsigned short, bool>::iterator it = pBuddy->skills.begin();
-	unsigned short skill1, skill2, skill3, skill4;
-	skill1 = it->first;
-	it++;
-	skill2 = it->first;
-	it++;
-	skill3 = it->first;
-	it++;
-	skill4 = it->first;
-	it++;
-	char sql[1024];
-	sprintf( sql, "insert into pet (userId, number, petId, talent, skill1, skill2, skill3, skill4, nature, "
-		"HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy) "
-		"values (%d, %d, %d, %d, %d,%d,%d,%d, %d, 25,25,25,25,25,25) ", 
-		userId, pBuddy->number, petId, talent, nature,
-		skill1, skill2, skill3, skill4);
-	if ( !pMysql->ExecuteSql(sql) ) return false;
-
-	return true;
+	return NULL;
 }
 
 bool Worker::ReadPets(MySqlClient *pMysql, unsigned int userId, std::vector<data::PET> &pets, ResultCode::ResultCode &result, std::string &reason)
@@ -1664,6 +1685,7 @@ void Worker::OnTreePlant(mdk::STNetHost &host, msg::Buffer &buffer)
 		host.Send(msg, msg.Size());
 		return;
 	}
+	int coin = 0;
 	if ( !UseItem(msg.m_objectId, 8, 1) )
 	{
 		msg.m_code   = ResultCode::Refuse;
@@ -1688,28 +1710,30 @@ void Worker::OnTreePlant(mdk::STNetHost &host, msg::Buffer &buffer)
 	return;
 }
 
-void Worker::OnPick(mdk::STNetHost &host, msg::Buffer &buffer)
+void Worker::OnSyncPets(mdk::STNetHost &host, msg::Buffer &buffer)
 {
-	msg::Pick msg;
+	msg::SyncPets msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() )
 	{
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code = ResultCode::FormatInvalid;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
 		return;
 	}
-	int coin = 0;
 	int i = 0;
-
-	std::vector<short>	itemIds = msg.m_itemIds;
-	for ( i = 0; i < itemIds.size(); i++ )
+	data::BUDDY *pBuddy;
+	for ( i = 0; i < msg.m_pets.size(); i++ )
 	{
-		data::ITEM *pItemInfo = Item(itemIds[i]);
-		if ( NULL != pItemInfo ) coin = pItemInfo->coin;
-		if ( 50 != coin && 100 != coin && 200 != coin ) continue;
-		if ( !PickFruit(msg.m_objectId, msg.m_treeId, coin, pItemInfo->id) ) continue;
+		pBuddy = Buddy(msg.m_pets[i].number);
+		msg.m_pets[i].sync = SyncPet(msg.m_objectId, msg.m_pets[i].id, 
+			msg.m_pets[i].number, msg.m_pets[i].talent, msg.m_pets[i].nature, 
+			msg.m_pets[i].HPHealthy, msg.m_pets[i].WGHealthy, msg.m_pets[i].WFHealthy, 
+			msg.m_pets[i].TGHealthy, msg.m_pets[i].TFHealthy, msg.m_pets[i].SDHealthy, 
+			msg.m_pets[i].HPMuscle, msg.m_pets[i].WGMuscle, msg.m_pets[i].WFMuscle, 
+			msg.m_pets[i].TGMuscle, msg.m_pets[i].TFMuscle, msg.m_pets[i].SDMuscle, 
+			msg.m_pets[i].race);
 	}
 	msg.Build(true);
 	host.Send(msg, msg.Size());
@@ -1717,9 +1741,9 @@ void Worker::OnPick(mdk::STNetHost &host, msg::Buffer &buffer)
 	return;
 }
 
-void Worker::OnDevour(mdk::STNetHost &host, msg::Buffer &buffer)
+void Worker::OnSyncItem(mdk::STNetHost &host, msg::Buffer &buffer)
 {
-	msg::Devour msg;
+	msg::SyncItem msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() )
 	{
@@ -1729,40 +1753,25 @@ void Worker::OnDevour(mdk::STNetHost &host, msg::Buffer &buffer)
 		host.Send(msg, msg.Size());
 		return;
 	}
-	data::ITEM *pItemInfo = Item(msg.m_itemId);
-	if ( NULL == pItemInfo )
+	int i = 0;
+	int coin = 0;
+	for ( i = 0; i < msg.m_items.size(); i++ )
 	{
-		msg.m_code   = ResultCode::Refuse;
-		msg.m_reason = "非法物品";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
+		msg.m_items[i].m_successed = false;//默认同步失败
+		if ( !SyncItem(msg.m_objectId, msg.m_items[i].m_itemId, msg.m_items[i].m_count, coin) ) continue;
+		msg.m_coin += coin;
+		msg.m_items[i].m_successed = true;
 	}
-	if ( !UseItem(msg.m_objectId, msg.m_itemId, 1) )
-	{
-		msg.m_code   = ResultCode::Refuse;
-		msg.m_reason = "使用物品失败";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-	msg.m_coin = pItemInfo->coin * 90 / 100;
-	if ( !AddCoin(msg.m_objectId, msg.m_coin) )
-	{
-		msg.m_code   = ResultCode::Refuse;
-		msg.m_reason = "获取能量失败";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
+
 	msg.Build(true);
 	host.Send(msg, msg.Size());
+
 	return;
 }
 
-void Worker::OnCatchStar(mdk::STNetHost &host, msg::Buffer &buffer)
+void Worker::OnSyncCoin(mdk::STNetHost &host, msg::Buffer &buffer)
 {
-	msg::BuildHouse msg;
+	msg::SyncCoin msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() )
 	{
@@ -1772,34 +1781,15 @@ void Worker::OnCatchStar(mdk::STNetHost &host, msg::Buffer &buffer)
 		host.Send(msg, msg.Size());
 		return;
 	}
-}
+	if ( !SyncCoin(msg.m_objectId, msg.m_count) ) 
+	{
+		msg.m_code   = ResultCode::DBError;
+		msg.m_reason = "访问失败";
+	}
+	msg.Build(true);
+	host.Send(msg, msg.Size());
 
-void Worker::OnUseItem(mdk::STNetHost &host, msg::Buffer &buffer)
-{
-	msg::BuildHouse msg;
-	memcpy(msg, buffer, buffer.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code   = ResultCode::FormatInvalid;
-		msg.m_reason = "报文格式非法";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnBuy(mdk::STNetHost &host, msg::Buffer &buffer)
-{
-	msg::BuildHouse msg;
-	memcpy(msg, buffer, buffer.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code   = ResultCode::FormatInvalid;
-		msg.m_reason = "报文格式非法";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
+	return;
 }
 
 int Worker::AddHouse(unsigned int owner, const std::string &name, const std::string &address,
@@ -1836,6 +1826,45 @@ int Worker::AddHouse(unsigned int owner, const std::string &name, const std::str
 	return houseId;
 }
 
+bool Worker::UseItem(unsigned int userId, int itemId, int count)
+{
+	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", userId);
+	if ( !pMysql ) return false;
+
+	char sql[1024];
+	sprintf( sql, "select * from player_item where userId = %u and itemId = %d ", 
+		userId, itemId );
+	if ( !pMysql->ExecuteSql(sql) ) 
+	{
+		m_log.Info("Error", "查询物品数量失败:%s", sql);
+		return false;
+	}
+	if ( pMysql->IsEmpty() ) 
+	{
+		m_log.Info("Error", "用户%u没有物品%d", userId, itemId);
+		return false;
+	}
+	int curCount = 0;
+	pMysql->GetValue("count", curCount);
+	if ( curCount > count )
+	{
+		sprintf( sql, "update player_item set count += %d where userId = %u and itemId = %d ", 
+			count, userId, itemId );
+	}
+	else
+	{
+		sprintf( sql, "delete from player_item where userId = %u and itemId = %d ", 
+			userId, itemId );
+	}
+	if ( !pMysql->ExecuteSql(sql) ) 
+	{
+		m_log.Info("Error", "修改物品数量失败:%s", sql);
+		return false;
+	}
+
+	return true;
+}
+
 int Worker::AddTree(unsigned int owner, int houseId )
 {
 	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", owner);
@@ -1868,23 +1897,11 @@ int Worker::AddTree(unsigned int owner, int houseId )
 	return houseId;
 }
 
-bool Worker::PickFruit(unsigned int owner, int treeId, int coin, int itemId)
+bool Worker::SyncItem(unsigned int userId, int itemId, int &count, int &coin)
 {
-	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", owner);
-	if ( !pMysql ) return false;
+	data::ITEM *pItem = Item(itemId);
+	if ( NULL == pItem ) return false;
 
-	char sql[1024];
-	if ( !AddItem(owner, itemId, 1) )
-	{
-		m_log.Info("Error", "添加物品失败");
-		return false;
-	}
-	
-	return true;
-}
-
-bool Worker::AddItem(unsigned int userId, int itemId, int count)
-{
 	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", userId);
 	if ( !pMysql ) return false;
 
@@ -1892,61 +1909,139 @@ bool Worker::AddItem(unsigned int userId, int itemId, int count)
 	sprintf( sql, "select * from player_item where userId = %u and itemId = %d ", 
 		userId, itemId );
 	if ( !pMysql->ExecuteSql(sql) ) return false;
-	if ( pMysql->IsEmpty() )
+	coin = 0;
+	if ( pMysql->IsEmpty() ) 
 	{
-		sprintf( sql, "insert into player_item (userId, itemId, count) values(%d, %d, %d) ", 
-			userId, itemId, count );
+		if ( count > 0 )
+		{
+			sprintf( sql, "insert into player_item (userId, itemId, count) values(%d, %d, %d) ", 
+				userId, itemId, count );
+		}
+		else
+		{
+			coin = count * pItem->coin;
+			if ( !SyncCoin(userId, coin) ) return false;
+			coin = count * pItem->coin;
+			count = 0;
+		}
 	}
 	else
 	{
-		sprintf( sql, "update player_item set count = count + %d where userId = %u and itemId = %d ", 
-			count, userId, itemId );
+		int curCount = 0;
+		pMysql->GetValue("count", curCount);
+		curCount = curCount + count;
+		if ( curCount > 0 )
+		{
+			sprintf( sql, "update player_item set count = count + %d where userId = %u and itemId = %d ", 
+				count, userId, itemId );
+			count = curCount;
+		}
+		else
+		{
+			sprintf( sql, "delete from player_item where userId = %u and itemId = %d ", 
+				userId, itemId );
+			coin = curCount * pItem->coin;
+			if ( !SyncCoin(userId, coin) ) return false;
+			coin = curCount * pItem->coin;
+			count = 0;
+		}
 	}
-	if ( !pMysql->ExecuteSql(sql) ) return false;
+	if ( !pMysql->ExecuteSql(sql) ) m_log.Info("Error", "修改物品数量失败:%s", sql);
 
-	return itemId;
+	return true;
 }
 
-bool Worker::UseItem(unsigned int userId, int itemId, int count)
-{
-	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", userId);
-	if ( !pMysql ) return false;
-
-	char sql[1024];
-	sprintf( sql, "select * from player_item where userId = %u and itemId = %d ", 
-		userId, itemId );
-	if ( !pMysql->ExecuteSql(sql) ) return false;
-	if ( pMysql->IsEmpty() ) return false;
-	int itemCount;
-	pMysql->GetValue("count", itemCount);
-	if ( itemCount < count ) return false;
-	sprintf( sql, "update player_item set count = count - %d where userId = %u and itemId = %d ", 
-		count, userId, itemId );
-	if ( !pMysql->ExecuteSql(sql) ) return false;
-
-	return itemId;
-}
-
-bool Worker::AddCoin(unsigned int userId, int count)
+bool Worker::SyncCoin(unsigned int userId, int &count)
 {
 	MySqlClient *pMysql = m_mySQLCluster.Node("Buddy", userId);
 	if ( !pMysql ) return false;
 
 	char sql[1024];
-	sprintf( sql, "update user_info set coin = coin + %d where userId = %u ", 
+	sprintf( sql, "select * from user_info where id = %u", userId );
+	if ( !pMysql->ExecuteSql(sql) || pMysql->IsEmpty() )
+	{
+		m_log.Info("Error", "同步正能量失败:%s", sql);
+		return false;
+	}
+
+	int curCoin;
+	pMysql->GetValue("coin", curCoin);
+	sprintf( sql, "update user_info set coin = coin + %d where id = %u ", 
 		count, userId );
-	if ( !pMysql->ExecuteSql(sql) ) return false;
+	if ( !pMysql->ExecuteSql(sql) ) m_log.Info("Error", "同步正能量失败:%s", sql);
+	count += curCoin;
 
 	return true;
 }
 
-data::ITEM* Worker::Item( int itemId )
+bool Worker::SyncPet( unsigned int userId, int petId, 
+	int number, char talent, char nature, 
+	char HPHealthy, char WGHealthy, char WFHealthy, char TGHealthy, char TFHealthy, char SDHealthy,
+	unsigned char HPMuscle, unsigned char WGMuscle, unsigned char WFMuscle, unsigned char TGMuscle, unsigned char TFMuscle, unsigned char SDMuscle,
+	std::vector<char> race )
 {
-	int i = 0;
-	for ( i = 0; i < m_items.size(); i++ )
+	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", userId);
+	if ( !pMysql ) return false;
+
+	char sql[1024];
+	sprintf( sql, "select * from pet where userId = %u and petId = %d", 
+		userId, petId );
+	if ( !pMysql->ExecuteSql(sql) ) 
 	{
-		if ( itemId == m_items[i].id ) return &m_items[i];
+		m_log.Info("Error", "保存宠物数据失败：%s", sql);
+		return false;
+	}
+	if ( pMysql->IsEmpty() ) 
+	{
+		sprintf( sql, "insert into pet (userId, number, petId, talent, nature, "
+			"HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy, "
+			"HPMuscle, WGMuscle, WFMuscle, TGMuscle, TFMuscle, SDMuscle) "
+			"values (%u, %d, %d, %d, %d, %d,%d,%d,%d,%d,%d, %d,%d,%d,%d,%d,%d) ", 
+			userId, number, petId, talent, nature,
+			HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy,
+			HPMuscle, WGMuscle, WFMuscle, TGMuscle, TFMuscle, SDMuscle );
+	}
+	else
+	{
+		sprintf( sql, "update pet "
+			"set number = %d, "
+			"talent = %d, "
+			"HPHealthy = %d, WGHealthy = %d, WFHealthy = %d, TGHealthy = %d, TFHealthy = %d, SDHealthy = %d, "
+			"HPMuscle = %d, WGMuscle = %d, WFMuscle = %d, TGMuscle = %d, TFMuscle = %d, SDMuscle = %d "
+			"where userId = %u and petId = %d", 
+			number, talent, 
+			HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy,
+			HPMuscle, WGMuscle, WFMuscle, TGMuscle, TFMuscle, SDMuscle,
+			userId, petId);
+	}
+	bool sync = true;
+	if ( !pMysql->ExecuteSql(sql) ) 
+	{
+		m_log.Info("Error", "保存宠物数据失败：%s", sql);
+		sync = false;
+	}
+	int i = 0;
+	for ( i = 0; i < race.size(); i++ )
+	{
+		if ( 0 >= race[i] || race[i] > 17 ) continue;
+		sprintf( sql, "insert into pet_skill (userId, petId, race) values(%u, %d, %d)",
+			userId, petId, race[i] );
+		if ( !pMysql->ExecuteSql(sql) ) 
+		{
+			m_log.Info("Error", "吃恶魔果子失败：%s", sql);
+			sync = false;
+		}
 	}
 
-	return NULL;
+	return sync;
 }
+
+bool Worker::AddPet( int number, unsigned userId, int petId, char talent, char nature, 
+	char HPHealthy, char WGHealthy, char WFHealthy, char TGHealthy, char TFHealthy, char SDHealthy)
+{
+	std::vector<char> race;
+	return SyncPet(userId, petId, number, talent, nature, 
+		HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy,
+		0,0,0,0,0,0, race );
+}
+

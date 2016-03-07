@@ -67,11 +67,9 @@ protected:
 	void OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer);
 	void OnBuildHouse(mdk::STNetHost &host, msg::Buffer &buffer);//地图技能：光墙，造房子
 	void OnTreePlant(mdk::STNetHost &host, msg::Buffer &buffer);//种树
-	void OnPick(mdk::STNetHost &host, msg::Buffer &buffer);//采摘
-	void OnDevour(mdk::STNetHost &host, msg::Buffer &buffer);//地图技能：吞噬，物品转换正能量
-	void OnCatchStar(mdk::STNetHost &host, msg::Buffer &buffer);//地图技能：摘星术，将天上的法宝打下来
-	void OnUseItem(mdk::STNetHost &host, msg::Buffer &buffer);//使用物品
-	void OnBuy(mdk::STNetHost &host, msg::Buffer &buffer);//购买
+	void OnSyncItem(mdk::STNetHost &host, msg::Buffer &buffer);//同步物品
+	void OnSyncCoin(mdk::STNetHost &host, msg::Buffer &buffer);//同步正能量
+	void OnSyncPets(mdk::STNetHost &host, msg::Buffer &buffer);//同步宠物,只添加不减少
 
 private:
 	friend int main(int argc, char* argv[]);
@@ -112,21 +110,25 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	//search
-	data::BUDDY* GetBuddy(const std::string name);
-	//添加宠物
-	bool AddPet( data::BUDDY *pBuddy, unsigned userId, int petId, 
-		char talent, char nature, char HP, char WG, char WF, char TG, char TF, char SD);
+	data::BUDDY* Buddy(short number);
+	data::BUDDY* Buddy(const std::string name);
+	data::ITEM* Item( int itemId );
 	//添加房子
 	int AddHouse(unsigned int owner, const std::string &name, const std::string &address,
 		const std::string &longitude, const std::string &latitude,
 		int	radius, int coin );
 	//添加果树
 	int AddTree(unsigned int owner, int houseId );
-	bool PickFruit(unsigned int owner, int treeId, int coin, int itemId);
-	bool AddItem(unsigned int userId, int itemId, int count);
 	bool UseItem(unsigned int userId, int itemId, int count);
-	bool AddCoin(unsigned int userId, int count);
-	data::ITEM* Item( int itemId );
+	bool SyncItem(unsigned int userId, int itemId, int &count, int &coin);
+	bool SyncCoin(unsigned int userId, int &count);
+	bool SyncPet( unsigned int userId, int petId, 
+		int number, char talent, char nature, 
+		char HPHealthy, char WGHealthy, char WFHealthy, char TGHealthy, char TFHealthy, char SDHealthy,
+		unsigned char HPMuscle, unsigned char WGMuscle, unsigned char WFMuscle, unsigned char TGMuscle, unsigned char TFMuscle, unsigned char SDMuscle,
+		std::vector<char> race );
+	bool AddPet( int number, unsigned userId, int petId, char talent, char nature, 
+		char HPHealthy, char WGHealthy, char WFHealthy, char TGHealthy, char TFHealthy, char SDHealthy);
 
 private:
 	mdk::Logger     m_log;

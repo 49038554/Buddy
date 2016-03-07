@@ -159,10 +159,13 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\TreePlant.cpp">
       <Filter>Message\Object\Game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Pick.cpp">
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SyncItem.cpp">
       <Filter>Message\Object\Game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Devour.cpp">
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SyncCoin.cpp">
+      <Filter>Message\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SyncPets.cpp">
       <Filter>Message\Object\Game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -284,10 +287,13 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\TreePlant.h">
       <Filter>Message\Object\Game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Pick.h">
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SyncItem.h">
       <Filter>Message\Object\Game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Devour.h">
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SyncCoin.h">
+      <Filter>Message\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SyncPets.h">
       <Filter>Message\Object\Game</Filter>
     </ClInclude>
   </ItemGroup>
