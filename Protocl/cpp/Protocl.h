@@ -1,7 +1,7 @@
 #ifndef PROTOCL_H
 #define PROTOCL_H
 
-#include <vector>
+#include "common/BuddyData.h"
 
 #define MAX_MSG_SIZE 10240	//报文最大长度
 #define BYTE_ORDER	net::smallOrder	//字节序
@@ -146,64 +146,6 @@ namespace ResultCode
 		SvrError = 5,				//服务错误，查服务端原因
 	};
 };
-
-//商品大类型
-namespace ItemBigType
-{
-	enum ItemBigType
-	{
-		all = 0,//全部
-		gift = 1,//礼物
-		commodity = 2,//商品
-		luckGift = 3,//幸运礼物
-	};
-}
-
-namespace data
-{
-	//特效
-	typedef struct EFFECT
-	{
-		unsigned char id;	//id
-		char step;			//触发时机
-		char probability;	//机率
-		char agent;			//作用对象
-	}EFFECT;
-
-	typedef struct PET
-	{
-		int		id;
-		bool	sync;
-		short	number;
-		char	talent;//特性
-		char	nature;//性格
-		short	skill1;
-		short	skill2;
-		short	skill3;
-		short	skill4;
-		short	itemId;
-		short	HP;//血
-		short	WG;//攻
-		short	WF;//防
-		short	TG;//特攻
-		short	TF;//特防
-		short	SD;//速度
-		char	HPHealthy;//血先天体质
-		char	WGHealthy;//攻先天体质
-		char	WFHealthy;//防先天体质
-		char	TGHealthy;//特攻先天体质
-		char	TFHealthy;//特防先天体质
-		char	SDHealthy;//速度先天体质
-		unsigned char	HPMuscle;//血后天修炼
-		unsigned char	WGMuscle;//攻后天修炼
-		unsigned char	WFMuscle;//防后天修炼
-		unsigned char	TGMuscle;//特攻后天修炼
-		unsigned char	TFMuscle;//特防后天修炼
-		unsigned char	SDMuscle;//速度后天修炼
-		std::vector<char>	race;//17个属性的恶魔果实是否吃过
-	}PET;
-}
-
 
 
 #endif //PROTOCL_H

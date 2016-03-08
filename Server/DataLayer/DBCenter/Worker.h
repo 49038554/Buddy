@@ -13,16 +13,6 @@
 #include "Protocl/cpp/Object/SNS/DelBuddy.h"
 #include "Protocl/cpp/Object/SNS/SetUserData.h"
 
-#include "Protocl/cpp/Object/Game/SetupVersion.h"
-#include "Protocl/cpp/Object/Game/RaceMap.h"
-#include "Protocl/cpp/Object/Game/SkillBook.h"
-#include "Protocl/cpp/Object/Game/ItemBook.h"
-#include "Protocl/cpp/Object/Game/TalentBook.h"
-#include "Protocl/cpp/Object/Game/BuddyBook.h"
-#include "Protocl/cpp/Object/Game/BuddyMap.h"
-#include "Protocl/cpp/Object/Game/GetPlayerData.h"
-#include "Protocl/cpp/Object/Game/Pets.h"
-#include "Protocl/cpp/Object/Game/PlayerItems.h"
 
 /**
  * Worker

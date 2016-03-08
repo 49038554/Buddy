@@ -293,6 +293,9 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\TreePlant.h">
       <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\common\BuddyData.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\DataLayer\DBCenter\bin\DBCenter.cfg" />

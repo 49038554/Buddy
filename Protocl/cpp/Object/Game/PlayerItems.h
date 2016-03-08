@@ -5,15 +5,6 @@
 #include "../../Protocl.h"
 #include <vector>
 
-namespace data
-{
-	typedef struct PLAYER_ITEM
-	{
-		short			id;
-		int				count;
-	}PLAYER_ITEM;
-}
-
 namespace msg
 {
 

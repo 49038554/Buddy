@@ -75,6 +75,10 @@ private:
 	}USER_DATA;
 
 	USER_DATA	m_user;
+
+	std::map<unsigned char, std::string>		m_races;
+	std::vector<data::SKILL>		m_skills;//×î´ó50¸ö
+
 };
 
 #endif //CLIENT_H

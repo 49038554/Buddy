@@ -6,17 +6,6 @@
 #include <vector>
 #include <string>
 
-namespace data
-{
-	typedef struct TALENT
-	{
-		short			id;
-		std::string		name;
-		std::vector<EFFECT>	effects;//特效,最多5个
-		std::string		descript;//最大60byte
-	}TALENT;
-}
-
 namespace msg
 {
 

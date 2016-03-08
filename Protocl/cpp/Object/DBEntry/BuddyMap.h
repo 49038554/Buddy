@@ -5,24 +5,6 @@
 #include "../../Protocl.h"
 #include <vector>
 
-namespace data
-{
-	typedef struct BUDDY_MAP
-	{
-		int					id;
-		std::vector<short>	buddys;//最大100
-		char				shape;//形状：0圆形，1矩形
-		double				x;//latitude
-		double				y;//longitude
-		int					radius;
-		double				right;//latitude
-		double				bottom;//longitude
-		int					city;//城市
-		bool				spot;//景区
-	}BUDDY_MAP;
-
-}
-
 namespace msg
 {
 

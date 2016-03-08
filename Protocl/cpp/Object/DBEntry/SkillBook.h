@@ -6,23 +6,6 @@
 #include <vector>
 #include <string>
 
-namespace data
-{
-	//技能
-	typedef struct SKILL
-	{
-		short				id;
-		std::string			name;
-		char				race;//属性
-		short				power;//威力0~300
-		char				type;//1物理，2变化，3特殊
-		char				hitRate;//命中率30~101, 101必中技
-		std::vector<EFFECT>	effects;//特效,最多5个
-		bool				isMapSkill;//是地图技能
-		std::string			descript;//最大60byte
-	}SKILL;
-}
-
 namespace msg
 {
 

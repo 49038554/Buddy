@@ -6,18 +6,6 @@
 #include <vector>
 #include <string>
 
-namespace data
-{
-	typedef struct ITEM
-	{
-		short			id;
-		std::string		name;
-		int				coin;//价值
-		std::vector<EFFECT>	effects;//特效,最多5个
-		std::string		descript;//最大60byte
-	}ITEM;
-}
-
 namespace msg
 {
 

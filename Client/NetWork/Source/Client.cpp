@@ -19,6 +19,27 @@
 #include "Protocl/cpp/Object/SNS/GetUserData.h"
 #include "Protocl/cpp/Object/SNS/UserData.h"
 
+//////////////////////////////////////////////////////////////////////////
+//DBEntry
+#include "Protocl/cpp/Object/Game/SetupVersion.h"
+#include "Protocl/cpp/Object/Game/RaceMap.h"
+#include "Protocl/cpp/Object/Game/SkillBook.h"
+#include "Protocl/cpp/Object/Game/ItemBook.h"
+#include "Protocl/cpp/Object/Game/TalentBook.h"
+#include "Protocl/cpp/Object/Game/BuddyBook.h"
+#include "Protocl/cpp/Object/Game/BuddyMap.h"
+
+#include "Protocl/cpp/Object/Game/GetPlayerData.h"
+#include "Protocl/cpp/Object/Game/Pets.h"
+#include "Protocl/cpp/Object/Game/PlayerItems.h"
+
+#include "Protocl/cpp/Object/Game/BuildHouse.h"
+#include "Protocl/cpp/Object/Game/TreePlant.h"
+#include "Protocl/cpp/Object/Game/SyncPets.h"
+#include "Protocl/cpp/Object/Game/SyncItem.h"
+#include "Protocl/cpp/Object/Game/SyncCoin.h"
+
+
 Client::Client(void)
 {
 }

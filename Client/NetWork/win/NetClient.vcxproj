@@ -21,6 +21,21 @@
     <ClCompile Include="..\..\..\Protocl\cpp\Object\Auth\UserLogout.cpp" />
     <ClCompile Include="..\..\..\Protocl\cpp\Object\Auth\UserRegister.cpp" />
     <ClCompile Include="..\..\..\Protocl\cpp\Object\Auth\UserRelogin.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\BuildHouse.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\GetPlayerData.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\Pets.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\PlayerItems.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncCoin.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncItem.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncPets.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\TalentBook.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\TreePlant.cpp" />
     <ClCompile Include="..\..\..\Protocl\cpp\Object\Notify\GetEvent.cpp" />
     <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\AddBuddy.cpp" />
     <ClCompile Include="..\..\..\Protocl\cpp\Object\SNS\Buddys.cpp" />
@@ -44,6 +59,7 @@
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\common\BuddyData.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\base\Message.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\base\Socket.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\base\Stream.h" />
@@ -54,6 +70,21 @@
     <ClInclude Include="..\..\..\Protocl\cpp\Object\Auth\UserLogout.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Object\Auth\UserRegister.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Object\Auth\UserRelogin.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\BuildHouse.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\GetPlayerData.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\Pets.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\PlayerItems.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncCoin.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncItem.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncPets.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\TalentBook.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\TreePlant.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Object\Notify\GetEvent.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\AddBuddy.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Object\SNS\Buddys.h" />
