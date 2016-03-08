@@ -45,6 +45,7 @@ void Client::OnMsg(int svrType, net::Socket &svr, msg::Buffer &buffer)
 {
 	if ( Moudle::Auth == buffer.MoudleId() ) OnAuth(buffer);
 	if ( Moudle::SNS == buffer.MoudleId() ) OnSNS(buffer);
+	if ( Moudle::DBEntry == buffer.MoudleId() ) OnSNS(buffer);
 }
 
 bool Client::Register(bool isMobile, const std::string &account, const std::string &pwd)
@@ -144,6 +145,7 @@ void Client::OnLogin(msg::Buffer &buffer)
 	ClientInfo();
 	printf( "user(%u)ÒÑµÇÂ¼\n", msg.m_userId );
 	GetEvent();
+	GameInit();
 }
 
 bool Client::BindPhone(const std::string &moblie)
@@ -575,3 +577,7 @@ void Client::OnSNS(msg::Buffer &buffer)
 	}
 }
 
+bool GameInit()
+{
+	return true;
+}

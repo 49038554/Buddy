@@ -12,7 +12,6 @@
 #include "Protocl/cpp/Object/Game/SyncPets.h"
 #include "Protocl/cpp/Object/Game/SyncItem.h"
 #include "Protocl/cpp/Object/Game/SyncCoin.h"
-#include "Protocl/cpp/Object/Game/SavePets.h"
 
 
 
@@ -95,65 +94,6 @@ Worker::Worker(void)
 		m_log.Info("Error", "加载游戏数据失败");
 		mdk::mdk_assert(false);
 		exit(EXIT_FAILURE);
-	}
-	mdk::STNetHost h;
-	{
-		bool ret = CreatePlayer( 100 );
-		int houseId = AddHouse(100, "house100", "address",
-			"100.123", "100.456",
-			100, 300000 );
-		ret = UseItem(100, 8, 1);
-		int treeId = AddTree(100, houseId );
-		int count = 100;
-		int coin = 0;
-		count = -73;
-		ret = SyncItem(100, 10, count, coin);
-		count = -73;
-		ret = SyncItem(100, 10, count, coin);
-		count = -73;
-		ret = SyncItem(100, 10, count, coin);
-		count = 100;
-		ret = SyncCoin(100, count);
-		ret = false;
-		std::vector<char> race;
-		race.push_back(1);
-		race.push_back(3);
-		ret = SyncPet( 100, 1, 
-			98, 10, 60, 
-			31,31,31,31,31,31,
-			131,131,131,131,131,131,
-			race);
-	}
-	{
-		msg::GetPlayerData msg;
-		msg.m_objectId = 1;
-		msg.Build();
-		msg::Buffer buf;
-		memcpy(buf, msg, msg.Size());
-		buf.Size();
-		buf.Parse();
-		OnGetPlayerData(h, msg);
-	}
-	{
-		msg::SetupVersion msg;
-		msg.m_dataVersion;
-		msg.Build();
-		msg::Buffer buf;
-		memcpy(buf, msg, msg.Size());
-		buf.Size();
-		buf.Parse();
-		OnSetupVersion(h, msg);
-	}
-	{
-		int buildId = AddHouse(1, "火羽1", "北京通州1", "1.12121", "20.12121", 100, 300000 );
-		buildId = AddHouse(1, "火羽2", "北京通州2", "2.12121", "20.12121", 100, 300000 );
-		buildId = AddHouse(1, "火羽3", "北京通州3", "3.12121", "20.12121", 100, 300000 );
-		buildId++;
-
-		int treeId = AddTree(1, 1);
-		treeId = AddTree(1, 2);
-		treeId = AddTree(1, 3);
-		treeId++;
 	}
 	// 初始化Redis集群
 	if ( !m_cache.InitCluster(m_cfg, 1))

@@ -57,7 +57,7 @@ namespace MsgId
 		//游戏模块
 		setupVersion = 1001,//安装版本
 		getPlayerData = 1002,//取玩家数据
-		buildHouse = 1003,//地图技能：光墙，造房子
+		buildHouse = 1003,//地图技能：秘密力量，造房子
 		treePlant = 1004,//种树
 		syncItem = 1005,//同步物品
 		syncCoin = 1006,//同步正能量
@@ -72,7 +72,7 @@ namespace MsgId
 		createShop = 1012,//开店
 		cityBuildInit = 1016,//开始城市建设
 		cityBuilding = 1017,//为城市建设添砖加瓦
-		delHouse = 1018,//地图技能：瓦割，拆房子
+		delHouse = 1018,//地图技能：碎石踢，拆房子
 
 		raceMap = 2001,//属性表
 		skillBook = 2002,//技能图鉴

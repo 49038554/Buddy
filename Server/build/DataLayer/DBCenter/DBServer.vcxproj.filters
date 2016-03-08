@@ -43,6 +43,9 @@
     <Filter Include="Message\Object\Game">
       <UniqueIdentifier>{b6b0c859-1f1a-4327-88db-ecdb1874de42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Message\Object\DBEntry">
+      <UniqueIdentifier>{22d3d172-cf1d-4d8d-ad1e-210cd9a6ccfb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\DataLayer\DBCenter\Main.cpp">
@@ -123,50 +126,50 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\UserData.cpp">
       <Filter>Message\Object\SNS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyBook.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyMap.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\ItemBook.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuildHouse.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\RaceMap.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\GetPlayerData.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SkillBook.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Pets.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\TalentBook.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\PlayerItems.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\GetPlayerData.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Pets.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\PlayerItems.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuildHouse.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncCoin.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\TreePlant.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncItem.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SyncItem.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncPets.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SyncCoin.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\TalentBook.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SyncPets.cpp">
-      <Filter>Message\Object\Game</Filter>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\TreePlant.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -251,50 +254,50 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\UserData.h">
       <Filter>Message\Object\SNS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyBook.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyMap.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\ItemBook.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuildHouse.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\RaceMap.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\GetPlayerData.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SkillBook.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Pets.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\TalentBook.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\PlayerItems.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\GetPlayerData.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Pets.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\PlayerItems.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuildHouse.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncCoin.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\TreePlant.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncItem.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SyncItem.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncPets.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SyncCoin.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\TalentBook.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SyncPets.h">
-      <Filter>Message\Object\Game</Filter>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\TreePlant.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -78,6 +78,7 @@ Worker::Worker(void)
 	}
 	m_authSvrCount = 0;
 	m_snsSvrCount = 0;
+	m_dbSvrCount = 0;
 	int notifySvrCount = 0;
 	ConnectInfo *pNode;
 	std::map<Moudle::Moudle, std::map<NetLine::NetLine, std::vector<msg::Cluster::NODE> > >::iterator itMoudle;
@@ -110,6 +111,7 @@ Worker::Worker(void)
 				}
 				else if ( Moudle::Auth == itMoudle->first ) m_authSvrCount++;
 				else if ( Moudle::SNS == itMoudle->first ) m_snsSvrCount++;
+				else if ( Moudle::DBEntry == itMoudle->first ) m_dbSvrCount++;
 				else continue;
 
 				pNode = new ConnectInfo;
@@ -122,7 +124,8 @@ Worker::Worker(void)
 			}
 		}
 	}
-	if ( 0 >= m_authSvrCount || 0 >= m_snsSvrCount )
+	m_log.Info("Run", "认证结点%d个, sns结点%d个, DBEntry结点%d个", m_authSvrCount, m_snsSvrCount, m_dbSvrCount);
+	if ( 0 >= m_authSvrCount || 0 >= m_snsSvrCount || 0 >= m_dbSvrCount )
 	{
 		m_log.Info( "Error", "集群缺少模块，请检查Cluster库" );
 		mdk::mdk_assert(false);
@@ -131,7 +134,7 @@ Worker::Worker(void)
 	m_notifyCluster.SetNodeCount(notifySvrCount);
 	m_authCluster.SetNodeCount(m_authSvrCount);
 	m_snsCluster.SetNodeCount(m_snsSvrCount);
-	m_log.Info("Run", "认证结点%d个, sns结点%d个", m_authSvrCount, m_snsSvrCount);
+	m_dbCluster.SetNodeCount(m_dbSvrCount);
 	int CPU = mdk::GetCUPNumber(32, 32);
 	SetWorkThreadCount(CPU);
 	m_cache.InitCluster(m_cfg, CPU);
@@ -206,6 +209,12 @@ void Worker::OnConnect(mdk::NetHost &host)
 		m_snsCluster.AddNode(pNode->nodeId, host);
 		m_log.Info("Run", "SNS服务(%d):%s:%d连接完成", pNode->nodeId, pNode->ip.c_str(), pNode->port);
 	}
+	if ( Moudle::DBEntry == pNode->type )
+	{
+		m_dbCluster.AddNode(pNode->nodeId, host);
+		m_log.Info("Run", "数据服务(%d):%s:%d连接完成", pNode->nodeId, pNode->ip.c_str(), pNode->port);
+	}
+	
 }
 
 void Worker::OnCloseConnect(mdk::NetHost &host)
@@ -247,6 +256,12 @@ void Worker::OnCloseConnect(mdk::NetHost &host)
 		m_snsCluster.DelNode(pNode->nodeId);
 		m_log.Info("Run", "SNS服务(%d):%s:%d连接断开", pNode->nodeId, pNode->ip.c_str(), pNode->port);
 	}
+	if ( Moudle::DBEntry == pNode->type )
+	{
+		m_dbCluster.DelNode(pNode->nodeId);
+		m_log.Info("Run", "数据服务(%d):%s:%d连接断开", pNode->nodeId, pNode->ip.c_str(), pNode->port);
+	}
+	
 }
 
 void Worker::OnMsg(mdk::NetHost &host)
@@ -303,6 +318,7 @@ void Worker::OnMsg(mdk::NetHost &host)
 	mdk::NetHost helperHost;
 	int nodeId = 0;
 	if ( Moudle::SNS == buffer.MoudleId() ) nodeId = m_snsCluster.Node(helperHost);
+	if ( Moudle::DBEntry == buffer.MoudleId() ) nodeId = m_dbCluster.Node(helperHost);
 	if ( 0 == nodeId )
 	{
 		m_log.Info("Error", "服务结点未连接");
@@ -379,7 +395,7 @@ bool Worker::OnConnectAuth(mdk::NetHost &host, msg::Buffer &buffer)
 		modName = "Notify";
 		m_notifyCluster.AddNode(pData->nodeId, host);
 	}
-	m_log.Info("Run", "%s(%d):%s:%d连接", modName, pData->nodeId, pData->ip.c_str(), pData->port );
+	m_log.Info("Run", "%s(%d):%s:%d已登录", modName, pData->nodeId, pData->ip.c_str(), pData->port );
 	DelConnect(host.ID());
 
 	return true;

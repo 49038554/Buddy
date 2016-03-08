@@ -74,6 +74,7 @@ private:
 	ClusterMgr		m_cluster;//集群
 	mdk::int32		m_authSvrCount;//配置的Auth数量
 	mdk::int32		m_snsSvrCount;//配置的sns数量
+	mdk::int32		m_dbSvrCount;//配置的DBEntry数量
 	//结点信息
 	class ConnectInfo : public mdk::HostData
 	{
@@ -112,5 +113,6 @@ private:
 	HostCluster		m_authCluster;//认证服务集群
 	HostCluster		m_snsCluster;//SNS服务集群
 	HostCluster		m_notifyCluster;//notify服务集群
+	HostCluster		m_dbCluster;//数据服务集群
 };
 

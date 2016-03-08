@@ -42,6 +42,10 @@ public:
 	void OnUserData(msg::Buffer &buffer);
 	bool SetUserData(unsigned int userId);
 	
+	//////////////////////////////////////////////////////////////////////////
+	//Game
+	bool GameInit();
+
 protected:
 	virtual void Main();
 	virtual void OnConnect(int svrType, net::Socket &svr);
