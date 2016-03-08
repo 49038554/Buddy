@@ -577,7 +577,7 @@ void Client::OnSNS(msg::Buffer &buffer)
 	}
 }
 
-bool GameInit()
+bool Client::GameInit()
 {
 	return true;
 }
