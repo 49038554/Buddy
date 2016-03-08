@@ -10,13 +10,13 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2016-03-07 18:42:05
+Date: 2016-03-08 13:41:08
 */
 
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for `battle_step`
+-- Table structure for battle_step
 -- ----------------------------
 DROP TABLE IF EXISTS `battle_step`;
 CREATE TABLE `battle_step` (
@@ -38,7 +38,7 @@ INSERT INTO `battle_step` VALUES ('5', '战斗');
 INSERT INTO `battle_step` VALUES ('3', '准备战斗');
 
 -- ----------------------------
--- Table structure for `buddy_book_info`
+-- Table structure for buddy_book_info
 -- ----------------------------
 DROP TABLE IF EXISTS `buddy_book_info`;
 CREATE TABLE `buddy_book_info` (
@@ -188,7 +188,7 @@ INSERT INTO `buddy_book_info` VALUES ('109', '机器手', null, '钢', '超', '�
 INSERT INTO `buddy_book_info` VALUES ('110', '钢螃蟹', null, '钢', '超', '净体', null, '天然', null, '80', '150', '130', '90', '80', '70', '3', '0');
 
 -- ----------------------------
--- Table structure for `buddy_book_skill`
+-- Table structure for buddy_book_skill
 -- ----------------------------
 DROP TABLE IF EXISTS `buddy_book_skill`;
 CREATE TABLE `buddy_book_skill` (
@@ -3971,7 +3971,7 @@ INSERT INTO `buddy_book_skill` VALUES ('4758', '虎鲨', '冲浪', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4759', '虎鲨', '高压水炮', '1');
 
 -- ----------------------------
--- Table structure for `buddy_book_update`
+-- Table structure for buddy_book_update
 -- ----------------------------
 DROP TABLE IF EXISTS `buddy_book_update`;
 CREATE TABLE `buddy_book_update` (
@@ -4033,7 +4033,7 @@ INSERT INTO `buddy_book_update` VALUES ('42', '铁手臂', '机器手');
 INSERT INTO `buddy_book_update` VALUES ('43', '机器手', '钢螃蟹');
 
 -- ----------------------------
--- Table structure for `buddy_map_lbs`
+-- Table structure for buddy_map_lbs
 -- ----------------------------
 DROP TABLE IF EXISTS `buddy_map_lbs`;
 CREATE TABLE `buddy_map_lbs` (
@@ -4071,7 +4071,7 @@ INSERT INTO `buddy_map_lbs` VALUES ('30', '0', '116.103519', '40.115447', '1000'
 INSERT INTO `buddy_map_lbs` VALUES ('31', '0', '116.653605', '40.026139', '1000', null, null, '东郊湿地公园', '北京', '1');
 
 -- ----------------------------
--- Table structure for `buddy_map_pet`
+-- Table structure for buddy_map_pet
 -- ----------------------------
 DROP TABLE IF EXISTS `buddy_map_pet`;
 CREATE TABLE `buddy_map_pet` (
@@ -4104,7 +4104,7 @@ INSERT INTO `buddy_map_pet` VALUES ('29', '怪蛙草');
 INSERT INTO `buddy_map_pet` VALUES ('31', '怪蛙草');
 
 -- ----------------------------
--- Table structure for `city`
+-- Table structure for city
 -- ----------------------------
 DROP TABLE IF EXISTS `city`;
 CREATE TABLE `city` (
@@ -4123,7 +4123,7 @@ INSERT INTO `city` VALUES ('3', '上海');
 INSERT INTO `city` VALUES ('4', '武汉');
 
 -- ----------------------------
--- Table structure for `ex_effect`
+-- Table structure for ex_effect
 -- ----------------------------
 DROP TABLE IF EXISTS `ex_effect`;
 CREATE TABLE `ex_effect` (
@@ -4314,7 +4314,7 @@ INSERT INTO `ex_effect` VALUES ('229', '完全恢复', '回复100%体力');
 INSERT INTO `ex_effect` VALUES ('230', '控场技能持续8回合', null);
 
 -- ----------------------------
--- Table structure for `item_book`
+-- Table structure for item_book
 -- ----------------------------
 DROP TABLE IF EXISTS `item_book`;
 CREATE TABLE `item_book` (
@@ -4369,7 +4369,7 @@ INSERT INTO `item_book` VALUES ('38', '专爱头巾', '50000', '携带后，物�
 INSERT INTO `item_book` VALUES ('39', '生命玉', '30000', '携带后，伤害*1.25，每次攻击损失1/8体力');
 
 -- ----------------------------
--- Table structure for `item_book_effect`
+-- Table structure for item_book_effect
 -- ----------------------------
 DROP TABLE IF EXISTS `item_book_effect`;
 CREATE TABLE `item_book_effect` (
@@ -4418,7 +4418,7 @@ INSERT INTO `item_book_effect` VALUES ('25', '生命玉', '战斗', '伤害*1.3'
 INSERT INTO `item_book_effect` VALUES ('26', '生命玉', '战斗', '反噬', '100', '1');
 
 -- ----------------------------
--- Table structure for `race`
+-- Table structure for race
 -- ----------------------------
 DROP TABLE IF EXISTS `race`;
 CREATE TABLE `race` (
@@ -4450,7 +4450,7 @@ INSERT INTO `race` VALUES ('3', '水');
 INSERT INTO `race` VALUES ('14', '岩');
 
 -- ----------------------------
--- Table structure for `skill_book_effect`
+-- Table structure for skill_book_effect
 -- ----------------------------
 DROP TABLE IF EXISTS `skill_book_effect`;
 CREATE TABLE `skill_book_effect` (
@@ -4656,7 +4656,7 @@ INSERT INTO `skill_book_effect` VALUES ('245', '原始力量', '战斗', '弱化
 INSERT INTO `skill_book_effect` VALUES ('250', '月光', '战斗', '日月精华', '100', '1');
 
 -- ----------------------------
--- Table structure for `skill_book_info`
+-- Table structure for skill_book_info
 -- ----------------------------
 DROP TABLE IF EXISTS `skill_book_info`;
 CREATE TABLE `skill_book_info` (
@@ -4843,7 +4843,7 @@ INSERT INTO `skill_book_info` VALUES ('531', '剧毒', '毒', '0', '2', '85', '0
 INSERT INTO `skill_book_info` VALUES ('534', '香甜气息', '草', '0', '2', '100', '00000000001', '非战斗使用可引出野生巴迪');
 
 -- ----------------------------
--- Table structure for `talent`
+-- Table structure for talent
 -- ----------------------------
 DROP TABLE IF EXISTS `talent`;
 CREATE TABLE `talent` (
@@ -4938,7 +4938,7 @@ INSERT INTO `talent` VALUES ('117', '天然', '所有能力变化无效');
 INSERT INTO `talent` VALUES ('119', '滑雪', '冰雹天气速度翻倍');
 
 -- ----------------------------
--- Table structure for `talent_book_effect`
+-- Table structure for talent_book_effect
 -- ----------------------------
 DROP TABLE IF EXISTS `talent_book_effect`;
 CREATE TABLE `talent_book_effect` (
@@ -5083,7 +5083,7 @@ INSERT INTO `talent_book_effect` VALUES ('378', '滑雪', '战斗', '冰雹特�
 INSERT INTO `talent_book_effect` VALUES ('379', '滑雪', '战斗', '速度翻倍', '100', '1');
 
 -- ----------------------------
--- Table structure for `version`
+-- Table structure for version
 -- ----------------------------
 DROP TABLE IF EXISTS `version`;
 CREATE TABLE `version` (

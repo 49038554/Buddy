@@ -1,22 +1,22 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : sun
+Source Server         : localhost
 Source Server Version : 50150
-Source Host           : 192.168.11.106:3306
-Source Database       : Auth
+Source Host           : localhost:3306
+Source Database       : auth
 
 Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2015-12-17 15:42:06
+Date: 2016-03-08 13:41:51
 */
 
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for `bind_imei`
+-- Table structure for bind_imei
 -- ----------------------------
 DROP TABLE IF EXISTS `bind_imei`;
 CREATE TABLE `bind_imei` (
@@ -26,11 +26,7 @@ CREATE TABLE `bind_imei` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of bind_imei
--- ----------------------------
-
--- ----------------------------
--- Table structure for `bind_mobile`
+-- Table structure for bind_mobile
 -- ----------------------------
 DROP TABLE IF EXISTS `bind_mobile`;
 CREATE TABLE `bind_mobile` (
@@ -38,7 +34,3 @@ CREATE TABLE `bind_mobile` (
   `id` bigint(11) DEFAULT NULL,
   PRIMARY KEY (`mobile`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='绑定手机表\r\n按照md5(mobile)前2字节分片';
-
--- ----------------------------
--- Records of bind_mobile
--- ----------------------------

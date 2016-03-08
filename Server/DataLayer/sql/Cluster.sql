@@ -1,22 +1,22 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : sun
+Source Server         : localhost
 Source Server Version : 50150
-Source Host           : 192.168.11.106:3306
-Source Database       : Cluster
+Source Host           : localhost:3306
+Source Database       : cluster
 
 Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2016-01-21 16:30:28
+Date: 2016-03-08 13:41:32
 */
 
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for `net_line`
+-- Table structure for net_line
 -- ----------------------------
 DROP TABLE IF EXISTS `net_line`;
 CREATE TABLE `net_line` (
@@ -35,7 +35,7 @@ INSERT INTO `net_line` VALUES ('2', '移动');
 INSERT INTO `net_line` VALUES ('3', '联通');
 
 -- ----------------------------
--- Table structure for `node`
+-- Table structure for node
 -- ----------------------------
 DROP TABLE IF EXISTS `node`;
 CREATE TABLE `node` (
@@ -62,7 +62,7 @@ INSERT INTO `node` VALUES ('认证服务', '1', '电信', '192.168.11.109', '670
 INSERT INTO `node` VALUES ('通知服务', '1', '电信', '192.168.11.109', '6802');
 
 -- ----------------------------
--- Table structure for `node_type`
+-- Table structure for node_type
 -- ----------------------------
 DROP TABLE IF EXISTS `node_type`;
 CREATE TABLE `node_type` (
@@ -85,7 +85,7 @@ INSERT INTO `node_type` VALUES ('1', '运维服务');
 INSERT INTO `node_type` VALUES ('4', '通知服务');
 
 -- ----------------------------
--- Table structure for `room`
+-- Table structure for room
 -- ----------------------------
 DROP TABLE IF EXISTS `room`;
 CREATE TABLE `room` (

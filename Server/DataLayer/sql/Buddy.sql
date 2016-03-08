@@ -1,22 +1,22 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : sun
+Source Server         : localhost
 Source Server Version : 50150
-Source Host           : 192.168.11.106:3306
-Source Database       : Buddy
+Source Host           : localhost:3306
+Source Database       : buddy
 
 Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2015-12-17 15:42:16
+Date: 2016-03-08 13:41:42
 */
 
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for `buddy`
+-- Table structure for buddy
 -- ----------------------------
 DROP TABLE IF EXISTS `buddy`;
 CREATE TABLE `buddy` (
@@ -25,11 +25,7 @@ CREATE TABLE `buddy` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of buddy
--- ----------------------------
-
--- ----------------------------
--- Table structure for `user_info`
+-- Table structure for user_info
 -- ----------------------------
 DROP TABLE IF EXISTS `user_info`;
 CREATE TABLE `user_info` (
@@ -39,13 +35,9 @@ CREATE TABLE `user_info` (
   `nickname` varchar(255) DEFAULT 'NULL' COMMENT '昵称',
   `signature` varchar(255) DEFAULT 'NULL' COMMENT '签名',
   `sex` int(11) DEFAULT '1' COMMENT '性别0女1男',
-  `coin` int(11) DEFAULT '0' COMMENT '虚拟币',
+  `coin` int(11) DEFAULT '1000000' COMMENT '虚拟币',
   `headIco` varchar(255) DEFAULT 'NULL' COMMENT '个人头像',
   `level` smallint(8) DEFAULT '0' COMMENT '等级',
   `realName` varchar(40) DEFAULT 'NULL' COMMENT '真实姓名',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表\r\n按照username首字母分片';
-
--- ----------------------------
--- Records of user_info
--- ----------------------------
