@@ -34,14 +34,8 @@
     <Filter Include="Message\Object\Operation">
       <UniqueIdentifier>{d4796510-666f-471b-8031-402470a20e68}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Message\Object\Database">
-      <UniqueIdentifier>{ca825674-b009-43e8-9997-0760b7b3cd7e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Message\Object\SNS">
       <UniqueIdentifier>{bdab649c-3c65-4d46-a8f4-cf04add31fcc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Message\Object\Game">
-      <UniqueIdentifier>{b6b0c859-1f1a-4327-88db-ecdb1874de42}</UniqueIdentifier>
     </Filter>
     <Filter Include="Message\Object\DBEntry">
       <UniqueIdentifier>{22d3d172-cf1d-4d8d-ad1e-210cd9a6ccfb}</UniqueIdentifier>
