@@ -67,7 +67,7 @@ namespace data
 		short		specialA;//特攻
 		short		specialD;//特防
 		short		speed;//速度
-		std::map<unsigned short, bool> skills;//最大30个
+		std::map<unsigned short, bool> skills;//最大80个
 		char		rare;	//出现率 1~99
 		char		tame;	//驯化率 1~99
 		std::vector<short>		upBuddys;//进化后编号最多10种进化

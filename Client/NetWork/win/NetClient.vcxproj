@@ -48,6 +48,7 @@
     <ClCompile Include="..\..\common\MD5Helper.cpp" />
     <ClCompile Include="..\..\mdk\ConfigFile.cpp" />
     <ClCompile Include="..\..\mdk\Executor.cpp" />
+    <ClCompile Include="..\..\mdk\File.cpp" />
     <ClCompile Include="..\..\mdk\Lock.cpp" />
     <ClCompile Include="..\..\mdk\mapi.cpp" />
     <ClCompile Include="..\..\mdk\Signal.cpp" />
@@ -99,6 +100,7 @@
     <ClInclude Include="..\..\mdk\atom.h" />
     <ClInclude Include="..\..\mdk\ConfigFile.h" />
     <ClInclude Include="..\..\mdk\Executor.h" />
+    <ClInclude Include="..\..\mdk\File.h" />
     <ClInclude Include="..\..\mdk\FixLengthInt.h" />
     <ClInclude Include="..\..\mdk\Lock.h" />
     <ClInclude Include="..\..\mdk\mapi.h" />

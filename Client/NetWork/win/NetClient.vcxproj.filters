@@ -170,6 +170,9 @@
     <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\TreePlant.cpp">
       <Filter>Protocl\Object\DBEntry</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\mdk\File.cpp">
+      <Filter>mdk</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Protocl\cpp\Buffer.h">
@@ -316,6 +319,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\common\BuddyData.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mdk\File.h">
+      <Filter>mdk</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

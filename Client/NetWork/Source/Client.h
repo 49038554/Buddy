@@ -44,7 +44,8 @@ public:
 	
 	//////////////////////////////////////////////////////////////////////////
 	//Game
-	bool GameInit();
+	bool LoadGameInit();
+	bool SaveGameInit();
 
 protected:
 	virtual void Main();
@@ -76,9 +77,13 @@ private:
 
 	USER_DATA	m_user;
 
-	std::map<unsigned char, std::string>		m_races;
-	std::vector<data::SKILL>		m_skills;//×î´ó50¸ö
-
+	bool m_gameInitLoaded;
+	std::map<unsigned char, std::string>	m_races;
+	std::vector<data::ITEM>					m_items;
+	std::vector<data::TALENT>				m_talents;
+	std::vector<data::SKILL>				m_skills;
+	std::vector<data::BUDDY>				m_buddys;
+	std::vector<data::BUDDY_MAP>			m_buddyMaps;
 };
 
 #endif //CLIENT_H
