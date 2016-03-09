@@ -165,6 +165,12 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\TreePlant.cpp">
       <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\common\BuddyData.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Player.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\DataLayer\DBCenter\Main.h">
@@ -295,6 +301,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\common\BuddyData.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Player.h">
+      <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

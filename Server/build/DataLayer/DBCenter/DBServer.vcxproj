@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\common\BuddyData.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp" />
@@ -24,6 +25,7 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\GetPlayerData.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Pets.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Player.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\PlayerItems.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.cpp" />
@@ -68,6 +70,7 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\GetPlayerData.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Pets.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Player.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\PlayerItems.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.h" />

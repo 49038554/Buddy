@@ -72,6 +72,7 @@ File::File(const std::string &dir, const std::string &name)
 
 File::~File()
 {
+	Close();
 }
 
 File::Error File::Open(const std::string &dir, const std::string &name, File::Action act, File::DataFromat fromat)

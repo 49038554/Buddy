@@ -17,35 +17,19 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	//Auth
 	bool Register(bool isMobile, const std::string &account, const std::string &pwd);
-	void OnRegister(msg::Buffer &buffer);
 	bool Login(bool isMobile, const std::string &account, const std::string &pwd);
-	void OnLogin(msg::Buffer &buffer);
 	bool BindPhone(const std::string &moblie);
-	void OnBindPhone(msg::Buffer &buffer);
-	void OnRelogin(msg::Buffer &buffer);
 	bool SetPassword(const std::string pwd);
-	void OnResetPassword(msg::Buffer &buffer);
-
 	//////////////////////////////////////////////////////////////////////////
 	//SNS
+	bool GetUserData(unsigned int userId);
+	bool GetBuddys();
+	bool GetEvent();
 	bool AddBuddy(unsigned int buddyId, const std::string &talk);
 	bool AcceptBuddy(unsigned int buddyId, const std::string &talk, bool accept);
-	void OnAddBuddy(msg::Buffer &buffer);
-	bool GetEvent();
 	bool DelBuddy( unsigned int buddyId );
-	void OnDelBuddy(msg::Buffer &buffer);
-	bool GetBuddys();
-	void OnBuddys(msg::Buffer &buffer);
 	bool Chat(unsigned int recverId, unsigned char recvType, const std::string &talk);
-	void OnChat(msg::Buffer &buffer);
-	bool GetUserData(unsigned int userId);
-	void OnUserData(msg::Buffer &buffer);
 	bool SetUserData(unsigned int userId);
-	
-	//////////////////////////////////////////////////////////////////////////
-	//Game
-	bool LoadGameInit();
-	bool SaveGameInit();
 
 protected:
 	virtual void Main();
@@ -55,8 +39,56 @@ protected:
 
 	void OnAuth(msg::Buffer &buffer);
 	void OnSNS(msg::Buffer &buffer);
+	void OnDBEntry(msg::Buffer &buffer);
+
+
+	//////////////////////////////////////////////////////////////////////////
+	//Auth
+	void OnRegister(msg::Buffer &buffer);
+	void OnLogin(msg::Buffer &buffer);
+	void OnBindPhone(msg::Buffer &buffer);
+	void OnRelogin(msg::Buffer &buffer);
+	void OnResetPassword(msg::Buffer &buffer);
+
+	//////////////////////////////////////////////////////////////////////////
+	//SNS
+	void OnAddBuddy(msg::Buffer &buffer);
+	void OnDelBuddy(msg::Buffer &buffer);
+	void OnBuddys(msg::Buffer &buffer);
+	void OnChat(msg::Buffer &buffer);
+	void OnUserData(msg::Buffer &buffer);
 
 	void ClientInfo();
+
+	//////////////////////////////////////////////////////////////////////////
+	//game data tooler
+	bool LoadGameInit();
+	bool SaveGameInit();
+	bool SaveGame();
+	bool LoadGame();
+	bool GameSaved();
+	void SyncGame();
+	void IOCoin( int count );
+	void IOItem( short itemId, int count );
+	bool TestLuck();
+	bool UseItem( short itemId, int count );
+	bool Buy( short itemId, int count );
+	bool Devour( short itemId, int count );
+	//////////////////////////////////////////////////////////////////////////
+	//DBEntry
+	void OnRaceMap(msg::Buffer &buffer);
+	void OnItemBook(msg::Buffer &buffer);
+	void OnTalentBook(msg::Buffer &buffer);
+	void OnSkillBook(msg::Buffer &buffer);
+	void OnBuddyBook(msg::Buffer &buffer);
+	void OnBuddyMap(msg::Buffer &buffer);
+	void OnSetupVersion(msg::Buffer &buffer);
+	void OnPlayer(msg::Buffer &buffer);
+	void OnPlayerItems(msg::Buffer &buffer);
+	void OnPets(msg::Buffer &buffer);
+	void OnGetPlayerData(msg::Buffer &buffer);
+
+
 private:
 	typedef struct BUDDY_DATA
 	{
@@ -75,15 +107,38 @@ private:
 		std::map<mdk::uint32, BUDDY_DATA>	buddys;
 	}USER_DATA;
 
+	net::Socket m_tcpEntry;
+	time_t m_lastQueryTime;
 	USER_DATA	m_user;
 
-	bool m_gameInitLoaded;
-	std::map<unsigned char, std::string>	m_races;
-	std::vector<data::ITEM>					m_items;
-	std::vector<data::TALENT>				m_talents;
-	std::vector<data::SKILL>				m_skills;
-	std::vector<data::BUDDY>				m_buddys;
+	bool									m_gameInitLoaded;
+	//当前版本数据
+	int										m_gameInitVersion;
+	std::map<unsigned char, std::string>	m_raceBook;
+	std::vector<data::ITEM>					m_itemBook;
+	std::vector<data::TALENT>				m_talentBook;
+	std::vector<data::SKILL>				m_skillBook;
+	std::vector<data::BUDDY>				m_buddyBook;
 	std::vector<data::BUDDY_MAP>			m_buddyMaps;
+
+	//更新版本数据
+	std::map<unsigned char, std::string>	m_raceBookNew;
+	std::vector<data::ITEM>					m_itemBookNew;
+	std::vector<data::TALENT>				m_talentBookNew;
+	std::vector<data::SKILL>				m_skillBookNew;
+	std::vector<data::BUDDY>				m_buddyBookNew;
+	std::vector<data::BUDDY_MAP>			m_buddyMapsNew;
+
+	//玩家数据
+	bool							m_palyerDataLoaded;
+	unsigned int					m_playerId;
+	int								m_coin;
+	int								m_coinChange;
+	std::vector<data::PLAYER_ITEM>	m_items;
+	std::vector<data::PLAYER_ITEM>	m_itemsChange;
+	std::vector<data::PET>			m_pets;
+	time_t							m_lastLuckTime;
+	short							m_luckCoin;
 };
 
 #endif //CLIENT_H

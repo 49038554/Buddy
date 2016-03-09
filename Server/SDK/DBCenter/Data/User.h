@@ -16,7 +16,7 @@ public:
 	std::string		nickName;       // 昵称
 	std::string		headIco;         // 头像URL
 	bool			sex;            // 性别true = 男 false = 女
-	int				coin;           // 柚元（由RMB充值产生）
+	int				coin;           // 证能量（由RMB充值产生）
 
 	// 内存数据
 	std::string		bindImei;		//账号：Imei

@@ -295,6 +295,26 @@ void Worker::OnMsg(mdk::NetHost &host)
 	}
 
 	//client请求
+	if ( !buffer.Parse() )
+	{
+		host.Close();
+		m_log.Info("Error","非法报文头，强制断开");
+		return;
+	}
+	if ( Moudle::DBEntry == buffer.MoudleId() 
+		&& (MsgId::setupVersion == buffer.Id())) 
+	{
+		mdk::NetHost helperHost;
+		int nodeId = 0;
+		if ( Moudle::DBEntry == buffer.MoudleId() ) nodeId = m_dbCluster.Node(helperHost);
+		if ( 0 == nodeId )
+		{
+			m_log.Info("Error", "DBEntry结点未连接");
+			return;
+		}
+		helperHost.Send(buffer, buffer.Size());
+		return;
+	}
 	if ( buffer.IsResult() ) //不应该发送回应报文
 	{
 		host.Close();

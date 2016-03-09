@@ -33,7 +33,7 @@ protected:
 	virtual void OnMsg(mdk::STNetHost& host);
 	void OnAuth(mdk::STNetHost &host, msg::Buffer &buffer);//认证模块消息响应
 	void OnSNS(mdk::STNetHost &host, msg::Buffer &buffer);//社交模块消息响应
-	void OnGame(mdk::STNetHost &host, msg::Buffer &buffer);//游戏模酷开消息响应
+	void OnDBEntry(mdk::STNetHost &host, msg::Buffer &buffer);//数据模块消息响应
 	//////////////////////////////////////////////////////////////////////////
 	// 认证服模块
 	//////////////////////////////////////////////////////////////////////////
@@ -93,16 +93,15 @@ private:
 	bool ReadBuddy(MySqlClient *pMysql, std::vector<data::BUDDY> &buddys);
 	//取巴迪兽地理数据 
 	bool ReadBuddyLBS(MySqlClient *pMysql, std::vector<data::BUDDY_MAP> &buddyMaps);
+	//取证能量
+	bool ReadCoin(MySqlClient *pMysql, unsigned int userId, int &coin, ResultCode::ResultCode &result, std::string &reason);
 	//取宠物
 	bool ReadPets(MySqlClient *pMysql, unsigned int userId, std::vector<data::PET> &pets, ResultCode::ResultCode &result, std::string &reason);
 	//取玩家物品 
 	bool ReadPlayerItems(MySqlClient *pMysql, unsigned int userId, std::vector<data::PLAYER_ITEM> &items, ResultCode::ResultCode &result, std::string &reason);
 
 	//////////////////////////////////////////////////////////////////////////
-	//search
-	data::BUDDY* Buddy(short number);
-	data::BUDDY* Buddy(const std::string name);
-	data::ITEM* Item( int itemId );
+	//Game
 	//添加房子
 	int AddHouse(unsigned int owner, const std::string &name, const std::string &address,
 		const std::string &longitude, const std::string &latitude,

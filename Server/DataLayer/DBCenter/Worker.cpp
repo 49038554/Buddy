@@ -8,25 +8,23 @@
 #include "Protocl/cpp/Object/Auth/ResetPassword.h"
 #include "Protocl/cpp/Object/Auth/BindingPhone.h"
 
-#include "Protocl/cpp/Object/Game/SetupVersion.h"
-#include "Protocl/cpp/Object/Game/RaceMap.h"
-#include "Protocl/cpp/Object/Game/SkillBook.h"
-#include "Protocl/cpp/Object/Game/ItemBook.h"
-#include "Protocl/cpp/Object/Game/TalentBook.h"
-#include "Protocl/cpp/Object/Game/BuddyBook.h"
-#include "Protocl/cpp/Object/Game/BuddyMap.h"
-#include "Protocl/cpp/Object/Game/GetPlayerData.h"
-#include "Protocl/cpp/Object/Game/Pets.h"
-#include "Protocl/cpp/Object/Game/PlayerItems.h"
+#include "Protocl/cpp/Object/DBEntry/SetupVersion.h"
+#include "Protocl/cpp/Object/DBEntry/RaceMap.h"
+#include "Protocl/cpp/Object/DBEntry/SkillBook.h"
+#include "Protocl/cpp/Object/DBEntry/ItemBook.h"
+#include "Protocl/cpp/Object/DBEntry/TalentBook.h"
+#include "Protocl/cpp/Object/DBEntry/BuddyBook.h"
+#include "Protocl/cpp/Object/DBEntry/BuddyMap.h"
+#include "Protocl/cpp/Object/DBEntry/GetPlayerData.h"
+#include "Protocl/cpp/Object/DBEntry/Player.h"
+#include "Protocl/cpp/Object/DBEntry/Pets.h"
+#include "Protocl/cpp/Object/DBEntry/PlayerItems.h"
 
-#include "Protocl/cpp/Object/Game/BuildHouse.h"
-#include "Protocl/cpp/Object/Game/TreePlant.h"
-#include "Protocl/cpp/Object/Game/SyncPets.h"
-#include "Protocl/cpp/Object/Game/SyncItem.h"
-#include "Protocl/cpp/Object/Game/SyncCoin.h"
-
-
-
+#include "Protocl/cpp/Object/DBEntry/BuildHouse.h"
+#include "Protocl/cpp/Object/DBEntry/TreePlant.h"
+#include "Protocl/cpp/Object/DBEntry/SyncPets.h"
+#include "Protocl/cpp/Object/DBEntry/SyncItem.h"
+#include "Protocl/cpp/Object/DBEntry/SyncCoin.h"
 
 static MD5Helper gs_md5helper;
 
@@ -205,6 +203,12 @@ void Worker::OnMsg(mdk::STNetHost& host)
 		host.Close();
 		return;
 	}
+	if ( !buffer.Parse() )
+	{
+		m_log.Info("Error", "非法报文头! 强制断开");
+		host.Close();
+		return;
+	}
 
 	switch (buffer.MoudleId())
 	{
@@ -214,8 +218,8 @@ void Worker::OnMsg(mdk::STNetHost& host)
 	case Moudle::SNS :
 		OnSNS(host, buffer);
 		break;
-	case Moudle::Game :
-		OnGame(host, buffer);
+	case Moudle::DBEntry :
+		OnDBEntry(host, buffer);
 		break;
 	default:
 		m_log.Info("Error", "未预料的报文! 强制断开");
@@ -458,7 +462,7 @@ bool Worker::CreateUser(msg::UserRegister& userRegister, Cache::User& user)
 		return false;
 	}
 	sprintf(sql, "insert into user_info (id, pwd, randKey, nickname, coin) "
-				"values (%d, \"%s\", \"%s\", \"%s\", 1000000)", 
+				"values (%d, \"%s\", \"%s\", \"%s\", 0)", 
 				user.id, user.pwd.c_str(), user.randKey.c_str(), user.nickName.c_str());
 	if (! pMysql->ExecuteSql(sql))
 	{
@@ -746,7 +750,7 @@ bool Worker::SetUserData(msg::SetUserData &msg)
 	return true;
 }
 
-void Worker::OnGame(mdk::STNetHost &host, msg::Buffer &buffer)
+void Worker::OnDBEntry(mdk::STNetHost &host, msg::Buffer &buffer)
 {
 	if (MsgId::setupVersion == buffer.Id()) OnSetupVersion(host, buffer);
 	else if (MsgId::getPlayerData == buffer.Id()) OnGetPlayerData(host, buffer);
@@ -778,7 +782,7 @@ bool Worker::LoadGameInit()
 		return false;
 	}
 	pMysql->MoveFirst();
-	while ( pMysql->IsEof() )
+	while ( !pMysql->IsEof() )
 	{
 		pMysql->GetValue("version", m_gameVersion);
 		pMysql->MoveNext();
@@ -1204,6 +1208,9 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 	{
 		std::map<unsigned char, std::string>::iterator it;
 		msg::RaceMap msg;
+		msg.m_connectId = buffer.m_connectId;
+		msg.m_objectId = buffer.m_objectId;
+		memcpy( msg.m_ip, buffer.m_ip, 4 );
 		for ( it = m_races.begin(); it != m_races.end(); it++ )
 		{
 			msg.m_races[it->first] = it->second;
@@ -1213,6 +1220,9 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 	}
 	{//特性
 		msg::TalentBook msg;
+		msg.m_connectId = buffer.m_connectId;
+		msg.m_objectId = buffer.m_objectId;
+		memcpy( msg.m_ip, buffer.m_ip, 4 );
 		for ( i = 0; i < m_talents.size(); i++ )
 		{
 			msg.m_talents.push_back(m_talents[i]);
@@ -1231,6 +1241,9 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 	}
 	{//物品
 		msg::ItemBook msg;
+		msg.m_connectId = buffer.m_connectId;
+		msg.m_objectId = buffer.m_objectId;
+		memcpy( msg.m_ip, buffer.m_ip, 4 );
 		for ( i = 0; i < m_items.size(); i++ )
 		{
 			msg.m_items.push_back(m_items[i]);
@@ -1249,6 +1262,9 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 	}
 	{//技能
 		msg::SkillBook msg;
+		msg.m_connectId = buffer.m_connectId;
+		msg.m_objectId = buffer.m_objectId;
+		memcpy( msg.m_ip, buffer.m_ip, 4 );
 		for ( i = 0; i < m_skills.size(); i++ )
 		{
 			msg.m_skills.push_back(m_skills[i]);
@@ -1267,6 +1283,9 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 	}
 	{//巴迪兽
 		msg::BuddyBook msg;
+		msg.m_connectId = buffer.m_connectId;
+		msg.m_objectId = buffer.m_objectId;
+		memcpy( msg.m_ip, buffer.m_ip, 4 );
 		for ( i = 0; i < m_buddys.size(); i++ )
 		{
 			msg.m_buddys.push_back(m_buddys[i]);
@@ -1285,6 +1304,9 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 	}
 	{//地图
 		msg::BuddyMap msg;
+		msg.m_connectId = buffer.m_connectId;
+		msg.m_objectId = buffer.m_objectId;
+		memcpy( msg.m_ip, buffer.m_ip, 4 );
 		int i = 0;
 		for ( i = 0; i < m_buddyMaps.size(); i++ )
 		{
@@ -1339,6 +1361,13 @@ void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
 		host.Send(msg, msg.Size());
 		return;
 	}
+	int coin = 0;
+	if ( !ReadCoin(pMysql, msg.m_objectId, coin, msg.m_code, msg.m_reason) )
+	{
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return;
+	}
 	std::vector<data::PET> pets;//最大100只
 	if ( !ReadPets(pMysql, msg.m_objectId, pets, msg.m_code, msg.m_reason) )
 	{
@@ -1354,7 +1383,19 @@ void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
 		return;
 	}
 	{
+		msg::Player msg;
+		msg.m_connectId = buffer.m_connectId;
+		msg.m_objectId = buffer.m_objectId;
+		memcpy( msg.m_ip, buffer.m_ip, 4 );
+		msg.m_coin = coin;
+		msg.Build();
+		host.Send(msg, msg.Size());
+	}
+	{
 		msg::Pets msg;
+		msg.m_connectId = buffer.m_connectId;
+		msg.m_objectId = buffer.m_objectId;
+		memcpy( msg.m_ip, buffer.m_ip, 4 );
 		int i = 0;
 		for ( i = 0; i < pets.size(); i++ )
 		{
@@ -1374,6 +1415,9 @@ void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
 	}
 	{
 		msg::PlayerItems msg;
+		msg.m_connectId = buffer.m_connectId;
+		msg.m_objectId = buffer.m_objectId;
+		memcpy( msg.m_ip, buffer.m_ip, 4 );
 		int i = 0;
 		for ( i = 0; i < items.size(); i++ )
 		{
@@ -1435,86 +1479,90 @@ bool Worker::CreatePlayer(unsigned int userId)
 	if ( !pMysql ) return false;
 
 	char sql[1024];
-	sprintf( sql, "select * from pet where userId = %d ", userId );
+	sprintf( sql, "select * from player where userId = %u ", userId );
 	if ( !pMysql->ExecuteSql(sql) ) return false;
 	if ( !pMysql->IsEmpty() ) return true;
 
-	sprintf( sql, "insert into player_item (userId, itemId, count) values(%d, 4, 1000) ", userId );
+	sprintf( sql, "insert into player (userId, coin) values(%u, 1000000) ", userId );
 	if ( !pMysql->ExecuteSql(sql) ) return false;
-	sprintf( sql, "insert into player_item (userId, itemId, count) values(%d, 8, 1) ", userId );
+	sprintf( sql, "insert into player_item (userId, itemId, count) values(%u, 4, 1000) ", userId );
+	if ( !pMysql->ExecuteSql(sql) ) return false;
+	sprintf( sql, "insert into player_item (userId, itemId, count) values(%u, 8, 1) ", userId );
 	if ( !pMysql->ExecuteSql(sql) ) return false;
 	int petId = 0;
 	data::BUDDY *pBuddy = NULL;
 	//老牛
 	petId++;
-	pBuddy = Buddy("老牛");
+	pBuddy = Buddy("老牛", m_buddys);
 	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 
 	//贪吃鬼
 	petId++;
-	pBuddy = Buddy("贪吃鬼");
+	pBuddy = Buddy("贪吃鬼", m_buddys);
 	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//虎鲨
 	petId++;
-	pBuddy = Buddy("虎鲨");
+	pBuddy = Buddy("虎鲨", m_buddys);
 	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//云雀
 	petId++;
-	pBuddy = Buddy("云雀");
+	pBuddy = Buddy("云雀", m_buddys);
 	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//悬浮魔偶
 	petId++;
-	pBuddy = Buddy("悬浮魔偶");
+	pBuddy = Buddy("悬浮魔偶", m_buddys);
 	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//夜魔人
 	petId++;
-	pBuddy = Buddy("夜魔人");
+	pBuddy = Buddy("夜魔人", m_buddys);
 	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 
 	return true;
 }
 
-data::BUDDY* Worker::Buddy(short number)
+bool Worker::ReadCoin(MySqlClient *pMysql, unsigned int userId, int &coin, ResultCode::ResultCode &result, std::string &reason)
 {
-	int i = 0;
-	for ( i = 0; i < m_buddys.size(); i++ )
+	char sql[1024];
+	sprintf( sql, "select * from player where userId = %d ", userId );
+	if ( !pMysql->ExecuteSql(sql) ) 
 	{
-		if ( number == m_buddys[i].number ) return &m_buddys[i];
+		result = ResultCode::DBError;
+		reason = "访问玩家数据失败:";
+		reason += pMysql->GetLastError();
+		return false;
+	}
+	if ( pMysql->IsEmpty() ) 
+	{
+		result = ResultCode::DBError;
+		reason = "玩家数据不存在";
+		return false;
+	}
+	data::PET pet;
+	pMysql->MoveFirst();
+	while ( !pMysql->IsEof() )
+	{
+		pMysql->GetValue("coin", coin);
+		pMysql->MoveNext();
 	}
 
-	return NULL;
-}
-
-data::BUDDY* Worker::Buddy(const std::string name)
-{
-	int i = 0;
-	for ( i = 0; i < m_buddys.size(); i++ )
-	{
-		if ( name == m_buddys[i].name ) return &m_buddys[i];
-	}
-	
-	return NULL;
-}
-
-data::ITEM* Worker::Item( int itemId )
-{
-	int i = 0;
-	for ( i = 0; i < m_items.size(); i++ )
-	{
-		if ( itemId == m_items[i].id ) return &m_items[i];
-	}
-
-	return NULL;
+	return true;
 }
 
 bool Worker::ReadPets(MySqlClient *pMysql, unsigned int userId, std::vector<data::PET> &pets, ResultCode::ResultCode &result, std::string &reason)
 {
 	char sql[1024];
 	sprintf( sql, "select * from pet where userId = %d ", userId );
-	if ( !pMysql->ExecuteSql(sql) || pMysql->IsEmpty() ) 
+	if ( !pMysql->ExecuteSql(sql) ) 
 	{
 		result = ResultCode::DBError;
-		reason = "访问宠物数据失败";
+		reason = "访问宠物数据失败:";
+		reason += pMysql->GetLastError();
+		return false;
+	}
+	if ( pMysql->IsEmpty() ) 
+	{
+		result = ResultCode::DBError;
+		reason = "玩家没有宠物";
 		return false;
 	}
 	data::PET pet;
@@ -1558,7 +1606,8 @@ bool Worker::ReadPets(MySqlClient *pMysql, unsigned int userId, std::vector<data
 		if ( !pMysql->ExecuteSql(sql) ) 
 		{
 			result = ResultCode::DBError;
-			reason = "访问宠物数据失败";
+			reason = "访问宠物数据失败:";
+			reason += pMysql->GetLastError();
 			return false;
 		}
 		if ( pMysql->IsEmpty() ) continue;
@@ -1582,7 +1631,8 @@ bool Worker::ReadPlayerItems(MySqlClient *pMysql, unsigned int userId, std::vect
 	if ( !pMysql->ExecuteSql(sql) ) 
 	{
 		result = ResultCode::DBError;
-		reason = "访问物品数据失败";
+		reason = "访问物品数据失败:";
+		reason += pMysql->GetLastError();
 		return false;
 	}
 	if ( pMysql->IsEmpty() ) return true;
@@ -1678,7 +1728,7 @@ void Worker::OnSyncPets(mdk::STNetHost &host, msg::Buffer &buffer)
 	data::BUDDY *pBuddy;
 	for ( i = 0; i < msg.m_pets.size(); i++ )
 	{
-		pBuddy = Buddy(msg.m_pets[i].number);
+		pBuddy = Buddy(msg.m_pets[i].number, m_buddys);
 		msg.m_pets[i].sync = SyncPet(msg.m_objectId, msg.m_pets[i].id, 
 			msg.m_pets[i].number, msg.m_pets[i].talent, msg.m_pets[i].nature, 
 			msg.m_pets[i].HPHealthy, msg.m_pets[i].WGHealthy, msg.m_pets[i].WFHealthy, 
@@ -1827,7 +1877,7 @@ int Worker::AddTree(unsigned int owner, int houseId )
 	sprintf(sql, "select treeId from tree where owner = %d order by treeId desc", owner);
 	if (!pMysql->ExecuteSql(sql))
 	{
-		m_log.Info("Error", "查询果树id", pMysql->GetLastError());
+		m_log.Info("Error", "查询果树id失败:%s", pMysql->GetLastError());
 		return 0;
 	}
 	if ( !pMysql->IsEmpty() ) 
@@ -1851,7 +1901,7 @@ int Worker::AddTree(unsigned int owner, int houseId )
 
 bool Worker::SyncItem(unsigned int userId, int itemId, int &count, int &coin)
 {
-	data::ITEM *pItem = Item(itemId);
+	data::ITEM *pItem = Item(itemId, m_items);
 	if ( NULL == pItem ) return false;
 
 	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", userId);
@@ -1909,16 +1959,21 @@ bool Worker::SyncCoin(unsigned int userId, int &count)
 	if ( !pMysql ) return false;
 
 	char sql[1024];
-	sprintf( sql, "select * from user_info where id = %u", userId );
-	if ( !pMysql->ExecuteSql(sql) || pMysql->IsEmpty() )
+	sprintf( sql, "select * from player where userId = %u", userId );
+	if ( !pMysql->ExecuteSql(sql) )
 	{
 		m_log.Info("Error", "同步正能量失败:%s", sql);
+		return false;
+	}
+	if ( pMysql->IsEmpty() )
+	{
+		m_log.Info("Error", "同步正能量失败:玩家数据不存在");
 		return false;
 	}
 
 	int curCoin;
 	pMysql->GetValue("coin", curCoin);
-	sprintf( sql, "update user_info set coin = coin + %d where id = %u ", 
+	sprintf( sql, "update player set coin = coin + %d where userId = %u ", 
 		count, userId );
 	if ( !pMysql->ExecuteSql(sql) ) m_log.Info("Error", "同步正能量失败:%s", sql);
 	count += curCoin;

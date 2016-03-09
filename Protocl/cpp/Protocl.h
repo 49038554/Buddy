@@ -80,8 +80,9 @@ namespace MsgId
 		talentBook = 2004,//特性图鉴
 		buddyBook = 2005,//巴迪图鉴
 		buddyMap = 2006,//巴迪分布地图
-		pets = 2007,//宠物数据
-		playerItems = 2008,//玩家物品
+		player = 2007,//玩家数据
+		pets = 2008,//宠物数据
+		playerItems = 2009,//玩家物品
 	};
 }
 

@@ -173,6 +173,12 @@
     <ClCompile Include="..\..\mdk\File.cpp">
       <Filter>mdk</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\common\BuddyData.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\Player.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Protocl\cpp\Buffer.h">
@@ -322,6 +328,9 @@
     </ClInclude>
     <ClInclude Include="..\..\mdk\File.h">
       <Filter>mdk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\Player.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

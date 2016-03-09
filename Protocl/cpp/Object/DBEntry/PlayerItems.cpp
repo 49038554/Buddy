@@ -56,7 +56,7 @@ bool PlayerItems::Parse()
 	}
 	int i = 0;
 	data::PLAYER_ITEM item;
-	for ( i = 0; i < m_items.size(); i++ )
+	for ( i = 0; i < count; i++ )
 	{
 		if ( !GetData(item.id) )
 		{
