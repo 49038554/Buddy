@@ -1757,10 +1757,11 @@ void Worker::OnSyncItem(mdk::STNetHost &host, msg::Buffer &buffer)
 	}
 	int i = 0;
 	int coin = 0;
+	msg.m_coin = 0;
 	for ( i = 0; i < msg.m_items.size(); i++ )
 	{
 		msg.m_items[i].m_successed = false;//默认同步失败
-		if ( !SyncItem(msg.m_objectId, msg.m_items[i].m_itemId, msg.m_items[i].m_count, coin) ) continue;
+		if ( !SyncItem(msg.m_objectId, msg.m_items[i].m_itemId, msg.m_items[i].m_count, coin, msg.m_items[i].m_countInDB) ) continue;
 		msg.m_coin += coin;
 		msg.m_items[i].m_successed = true;
 	}
@@ -1783,7 +1784,7 @@ void Worker::OnSyncCoin(mdk::STNetHost &host, msg::Buffer &buffer)
 		host.Send(msg, msg.Size());
 		return;
 	}
-	if ( !SyncCoin(msg.m_objectId, msg.m_count) ) 
+	if ( !SyncCoin(msg.m_objectId, msg.m_count, msg.m_coin) ) 
 	{
 		msg.m_code   = ResultCode::DBError;
 		msg.m_reason = "访问失败";
@@ -1899,18 +1900,31 @@ int Worker::AddTree(unsigned int owner, int houseId )
 	return houseId;
 }
 
-bool Worker::SyncItem(unsigned int userId, int itemId, int &count, int &coin)
+bool Worker::SyncItem(unsigned int userId, int itemId, int &count, int &coin, int &countInDB)
 {
+	if ( 0 == count ) return false;
 	data::ITEM *pItem = Item(itemId, m_items);
-	if ( NULL == pItem ) return false;
+	if ( NULL == pItem ) 
+	{
+		m_log.Info("Error", "同步不存在的物品");
+		return false;
+	}
 
 	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", userId);
-	if ( !pMysql ) return false;
+	if ( !pMysql ) 
+	{
+		m_log.Info("Error", "同步物品失败：数据库连接不存在");
+		return false;
+	}
 
 	char sql[1024];
 	sprintf( sql, "select * from player_item where userId = %u and itemId = %d ", 
 		userId, itemId );
-	if ( !pMysql->ExecuteSql(sql) ) return false;
+	if ( !pMysql->ExecuteSql(sql) ) 
+	{
+		m_log.Info("Error", "同步物品失败：查询剩余数量失败(%s)", pMysql->GetLastError());
+		return false;
+	}
 	coin = 0;
 	if ( pMysql->IsEmpty() ) 
 	{
@@ -1918,13 +1932,14 @@ bool Worker::SyncItem(unsigned int userId, int itemId, int &count, int &coin)
 		{
 			sprintf( sql, "insert into player_item (userId, itemId, count) values(%d, %d, %d) ", 
 				userId, itemId, count );
+			countInDB = count;
 		}
 		else
 		{
 			coin = count * pItem->coin;
-			if ( !SyncCoin(userId, coin) ) return false;
+			if ( !SyncCoin(userId, coin, coin) ) return false;
 			coin = count * pItem->coin;
-			count = 0;
+			countInDB = 0;
 		}
 	}
 	else
@@ -1936,16 +1951,19 @@ bool Worker::SyncItem(unsigned int userId, int itemId, int &count, int &coin)
 		{
 			sprintf( sql, "update player_item set count = count + %d where userId = %u and itemId = %d ", 
 				count, userId, itemId );
-			count = curCount;
+			countInDB = curCount;
 		}
 		else
 		{
 			sprintf( sql, "delete from player_item where userId = %u and itemId = %d ", 
 				userId, itemId );
-			coin = curCount * pItem->coin;
-			if ( !SyncCoin(userId, coin) ) return false;
-			coin = curCount * pItem->coin;
-			count = 0;
+			if ( curCount < 0 )
+			{
+				coin = curCount * pItem->coin;
+				if ( !SyncCoin(userId, coin, coin) ) return false;
+				coin = curCount * pItem->coin;
+			}
+			countInDB = 0;
 		}
 	}
 	if ( !pMysql->ExecuteSql(sql) ) m_log.Info("Error", "修改物品数量失败:%s", sql);
@@ -1953,9 +1971,14 @@ bool Worker::SyncItem(unsigned int userId, int itemId, int &count, int &coin)
 	return true;
 }
 
-bool Worker::SyncCoin(unsigned int userId, int &count)
+bool Worker::SyncCoin(unsigned int userId, int count, int &coin)
 {
-	MySqlClient *pMysql = m_mySQLCluster.Node("Buddy", userId);
+	if ( 0 == count ) 
+	{
+		m_log.Info("Error", "同步正能量,增量=0");
+		return false;
+	}
+	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", userId);
 	if ( !pMysql ) return false;
 
 	char sql[1024];
@@ -1976,7 +1999,7 @@ bool Worker::SyncCoin(unsigned int userId, int &count)
 	sprintf( sql, "update player set coin = coin + %d where userId = %u ", 
 		count, userId );
 	if ( !pMysql->ExecuteSql(sql) ) m_log.Info("Error", "同步正能量失败:%s", sql);
-	count += curCoin;
+	coin = curCoin + count;
 
 	return true;
 }

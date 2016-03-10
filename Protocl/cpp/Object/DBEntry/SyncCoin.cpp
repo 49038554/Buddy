@@ -20,7 +20,9 @@ bool SyncCoin::Build(bool isResult)
  	if ( !AddData(m_count) ) return false;
 
 	//回应参数
-
+	if (!isResult || ResultCode::Success != m_code) return true;
+	if ( !AddData(m_coin) ) return false;
+	
 	return true;
 }
 
@@ -31,6 +33,9 @@ bool SyncCoin::Parse()
 	if ( !GetData(m_count) ) return false;
 
 	//回应参数
+	if (!IsResult() || ResultCode::Success != m_code) return true;
+
+	if (!GetData(m_coin)) return false;
 
 	return true;
 }

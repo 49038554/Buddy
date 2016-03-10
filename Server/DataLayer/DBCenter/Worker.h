@@ -109,8 +109,8 @@ private:
 	//Ìí¼Ó¹ûÊ÷
 	int AddTree(unsigned int owner, int houseId );
 	bool UseItem(unsigned int userId, int itemId, int count);
-	bool SyncItem(unsigned int userId, int itemId, int &count, int &coin);
-	bool SyncCoin(unsigned int userId, int &count);
+	bool SyncItem(unsigned int userId, int itemId, int &count, int &coin, int &countInDB);
+	bool SyncCoin(unsigned int userId, int count, int &coin);
 	bool SyncPet( unsigned int userId, int petId, 
 		int number, char talent, char nature, 
 		char HPHealthy, char WGHealthy, char WFHealthy, char TGHealthy, char TFHealthy, char SDHealthy,

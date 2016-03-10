@@ -17,9 +17,10 @@ public:
 		short		m_itemId;	//物品id
 		bool		m_successed;//成功/失败
 		int			m_count;	//数量
+		int			m_countInDB;//同步后数据库中数量
 	}ITEM;
 	//请求参数
-	std::vector<ITEM>	m_items;//同步物品
+	std::vector<ITEM>	m_items;//同步物品,最大500
 
 	//回应参数
 	int					m_coin;//作弊罚款

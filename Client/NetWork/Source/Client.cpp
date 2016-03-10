@@ -1323,6 +1323,15 @@ void Client::OnDBEntry(msg::Buffer &buffer)
 	case MsgId::getPlayerData :
 		OnGetPlayerData(buffer);
 		break;
+	case MsgId::syncCoin :
+		OnSyncCoin(buffer);
+		break;
+	case MsgId::syncItem :
+		OnSyncItem(buffer);
+		break;
+	case MsgId::syncPets :
+		OnSyncPets(buffer);
+		break;
 	default:
 		break;
 	}
@@ -1484,6 +1493,8 @@ bool Client::SaveGame()
 	SaveItems(db, m_items);//
 	SaveItems(db, m_itemsChange);//
 	SavePets(db, m_pets);//
+	db.Write(&m_lastLuckTime, sizeof(time_t));
+	db.Write(&m_luckCoin, sizeof(short));
 
 	return true;
 }
@@ -1502,8 +1513,8 @@ bool Client::LoadGame()
 	if ( 0 != ret ) return false;
 	ret = LoadPets(db, m_pets);//
 	if ( 0 != ret ) return false;
-	m_lastLuckTime = time(NULL);
-	m_luckCoin = 0;
+	if ( mdk::File::success != db.Read(&m_lastLuckTime, sizeof(time_t)) ) return false;
+	if ( mdk::File::success != db.Read(&m_luckCoin, sizeof(short)) ) return false;
 
 	return true;
 }
@@ -1580,26 +1591,39 @@ void Client::SyncGame()
 	if ( m_tcpEntry.IsClosed() ) return;
 	if ( GameSaved() ) return;
 
+	if ( 0 != m_coinChange )
 	{
 		msg::SyncCoin msg;
 		msg.m_count = m_coinChange;
 		msg.Build();
 		m_tcpEntry.Send(msg, msg.Size());
 	}
+	if ( 0 < m_itemsChange.size() )
 	{
 		msg::SyncItem msg;
 		msg::SyncItem::ITEM info;
 		int i = 0;
-		for ( i = 0; m_itemsChange.size(); i++ )
+		for ( i = 0; i < m_itemsChange.size(); i++ )
 		{
+			if ( 0 == m_itemsChange[i].count ) continue;
 			info.m_itemId = m_itemsChange[i].id;
 			info.m_count = m_itemsChange[i].count;
 			info.m_successed = false;
 			msg.m_items.push_back(info);
+			if ( msg.m_items.size() == 500 )
+			{
+				msg.Build();
+				m_tcpEntry.Send(msg, msg.Size());
+				msg.m_items.clear();
+			}
 		}
-		msg.Build();
-		m_tcpEntry.Send(msg, msg.Size());
+		if ( 0 < msg.m_items.size() )
+		{
+			msg.Build();
+			m_tcpEntry.Send(msg, msg.Size());
+		}
 	}
+	if ( false )
 	{
 		msg::SyncPets msg;
 		int i = 0;
@@ -1651,12 +1675,14 @@ void Client::IOItem( short itemId, int count )
 	else pInfo->count += count;
 }
 
-bool Client::TestLuck()
+char* Client::TestLuck()
 {
-	time_t curTime = time(NULL);
 	time_t today = mdk::mdk_Date();
-	if ( today > curTime ) m_luckCoin = 0;
-	if ( m_luckCoin >= 1000 ) return false;
+	if ( today > m_lastLuckTime ) 
+	{
+		m_luckCoin = 0;
+	}
+	if ( m_luckCoin >= 1000 ) return "今日机会已经用完";
 
 	int i = 0; 
 	data::PLAYER_ITEM *pInfo;
@@ -1672,44 +1698,120 @@ bool Client::TestLuck()
 		if ( m_luckCoin + m_itemBook[i].coin > 1000 ) continue;
 		m_luckCoin += m_itemBook[i].coin;
 		IOItem(m_itemBook[i].id, 1);
+		SaveGame();
 		break;
 	}
-	m_lastLuckTime = curTime;
-	return true;
+	m_lastLuckTime = time(NULL);
+	char result[256];
+	sprintf( result, "摇到物品(%s)正能量(%d)剩余机会(%d)\n", 
+		m_itemBook[i].name.c_str(), m_itemBook[i].coin, 1000 - m_luckCoin );
+	return result;
 }
 
-bool Client::UseItem( short itemId, int count )
+char* Client::UseItem( short itemId, int count )
 {
+	if ( 0 >= count ) return "参数错误";
+
 	data::PLAYER_ITEM *pInfo = PlayerItem(itemId, m_items);
-	if ( NULL == pInfo || pInfo->count < count ) return false;
-	IOItem(itemId, count);
+	if ( NULL == pInfo || pInfo->count < count ) return "数量不足";
+	IOItem(itemId, count * -1);
+	SaveGame();
 
-	return true;
+	return NULL;
 }
 
-bool Client::Buy( short itemId, int count )
+char* Client::Buy( short itemId, int count )
 {
-	if ( 0 >= count ) return false;
+	if ( 0 >= count ) return "参数错误";
 
 	data::ITEM *pItemBook = Item(itemId, m_itemBook);
-	if ( NULL == pItemBook ) return false;
-	if ( pItemBook->coin * count > m_coin ) return false;
+	if ( NULL == pItemBook ) return "物品不存在";
+	if ( pItemBook->coin * count > m_coin ) return "正能量不足";
 
 	IOCoin(pItemBook->coin * count * -1);
 	IOItem(itemId, count);
+	SaveGame();
 
-	return true;
+	return NULL;
 }
 
-bool Client::Devour( short itemId, int count )
+char* Client::Devour( short itemId, int count )
 {
-	if ( 0 >= count ) return false;
+	if ( 0 >= count ) return "参数错误";
 
 	data::ITEM *pItemBook = Item(itemId, m_itemBook);
-	if ( NULL == pItemBook ) return false;
+	if ( NULL == pItemBook ) return "物品不存在";
 
-	if ( !UseItem(itemId, count) ) return false;
+	char *ret = UseItem(itemId, count);
+	if ( NULL != ret ) return ret;
 	IOCoin(pItemBook->coin * count * 0.9);
+	SaveGame();
 
-	return true;
+	return NULL;
+}
+
+void Client::OnSyncCoin(msg::Buffer &buffer)
+{
+	msg::SyncCoin msg;
+	memcpy(msg, buffer, buffer.Size());
+	if ( !msg.Parse() ) return;
+
+	if ( ResultCode::Success != msg.m_code ) return;
+	m_coinChange -= msg.m_count;
+	m_coin = msg.m_coin + m_coinChange;
+	SaveGame();
+}
+
+void Client::OnSyncItem(msg::Buffer &buffer)
+{
+	msg::SyncItem msg;
+	memcpy(msg, buffer, buffer.Size());
+	if ( !msg.Parse() ) return;
+	if ( ResultCode::Success != msg.m_code ) return;
+
+	int i = 0;
+	data::PLAYER_ITEM *pInfo;
+	for ( i = 0; i < msg.m_items.size(); i++ )
+	{
+		if ( !msg.m_items[i].m_successed ) continue;
+		pInfo = PlayerItem(msg.m_items[i].m_itemId, m_itemsChange);
+		int changeCount;
+		if ( NULL == pInfo )
+		{
+			data::PLAYER_ITEM info;
+			info.id = msg.m_items[i].m_itemId;
+			info.count = msg.m_items[i].m_count * -1;
+			m_itemsChange.push_back(info);
+			changeCount = info.count;
+		}
+		else
+		{
+			pInfo->count -= msg.m_items[i].m_count;
+			changeCount = pInfo->count;
+		}
+		pInfo = PlayerItem(msg.m_items[i].m_itemId, m_items);
+		if ( NULL == pInfo )
+		{
+			data::PLAYER_ITEM info;
+			info.id = msg.m_items[i].m_itemId;
+			info.count = msg.m_items[i].m_countInDB + changeCount;
+			m_itemsChange.push_back(info);
+		}
+		else
+		{
+			pInfo->count = msg.m_items[i].m_countInDB + changeCount;
+		}
+	}
+	
+	m_coin += msg.m_coin;
+	SaveGame();
+}
+
+void Client::OnSyncPets(msg::Buffer &buffer)
+{
+	msg::SyncPets msg;
+	memcpy(msg, buffer, buffer.Size());
+	if ( !msg.Parse() ) return;
+
+	SaveGame();
 }

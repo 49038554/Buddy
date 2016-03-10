@@ -25,6 +25,10 @@ bool SyncItem::Build(bool isResult)
 		if ( !AddData(m_items[i].m_itemId) ) return false;
 		if ( !AddData(m_items[i].m_count) ) return false;
 		if ( !AddData(m_items[i].m_successed) ) return false;
+		if ( m_items[i].m_successed )
+		{
+			if ( !AddData(m_items[i].m_countInDB) ) return false;
+		}
 	}
 	
 	//回应参数
@@ -47,6 +51,10 @@ bool SyncItem::Parse()
 		if ( !GetData(info.m_itemId) ) return false;
 		if ( !GetData(info.m_count) ) return false;
 		if ( !GetData(info.m_successed) ) return false;
+		if ( info.m_successed )
+		{
+			if ( !GetData(info.m_countInDB) ) return false;
+		}
 		m_items.push_back(info);
 	}
 

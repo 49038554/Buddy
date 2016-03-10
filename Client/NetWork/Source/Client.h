@@ -31,6 +31,13 @@ public:
 	bool Chat(unsigned int recverId, unsigned char recvType, const std::string &talk);
 	bool SetUserData(unsigned int userId);
 
+	//////////////////////////////////////////////////////////////////////////
+	//Game
+	char* TestLuck();
+	char* UseItem( short itemId, int count );
+	char* Buy( short itemId, int count );
+	char* Devour( short itemId, int count );
+
 protected:
 	virtual void Main();
 	virtual void OnConnect(int svrType, net::Socket &svr);
@@ -70,10 +77,6 @@ protected:
 	void SyncGame();
 	void IOCoin( int count );
 	void IOItem( short itemId, int count );
-	bool TestLuck();
-	bool UseItem( short itemId, int count );
-	bool Buy( short itemId, int count );
-	bool Devour( short itemId, int count );
 	//////////////////////////////////////////////////////////////////////////
 	//DBEntry
 	void OnRaceMap(msg::Buffer &buffer);
@@ -87,6 +90,9 @@ protected:
 	void OnPlayerItems(msg::Buffer &buffer);
 	void OnPets(msg::Buffer &buffer);
 	void OnGetPlayerData(msg::Buffer &buffer);
+	void OnSyncCoin(msg::Buffer &buffer);
+	void OnSyncItem(msg::Buffer &buffer);
+	void OnSyncPets(msg::Buffer &buffer);
 
 
 private:
@@ -139,6 +145,7 @@ private:
 	std::vector<data::PET>			m_pets;
 	time_t							m_lastLuckTime;
 	short							m_luckCoin;
+
 };
 
 #endif //CLIENT_H

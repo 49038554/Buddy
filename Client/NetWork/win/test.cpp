@@ -187,6 +187,58 @@ char* OnCommand(std::vector<std::string> *param)
 		}
 		g_cli.GetUserData(uid);
 	}
+	else if ( "luck" == cmd[0] )
+	{
+		if ( 1 != cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		char *ret = g_cli.TestLuck();
+		if ( NULL != ret ) printf( "%s\n", ret );
+	}
+	else if ( "use" == cmd[0] )
+	{
+		if ( 3 != cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		short id;
+		sscanf(cmd[1].c_str(), "%hd", &id);
+		int count;
+		sscanf(cmd[2].c_str(), "%d", &count);
+		char *ret = g_cli.UseItem(id, count);
+		if ( NULL != ret ) printf( "%s\n", ret );
+	}
+	else if ( "buy" == cmd[0] )
+	{
+		if ( 3 != cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		short id;
+		sscanf(cmd[1].c_str(), "%hd", &id);
+		int count;
+		sscanf(cmd[2].c_str(), "%d", &count);
+		char *ret = g_cli.Buy(id, count);
+		if ( NULL != ret ) printf( "%s\n", ret );
+	}
+	else if ( "eat" == cmd[0] )
+	{
+		if ( 3 != cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		short id;
+		sscanf(cmd[1].c_str(), "%hd", &id);
+		int count;
+		sscanf(cmd[2].c_str(), "%d", &count);
+		char *ret = g_cli.Devour(id, count);
+		if ( NULL != ret ) printf( "%s\n", ret );
+	}
 	else Helper();
 
 	return NULL;
@@ -205,4 +257,8 @@ void Helper()
 	printf( "\t\tgetBuddys buddyId\n" );
 	printf( "\t\tchat buddyId talk [recvType]\n" );
 	printf( "\t\tgetUser userId\n" );
+	printf( "\t\tluck itemId count\n" );
+	printf( "\t\tuse itemId count\n" );
+	printf( "\t\tbuy itemId count\n" );
+	printf( "\t\teat itemId count\n" );
 }

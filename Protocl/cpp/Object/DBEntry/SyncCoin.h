@@ -13,9 +13,10 @@ class SyncCoin : public Buffer
 {
 public:
 	//请求参数
-	int			m_count;	//数量
+	int			m_count;	//修正数量
 
 	//回应参数
+	int			m_coin;		//数据库中余额
 
 public:
 	SyncCoin();
