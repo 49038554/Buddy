@@ -33,7 +33,7 @@
     <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.cpp" />
     <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.cpp" />
     <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.cpp" />
-    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncCoin.cpp" />
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncPlayer.cpp" />
     <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncItem.cpp" />
     <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncPets.cpp" />
     <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\TalentBook.cpp" />
@@ -84,7 +84,7 @@
     <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.h" />
-    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncCoin.h" />
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncPlayer.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncItem.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncPets.h" />
     <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\TalentBook.h" />

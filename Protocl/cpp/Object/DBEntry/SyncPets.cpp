@@ -32,10 +32,6 @@ bool SyncPets::Build(bool isResult)
 		{
 			return false;
 		}
-		if ( !AddData(m_pets[i].sync) )
-		{
-			return false;
-		}
 		if ( !AddData(m_pets[i].number) )
 		{
 			return false;
@@ -132,6 +128,11 @@ bool SyncPets::Build(bool isResult)
 		{
 			return false;
 		}
+
+		if ( !AddData(m_pets[i].synced) )
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -155,10 +156,6 @@ bool SyncPets::Parse()
 	for ( i = 0; i < count; i++ )
 	{
 		if ( !GetData(pet.id) )
-		{
-			return false;
-		}
-		if ( !GetData(pet.sync) )
 		{
 			return false;
 		}
@@ -259,6 +256,11 @@ bool SyncPets::Parse()
 			pet.race.push_back(race);
 		}
 		if ( !GetData(pet.itemId) )
+		{
+			return false;
+		}
+
+		if ( !GetData(pet.synced) )
 		{
 			return false;
 		}

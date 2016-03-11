@@ -60,7 +60,7 @@ namespace MsgId
 		buildHouse = 1003,//地图技能：秘密力量，造房子
 		treePlant = 1004,//种树
 		syncItem = 1005,//同步物品
-		syncCoin = 1006,//同步正能量
+		syncPlayer = 1006,//同步玩家
 		syncPets = 1007,//同步宠物，只添加不减少
 
 // 		killBeast = 1006,//杀死野怪

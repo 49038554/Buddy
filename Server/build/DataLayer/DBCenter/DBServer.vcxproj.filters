@@ -150,9 +150,6 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.cpp">
       <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncCoin.cpp">
-      <Filter>Message\Object\DBEntry</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncItem.cpp">
       <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
@@ -169,6 +166,9 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Player.cpp">
+      <Filter>Message\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncPlayer.cpp">
       <Filter>Message\Object\DBEntry</Filter>
     </ClCompile>
   </ItemGroup>
@@ -284,9 +284,6 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.h">
       <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncCoin.h">
-      <Filter>Message\Object\DBEntry</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncItem.h">
       <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
@@ -303,6 +300,9 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Player.h">
+      <Filter>Message\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncPlayer.h">
       <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
   </ItemGroup>

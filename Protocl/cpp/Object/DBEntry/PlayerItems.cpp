@@ -36,6 +36,10 @@ bool PlayerItems::Build()
 		{
 			return false;
 		}
+		if ( !AddData(m_items[i].synced) )
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -63,6 +67,10 @@ bool PlayerItems::Parse()
 			return false;
 		}
 		if ( !GetData(item.count) )
+		{
+			return false;
+		}
+		if ( !GetData(item.synced) )
 		{
 			return false;
 		}

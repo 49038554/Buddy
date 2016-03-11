@@ -39,7 +39,7 @@
 #include "Protocl/cpp/Object/DBEntry/TreePlant.h"
 #include "Protocl/cpp/Object/DBEntry/SyncPets.h"
 #include "Protocl/cpp/Object/DBEntry/SyncItem.h"
-#include "Protocl/cpp/Object/DBEntry/SyncCoin.h"
+#include "Protocl/cpp/Object/DBEntry/SyncPlayer.h"
 
 #include "mdk/File.h"
 
@@ -190,7 +190,7 @@ void Client::OnLogin(msg::Buffer &buffer)
 	ClientInfo();
 	printf( "user(%u)已登录\n", msg.m_userId );
 	GetEvent();
-	if ( m_playerId != m_user.id )
+	if ( m_player.playerId != m_user.id )
 	{
 		if ( !GameSaved() ) 
 		{
@@ -198,10 +198,9 @@ void Client::OnLogin(msg::Buffer &buffer)
 			return;
 		}
 		m_palyerDataLoaded = false;
-		m_coin = 0;
-		m_coinChange = 0;
+		memset(&m_player, 0, sizeof(data::PLAYER));
+		m_player.synced = true;
 		m_items.clear();
-		m_itemsChange.clear();
 		m_pets.clear();
 	}
 	if ( !m_palyerDataLoaded )//下载
@@ -1323,8 +1322,8 @@ void Client::OnDBEntry(msg::Buffer &buffer)
 	case MsgId::getPlayerData :
 		OnGetPlayerData(buffer);
 		break;
-	case MsgId::syncCoin :
-		OnSyncCoin(buffer);
+	case MsgId::syncPlayer :
+		OnSyncPlayer(buffer);
 		break;
 	case MsgId::syncItem :
 		OnSyncItem(buffer);
@@ -1344,10 +1343,13 @@ int LoadItems(mdk::File &db, std::vector<data::PLAYER_ITEM> &items)
 	if ( mdk::File::success != db.Read(&count, sizeof(short)) ) return 1;
 	if ( count > 500 || count < 0 ) return 2;
 	int i = 0; 
+	char varChar;
 	for ( i = 0; i < count; i++ )
 	{
 		if ( mdk::File::success != db.Read(&info.id, sizeof(short)) ) return 3;
 		if ( mdk::File::success != db.Read(&info.count, sizeof(int)) ) return 4;
+		if ( mdk::File::success != db.Read(&varChar, sizeof(char)) ) return 5;
+		info.synced = (0 == varChar?false:true);
 		items.push_back(info);
 	}
 
@@ -1361,11 +1363,14 @@ bool SaveItems(mdk::File &db, std::vector<data::PLAYER_ITEM> &items)
 	if ( count > 500 ) return false;
 	db.Write(&count, sizeof(short));
 	int i = 0; 
+	char varChar;
 	for ( i = 0; i < items.size(); i++ )
 	{
 		pInfo = &items[i];
 		db.Write(&pInfo->id, sizeof(short));
 		db.Write(&pInfo->count, sizeof(int));
+		varChar = pInfo->synced?1:0;
+		db.Write(&varChar, sizeof(char));
 	}
 
 	return true;
@@ -1383,44 +1388,45 @@ int LoadPets(mdk::File &db, std::vector<data::PET> &pets)
 	for ( i = 0; i < count; i++ )
 	{
 		if ( mdk::File::success != db.Read(&info.id, sizeof(int)) ) return 3;
-		if ( mdk::File::success != db.Read(&varChar, sizeof(char)) ) return 4;
-		info.sync = (0 == varChar?false:true);
-		if ( mdk::File::success != db.Read(&info.number, sizeof(short)) ) return 5;
-		if ( mdk::File::success != db.Read(&info.talent, sizeof(char)) ) return 6;
-		if ( mdk::File::success != db.Read(&info.nature, sizeof(char)) ) return 7;
-		if ( mdk::File::success != db.Read(&info.skill1, sizeof(short)) ) return 8;
-		if ( mdk::File::success != db.Read(&info.skill2, sizeof(short)) ) return 9;
-		if ( mdk::File::success != db.Read(&info.skill3, sizeof(short)) ) return 10;
-		if ( mdk::File::success != db.Read(&info.skill4, sizeof(short)) ) return 11;
-		if ( mdk::File::success != db.Read(&info.itemId, sizeof(short)) ) return 12;
-		if ( mdk::File::success != db.Read(&info.HP, sizeof(short)) ) return 13;
-		if ( mdk::File::success != db.Read(&info.WG, sizeof(short)) ) return 14;
-		if ( mdk::File::success != db.Read(&info.WF, sizeof(short)) ) return 15;
-		if ( mdk::File::success != db.Read(&info.TG, sizeof(short)) ) return 16;
-		if ( mdk::File::success != db.Read(&info.TF, sizeof(short)) ) return 17;
-		if ( mdk::File::success != db.Read(&info.SD, sizeof(short)) ) return 18;
-		if ( mdk::File::success != db.Read(&info.HPHealthy, sizeof(char)) ) return 19;
-		if ( mdk::File::success != db.Read(&info.WGHealthy, sizeof(char)) ) return 10;
-		if ( mdk::File::success != db.Read(&info.WFHealthy, sizeof(char)) ) return 21;
-		if ( mdk::File::success != db.Read(&info.TGHealthy, sizeof(char)) ) return 22;
-		if ( mdk::File::success != db.Read(&info.TFHealthy, sizeof(char)) ) return 23;
-		if ( mdk::File::success != db.Read(&info.SDHealthy, sizeof(char)) ) return 24;
-		if ( mdk::File::success != db.Read(&info.HPMuscle, sizeof(char)) ) return 25;
-		if ( mdk::File::success != db.Read(&info.WGMuscle, sizeof(char)) ) return 26;
-		if ( mdk::File::success != db.Read(&info.WFMuscle, sizeof(char)) ) return 27;
-		if ( mdk::File::success != db.Read(&info.TGMuscle, sizeof(char)) ) return 28;
-		if ( mdk::File::success != db.Read(&info.TFMuscle, sizeof(char)) ) return 29;
-		if ( mdk::File::success != db.Read(&info.SDMuscle, sizeof(char)) ) return 30;
+		if ( mdk::File::success != db.Read(&info.number, sizeof(short)) ) return 4;
+		if ( mdk::File::success != db.Read(&info.talent, sizeof(char)) ) return 5;
+		if ( mdk::File::success != db.Read(&info.nature, sizeof(char)) ) return 6;
+		if ( mdk::File::success != db.Read(&info.skill1, sizeof(short)) ) return 7;
+		if ( mdk::File::success != db.Read(&info.skill2, sizeof(short)) ) return 8;
+		if ( mdk::File::success != db.Read(&info.skill3, sizeof(short)) ) return 9;
+		if ( mdk::File::success != db.Read(&info.skill4, sizeof(short)) ) return 10;
+		if ( mdk::File::success != db.Read(&info.itemId, sizeof(short)) ) return 11;
+		if ( mdk::File::success != db.Read(&info.HP, sizeof(short)) ) return 12;
+		if ( mdk::File::success != db.Read(&info.WG, sizeof(short)) ) return 13;
+		if ( mdk::File::success != db.Read(&info.WF, sizeof(short)) ) return 14;
+		if ( mdk::File::success != db.Read(&info.TG, sizeof(short)) ) return 15;
+		if ( mdk::File::success != db.Read(&info.TF, sizeof(short)) ) return 16;
+		if ( mdk::File::success != db.Read(&info.SD, sizeof(short)) ) return 17;
+		if ( mdk::File::success != db.Read(&info.HPHealthy, sizeof(char)) ) return 18;
+		if ( mdk::File::success != db.Read(&info.WGHealthy, sizeof(char)) ) return 19;
+		if ( mdk::File::success != db.Read(&info.WFHealthy, sizeof(char)) ) return 20;
+		if ( mdk::File::success != db.Read(&info.TGHealthy, sizeof(char)) ) return 21;
+		if ( mdk::File::success != db.Read(&info.TFHealthy, sizeof(char)) ) return 22;
+		if ( mdk::File::success != db.Read(&info.SDHealthy, sizeof(char)) ) return 23;
+		if ( mdk::File::success != db.Read(&info.HPMuscle, sizeof(char)) ) return 24;
+		if ( mdk::File::success != db.Read(&info.WGMuscle, sizeof(char)) ) return 25;
+		if ( mdk::File::success != db.Read(&info.WFMuscle, sizeof(char)) ) return 26;
+		if ( mdk::File::success != db.Read(&info.TGMuscle, sizeof(char)) ) return 27;
+		if ( mdk::File::success != db.Read(&info.TFMuscle, sizeof(char)) ) return 28;
+		if ( mdk::File::success != db.Read(&info.SDMuscle, sizeof(char)) ) return 29;
 
 		char len = 0;
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 31;
-		if ( len > 17 || len < 0 ) return 32;
+		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 30;
+		if ( len > 17 || len < 0 ) return 31;
 		int j = 0;
 		for ( j = 0; j < info.race.size(); j++ )
 		{
-			if ( mdk::File::success != db.Read(&varChar, sizeof(char)) ) return 33;
+			if ( mdk::File::success != db.Read(&varChar, sizeof(char)) ) return 32;
 			info.race.push_back(varChar);
 		}
+
+		if ( mdk::File::success != db.Read(&varChar, sizeof(char)) ) return 33;
+		info.synced = (0 == varChar?false:true);
 		pets.push_back(info);
 	}
 
@@ -1440,8 +1446,6 @@ bool SavePets(mdk::File &db, std::vector<data::PET> &pets)
 	{
 		pInfo = &pets[i];
 		db.Write(&pInfo->id, sizeof(int));
-		varChar = pInfo->sync?1:0;
-		db.Write(&varChar, sizeof(char));
 		db.Write(&pInfo->number, sizeof(short));
 		db.Write(&pInfo->talent, sizeof(char));
 		db.Write(&pInfo->nature, sizeof(char));
@@ -1477,6 +1481,9 @@ bool SavePets(mdk::File &db, std::vector<data::PET> &pets)
 			varChar = pInfo->race[j];
 			db.Write(&varChar, sizeof(char));
 		}
+
+		varChar = pInfo->synced?1:0;
+		db.Write(&varChar, sizeof(char));
 	}
 
 	return true;
@@ -1487,14 +1494,9 @@ bool Client::SaveGame()
 	mdk::File db("D:/data", "player.db");
 
 	if ( mdk::File::success != db.Open(mdk::File::write, mdk::File::assii) ) return false;
-	db.Write(&m_playerId, sizeof(int));
-	db.Write(&m_coin, sizeof(int));
-	db.Write(&m_coinChange, sizeof(int));
+	db.Write(&m_player, sizeof(data::PLAYER));
 	SaveItems(db, m_items);//
-	SaveItems(db, m_itemsChange);//
 	SavePets(db, m_pets);//
-	db.Write(&m_lastLuckTime, sizeof(time_t));
-	db.Write(&m_luckCoin, sizeof(short));
 
 	return true;
 }
@@ -1504,17 +1506,11 @@ bool Client::LoadGame()
 	mdk::File db("D:/data", "player.db");
 
 	if ( mdk::File::success != db.Open(mdk::File::read, mdk::File::assii) ) return false;
-	if ( mdk::File::success != db.Read(&m_playerId, sizeof(int)) ) return false;
-	if ( mdk::File::success != db.Read(&m_coin, sizeof(int)) ) return false;
-	if ( mdk::File::success != db.Read(&m_coinChange, sizeof(int)) ) return false;
+	if ( mdk::File::success != db.Read(&m_player, sizeof(data::PLAYER)) ) return false;
 	int ret = LoadItems(db, m_items);//
-	if ( 0 != ret ) return false;
-	ret = LoadItems(db, m_itemsChange);//
 	if ( 0 != ret ) return false;
 	ret = LoadPets(db, m_pets);//
 	if ( 0 != ret ) return false;
-	if ( mdk::File::success != db.Read(&m_lastLuckTime, sizeof(time_t)) ) return false;
-	if ( mdk::File::success != db.Read(&m_luckCoin, sizeof(short)) ) return false;
 
 	return true;
 }
@@ -1524,7 +1520,10 @@ void Client::OnPlayer(msg::Buffer &buffer)
 	msg::Player msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-	m_coin = msg.m_coin;
+	time_t t = m_player.lastLuckTime;
+	m_player = msg.m_player;
+	m_player.lastLuckTime = t;
+	m_player.synced = true;
 }
 
 void Client::OnPlayerItems(msg::Buffer &buffer)
@@ -1566,7 +1565,6 @@ void Client::OnGetPlayerData(msg::Buffer &buffer)
 	if ( !msg.Parse() ) return;
 
 	if ( ResultCode::Success != msg.m_code ) return;
-	m_playerId = m_user.id;
 	SaveGame();
 	m_palyerDataLoaded = true;
 	//发出通知
@@ -1575,12 +1573,15 @@ void Client::OnGetPlayerData(msg::Buffer &buffer)
 bool Client::GameSaved()
 {
 	if ( !m_palyerDataLoaded ) return true;
-	if ( 0 != m_coinChange ) return false;
-	if ( 0 != m_itemsChange.size() ) return false;
+	if ( !m_player.synced ) return false;
 	int i = 0;
 	for ( i = 0; i < m_pets.size(); i++ )
 	{
-		if ( !m_pets[i].sync ) return false;
+		if ( !m_pets[i].synced ) return false;
+	}
+	for ( i = 0; i < m_items.size(); i++ )
+	{
+		if ( !m_items[i].synced ) return false;
 	}
 
 	return true;
@@ -1591,25 +1592,21 @@ void Client::SyncGame()
 	if ( m_tcpEntry.IsClosed() ) return;
 	if ( GameSaved() ) return;
 
-	if ( 0 != m_coinChange )
+	if ( !m_player.synced )
 	{
-		msg::SyncCoin msg;
-		msg.m_count = m_coinChange;
+		msg::SyncPlayer msg;
+		msg.m_player = m_player;
 		msg.Build();
 		m_tcpEntry.Send(msg, msg.Size());
 	}
-	if ( 0 < m_itemsChange.size() )
+	if ( 0 < m_items.size() )
 	{
 		msg::SyncItem msg;
-		msg::SyncItem::ITEM info;
 		int i = 0;
-		for ( i = 0; i < m_itemsChange.size(); i++ )
+		for ( i = 0; i < m_items.size(); i++ )
 		{
-			if ( 0 == m_itemsChange[i].count ) continue;
-			info.m_itemId = m_itemsChange[i].id;
-			info.m_count = m_itemsChange[i].count;
-			info.m_successed = false;
-			msg.m_items.push_back(info);
+			if ( m_items[i].synced ) continue;
+			msg.m_items.push_back(m_items[i]);
 			if ( msg.m_items.size() == 500 )
 			{
 				msg.Build();
@@ -1629,7 +1626,7 @@ void Client::SyncGame()
 		int i = 0;
 		for ( i = 0; i < m_pets.size(); i++ )
 		{
-			if ( m_pets[i].sync ) continue;
+			if ( m_pets[i].synced ) continue;
 			msg.m_pets.push_back(m_pets[i]);
 			if ( msg.m_pets.size() == 100 )
 			{
@@ -1648,8 +1645,8 @@ void Client::SyncGame()
 
 void Client::IOCoin( int count )
 {
-	m_coinChange += count;
-	m_coin += count;
+	m_player.coin += count;
+	m_player.synced = false;
 }
 
 void Client::IOItem( short itemId, int count )
@@ -1660,29 +1657,24 @@ void Client::IOItem( short itemId, int count )
 		data::PLAYER_ITEM info;
 		info.id = itemId;
 		info.count = count;
+		info.synced = false;
 		m_items.push_back(info);
 	}
-	else pInfo->count += count;
-
-	pInfo = PlayerItem(itemId, m_itemsChange);
-	if ( NULL == pInfo )
+	else 
 	{
-		data::PLAYER_ITEM info;
-		info.id = itemId;
-		info.count = count;
-		m_itemsChange.push_back(info);
+		pInfo->count += count;
+		pInfo->synced = false;
 	}
-	else pInfo->count += count;
 }
 
 char* Client::TestLuck()
 {
 	time_t today = mdk::mdk_Date();
-	if ( today > m_lastLuckTime ) 
+	if ( today > m_player.lastLuckTime ) 
 	{
-		m_luckCoin = 0;
+		m_player.luckCoin = 0;
 	}
-	if ( m_luckCoin >= 1000 ) return "今日机会已经用完";
+	if ( m_player.luckCoin >= 1000 ) return "今日机会已经用完";
 
 	int i = 0; 
 	data::PLAYER_ITEM *pInfo;
@@ -1695,16 +1687,16 @@ char* Client::TestLuck()
 			&& 200 != m_itemBook[i].coin 
 			) continue;
 		if ( 0 == rand() % 2 ) continue;
-		if ( m_luckCoin + m_itemBook[i].coin > 1000 ) continue;
-		m_luckCoin += m_itemBook[i].coin;
+		if ( m_player.luckCoin + m_itemBook[i].coin > 1000 ) continue;
+		m_player.luckCoin += m_itemBook[i].coin;
 		IOItem(m_itemBook[i].id, 1);
 		SaveGame();
 		break;
 	}
-	m_lastLuckTime = time(NULL);
+	m_player.lastLuckTime = time(NULL);
 	char result[256];
 	sprintf( result, "摇到物品(%s)正能量(%d)剩余机会(%d)\n", 
-		m_itemBook[i].name.c_str(), m_itemBook[i].coin, 1000 - m_luckCoin );
+		m_itemBook[i].name.c_str(), m_itemBook[i].coin, 1000 - m_player.luckCoin );
 	return result;
 }
 
@@ -1726,7 +1718,7 @@ char* Client::Buy( short itemId, int count )
 
 	data::ITEM *pItemBook = Item(itemId, m_itemBook);
 	if ( NULL == pItemBook ) return "物品不存在";
-	if ( pItemBook->coin * count > m_coin ) return "正能量不足";
+	if ( pItemBook->coin * count > m_player.coin ) return "正能量不足";
 
 	IOCoin(pItemBook->coin * count * -1);
 	IOItem(itemId, count);
@@ -1750,15 +1742,14 @@ char* Client::Devour( short itemId, int count )
 	return NULL;
 }
 
-void Client::OnSyncCoin(msg::Buffer &buffer)
+void Client::OnSyncPlayer(msg::Buffer &buffer)
 {
-	msg::SyncCoin msg;
+	msg::SyncPlayer msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
 
 	if ( ResultCode::Success != msg.m_code ) return;
-	m_coinChange -= msg.m_count;
-	m_coin = msg.m_coin + m_coinChange;
+	m_player.synced = true;
 	SaveGame();
 }
 
@@ -1773,37 +1764,17 @@ void Client::OnSyncItem(msg::Buffer &buffer)
 	data::PLAYER_ITEM *pInfo;
 	for ( i = 0; i < msg.m_items.size(); i++ )
 	{
-		if ( !msg.m_items[i].m_successed ) continue;
-		pInfo = PlayerItem(msg.m_items[i].m_itemId, m_itemsChange);
-		int changeCount;
+		if ( !msg.m_items[i].synced ) continue;
+		pInfo = PlayerItem(msg.m_items[i].id, m_items);
 		if ( NULL == pInfo )
 		{
-			data::PLAYER_ITEM info;
-			info.id = msg.m_items[i].m_itemId;
-			info.count = msg.m_items[i].m_count * -1;
-			m_itemsChange.push_back(info);
-			changeCount = info.count;
+			m_items.push_back(msg.m_items[i]);
 		}
 		else
 		{
-			pInfo->count -= msg.m_items[i].m_count;
-			changeCount = pInfo->count;
-		}
-		pInfo = PlayerItem(msg.m_items[i].m_itemId, m_items);
-		if ( NULL == pInfo )
-		{
-			data::PLAYER_ITEM info;
-			info.id = msg.m_items[i].m_itemId;
-			info.count = msg.m_items[i].m_countInDB + changeCount;
-			m_itemsChange.push_back(info);
-		}
-		else
-		{
-			pInfo->count = msg.m_items[i].m_countInDB + changeCount;
+			pInfo->synced = true;
 		}
 	}
-	
-	m_coin += msg.m_coin;
 	SaveGame();
 }
 
@@ -1812,6 +1783,22 @@ void Client::OnSyncPets(msg::Buffer &buffer)
 	msg::SyncPets msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
+	if ( ResultCode::Success != msg.m_code ) return;
 
+	int i = 0;
+	data::PET *pInfo;
+	for ( i = 0; i < msg.m_pets.size(); i++ )
+	{
+		if ( !msg.m_pets[i].synced ) continue;
+		pInfo = Pet(msg.m_pets[i].id, m_pets);
+		if ( NULL == pInfo )
+		{
+			m_pets.push_back(msg.m_pets[i]);
+		}
+		else
+		{
+			pInfo->synced = true;
+		}
+	}
 	SaveGame();
 }

@@ -58,7 +58,7 @@ protected:
 	void OnBuildHouse(mdk::STNetHost &host, msg::Buffer &buffer);//地图技能：光墙，造房子
 	void OnTreePlant(mdk::STNetHost &host, msg::Buffer &buffer);//种树
 	void OnSyncItem(mdk::STNetHost &host, msg::Buffer &buffer);//同步物品
-	void OnSyncCoin(mdk::STNetHost &host, msg::Buffer &buffer);//同步正能量
+	void OnSyncPlayer(mdk::STNetHost &host, msg::Buffer &buffer);//同步正能量
 	void OnSyncPets(mdk::STNetHost &host, msg::Buffer &buffer);//同步宠物,只添加不减少
 
 private:
@@ -94,7 +94,7 @@ private:
 	//取巴迪兽地理数据 
 	bool ReadBuddyLBS(MySqlClient *pMysql, std::vector<data::BUDDY_MAP> &buddyMaps);
 	//取证能量
-	bool ReadCoin(MySqlClient *pMysql, unsigned int userId, int &coin, ResultCode::ResultCode &result, std::string &reason);
+	bool ReadPlayer(MySqlClient *pMysql, data::PLAYER &player, ResultCode::ResultCode &result, std::string &reason);
 	//取宠物
 	bool ReadPets(MySqlClient *pMysql, unsigned int userId, std::vector<data::PET> &pets, ResultCode::ResultCode &result, std::string &reason);
 	//取玩家物品 
@@ -109,8 +109,8 @@ private:
 	//添加果树
 	int AddTree(unsigned int owner, int houseId );
 	bool UseItem(unsigned int userId, int itemId, int count);
-	bool SyncItem(unsigned int userId, int itemId, int &count, int &coin, int &countInDB);
-	bool SyncCoin(unsigned int userId, int count, int &coin);
+	bool SyncItem(unsigned int userId, int itemId, int count);
+	bool SyncPlayer(data::PLAYER &player);
 	bool SyncPet( unsigned int userId, int petId, 
 		int number, char talent, char nature, 
 		char HPHealthy, char WGHealthy, char WFHealthy, char TGHealthy, char TFHealthy, char SDHealthy,

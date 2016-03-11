@@ -90,7 +90,7 @@ protected:
 	void OnPlayerItems(msg::Buffer &buffer);
 	void OnPets(msg::Buffer &buffer);
 	void OnGetPlayerData(msg::Buffer &buffer);
-	void OnSyncCoin(msg::Buffer &buffer);
+	void OnSyncPlayer(msg::Buffer &buffer);
 	void OnSyncItem(msg::Buffer &buffer);
 	void OnSyncPets(msg::Buffer &buffer);
 
@@ -137,15 +137,9 @@ private:
 
 	//Íæ¼ÒÊý¾Ý
 	bool							m_palyerDataLoaded;
-	unsigned int					m_playerId;
-	int								m_coin;
-	int								m_coinChange;
+	data::PLAYER					m_player;
 	std::vector<data::PLAYER_ITEM>	m_items;
-	std::vector<data::PLAYER_ITEM>	m_itemsChange;
 	std::vector<data::PET>			m_pets;
-	time_t							m_lastLuckTime;
-	short							m_luckCoin;
-
 };
 
 #endif //CLIENT_H

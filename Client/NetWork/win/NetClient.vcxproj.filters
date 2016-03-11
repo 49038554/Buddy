@@ -155,9 +155,6 @@
     <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.cpp">
       <Filter>Protocl\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncCoin.cpp">
-      <Filter>Protocl\Object\DBEntry</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncItem.cpp">
       <Filter>Protocl\Object\DBEntry</Filter>
     </ClCompile>
@@ -177,6 +174,9 @@
       <Filter>common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\Player.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncPlayer.cpp">
       <Filter>Protocl\Object\DBEntry</Filter>
     </ClCompile>
   </ItemGroup>
@@ -308,9 +308,6 @@
     <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.h">
       <Filter>Protocl\Object\DBEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncCoin.h">
-      <Filter>Protocl\Object\DBEntry</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncItem.h">
       <Filter>Protocl\Object\DBEntry</Filter>
     </ClInclude>
@@ -330,6 +327,9 @@
       <Filter>mdk</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\Player.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncPlayer.h">
       <Filter>Protocl\Object\DBEntry</Filter>
     </ClInclude>
   </ItemGroup>

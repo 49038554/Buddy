@@ -24,7 +24,7 @@
 #include "Protocl/cpp/Object/DBEntry/TreePlant.h"
 #include "Protocl/cpp/Object/DBEntry/SyncPets.h"
 #include "Protocl/cpp/Object/DBEntry/SyncItem.h"
-#include "Protocl/cpp/Object/DBEntry/SyncCoin.h"
+#include "Protocl/cpp/Object/DBEntry/SyncPlayer.h"
 
 static MD5Helper gs_md5helper;
 
@@ -758,7 +758,7 @@ void Worker::OnDBEntry(mdk::STNetHost &host, msg::Buffer &buffer)
 	else if (MsgId::treePlant == buffer.Id()) OnTreePlant(host, buffer);//种树
 	else if (MsgId::syncPets == buffer.Id()) OnSyncPets(host, buffer);//同步宠物
 	else if (MsgId::syncItem == buffer.Id()) OnSyncItem(host, buffer);//同步物品
-	else if (MsgId::syncCoin == buffer.Id()) OnSyncCoin(host, buffer);//同步物品
+	else if (MsgId::syncPlayer == buffer.Id()) OnSyncPlayer(host, buffer);//同步物品
 }
 
 bool Worker::LoadGameInit()
@@ -1361,8 +1361,11 @@ void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
 		host.Send(msg, msg.Size());
 		return;
 	}
+	data::PLAYER player;
+	memset(&player, 0, sizeof (data::PLAYER));
+	player.playerId = msg.m_objectId;
 	int coin = 0;
-	if ( !ReadCoin(pMysql, msg.m_objectId, coin, msg.m_code, msg.m_reason) )
+	if ( !ReadPlayer(pMysql, player, msg.m_code, msg.m_reason) )
 	{
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -1387,7 +1390,7 @@ void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
 		msg.m_connectId = buffer.m_connectId;
 		msg.m_objectId = buffer.m_objectId;
 		memcpy( msg.m_ip, buffer.m_ip, 4 );
-		msg.m_coin = coin;
+		msg.m_player = player;
 		msg.Build();
 		host.Send(msg, msg.Size());
 	}
@@ -1520,10 +1523,10 @@ bool Worker::CreatePlayer(unsigned int userId)
 	return true;
 }
 
-bool Worker::ReadCoin(MySqlClient *pMysql, unsigned int userId, int &coin, ResultCode::ResultCode &result, std::string &reason)
+bool Worker::ReadPlayer(MySqlClient *pMysql, data::PLAYER &player, ResultCode::ResultCode &result, std::string &reason)
 {
 	char sql[1024];
-	sprintf( sql, "select * from player where userId = %d ", userId );
+	sprintf( sql, "select * from player where userId = %d ", player.playerId );
 	if ( !pMysql->ExecuteSql(sql) ) 
 	{
 		result = ResultCode::DBError;
@@ -1539,9 +1542,22 @@ bool Worker::ReadCoin(MySqlClient *pMysql, unsigned int userId, int &coin, Resul
 	}
 	data::PET pet;
 	pMysql->MoveFirst();
+	player.petCount = 0;
 	while ( !pMysql->IsEof() )
 	{
-		pMysql->GetValue("coin", coin);
+		pMysql->GetValue("coin", player.coin);
+		pMysql->GetValue("pet1", player.pet[player.petCount]);
+		if ( 0 != player.pet[player.petCount] ) player.petCount++;
+		pMysql->GetValue("pet2", player.pet[player.petCount]);
+		if ( 0 != player.pet[player.petCount] ) player.petCount++;
+		pMysql->GetValue("pet3", player.pet[player.petCount]);
+		if ( 0 != player.pet[player.petCount] ) player.petCount++;
+		pMysql->GetValue("pet4", player.pet[player.petCount]);
+		if ( 0 != player.pet[player.petCount] ) player.petCount++;
+		pMysql->GetValue("pet5", player.pet[player.petCount]);
+		if ( 0 != player.pet[player.petCount] ) player.petCount++;
+		pMysql->GetValue("pet6", player.pet[player.petCount]);
+		if ( 0 != player.pet[player.petCount] ) player.petCount++;
 		pMysql->MoveNext();
 	}
 
@@ -1596,6 +1612,7 @@ bool Worker::ReadPets(MySqlClient *pMysql, unsigned int userId, std::vector<data
 		pMysql->GetValue("SDHealthy", pet.SDHealthy);
 		pMysql->GetValue("itemId", pet.itemId);
 		pMysql->MoveNext();
+		pet.synced = true;
 		pets.push_back(pet);
 	}
 
@@ -1642,6 +1659,7 @@ bool Worker::ReadPlayerItems(MySqlClient *pMysql, unsigned int userId, std::vect
 		pMysql->GetValue("itemId", item.id);
 		pMysql->GetValue("count", item.count);
 		pMysql->MoveNext();
+		item.synced = true;
 		items.push_back(item);
 	}
 
@@ -1729,7 +1747,7 @@ void Worker::OnSyncPets(mdk::STNetHost &host, msg::Buffer &buffer)
 	for ( i = 0; i < msg.m_pets.size(); i++ )
 	{
 		pBuddy = Buddy(msg.m_pets[i].number, m_buddys);
-		msg.m_pets[i].sync = SyncPet(msg.m_objectId, msg.m_pets[i].id, 
+		msg.m_pets[i].synced = SyncPet(msg.m_objectId, msg.m_pets[i].id, 
 			msg.m_pets[i].number, msg.m_pets[i].talent, msg.m_pets[i].nature, 
 			msg.m_pets[i].HPHealthy, msg.m_pets[i].WGHealthy, msg.m_pets[i].WFHealthy, 
 			msg.m_pets[i].TGHealthy, msg.m_pets[i].TFHealthy, msg.m_pets[i].SDHealthy, 
@@ -1756,14 +1774,9 @@ void Worker::OnSyncItem(mdk::STNetHost &host, msg::Buffer &buffer)
 		return;
 	}
 	int i = 0;
-	int coin = 0;
-	msg.m_coin = 0;
 	for ( i = 0; i < msg.m_items.size(); i++ )
 	{
-		msg.m_items[i].m_successed = false;//默认同步失败
-		if ( !SyncItem(msg.m_objectId, msg.m_items[i].m_itemId, msg.m_items[i].m_count, coin, msg.m_items[i].m_countInDB) ) continue;
-		msg.m_coin += coin;
-		msg.m_items[i].m_successed = true;
+		msg.m_items[i].synced = SyncItem(msg.m_objectId, msg.m_items[i].id, msg.m_items[i].count);
 	}
 
 	msg.Build(true);
@@ -1772,9 +1785,9 @@ void Worker::OnSyncItem(mdk::STNetHost &host, msg::Buffer &buffer)
 	return;
 }
 
-void Worker::OnSyncCoin(mdk::STNetHost &host, msg::Buffer &buffer)
+void Worker::OnSyncPlayer(mdk::STNetHost &host, msg::Buffer &buffer)
 {
-	msg::SyncCoin msg;
+	msg::SyncPlayer msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() )
 	{
@@ -1784,7 +1797,16 @@ void Worker::OnSyncCoin(mdk::STNetHost &host, msg::Buffer &buffer)
 		host.Send(msg, msg.Size());
 		return;
 	}
-	if ( !SyncCoin(msg.m_objectId, msg.m_count, msg.m_coin) ) 
+	if ( msg.m_objectId != msg.m_player.playerId )
+	{
+		msg.m_code   = ResultCode::Refuse;
+		msg.m_reason = "非本用户操作";
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return;
+	}
+	SyncPlayer(msg.m_player);
+	if ( !msg.m_player.synced ) 
 	{
 		msg.m_code   = ResultCode::DBError;
 		msg.m_reason = "访问失败";
@@ -1900,9 +1922,9 @@ int Worker::AddTree(unsigned int owner, int houseId )
 	return houseId;
 }
 
-bool Worker::SyncItem(unsigned int userId, int itemId, int &count, int &coin, int &countInDB)
+bool Worker::SyncItem(unsigned int userId, int itemId, int count)
 {
-	if ( 0 == count ) return false;
+	if ( 0 > count ) return false;
 	data::ITEM *pItem = Item(itemId, m_items);
 	if ( NULL == pItem ) 
 	{
@@ -1925,83 +1947,61 @@ bool Worker::SyncItem(unsigned int userId, int itemId, int &count, int &coin, in
 		m_log.Info("Error", "同步物品失败：查询剩余数量失败(%s)", pMysql->GetLastError());
 		return false;
 	}
-	coin = 0;
 	if ( pMysql->IsEmpty() ) 
 	{
-		if ( count > 0 )
-		{
-			sprintf( sql, "insert into player_item (userId, itemId, count) values(%d, %d, %d) ", 
-				userId, itemId, count );
-			countInDB = count;
-		}
-		else
-		{
-			coin = count * pItem->coin;
-			if ( !SyncCoin(userId, coin, coin) ) return false;
-			coin = count * pItem->coin;
-			countInDB = 0;
-		}
+		sprintf( sql, "insert into player_item (userId, itemId, count) values(%d, %d, %d) ", 
+			userId, itemId, count );
 	}
 	else
 	{
-		int curCount = 0;
-		pMysql->GetValue("count", curCount);
-		curCount = curCount + count;
-		if ( curCount > 0 )
+		if ( count > 0 )
 		{
-			sprintf( sql, "update player_item set count = count + %d where userId = %u and itemId = %d ", 
+			sprintf( sql, "update player_item set count = %d where userId = %u and itemId = %d ", 
 				count, userId, itemId );
-			countInDB = curCount;
 		}
 		else
 		{
 			sprintf( sql, "delete from player_item where userId = %u and itemId = %d ", 
 				userId, itemId );
-			if ( curCount < 0 )
-			{
-				coin = curCount * pItem->coin;
-				if ( !SyncCoin(userId, coin, coin) ) return false;
-				coin = curCount * pItem->coin;
-			}
-			countInDB = 0;
 		}
 	}
-	if ( !pMysql->ExecuteSql(sql) ) m_log.Info("Error", "修改物品数量失败:%s", sql);
+	if ( !pMysql->ExecuteSql(sql) ) 
+	{
+		m_log.Info("Error", "修改物品数量失败:%s", sql);
+		return false;
+	}
 
 	return true;
 }
 
-bool Worker::SyncCoin(unsigned int userId, int count, int &coin)
+bool Worker::SyncPlayer(data::PLAYER &player)
 {
-	if ( 0 == count ) 
-	{
-		m_log.Info("Error", "同步正能量,增量=0");
-		return false;
-	}
-	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", userId);
+	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", player.playerId);
 	if ( !pMysql ) return false;
 
 	char sql[1024];
-	sprintf( sql, "select * from player where userId = %u", userId );
+	sprintf( sql, "select * from player where userId = %u", player.playerId );
 	if ( !pMysql->ExecuteSql(sql) )
 	{
-		m_log.Info("Error", "同步正能量失败:%s", sql);
+		m_log.Info("Error", "同步用户失败:%s", sql);
 		return false;
 	}
 	if ( pMysql->IsEmpty() )
 	{
-		m_log.Info("Error", "同步正能量失败:玩家数据不存在");
+		m_log.Info("Error", "同步用户失败:玩家数据不存在");
 		return false;
 	}
 
-	int curCoin;
-	pMysql->GetValue("coin", curCoin);
-	sprintf( sql, "update player set coin = coin + %d where userId = %u ", 
-		count, userId );
+	sprintf( sql, "update player set coin = %d, "
+		"pet1 = %d, pet2 = %d, pet3 = %d,"
+		"pet4 = %d, pet5 = %d, pet6 = %d "
+		"where userId = %u ", 
+		player.coin, player.pet[0], player.pet[1], 
+		player.pet[2], player.pet[3], player.pet[4], player.pet[5],
+		player.playerId );
 	if ( !pMysql->ExecuteSql(sql) ) m_log.Info("Error", "同步正能量失败:%s", sql);
-	coin = curCoin + count;
-
-	return true;
+	else player.synced = true;
+	return player.synced;
 }
 
 bool Worker::SyncPet( unsigned int userId, int petId, 

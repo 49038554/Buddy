@@ -128,6 +128,11 @@ bool Pets::Build()
 		{
 			return false;
 		}
+
+		if ( !AddData(m_pets[i].synced) )
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -251,6 +256,11 @@ bool Pets::Parse()
 			pet.race.push_back(race);
 		}
 		if ( !GetData(pet.itemId) )
+		{
+			return false;
+		}
+
+		if ( !GetData(pet.synced) )
 		{
 			return false;
 		}

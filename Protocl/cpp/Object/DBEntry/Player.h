@@ -13,7 +13,7 @@ class Player : public Buffer
 {
 public:
 	//回应参数
-	int		m_coin;
+	data::PLAYER	m_player;
 
 public:
 	Player();

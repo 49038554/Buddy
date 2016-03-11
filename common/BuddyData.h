@@ -88,10 +88,20 @@ namespace data
 		bool				spot;//景区
 	}BUDDY_MAP;
 
+	typedef struct PLAYER
+	{
+		unsigned int					playerId;
+		int								coin;
+		char							petCount;
+		short							pet[6];
+		time_t							lastLuckTime;
+		short							luckCoin;
+		bool							synced;
+	}PLAYER;
+
 	typedef struct PET
 	{
 		int		id;
-		bool	sync;
 		short	number;
 		char	talent;//特性
 		char	nature;//性格
@@ -119,12 +129,16 @@ namespace data
 		unsigned char	TFMuscle;//特防后天修炼
 		unsigned char	SDMuscle;//速度后天修炼
 		std::vector<char>	race;//17个属性的恶魔果实是否吃过
+
+		bool	synced;
 	}PET;
 
 	typedef struct PLAYER_ITEM
 	{
 		short			id;
 		int				count;
+
+		bool			synced;
 	}PLAYER_ITEM;
 
 }
