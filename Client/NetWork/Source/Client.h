@@ -2,6 +2,7 @@
 #define CLIENT_H
 
 #include "NetWorker.h"
+#include "Game.h"
 
 class Client : public NetWorker
 {
@@ -33,10 +34,10 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 	//Game
-	char* TestLuck();
-	char* UseItem( short itemId, int count );
-	char* Buy( short itemId, int count );
-	char* Devour( short itemId, int count );
+	std::string TestLuck();
+	std::string UseItem( short itemId, int count );
+	std::string Buy( short itemId, int count );
+	std::string Devour( short itemId, int count );
 
 protected:
 	virtual void Main();
@@ -69,8 +70,6 @@ protected:
 
 	//////////////////////////////////////////////////////////////////////////
 	//game data tooler
-	bool LoadGameInit();
-	bool SaveGameInit();
 	bool SaveGame();
 	bool LoadGame();
 	bool GameSaved();
@@ -117,24 +116,7 @@ private:
 	time_t m_lastQueryTime;
 	USER_DATA	m_user;
 
-	bool									m_gameInitLoaded;
-	//当前版本数据
-	int										m_gameInitVersion;
-	std::map<unsigned char, std::string>	m_raceBook;
-	std::vector<data::ITEM>					m_itemBook;
-	std::vector<data::TALENT>				m_talentBook;
-	std::vector<data::SKILL>				m_skillBook;
-	std::vector<data::BUDDY>				m_buddyBook;
-	std::vector<data::BUDDY_MAP>			m_buddyMaps;
-
-	//更新版本数据
-	std::map<unsigned char, std::string>	m_raceBookNew;
-	std::vector<data::ITEM>					m_itemBookNew;
-	std::vector<data::TALENT>				m_talentBookNew;
-	std::vector<data::SKILL>				m_skillBookNew;
-	std::vector<data::BUDDY>				m_buddyBookNew;
-	std::vector<data::BUDDY_MAP>			m_buddyMapsNew;
-
+	Game							m_game;
 	//玩家数据
 	bool							m_palyerDataLoaded;
 	data::PLAYER					m_player;

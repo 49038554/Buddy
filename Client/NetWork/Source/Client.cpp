@@ -46,8 +46,6 @@
 
 Client::Client(void)
 {
-	m_gameInitVersion = 0;
-	m_gameInitLoaded = LoadGameInit();
 	m_palyerDataLoaded = LoadGame();
 }
 
@@ -60,21 +58,25 @@ void Client::Main()
 	if ( !m_tcpEntry.IsClosed() )
 	{
 		time_t curTime = time(NULL);
-		if ( !m_gameInitLoaded && curTime - m_lastQueryTime > 3 )
+		if ( !m_game.IsInit() && curTime - m_lastQueryTime > 3 )
 		{
 			Close(Client::TcpSvr);
 		}
 	}
+
+//	short number = m_game.Encounter(1);
 }
 
 void Client::OnConnect(int svrType, net::Socket &svr)
 {
 	srand(time(NULL));
+//	short number = m_game.Encounter(1);
+
 	if ( Client::TcpSvr == svrType )
 	{
 		m_tcpEntry = svr;
 		msg::SetupVersion msg;
-		msg.m_dataVersion = m_gameInitLoaded?m_gameInitVersion:0;
+		msg.m_dataVersion = m_game.IsInit()?m_game.Version():0;
 		msg.Build();
 		m_tcpEntry.Send(msg, msg.Size());
 		m_lastQueryTime = time(NULL);
@@ -640,547 +642,12 @@ void Client::OnSNS(msg::Buffer &buffer)
 	}
 }
 
-bool SaveRaceBook( mdk::File &db, std::map<unsigned char, std::string> &races )
-{
-	std::map<unsigned char, std::string>::iterator it = races.begin();
-	unsigned char len = races.size();
-	db.Write(&len, sizeof(char));
-	unsigned char raceId;
-	for ( ; it != races.end(); it++ )
-	{
-		raceId = it->first;
-		db.Write(&raceId, 1);
-		len = it->second.size();
-		db.Write(&len, sizeof(char));
-		db.Write((char*)(it->second.c_str()), len);
-	}
-
-	return true;
-}
-
-int LoadRaceBook( mdk::File &db, std::map<unsigned char, std::string> &races )
-{
-	races.clear();
-	std::map<unsigned char, std::string>::iterator it = races.begin();
-	unsigned char len = 0;
-	unsigned char count = 0;
-	if ( mdk::File::success != db.Read(&count, sizeof(char)) ) return 1;
-	if ( 0 >= count || 17 < count ) return 2;
-	unsigned char raceId;
-	int i = 0;
-	char buf[256];
-	for ( i = 0; i < count; i++ )
-	{
-		if ( mdk::File::success != db.Read(&raceId, 1) ) return 3;
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 4;
-		if ( 20 < len || 0 >= len ) return 5;
-		if ( mdk::File::success != db.Read(buf, len) ) return 6;
-		races[raceId] = std::string(buf, len);
-	}
-
-	return 0;
-}
-
-bool SaveItemBook( mdk::File &db, std::vector<data::ITEM> &items )
-{
-	data::ITEM *pItem;
-	data::EFFECT *pEffect;
-	char len;
-	short count = items.size();
-	db.Write(&count, sizeof(short));
-	int i = 0;
-	for ( i = 0; i < items.size(); i++ )
-	{
-		pItem = &items[i];
-
-		db.Write(&pItem->id, sizeof(short));
-		len = pItem->name.size();
-		db.Write(&len, sizeof(char));
-		db.Write((char*)(pItem->name.c_str()), len);
-		db.Write(&pItem->coin, sizeof(int));
-		len = pItem->descript.size();
-		db.Write(&len, sizeof(char));
-		db.Write(&pItem->descript, len);
-
-		len = pItem->effects.size();
-		db.Write(&len, sizeof(char));
-		int j = 0;
-		for ( j = 0; j < pItem->effects.size(); j++ )
-		{
-			pEffect = &pItem->effects[j];
-
-			db.Write(&pEffect->id, sizeof(char));
-			db.Write(&pEffect->step, sizeof(char));
-			db.Write(&pEffect->probability, sizeof(char));
-			db.Write(&pEffect->agent, sizeof(char));
-		}
-
-	}
-
-	return true;
-}
-
-int LoadItemBook( mdk::File &db, std::vector<data::ITEM> &items )
-{
-	items.clear();
-	data::ITEM info;
-	data::EFFECT effect;
-	char len;
-	short count = 0;
-	if ( mdk::File::success != db.Read(&count, sizeof(short)) ) return 1;
-	if ( 0 >= count ) return 2;
-	int i = 0;
-	char buf[256];
-	for ( i = 0; i < count; i++ )
-	{
-		if ( mdk::File::success != db.Read(&info.id, sizeof(short)) ) return 3;
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 4;
-		if ( 20 < len || 0 >= len ) return 5;
-		if ( mdk::File::success != db.Read(buf, len) ) return 6;
-		info.name = std::string(buf, len);
-		if ( mdk::File::success != db.Read(&info.coin, sizeof(int)) ) return 7;
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 8;
-		if ( 60 < len || 0 >= len ) return 9;
-		if ( mdk::File::success != db.Read(&buf, len) ) return 10;
-		info.descript = std::string(buf, len);
-
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 11;
-		if ( 5 < len || 0 > len ) return 12;
-		int j = 0;
-		for ( j = 0; j < len; j++ )
-		{
-			if ( mdk::File::success != db.Read(&effect.id, sizeof(char)) ) return 13;
-			if ( mdk::File::success != db.Read(&effect.step, sizeof(char)) ) return 14;
-			if ( mdk::File::success != db.Read(&effect.probability, sizeof(char)) ) return 15;
-			if ( mdk::File::success != db.Read(&effect.agent, sizeof(char)) ) return 16;
-			info.effects.push_back(effect);
-		}
-
-		items.push_back(info);
-	}
-
-	return 0;
-}
-
-bool SaveTalentBook(mdk::File &db, std::vector<data::TALENT> &talents)
-{
-	data::TALENT *pTalent;
-	data::EFFECT *pEffect;
-	char len;
-	short count = talents.size();
-	db.Write(&count, sizeof(short));
-	int i = 0;
-	for ( i = 0; i < talents.size(); i++ )
-	{
-		pTalent = &talents[i];
-
-		db.Write(&pTalent->id, sizeof(short));
-		len = pTalent->name.size();
-		db.Write(&len, sizeof(char));
-		db.Write((char*)(pTalent->name.c_str()), len);
-		len = pTalent->descript.size();
-		db.Write(&len, sizeof(char));
-		db.Write(&pTalent->descript, len);
-
-		len = pTalent->effects.size();
-		db.Write(&len, sizeof(char));
-		int j = 0;
-		for ( j = 0; j < pTalent->effects.size(); j++ )
-		{
-			pEffect = &pTalent->effects[j];
-
-			db.Write(&pEffect->id, sizeof(char));
-			db.Write(&pEffect->step, sizeof(char));
-			db.Write(&pEffect->probability, sizeof(char));
-			db.Write(&pEffect->agent, sizeof(char));
-		}
-
-	}
-
-	return true;
-}
-
-int LoadTalentBook(mdk::File &db, std::vector<data::TALENT> &talents)
-{
-	talents.clear();
-	data::TALENT info;
-	data::EFFECT effect;
-	char len;
-	short count = 0;
-	if ( mdk::File::success != db.Read(&count, sizeof(short)) ) return 1;
-	if ( 0 >= count ) return 2;
-	int i = 0;
-	char buf[256];
-	for ( i = 0; i < count; i++ )
-	{
-		if ( mdk::File::success != db.Read(&info.id, sizeof(short)) ) return 3;
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 4;
-		if ( 20 < len || 0 >= len ) return 5;
-		if ( mdk::File::success != db.Read(buf, len) ) return 6;
-		info.name = std::string(buf, len);
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 7;
-		if ( 60 < len || 0 >= len ) return 8;
-		if ( mdk::File::success != db.Read(&buf, len) ) return 9;
-		info.descript = std::string(buf, len);
-
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 10;
-		if ( 5 < len || 0 >= len ) return 11;
-		int j = 0;
-		for ( j = 0; j < len; j++ )
-		{
-			if ( mdk::File::success != db.Read(&effect.id, sizeof(char)) ) return 12;
-			if ( mdk::File::success != db.Read(&effect.step, sizeof(char)) ) return 13;
-			if ( mdk::File::success != db.Read(&effect.probability, sizeof(char)) ) return 14;
-			if ( mdk::File::success != db.Read(&effect.agent, sizeof(char)) ) return 15;
-			info.effects.push_back(effect);
-		}
-		talents.push_back(info);
-	}
-
-	return 0;
-}
-
-bool SaveSkillBook(mdk::File &db, std::vector<data::SKILL> &skills)
-{
-	data::SKILL *pSkill;
-	data::EFFECT *pEffect;
-	char len;
-	short count = skills.size();
-	db.Write(&count, sizeof(short));
-	int i = 0;
-	char valChar;
-	for ( i = 0; i < skills.size(); i++ )
-	{
-		pSkill = &skills[i];
-
-		db.Write(&pSkill->id, sizeof(short));
-		len = pSkill->name.size();
-		db.Write(&len, sizeof(char));
-		db.Write((char*)(pSkill->name.c_str()), len);
-		len = pSkill->descript.size();
-		db.Write(&len, sizeof(char));
-		db.Write(&pSkill->descript, len);
-		db.Write(&pSkill->race, sizeof(char));
-		db.Write(&pSkill->power, sizeof(short));
-		db.Write(&pSkill->type, sizeof(char));
-		db.Write(&pSkill->hitRate, sizeof(char));
-		valChar = pSkill->isMapSkill?1:0;
-		db.Write(&valChar, sizeof(char));
-
-		len = pSkill->effects.size();
-		db.Write(&len, sizeof(char));
-		int j = 0;
-		for ( j = 0; j < pSkill->effects.size(); j++ )
-		{
-			pEffect = &pSkill->effects[j];
-
-			db.Write(&pEffect->id, sizeof(char));
-			db.Write(&pEffect->step, sizeof(char));
-			db.Write(&pEffect->probability, sizeof(char));
-			db.Write(&pEffect->agent, sizeof(char));
-		}
-
-	}
-
-	return true;
-}
-
-int LoadSkillBook(mdk::File &db, std::vector<data::SKILL> &skills)
-{
-	skills.clear();
-	data::SKILL info;
-	data::EFFECT effect;
-	char len;
-	short count = 0;
-	if ( mdk::File::success != db.Read(&count, sizeof(short)) ) return 1;
-	if ( 0 >= count ) return 2;
-	int i = 0;
-	char valChar;
-	char buf[256];
-	for ( i = 0; i < count; i++ )
-	{
-		if ( mdk::File::success != db.Read(&info.id, sizeof(short)) ) return 3;
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 4;
-		if ( 20 < len || 0 >= len ) return 5;
-		if ( mdk::File::success != db.Read(buf, len) ) return 6;
-		info.name = std::string(buf, len);
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 7;
-		if ( 60 < len || 0 >= len ) return 8;
-		if ( mdk::File::success != db.Read(&buf, len) ) return 9;
-		info.descript = std::string(buf, len);
-		if ( mdk::File::success != db.Read(&info.race, sizeof(char)) ) return 10;
-		if ( mdk::File::success != db.Read(&info.power, sizeof(short)) ) return 11;
-		if ( mdk::File::success != db.Read(&info.type, sizeof(char)) ) return 12;
-		if ( mdk::File::success != db.Read(&info.hitRate, sizeof(char)) ) return 13;
-		if ( mdk::File::success != db.Read(&valChar, sizeof(char)) ) return 14;
-		info.isMapSkill = (0 == valChar?false:true);
-
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 15;
-		if ( 5 < len || 0 > len ) return 16;
-		int j = 0;
-		for ( j = 0; j < len; j++ )
-		{
-			if ( mdk::File::success != db.Read(&effect.id, sizeof(char)) ) return 17;
-			if ( mdk::File::success != db.Read(&effect.step, sizeof(char)) ) return 18;
-			if ( mdk::File::success != db.Read(&effect.probability, sizeof(char)) ) return 19;
-			if ( mdk::File::success != db.Read(&effect.agent, sizeof(char)) ) return 20;
-
-			info.effects.push_back(effect);
-		}
-
-		skills.push_back(info);
-	}
-
-	return 0;
-}
-
-bool SaveBuddyBook(mdk::File &db, std::vector<data::BUDDY> &buddys)
-{
-	data::BUDDY *pBuddy;
-	char len;
-	short count = buddys.size();
-	db.Write(&count, sizeof(short));
-	int i = 0;
-	for ( i = 0; i < buddys.size(); i++ )
-	{
-		pBuddy = &buddys[i];
-
-		db.Write(&pBuddy->number, sizeof(short));
-		len = pBuddy->name.size();
-		db.Write(&len, sizeof(char));
-		db.Write((char*)(pBuddy->name.c_str()), len);
-		len = pBuddy->descript.size();
-		db.Write(&len, sizeof(char));
-		db.Write(&pBuddy->descript, len);
-		db.Write(&pBuddy->race1, sizeof(char));
-		db.Write(&pBuddy->race2, sizeof(char));
-		db.Write(&pBuddy->talent1, sizeof(char));
-		db.Write(&pBuddy->talent2, sizeof(char));
-		db.Write(&pBuddy->talent3, sizeof(char));
-		db.Write(&pBuddy->itemId, sizeof(short));
-		db.Write(&pBuddy->hitPoint, sizeof(short));
-		db.Write(&pBuddy->physicalA, sizeof(short));
-		db.Write(&pBuddy->physicalD, sizeof(short));
-		db.Write(&pBuddy->specialA, sizeof(short));
-		db.Write(&pBuddy->specialD, sizeof(short));
-		db.Write(&pBuddy->speed, sizeof(short));
-		db.Write(&pBuddy->rare, sizeof(char));
-		db.Write(&pBuddy->tame, sizeof(char));
-
-		len = pBuddy->skills.size();
-		db.Write(&len, sizeof(char));
-		short valShort;
-		char valChar;
-		std::map<unsigned short, bool>::iterator it = pBuddy->skills.begin();
-		for ( ; it != pBuddy->skills.end(); it++ )
-		{
-			valShort = it->first;
-			valChar = it->second?1:0;
-			db.Write(&valShort, sizeof(short));
-			db.Write(&valChar, sizeof(char));
-		}
-
-		len = pBuddy->upBuddys.size();
-		db.Write(&len, sizeof(char));
-		int j = 0;
-		for ( j = 0; j < pBuddy->upBuddys.size(); j++ )
-		{
-			valShort = pBuddy->upBuddys[j];
-			db.Write(&valShort, sizeof(short));
-		}
-
-	}
-
-	return true;
-}
-
-int LoadBuddyBook(mdk::File &db, std::vector<data::BUDDY> &buddys)
-{
-	buddys.clear();
-	data::BUDDY info;
-	char len;
-	short count = buddys.size();
-	if ( mdk::File::success != db.Read(&count, sizeof(short)) ) return 1;
-	if ( 0 >= count ) return 2;
-
-	int i = 0;
-	char buf[256];
-	for ( i = 0; i < count; i++ )
-	{
-		if ( mdk::File::success != db.Read(&info.number, sizeof(short)) ) return 3;
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 4;
-		if ( 20 < len || 0 >= len ) return 5;
-		if ( mdk::File::success != db.Read(buf, len) ) return 6;
-		info.name = std::string(buf, len);
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 7;
-		if ( 60 < len || 0 >= len ) return 8;
-		if ( mdk::File::success != db.Read(buf, len) ) return 9;
-		info.descript = std::string(buf, len);
-		if ( mdk::File::success != db.Read(&info.race1, sizeof(char)) ) return 10;
-		if ( mdk::File::success != db.Read(&info.race2, sizeof(char)) ) return 11;
-		if ( mdk::File::success != db.Read(&info.talent1, sizeof(char)) ) return 12;
-		if ( mdk::File::success != db.Read(&info.talent2, sizeof(char)) ) return 13;
-		if ( mdk::File::success != db.Read(&info.talent3, sizeof(char)) ) return 14;
-		if ( mdk::File::success != db.Read(&info.itemId, sizeof(short)) ) return 15;
-		if ( mdk::File::success != db.Read(&info.hitPoint, sizeof(short)) ) return 16;
-		if ( mdk::File::success != db.Read(&info.physicalA, sizeof(short)) ) return 17;
-		if ( mdk::File::success != db.Read(&info.physicalD, sizeof(short)) ) return 18;
-		if ( mdk::File::success != db.Read(&info.specialA, sizeof(short)) ) return 19;
-		if ( mdk::File::success != db.Read(&info.specialD, sizeof(short)) ) return 20;
-		if ( mdk::File::success != db.Read(&info.speed, sizeof(short)) ) return 21;
-		if ( mdk::File::success != db.Read(&info.rare, sizeof(char)) ) return 22;
-		if ( mdk::File::success != db.Read(&info.tame, sizeof(char)) ) return 23;
-
-		len = info.skills.size();
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 24;
-		if ( 80 < len || 0 >= len ) return 25;
-		short valShort;
-		char valChar;
-		int j = 0;
-		for ( ; j < len; j++ )
-		{
-			if ( mdk::File::success != db.Read(&valShort, sizeof(short)) ) return 26;
-			if ( mdk::File::success != db.Read(&valChar, sizeof(char)) ) return 27;
-			info.skills[valShort] = (0 == valChar?false:true); 
-		}
-
-		len = info.upBuddys.size();
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 28;
-		if ( 10 < len || 0 > len) return 29;
-		for ( j = 0; j < len; j++ )
-		{
-			if ( mdk::File::success != db.Read(&valShort, sizeof(short)) ) return 30;
-			info.upBuddys.push_back(valShort);
-		}
-		buddys.push_back(info);
-	}
-
-	return 0;
-}
-
-bool SaveBuddyMap(mdk::File &db, std::vector<data::BUDDY_MAP> &buddyMaps)
-{
-	data::BUDDY_MAP *pBuddyMap;
-	unsigned char len;
-	short count = buddyMaps.size();
-	db.Write(&count, sizeof(short));
-	int i = 0;
-	char valChar;
-	short valShort;
-	for ( i = 0; i < buddyMaps.size(); i++ )
-	{
-		pBuddyMap = &buddyMaps[i];
-
-		db.Write(&pBuddyMap->id, sizeof(int));
-		db.Write(&pBuddyMap->shape, sizeof(char));
-		db.Write(&pBuddyMap->x, sizeof(double));//latitude
-		db.Write(&pBuddyMap->y, sizeof(double));//longitude
-		db.Write(&pBuddyMap->radius, sizeof(int));
-		db.Write(&pBuddyMap->right, sizeof(double));//latitude
-		db.Write(&pBuddyMap->bottom, sizeof(double));//longitude
-		db.Write(&pBuddyMap->city, sizeof(int));
-		valChar = pBuddyMap->spot?1:0;
-		db.Write(&valChar, sizeof(char));
-
-		len = pBuddyMap->buddys.size();
-		db.Write(&len, sizeof(char));
-		int j = 0;
-		for ( j = 0; j < pBuddyMap->buddys.size(); j++ )
-		{
-			valShort = pBuddyMap->buddys[j];
-			db.Write(&valShort, sizeof(short));
-		}
-
-	}
-
-	return true;
-}
-
-int LoadBuddyMap(mdk::File &db, std::vector<data::BUDDY_MAP> &buddyMaps)
-{
-	buddyMaps.clear();
-	data::BUDDY_MAP info;
-	unsigned char len;
-	short count = 0;
-	if ( mdk::File::success != db.Read(&count, sizeof(short)) ) return 1;
-	if ( 0 >= count ) return 2;
-
-	int i = 0;
-	char valChar;
-	short valShort;
-	for ( i = 0; i < count; i++ )
-	{
-		if ( mdk::File::success != db.Read(&info.id, sizeof(int)) ) return 3;
-		if ( mdk::File::success != db.Read(&info.shape, sizeof(char)) ) return 4;
-		if ( mdk::File::success != db.Read(&info.x, sizeof(double)) ) return 5;//latitude
-		if ( mdk::File::success != db.Read(&info.y, sizeof(double)) ) return 6;//longitude
-		if ( mdk::File::success != db.Read(&info.radius, sizeof(int)) ) return 7;
-		if ( mdk::File::success != db.Read(&info.right, sizeof(double)) ) return 9;//latitude
-		if ( mdk::File::success != db.Read(&info.bottom, sizeof(double)) ) return 10;//longitude
-		if ( mdk::File::success != db.Read(&info.city, sizeof(int)) ) return 11;
-		if ( mdk::File::success != db.Read(&valChar, sizeof(char)) ) return 12;
-		info.spot = (0 == valChar?false:true);
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 13;
-		if ( 100 < len || 0 >= len) return 14;
-		int j = 0;
-		for ( j = 0; j < len; j++ )
-		{
-			if ( mdk::File::success != db.Read(&valShort, sizeof(short)) ) return 15;
-			info.buddys.push_back(valShort);
-		}
-		buddyMaps.push_back(info);
-	}
-
-	return 0;
-}
-
-bool Client::LoadGameInit()
-{
-	if ( m_gameInitLoaded ) return true;
-
-	mdk::File db("D:/data", "buddy.db");
-
-	if ( mdk::File::success != db.Open(mdk::File::read, mdk::File::assii) ) return false;
-	if ( mdk::File::success != db.Read(&m_gameInitVersion, sizeof(int)) ) return false;
-
-	int ret = LoadRaceBook(db, m_raceBook);//
-	if ( 0 != ret ) return false;
-	ret = LoadItemBook(db, m_itemBook);//
-	if ( 0 != ret ) return false;
-	ret = LoadTalentBook(db, m_talentBook);//
-	if ( 0 != ret ) return false;
-	ret = LoadSkillBook(db, m_skillBook);//
-	if ( 0 != ret ) return false;
-	ret = LoadBuddyBook(db, m_buddyBook);//
-	if ( 0 != ret ) return false;
-	ret = LoadBuddyMap(db, m_buddyMaps);//
-	if ( 0 != ret ) return false;
-
-	return true;
-}
-
-bool Client::SaveGameInit()
-{
-	mdk::File db("D:/data", "buddy.db");
-
-	if ( mdk::File::success != db.Open(mdk::File::write, mdk::File::assii) ) return false;
-	db.Write(&m_gameInitVersion, sizeof(int));
-	SaveRaceBook(db, m_raceBook);//
-	SaveItemBook(db, m_itemBook);//
-	SaveTalentBook(db, m_talentBook);//
-	SaveSkillBook(db, m_skillBook);//
-	SaveBuddyBook(db, m_buddyBook);//
-	SaveBuddyMap(db, m_buddyMaps);//
-
-	return true;
-}
-
 void Client::OnRaceMap(msg::Buffer &buffer)
 {
 	msg::RaceMap msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-	m_raceBookNew = msg.m_races;
+	m_game.SetRaceMap(msg.m_races);
 }
 
 void Client::OnItemBook(msg::Buffer &buffer)
@@ -1188,15 +655,7 @@ void Client::OnItemBook(msg::Buffer &buffer)
 	msg::ItemBook msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-
-	int i = 0;
-	data::ITEM *pInfo;
-	for ( i = 0; i < msg.m_items.size(); i++ )
-	{
-		pInfo = Item(msg.m_items[i].id, m_itemBookNew);
-		if ( NULL == pInfo ) m_itemBookNew.push_back(msg.m_items[i]);
-		else *pInfo = msg.m_items[i];
-	}
+	m_game.SetItemBook(msg.m_items);
 }
 
 void Client::OnTalentBook(msg::Buffer &buffer)
@@ -1204,16 +663,7 @@ void Client::OnTalentBook(msg::Buffer &buffer)
 	msg::TalentBook msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-
-	int i = 0;
-	data::TALENT *pInfo;
-	data::TALENT info;
-	for ( i = 0; i < msg.m_talents.size(); i++ )
-	{
-		pInfo = Talent(msg.m_talents[i].id, m_talentBookNew);
-		if ( NULL == pInfo ) m_talentBookNew.push_back(msg.m_talents[i]);
-		else *pInfo = msg.m_talents[i];
-	}
+	m_game.SetTalentBook(msg.m_talents);
 }
 
 void Client::OnSkillBook(msg::Buffer &buffer)
@@ -1221,15 +671,7 @@ void Client::OnSkillBook(msg::Buffer &buffer)
 	msg::SkillBook msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-
-	int i = 0;
-	data::SKILL *pInfo;
-	for ( i = 0; i < msg.m_skills.size(); i++ )
-	{
-		pInfo = Skill(msg.m_skills[i].id, m_skillBookNew);
-		if ( NULL == pInfo ) m_skillBookNew.push_back(msg.m_skills[i]);
-		else *pInfo = msg.m_skills[i];
-	}
+	m_game.SetSkillBook(msg.m_skills);
 }
 
 void Client::OnBuddyBook(msg::Buffer &buffer)
@@ -1237,15 +679,7 @@ void Client::OnBuddyBook(msg::Buffer &buffer)
 	msg::BuddyBook msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-
-	int i = 0;
-	data::BUDDY *pInfo;
-	for ( i = 0; i < msg.m_buddys.size(); i++ )
-	{
-		pInfo = Buddy(msg.m_buddys[i].number, m_buddyBookNew);
-		if ( NULL == pInfo ) m_buddyBookNew.push_back(msg.m_buddys[i]);
-		else *pInfo = msg.m_buddys[i];
-	}
+	m_game.SetBuddyBook(msg.m_buddys);
 }
 
 void Client::OnBuddyMap(msg::Buffer &buffer)
@@ -1253,15 +687,7 @@ void Client::OnBuddyMap(msg::Buffer &buffer)
 	msg::BuddyMap msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-
-	int i = 0;
-	data::BUDDY_MAP *pInfo;
-	for ( i = 0; i < msg.m_buddyMaps.size(); i++ )
-	{
-		pInfo = BuddyMap(msg.m_buddyMaps[i].id, m_buddyMapsNew);
-		if ( NULL == pInfo ) m_buddyMapsNew.push_back(msg.m_buddyMaps[i]);
-		else *pInfo = msg.m_buddyMaps[i];
-	}
+	m_game.SetBuddyMap(msg.m_buddyMaps);
 }
 
 void Client::OnSetupVersion(msg::Buffer &buffer)
@@ -1270,19 +696,7 @@ void Client::OnSetupVersion(msg::Buffer &buffer)
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
 	if ( ResultCode::Success != msg.m_code ) return;
-
-	if ( m_gameInitVersion != msg.m_dataVersion )
-	{
-		m_gameInitVersion = msg.m_dataVersion;
-		m_raceBook = m_raceBookNew;
-		m_itemBook = m_itemBookNew;
-		m_talentBook = m_talentBookNew;
-		m_skillBook = m_skillBookNew;
-		m_buddyBook = m_buddyBookNew;
-		m_buddyMaps = m_buddyMapsNew;
-		m_gameInitLoaded = true;
-		SaveGameInit();
-	}
+	m_game.OnSetupVersion(msg.m_dataVersion);
 }
 
 void Client::OnDBEntry(msg::Buffer &buffer)
@@ -1667,7 +1081,7 @@ void Client::IOItem( short itemId, int count )
 	}
 }
 
-char* Client::TestLuck()
+std::string Client::TestLuck()
 {
 	time_t today = mdk::mdk_Date();
 	if ( today > m_player.lastLuckTime ) 
@@ -1676,31 +1090,16 @@ char* Client::TestLuck()
 	}
 	if ( m_player.luckCoin >= 1000 ) return "今日机会已经用完";
 
-	int i = 0; 
-	data::PLAYER_ITEM *pInfo;
-	data::PLAYER_ITEM info;
-	for ( ; true; i++)
-	{
-		if ( i >= m_itemBook.size() ) i = 0;
-		if ( 50 != m_itemBook[i].coin 
-			&& 100 != m_itemBook[i].coin 
-			&& 200 != m_itemBook[i].coin 
-			) continue;
-		if ( 0 == rand() % 2 ) continue;
-		if ( m_player.luckCoin + m_itemBook[i].coin > 1000 ) continue;
-		m_player.luckCoin += m_itemBook[i].coin;
-		IOItem(m_itemBook[i].id, 1);
-		SaveGame();
-		break;
-	}
+	short itemId;
+	std::string result = m_game.TestLuck(m_player.luckCoin, itemId);
+	IOItem(itemId, 1);
+	SaveGame();
 	m_player.lastLuckTime = time(NULL);
-	char result[256];
-	sprintf( result, "摇到物品(%s)正能量(%d)剩余机会(%d)\n", 
-		m_itemBook[i].name.c_str(), m_itemBook[i].coin, 1000 - m_player.luckCoin );
+
 	return result;
 }
 
-char* Client::UseItem( short itemId, int count )
+std::string Client::UseItem( short itemId, int count )
 {
 	if ( 0 >= count ) return "参数错误";
 
@@ -1709,37 +1108,36 @@ char* Client::UseItem( short itemId, int count )
 	IOItem(itemId, count * -1);
 	SaveGame();
 
-	return NULL;
+	return "";
 }
 
-char* Client::Buy( short itemId, int count )
+std::string Client::Buy( short itemId, int count )
 {
-	if ( 0 >= count ) return "参数错误";
+	int coin;
+	std::string result = m_game.Buy(itemId, count, coin);
+	if ( "" != result ) return result;
+	if ( coin > m_player.coin ) return "正能量不足";
 
-	data::ITEM *pItemBook = Item(itemId, m_itemBook);
-	if ( NULL == pItemBook ) return "物品不存在";
-	if ( pItemBook->coin * count > m_player.coin ) return "正能量不足";
-
-	IOCoin(pItemBook->coin * count * -1);
+	IOCoin(coin * -1);
 	IOItem(itemId, count);
 	SaveGame();
 
-	return NULL;
+	return "";
 }
 
-char* Client::Devour( short itemId, int count )
+std::string Client::Devour( short itemId, int count )
 {
-	if ( 0 >= count ) return "参数错误";
+	std::string result = UseItem(itemId, count);
+	if ( "" != result ) return result;
 
-	data::ITEM *pItemBook = Item(itemId, m_itemBook);
-	if ( NULL == pItemBook ) return "物品不存在";
+	int coin;
+	result = m_game.Devour(itemId, count, coin);
+	if ( "" != result ) return result;
 
-	char *ret = UseItem(itemId, count);
-	if ( NULL != ret ) return ret;
-	IOCoin(pItemBook->coin * count * 0.9);
+	IOCoin(coin);
 	SaveGame();
 
-	return NULL;
+	return "";
 }
 
 void Client::OnSyncPlayer(msg::Buffer &buffer)

@@ -194,8 +194,8 @@ char* OnCommand(std::vector<std::string> *param)
 			Helper();
 			return NULL;
 		}
-		char *ret = g_cli.TestLuck();
-		if ( NULL != ret ) printf( "%s\n", ret );
+		std::string ret = g_cli.TestLuck();
+		if ( "" != ret ) printf( "%s\n", ret.c_str() );
 	}
 	else if ( "use" == cmd[0] )
 	{
@@ -208,8 +208,8 @@ char* OnCommand(std::vector<std::string> *param)
 		sscanf(cmd[1].c_str(), "%hd", &id);
 		int count;
 		sscanf(cmd[2].c_str(), "%d", &count);
-		char *ret = g_cli.UseItem(id, count);
-		if ( NULL != ret ) printf( "%s\n", ret );
+		std::string ret = g_cli.UseItem(id, count);
+		if ( "" != ret ) printf( "%s\n", ret.c_str() );
 	}
 	else if ( "buy" == cmd[0] )
 	{
@@ -222,8 +222,8 @@ char* OnCommand(std::vector<std::string> *param)
 		sscanf(cmd[1].c_str(), "%hd", &id);
 		int count;
 		sscanf(cmd[2].c_str(), "%d", &count);
-		char *ret = g_cli.Buy(id, count);
-		if ( NULL != ret ) printf( "%s\n", ret );
+		std::string ret = g_cli.Buy(id, count);
+		if ( "" != ret ) printf( "%s\n", ret.c_str() );
 	}
 	else if ( "eat" == cmd[0] )
 	{
@@ -236,8 +236,8 @@ char* OnCommand(std::vector<std::string> *param)
 		sscanf(cmd[1].c_str(), "%hd", &id);
 		int count;
 		sscanf(cmd[2].c_str(), "%d", &count);
-		char *ret = g_cli.Devour(id, count);
-		if ( NULL != ret ) printf( "%s\n", ret );
+		std::string ret = g_cli.Devour(id, count);
+		if ( "" != ret ) printf( "%s\n", ret.c_str() );
 	}
 	else Helper();
 

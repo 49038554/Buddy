@@ -179,6 +179,9 @@
     <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncPlayer.cpp">
       <Filter>Protocl\Object\DBEntry</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Game.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Protocl\cpp\Buffer.h">
@@ -331,6 +334,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\SyncPlayer.h">
       <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Game.h">
+      <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
