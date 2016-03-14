@@ -64,14 +64,39 @@ void Client::Main()
 		}
 	}
 
-//	short number = m_game.Encounter(1);
+	short number = 0;
+	int i = 1;
+	int count[256];
+	for ( i = 0; i < 256; i++ ) count[i] = 0;
+	i= 1;
+	data::BUDDY *pBuddy;
+	srand(time(NULL));
+	while ( true )
+	{
+		number = m_game.Encounter(2);
+		count[number]++;
+		i++;
+		if ( 0 == i % 1000 )
+		{
+			int pos = 0;
+			for ( pos = 1; pos < 256; pos++ )
+			{
+				if ( count[pos] <= 0 ) continue;
+				pBuddy = Buddy(pos, m_game.m_buddyBook);
+				if ( NULL == pBuddy ) 
+				{
+					printf( "未定义巴迪(%d)出现%d次\n", pos, count[pos] );
+					continue;
+				}
+				printf( "%s出现%d次,出现率%d\n", pBuddy->name.c_str(), count[pos], pBuddy->rare );
+			}
+			printf( "\n\n" );
+		}
+	}
 }
 
 void Client::OnConnect(int svrType, net::Socket &svr)
 {
-	srand(time(NULL));
-//	short number = m_game.Encounter(1);
-
 	if ( Client::TcpSvr == svrType )
 	{
 		m_tcpEntry = svr;

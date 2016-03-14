@@ -28,7 +28,7 @@ private:
 	bool LoadGameInit();
 	bool SaveGameInit();
 
-private:
+public:
 	bool									m_gameInitLoaded;
 	//当前版本数据
 	int										m_gameInitVersion;

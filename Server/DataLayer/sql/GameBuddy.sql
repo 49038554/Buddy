@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2016-03-08 13:41:20
+Date: 2016-03-14 20:02:32
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -65,6 +65,22 @@ CREATE TABLE `pet_skill` (
   `petId` int(11) NOT NULL DEFAULT '0' COMMENT '宠物id',
   `race` int(11) NOT NULL DEFAULT '0' COMMENT '属性Id',
   PRIMARY KEY (`userId`,`petId`,`race`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for player
+-- ----------------------------
+DROP TABLE IF EXISTS `player`;
+CREATE TABLE `player` (
+  `userId` int(11) NOT NULL,
+  `coin` int(255) DEFAULT NULL,
+  `pet1` int(11) DEFAULT NULL,
+  `pet2` int(11) DEFAULT NULL,
+  `pet3` int(11) DEFAULT NULL,
+  `pet4` int(11) DEFAULT NULL,
+  `pet5` int(11) DEFAULT NULL,
+  `pet6` int(11) DEFAULT NULL,
+  PRIMARY KEY (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------

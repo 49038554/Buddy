@@ -1486,39 +1486,45 @@ bool Worker::CreatePlayer(unsigned int userId)
 	if ( !pMysql->ExecuteSql(sql) ) return false;
 	if ( !pMysql->IsEmpty() ) return true;
 
-	sprintf( sql, "insert into player (userId, coin) values(%u, 1000000) ", userId );
+	data::BUDDY *pBuddy1 = Buddy("¸Ö½Ç", m_buddys);
+	data::BUDDY *pBuddy2 = Buddy("Ì°³Ô¹í", m_buddys);
+	data::BUDDY *pBuddy3 = Buddy("»¢öè", m_buddys);
+	data::BUDDY *pBuddy4 = Buddy("ÔÆÈ¸", m_buddys);
+	data::BUDDY *pBuddy5 = Buddy("Ğü¸¡Ä§Å¼", m_buddys);
+	data::BUDDY *pBuddy6 = Buddy("Ò¹Ä§ÈË", m_buddys);
+	if ( NULL == pBuddy1 ) return false;
+	if ( NULL == pBuddy2 ) return false;
+	if ( NULL == pBuddy3 ) return false;
+	if ( NULL == pBuddy4 ) return false;
+	if ( NULL == pBuddy5 ) return false;
+	if ( NULL == pBuddy6 ) return false;
+	sprintf( sql, "insert into player (userId, coin, pet1, pet2, pet3, pet4, pet5, pet6) "
+		"values(%u, 1000000, %d, %d, %d, %d, %d, %d) ", userId, 
+		pBuddy1->number, pBuddy2->number, pBuddy3->number, pBuddy4->number, pBuddy5->number, pBuddy6->number);
 	if ( !pMysql->ExecuteSql(sql) ) return false;
 	sprintf( sql, "insert into player_item (userId, itemId, count) values(%u, 4, 1000) ", userId );
 	if ( !pMysql->ExecuteSql(sql) ) return false;
 	sprintf( sql, "insert into player_item (userId, itemId, count) values(%u, 8, 1) ", userId );
 	if ( !pMysql->ExecuteSql(sql) ) return false;
 	int petId = 0;
-	data::BUDDY *pBuddy = NULL;
 	//ÀÏÅ£
 	petId++;
-	pBuddy = Buddy("ÀÏÅ£", m_buddys);
-	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
-
+	if ( !AddPet( pBuddy1->number, userId, petId, pBuddy1->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//Ì°³Ô¹í
 	petId++;
-	pBuddy = Buddy("Ì°³Ô¹í", m_buddys);
-	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	if ( !AddPet( pBuddy2->number, userId, petId, pBuddy2->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//»¢öè
 	petId++;
-	pBuddy = Buddy("»¢öè", m_buddys);
-	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	if ( !AddPet( pBuddy3->number, userId, petId, pBuddy3->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//ÔÆÈ¸
 	petId++;
-	pBuddy = Buddy("ÔÆÈ¸", m_buddys);
-	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	if ( !AddPet( pBuddy4->number, userId, petId, pBuddy4->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//Ğü¸¡Ä§Å¼
 	petId++;
-	pBuddy = Buddy("Ğü¸¡Ä§Å¼", m_buddys);
-	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	if ( !AddPet( pBuddy5->number, userId, petId, pBuddy5->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 	//Ò¹Ä§ÈË
 	petId++;
-	pBuddy = Buddy("Ò¹Ä§ÈË", m_buddys);
-	if ( !AddPet( pBuddy->number, userId, petId, pBuddy->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	if ( !AddPet( pBuddy6->number, userId, petId, pBuddy6->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
 
 	return true;
 }

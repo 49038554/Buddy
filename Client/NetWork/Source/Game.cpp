@@ -449,6 +449,7 @@ bool SaveBuddyMap(mdk::File &db, std::vector<data::BUDDY_MAP> &buddyMaps)
 	int i = 0;
 	char valChar;
 	short valShort;
+	int j = 0;
 	for ( i = 0; i < buddyMaps.size(); i++ )
 	{
 		pBuddyMap = &buddyMaps[i];
@@ -466,7 +467,6 @@ bool SaveBuddyMap(mdk::File &db, std::vector<data::BUDDY_MAP> &buddyMaps)
 
 		len = pBuddyMap->buddys.size();
 		db.Write(&len, sizeof(char));
-		int j = 0;
 		for ( j = 0; j < pBuddyMap->buddys.size(); j++ )
 		{
 			valShort = pBuddyMap->buddys[j];
@@ -505,6 +505,7 @@ int LoadBuddyMap(mdk::File &db, std::vector<data::BUDDY_MAP> &buddyMaps)
 		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 13;
 		if ( 100 < len || 0 >= len) return 14;
 		int j = 0;
+		info.buddys.clear();
 		for ( j = 0; j < len; j++ )
 		{
 			if ( mdk::File::success != db.Read(&valShort, sizeof(short)) ) return 15;
@@ -691,12 +692,13 @@ short Game::Encounter( int mapId )
 	{
 		if ( mapId == m_buddyMaps[i].id )
 		{
-			char *rare = new char[m_buddyMaps[i].buddys.size()];
+			char *rare = new char[m_buddyMaps[i].buddys.size() * 5];
 			int pos = 0;
+			int j = 0;
 			data::BUDDY *pBuddy;
-			for (i = 0; i < m_buddyMaps[i].buddys.size(); i++)
+			for (j = 0; j < m_buddyMaps[i].buddys.size(); j++)
 			{
-				pBuddy = Buddy(m_buddyMaps[i].buddys[i], m_buddyBook);
+				pBuddy = Buddy(m_buddyMaps[i].buddys[j], m_buddyBook);
 				if ( NULL == pBuddy ) return 0;
 
 				memset(&rare[pos], pBuddy->number, pBuddy->rare);
@@ -704,8 +706,8 @@ short Game::Encounter( int mapId )
 			}
 			pos = rand()%pos;
 			short number = rare[pos];
+			pBuddy = Buddy(rare[pos], m_buddyBook);
 			delete[]rare;
-			printf( "Óöµ½%s\n", pBuddy->name.c_str() );
 			return number;
 		}
 	}
