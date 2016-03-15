@@ -1446,36 +1446,6 @@ void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
 	return;
 }
 
-int GetNature(const std::string &add, const std::string &dec)
-{
-	if ("-" == add && "-" == dec ) return 0;
-
-	if ("WG" == add && "WF" == dec ) return 1;
-	if ("WG" == add && "TG" == dec ) return 2;
-	if ("WG" == add && "TF" == dec ) return 3;
-	if ("WG" == add && "SD" == dec ) return 4;
-
-	if ("WF" == add && "WG" == dec ) return 5;
-	if ("WF" == add && "TG" == dec ) return 6;
-	if ("WF" == add && "TF" == dec ) return 7;
-	if ("WF" == add && "SD" == dec ) return 8;
-
-	if ("TG" == add && "WG" == dec ) return 9;
-	if ("TG" == add && "WF" == dec ) return 10;
-	if ("TG" == add && "TF" == dec ) return 11;
-	if ("TG" == add && "SD" == dec ) return 12;
-										    
-	if ("TF" == add && "WG" == dec ) return 13;
-	if ("TF" == add && "WF" == dec ) return 14;
-	if ("TF" == add && "TG" == dec ) return 15;
-	if ("TF" == add && "SD" == dec ) return 16;
-										    
-	if ("SD" == add && "WG" == dec ) return 17;
-	if ("SD" == add && "WF" == dec ) return 18;
-	if ("SD" == add && "TG" == dec ) return 19;
-	if ("SD" == add && "TF" == dec ) return 20;
-}
-
 bool Worker::CreatePlayer(unsigned int userId)
 {
 	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", userId);

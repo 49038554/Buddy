@@ -3,14 +3,22 @@
 
 #include <ctime>
 #include "common/BuddyData.h"
+#include "Battle.h"
 
 class Game
 {
+	friend class Battle;
 public:
 	Game(void);
 	virtual ~Game(void);
 	bool IsInit();
 	int Version();
+	std::map<unsigned char, std::string>& RaceBook();
+	std::vector<data::ITEM>& ItemBook();
+	std::vector<data::TALENT>& TalentBook();
+	std::vector<data::SKILL>& SkillBook();
+	std::vector<data::BUDDY>& BuddyBook();
+	std::vector<data::BUDDY_MAP>& BuddyMaps();
 
 	void SetRaceMap(std::map<unsigned char, std::string> &raceBook);
 	void SetItemBook(std::vector<data::ITEM> &itemBook);
@@ -19,10 +27,13 @@ public:
 	void SetBuddyBook(std::vector<data::BUDDY> &buddyBook);
 	void SetBuddyMap(std::vector<data::BUDDY_MAP> &buddyMaps);
 	void OnSetupVersion(unsigned short dataVersion);
+
 	std::string TestLuck(short &luckCoin, short &itemId);
 	std::string Buy( short itemId, int count, int &coin );
 	std::string Devour( short itemId, int count, int &coin );
-	short Encounter( int mapId );
+	data::BUDDY* Encounter( int mapId );
+	int CreateBattle(std::vector<data::PET*> &me, std::vector<data::PET*> &she);
+	bool PlayerAction(int battleId, bool me, Battle::Action act, short objectId, bool skillPro, int speed);
 
 private:
 	bool LoadGameInit();
@@ -48,6 +59,7 @@ public:
 	std::vector<data::BUDDY_MAP>			m_buddyMapsNew;
 
 	time_t m_lastBattleTime;
+	std::map<int, Battle>	m_battles;
 };
 
 #endif //GAME_H

@@ -22,6 +22,35 @@ int Game::Version()
 	return m_gameInitVersion;
 }
 
+std::map<unsigned char, std::string>& Game::RaceBook()
+{
+	return m_raceBook;
+}
+std::vector<data::ITEM>& Game::ItemBook()
+{
+	return m_itemBook;
+}
+
+std::vector<data::TALENT>& Game::TalentBook()
+{
+	return m_talentBook;
+}
+
+std::vector<data::SKILL>& Game::SkillBook()
+{
+	return m_skillBook;
+}
+
+std::vector<data::BUDDY>& Game::BuddyBook()
+{
+	return m_buddyBook;
+}
+
+std::vector<data::BUDDY_MAP>& Game::BuddyMaps()
+{
+	return m_buddyMaps;
+}
+
 bool SaveRaceBook( mdk::File &db, std::map<unsigned char, std::string> &races )
 {
 	std::map<unsigned char, std::string>::iterator it = races.begin();
@@ -682,10 +711,11 @@ std::string Game::Buy( short itemId, int count, int &coin )
 	return "";
 }
 
-short Game::Encounter( int mapId )
+data::BUDDY* Game::Encounter( int mapId )
 {
 	time_t curTime = time(NULL);
-	if ( curTime - m_lastBattleTime < 30 ) return 0;
+	int battleTime = rand() % 26 + 5;
+	if ( curTime - m_lastBattleTime < battleTime ) return NULL;
 
 	int i = 0;
 	for ( i = 0; i < m_buddyMaps.size(); i++ )
@@ -705,12 +735,28 @@ short Game::Encounter( int mapId )
 				pos += pBuddy->rare;
 			}
 			pos = rand()%pos;
-			short number = rare[pos];
 			pBuddy = Buddy(rare[pos], m_buddyBook);
 			delete[]rare;
-			return number;
+			return pBuddy;
 		}
 	}
 
-	return 0;
+	return NULL;
+}
+
+int Game::CreateBattle(std::vector<data::PET*> &me, std::vector<data::PET*> &she)
+{
+	static int battleId = 0;
+	battleId++;
+	m_battles[battleId].Init(this, battleId, me, she);
+	return battleId;
+}
+
+bool Game::PlayerAction(int battleId, bool me, Battle::Action act, short objectId, bool skillPro, int speed)
+{
+	if ( m_battles.end() == m_battles.find(battleId) ) return false;
+	Battle &pBattle = m_battles[battleId];
+	pBattle.PlayerAction(me, act, objectId, skillPro, speed);
+
+	return true;
 }

@@ -131,6 +131,8 @@ namespace data
 		std::vector<char>	race;//17个属性的恶魔果实是否吃过
 
 		bool	synced;
+		char	state;//状态
+		short	curHP;//当前血量
 	}PET;
 
 	typedef struct PLAYER_ITEM
@@ -152,5 +154,7 @@ data::BUDDY_MAP* BuddyMap(int id, std::vector<data::BUDDY_MAP> &BuddyMaps);
 
 data::PLAYER_ITEM* PlayerItem(short id, std::vector<data::PLAYER_ITEM> &items);
 data::PET* Pet(int id, std::vector<data::PET> &pets);
+
+double GetNatureCal(int nature, const std::string &attr);
 
 #endif //BUDDY_DATA_H

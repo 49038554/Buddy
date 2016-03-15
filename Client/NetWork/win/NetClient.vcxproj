@@ -56,6 +56,7 @@
     <ClCompile Include="..\..\mdk\Signal.cpp" />
     <ClCompile Include="..\..\mdk\Task.cpp" />
     <ClCompile Include="..\..\mdk\Thread.cpp" />
+    <ClCompile Include="..\Source\Battle.cpp" />
     <ClCompile Include="..\Source\Client.cpp" />
     <ClCompile Include="..\Source\Game.cpp" />
     <ClCompile Include="..\Source\NetWorker.cpp" />
@@ -111,6 +112,7 @@
     <ClInclude Include="..\..\mdk\Signal.h" />
     <ClInclude Include="..\..\mdk\Task.h" />
     <ClInclude Include="..\..\mdk\Thread.h" />
+    <ClInclude Include="..\Source\Battle.h" />
     <ClInclude Include="..\Source\Client.h" />
     <ClInclude Include="..\Source\Game.h" />
     <ClInclude Include="..\Source\NetWorker.h" />

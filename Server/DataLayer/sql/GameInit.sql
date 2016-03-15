@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2016-03-14 20:02:39
+Date: 2016-03-15 20:22:24
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -110,7 +110,7 @@ INSERT INTO `buddy_book_info` VALUES ('31', '邪心狮', null, '普', null, '技
 INSERT INTO `buddy_book_info` VALUES ('32', '古莉丝', null, '普', '恶', '技师', '柔软', '压力', null, '80', '105', '80', '100', '85', '150', '1', '0');
 INSERT INTO `buddy_book_info` VALUES ('33', '猪鼻猴', null, '斗', null, '失眠', '正义心', '锐利目光', null, '65', '105', '60', '60', '70', '95', '5', '100');
 INSERT INTO `buddy_book_info` VALUES ('34', '金毛吼', null, '火', null, '威吓', '引火', '正义心', null, '90', '110', '80', '100', '80', '95', '3', '80');
-INSERT INTO `buddy_book_info` VALUES ('35', '勺子狸', null, '超', null, '精神力', '换装', '魔法防御', null, '55', '50', '45', '135', '95', '120', '5', '100');
+INSERT INTO `buddy_book_info` VALUES ('35', '勺子狸', null, '超', null, '精神力', '穿透', '魔法防御', null, '55', '50', '45', '135', '95', '120', '5', '100');
 INSERT INTO `buddy_book_info` VALUES ('36', '拳鸡', null, '斗', null, '根性', '锐利目光', '不屈', null, '90', '130', '80', '65', '85', '55', '4', '80');
 INSERT INTO `buddy_book_info` VALUES ('37', '外星水母', null, '水', '毒', '净体', '蓄水', '雨盘', null, '80', '70', '65', '80', '120', '100', '5', '100');
 INSERT INTO `buddy_book_info` VALUES ('38', '岩龟', null, '岩', '地', '石脑', '结实', '沙隐', null, '80', '120', '130', '55', '65', '45', '4', '80');
@@ -138,8 +138,8 @@ INSERT INTO `buddy_book_info` VALUES ('59', '美女龙', null, '水', null, '神
 INSERT INTO `buddy_book_info` VALUES ('60', '棉棉龟', null, '水', '冰', '蓄水', '盔甲', '湿润身躯', null, '130', '85', '80', '85', '95', '60', '3', '60');
 INSERT INTO `buddy_book_info` VALUES ('61', '女布', null, '普', null, '逃走', '逃走', '自然恢复', null, '55', '55', '50', '45', '65', '55', '4', '70');
 INSERT INTO `buddy_book_info` VALUES ('62', '雷布', null, '电', null, '电气引擎', null, '飞毛腿', null, '65', '65', '60', '110', '95', '130', '3', '0');
-INSERT INTO `buddy_book_info` VALUES ('63', '日布', null, '超', null, '换装', '超级炮台', '魔装反射', null, '75', '40', '60', '130', '110', '110', '3', '0');
-INSERT INTO `buddy_book_info` VALUES ('64', '月布', null, '恶', null, '换装', '精神力', '魔装反射', null, '95', '65', '110', '60', '130', '65', '3', '0');
+INSERT INTO `buddy_book_info` VALUES ('63', '日布', null, '超', null, '穿透', '超级炮台', '魔装反射', null, '75', '40', '60', '130', '110', '110', '3', '0');
+INSERT INTO `buddy_book_info` VALUES ('64', '月布', null, '恶', null, '魔法防御', '精神力', '魔装反射', null, '95', '65', '110', '60', '130', '65', '3', '0');
 INSERT INTO `buddy_book_info` VALUES ('65', '破嘴螺', null, '水', '岩', '轻快', '盔甲', '有色眼镜', null, '70', '60', '125', '115', '70', '55', '4', '70');
 INSERT INTO `buddy_book_info` VALUES ('66', '水螳螂', null, '水', '岩', '轻快', '盔甲', '技师', null, '60', '115', '105', '65', '70', '80', '5', '100');
 INSERT INTO `buddy_book_info` VALUES ('67', '风速龙', null, '飞', '岩', '压力', '石脑', '霸气', null, '80', '105', '65', '60', '75', '130', '3', '60');
@@ -5191,7 +5191,6 @@ INSERT INTO `talent` VALUES ('34', '自然恢复', '退场解除异常');
 INSERT INTO `talent` VALUES ('35', '轻快', '雨天速度*2');
 INSERT INTO `talent` VALUES ('36', '叶绿素', '晴天速度*2');
 INSERT INTO `talent` VALUES ('37', '挖沙', '沙暴速度*2，不受沙暴伤害');
-INSERT INTO `talent` VALUES ('38', '换装', '复制特性');
 INSERT INTO `talent` VALUES ('39', '精神力', '不害怕');
 INSERT INTO `talent` VALUES ('40', '雨盘', '雨天回复1/16');
 INSERT INTO `talent` VALUES ('41', '加速', '每回合结束强化速度');
@@ -5300,7 +5299,6 @@ INSERT INTO `talent_book_effect` VALUES ('297', '叶绿素', '战斗', '晴天�
 INSERT INTO `talent_book_effect` VALUES ('298', '叶绿素', '战斗', '速度翻倍', '100', '1');
 INSERT INTO `talent_book_effect` VALUES ('299', '挖沙', '战斗', '沙暴特效', '100', '1');
 INSERT INTO `talent_book_effect` VALUES ('300', '挖沙', '战斗', '速度翻倍', '100', '1');
-INSERT INTO `talent_book_effect` VALUES ('301', '换装', '换人', '复制特性', '100', '1');
 INSERT INTO `talent_book_effect` VALUES ('302', '精神力', '战斗', '免疫霸气', '100', '1');
 INSERT INTO `talent_book_effect` VALUES ('303', '雨盘', '回合结束', '雨天特效', '100', '1');
 INSERT INTO `talent_book_effect` VALUES ('304', '雨盘', '回合结束', '微量回复', '100', '1');

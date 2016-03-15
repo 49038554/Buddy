@@ -34,6 +34,7 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 	//Game
+	void SetLBS(int mapId);
 	std::string TestLuck();
 	std::string UseItem( short itemId, int count );
 	std::string Buy( short itemId, int count );
@@ -122,6 +123,14 @@ private:
 	data::PLAYER					m_player;
 	std::vector<data::PLAYER_ITEM>	m_items;
 	std::vector<data::PET>			m_pets;
+
+	enum PlayerState
+	{
+		idle = 0,
+		fight = 1,
+	};
+	PlayerState						m_state;
+	int								m_mapId;
 };
 
 #endif //CLIENT_H

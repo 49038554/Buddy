@@ -43,10 +43,10 @@
 
 #include "mdk/File.h"
 
-
 Client::Client(void)
 {
 	m_palyerDataLoaded = LoadGame();
+	m_mapId = 5;
 }
 
 Client::~Client(void)
@@ -64,34 +64,10 @@ void Client::Main()
 		}
 	}
 
-	short number = 0;
-	int i = 1;
-	int count[256];
-	for ( i = 0; i < 256; i++ ) count[i] = 0;
-	i= 1;
-	data::BUDDY *pBuddy;
-	srand(time(NULL));
-	while ( true )
+	if ( !m_game.IsInit() || !m_palyerDataLoaded ) return;
+	if ( Client::idle == m_state )
 	{
-		number = m_game.Encounter(2);
-		count[number]++;
-		i++;
-		if ( 0 == i % 1000 )
-		{
-			int pos = 0;
-			for ( pos = 1; pos < 256; pos++ )
-			{
-				if ( count[pos] <= 0 ) continue;
-				pBuddy = Buddy(pos, m_game.m_buddyBook);
-				if ( NULL == pBuddy ) 
-				{
-					printf( "未定义巴迪(%d)出现%d次\n", pos, count[pos] );
-					continue;
-				}
-				printf( "%s出现%d次,出现率%d\n", pBuddy->name.c_str(), count[pos], pBuddy->rare );
-			}
-			printf( "\n\n" );
-		}
+		data::BUDDY *pBuddy= m_game.Encounter(m_mapId);
 	}
 }
 
@@ -989,11 +965,22 @@ void Client::OnPets(msg::Buffer &buffer)
 
 	int i = 0;
 	data::PET *pInfo;
+	data::BUDDY *pBuddy;
 	for ( i = 0; i < msg.m_pets.size(); i++ )
 	{
+		pBuddy = Buddy(msg.m_pets[i].number, m_game.BuddyBook());
+		if ( NULL == pBuddy ) continue;
+
 		pInfo = Pet(msg.m_pets[i].id, m_pets);
 		if ( NULL == pInfo ) m_pets.push_back(msg.m_pets[i]);
 		else *pInfo = msg.m_pets[i];
+		pInfo = Pet(msg.m_pets[i].id, m_pets);
+		pInfo->HP = (pBuddy->hitPoint * 2 + pInfo->HPMuscle/4 + pInfo->HPHealthy) + 100 + 10;//血
+		pInfo->WG = ((pBuddy->physicalA * 2 + pInfo->WGMuscle/4 + pInfo->WGHealthy) + 5) * GetNatureCal(pInfo->nature, "WG");//攻
+		pInfo->WF = ((pBuddy->physicalD * 2 + pInfo->WFMuscle/4 + pInfo->WFHealthy) + 5) * GetNatureCal(pInfo->nature, "WF");//防
+		pInfo->TG = ((pBuddy->specialA * 2 + pInfo->TFMuscle/4 + pInfo->TGHealthy) + 5) * GetNatureCal(pInfo->nature, "TG");//特攻
+		pInfo->TF = ((pBuddy->specialD * 2 + pInfo->TFMuscle/4 + pInfo->TFHealthy) + 5) * GetNatureCal(pInfo->nature, "TF");//特防
+		pInfo->SD = ((pBuddy->speed * 2 + pInfo->SDMuscle/4 + pInfo->SDHealthy) + 5) * GetNatureCal(pInfo->nature, "SD");//速度
 	}
 }
 
@@ -1224,4 +1211,9 @@ void Client::OnSyncPets(msg::Buffer &buffer)
 		}
 	}
 	SaveGame();
+}
+
+void Client::SetLBS(int mapId)
+{
+	m_mapId = mapId;
 }
