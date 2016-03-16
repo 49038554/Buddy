@@ -5,8 +5,33 @@
 #include <vector>
 #include <map>
 
+namespace Race
+{
+	enum Race
+	{
+		pu = 1	,//ÆÕ
+		huo = 2	,//»ð
+		shui = 3	,//Ë®
+		dian = 4	,//µç
+		bing = 5	,//±ù
+		gui = 6	,//¹í
+		e = 7	,//¶ñ
+		chao = 8	,//³¬
+		longx = 9	,//Áú
+		fei = 10	,//·É
+		chong = 11	,//³æ
+		cao = 12	,//²Ý
+		di = 13	,//µØ
+		yan = 14	,//ÑÒ
+		gang = 15	,//¸Ö
+		dou = 16	,//¶·
+		du = 17	,//¶¾
+	};
+}
+
 namespace data
 {
+
 	//ÌØÐ§
 	typedef struct EFFECT
 	{

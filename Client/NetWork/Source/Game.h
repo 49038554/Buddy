@@ -32,8 +32,9 @@ public:
 	std::string Buy( short itemId, int count, int &coin );
 	std::string Devour( short itemId, int count, int &coin );
 	data::BUDDY* Encounter( int mapId );
-	int CreateBattle(std::vector<data::PET*> &me, std::vector<data::PET*> &she);
-	bool PlayerAction(int battleId, bool me, Battle::Action act, short objectId, bool skillPro, int speed);
+	int CreateBattle(unsigned int mePlayerId, unsigned int shePlayerId, 
+		std::vector<data::PET*> &me, std::vector<data::PET*> &she);
+	bool PlayerAction(int battleId, bool me, Battle::Action act, short objectId, bool skillPro, bool itemPro, int speed);
 
 private:
 	bool LoadGameInit();

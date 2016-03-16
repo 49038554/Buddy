@@ -806,11 +806,6 @@ int LoadPets(mdk::File &db, std::vector<data::PET> &pets)
 		if ( mdk::File::success != db.Read(&info.number, sizeof(short)) ) return 4;
 		if ( mdk::File::success != db.Read(&info.talent, sizeof(char)) ) return 5;
 		if ( mdk::File::success != db.Read(&info.nature, sizeof(char)) ) return 6;
-		if ( mdk::File::success != db.Read(&info.skill1, sizeof(short)) ) return 7;
-		if ( mdk::File::success != db.Read(&info.skill2, sizeof(short)) ) return 8;
-		if ( mdk::File::success != db.Read(&info.skill3, sizeof(short)) ) return 9;
-		if ( mdk::File::success != db.Read(&info.skill4, sizeof(short)) ) return 10;
-		if ( mdk::File::success != db.Read(&info.itemId, sizeof(short)) ) return 11;
 		if ( mdk::File::success != db.Read(&info.HP, sizeof(short)) ) return 12;
 		if ( mdk::File::success != db.Read(&info.WG, sizeof(short)) ) return 13;
 		if ( mdk::File::success != db.Read(&info.WF, sizeof(short)) ) return 14;
@@ -842,6 +837,13 @@ int LoadPets(mdk::File &db, std::vector<data::PET> &pets)
 
 		if ( mdk::File::success != db.Read(&varChar, sizeof(char)) ) return 33;
 		info.synced = (0 == varChar?false:true);
+		if ( mdk::File::success != db.Read(&info.curHP, sizeof(short)) ) return 34;
+		if ( mdk::File::success != db.Read(&info.state, sizeof(char)) ) return 35;
+		if ( mdk::File::success != db.Read(&info.skill1, sizeof(short)) ) return 36;
+		if ( mdk::File::success != db.Read(&info.skill2, sizeof(short)) ) return 37;
+		if ( mdk::File::success != db.Read(&info.skill3, sizeof(short)) ) return 38;
+		if ( mdk::File::success != db.Read(&info.skill4, sizeof(short)) ) return 39;
+		if ( mdk::File::success != db.Read(&info.itemId, sizeof(short)) ) return 40;
 		pets.push_back(info);
 	}
 
@@ -864,11 +866,6 @@ bool SavePets(mdk::File &db, std::vector<data::PET> &pets)
 		db.Write(&pInfo->number, sizeof(short));
 		db.Write(&pInfo->talent, sizeof(char));
 		db.Write(&pInfo->nature, sizeof(char));
-		db.Write(&pInfo->skill1, sizeof(short));
-		db.Write(&pInfo->skill2, sizeof(short));
-		db.Write(&pInfo->skill3, sizeof(short));
-		db.Write(&pInfo->skill4, sizeof(short));
-		db.Write(&pInfo->itemId, sizeof(short));
 		db.Write(&pInfo->HP, sizeof(short));
 		db.Write(&pInfo->WG, sizeof(short));
 		db.Write(&pInfo->WF, sizeof(short));
@@ -899,6 +896,13 @@ bool SavePets(mdk::File &db, std::vector<data::PET> &pets)
 
 		varChar = pInfo->synced?1:0;
 		db.Write(&varChar, sizeof(char));
+		db.Write(&pInfo->curHP, sizeof(short));
+		db.Write(&pInfo->state, sizeof(char));
+		db.Write(&pInfo->skill1, sizeof(short));
+		db.Write(&pInfo->skill2, sizeof(short));
+		db.Write(&pInfo->skill3, sizeof(short));
+		db.Write(&pInfo->skill4, sizeof(short));
+		db.Write(&pInfo->itemId, sizeof(short));
 	}
 
 	return true;
@@ -975,12 +979,43 @@ void Client::OnPets(msg::Buffer &buffer)
 		if ( NULL == pInfo ) m_pets.push_back(msg.m_pets[i]);
 		else *pInfo = msg.m_pets[i];
 		pInfo = Pet(msg.m_pets[i].id, m_pets);
-		pInfo->HP = (pBuddy->hitPoint * 2 + pInfo->HPMuscle/4 + pInfo->HPHealthy) + 100 + 10;//血
+		pInfo->curHP = pInfo->HP = (pBuddy->hitPoint * 2 + pInfo->HPMuscle/4 + pInfo->HPHealthy) + 100 + 10;//血
 		pInfo->WG = ((pBuddy->physicalA * 2 + pInfo->WGMuscle/4 + pInfo->WGHealthy) + 5) * GetNatureCal(pInfo->nature, "WG");//攻
 		pInfo->WF = ((pBuddy->physicalD * 2 + pInfo->WFMuscle/4 + pInfo->WFHealthy) + 5) * GetNatureCal(pInfo->nature, "WF");//防
 		pInfo->TG = ((pBuddy->specialA * 2 + pInfo->TFMuscle/4 + pInfo->TGHealthy) + 5) * GetNatureCal(pInfo->nature, "TG");//特攻
 		pInfo->TF = ((pBuddy->specialD * 2 + pInfo->TFMuscle/4 + pInfo->TFHealthy) + 5) * GetNatureCal(pInfo->nature, "TF");//特防
 		pInfo->SD = ((pBuddy->speed * 2 + pInfo->SDMuscle/4 + pInfo->SDHealthy) + 5) * GetNatureCal(pInfo->nature, "SD");//速度
+		pInfo->state = 0;
+		pInfo->itemId = 0;
+		pInfo->skill1 = 0;
+		pInfo->skill2 = 0;
+		pInfo->skill3 = 0;
+		pInfo->skill4 = 0;
+		std::map<unsigned short, bool>::iterator it;
+		for ( it = pBuddy->skills.begin(); it != pBuddy->skills.end(); it++ )
+		{
+			if ( !it->second ) continue;
+			if ( 0 == pInfo->skill1 ) 
+			{
+				pInfo->skill1 = it->first;
+				continue;
+			}
+			if ( 0 == pInfo->skill2 ) 
+			{
+				pInfo->skill2 = it->first;
+				continue;
+			}
+			if ( 0 == pInfo->skill3 ) 
+			{
+				pInfo->skill3 = it->first;
+				continue;
+			}
+			if ( 0 == pInfo->skill4 ) 
+			{
+				pInfo->skill4 = it->first;
+				continue;
+			}
+		}
 	}
 }
 

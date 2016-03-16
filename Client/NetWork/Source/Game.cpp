@@ -6,6 +6,7 @@ Game::Game(void)
 {
 	m_gameInitVersion = 0;
 	m_gameInitLoaded = LoadGameInit();
+	m_lastBattleTime = time(NULL);
 }
 
 Game::~Game(void)
@@ -158,6 +159,7 @@ int LoadItemBook( mdk::File &db, std::vector<data::ITEM> &items )
 		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 11;
 		if ( 5 < len || 0 > len ) return 12;
 		int j = 0;
+		info.effects.clear();
 		for ( j = 0; j < len; j++ )
 		{
 			if ( mdk::File::success != db.Read(&effect.id, sizeof(char)) ) return 13;
@@ -237,6 +239,7 @@ int LoadTalentBook(mdk::File &db, std::vector<data::TALENT> &talents)
 		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 10;
 		if ( 5 < len || 0 >= len ) return 11;
 		int j = 0;
+		info.effects.clear();
 		for ( j = 0; j < len; j++ )
 		{
 			if ( mdk::File::success != db.Read(&effect.id, sizeof(char)) ) return 12;
@@ -329,6 +332,7 @@ int LoadSkillBook(mdk::File &db, std::vector<data::SKILL> &skills)
 		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 15;
 		if ( 5 < len || 0 > len ) return 16;
 		int j = 0;
+		info.effects.clear();
 		for ( j = 0; j < len; j++ )
 		{
 			if ( mdk::File::success != db.Read(&effect.id, sizeof(char)) ) return 17;
@@ -442,12 +446,13 @@ int LoadBuddyBook(mdk::File &db, std::vector<data::BUDDY> &buddys)
 		if ( mdk::File::success != db.Read(&info.rare, sizeof(char)) ) return 22;
 		if ( mdk::File::success != db.Read(&info.tame, sizeof(char)) ) return 23;
 
-		len = info.skills.size();
+		len = 0;
 		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 24;
 		if ( 80 < len || 0 >= len ) return 25;
 		short valShort;
 		char valChar;
 		int j = 0;
+		info.skills.clear();
 		for ( ; j < len; j++ )
 		{
 			if ( mdk::File::success != db.Read(&valShort, sizeof(short)) ) return 26;
@@ -455,9 +460,10 @@ int LoadBuddyBook(mdk::File &db, std::vector<data::BUDDY> &buddys)
 			info.skills[valShort] = (0 == valChar?false:true); 
 		}
 
-		len = info.upBuddys.size();
+		len = 0;
 		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 28;
 		if ( 10 < len || 0 > len) return 29;
+		info.upBuddys.clear();
 		for ( j = 0; j < len; j++ )
 		{
 			if ( mdk::File::success != db.Read(&valShort, sizeof(short)) ) return 30;
@@ -737,6 +743,8 @@ data::BUDDY* Game::Encounter( int mapId )
 			pos = rand()%pos;
 			pBuddy = Buddy(rare[pos], m_buddyBook);
 			delete[]rare;
+			printf( "经过%d秒%s出现\n", (int)(curTime - m_lastBattleTime), pBuddy->name.c_str() );
+			m_lastBattleTime = curTime;
 			return pBuddy;
 		}
 	}
@@ -744,19 +752,20 @@ data::BUDDY* Game::Encounter( int mapId )
 	return NULL;
 }
 
-int Game::CreateBattle(std::vector<data::PET*> &me, std::vector<data::PET*> &she)
+int Game::CreateBattle(unsigned int mePlayerId, unsigned int shePlayerId, 
+	std::vector<data::PET*> &me, std::vector<data::PET*> &she)
 {
 	static int battleId = 0;
 	battleId++;
-	m_battles[battleId].Init(this, battleId, me, she);
+	m_battles[battleId].Init(this, battleId, mePlayerId, shePlayerId, me, she);
 	return battleId;
 }
 
-bool Game::PlayerAction(int battleId, bool me, Battle::Action act, short objectId, bool skillPro, int speed)
+bool Game::PlayerAction(int battleId, bool me, Battle::Action act, short objectId, bool skillPro, bool itemPro, int speed)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;
 	Battle &pBattle = m_battles[battleId];
-	pBattle.PlayerAction(me, act, objectId, skillPro, speed);
+	pBattle.PlayerAction(me, act, objectId, skillPro, itemPro, speed);
 
 	return true;
 }
