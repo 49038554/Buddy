@@ -753,19 +753,20 @@ data::BUDDY* Game::Encounter( int mapId )
 }
 
 int Game::CreateBattle(unsigned int mePlayerId, unsigned int shePlayerId, 
+	const std::string &playerName, const std::string &enemyName,
 	std::vector<data::PET*> &me, std::vector<data::PET*> &she)
 {
 	static int battleId = 0;
 	battleId++;
-	m_battles[battleId].Init(this, battleId, mePlayerId, shePlayerId, me, she);
+	m_battles[battleId].Init(this, battleId, playerName, enemyName, mePlayerId, shePlayerId, me, she);
 	return battleId;
 }
 
-bool Game::PlayerAction(int battleId, bool me, Battle::Action act, short objectId, bool skillPro, bool itemPro, int speed)
+bool Game::PlayerAction(int battleId, bool me, Battle::Action act, short objectId, bool skillPro, bool itemPro, int speed, unsigned char randSH)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;
 	Battle &pBattle = m_battles[battleId];
-	pBattle.PlayerAction(me, act, objectId, skillPro, itemPro, speed);
+	pBattle.PlayerAction(me, act, objectId, skillPro, itemPro, speed, randSH);
 
 	return true;
 }
