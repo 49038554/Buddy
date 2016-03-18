@@ -24,9 +24,18 @@ public:
 		std::vector<data::PET*> &me, std::vector<data::PET*> &she);
 	typedef struct RAND_PARAM
 	{
-		int i;
+		char miss;//命中随机数
+		char sePro;//技能特效随机数
+		char iePro;//物品特效随机数
+		char tePro;//特性特效随机数
+		char luanWu;//乱舞回合数
+		char sleep;//睡眠随机数
+		char ice;//冰冻随机数
+		bool luan;//混乱随机数
+		unsigned char	hurt;//伤害随机数217~255
+		unsigned char	speed;//速度随机数
 	}RAND_PARAM;
-	bool PlayerRand(bool me, RAND_PARAM &rp, Battle::Action act, short objectId);
+	bool PlayerRand(bool me, Battle::Action act, short objectId, RAND_PARAM &rp);
 	bool PlayerAction(bool me, Battle::Action act, short objectId, bool skillPro, bool itemPro, int speed, unsigned char randSH);
 	void PlayRound();
 

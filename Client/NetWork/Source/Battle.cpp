@@ -129,7 +129,7 @@ bool Battle::Init(Game *game, int id,
 	return true;
 }
 
-bool Battle::PlayerRand(bool me, RAND_PARAM &rp, Battle::Action act, short objectId)
+bool Battle::PlayerRand(bool me, Battle::Action act, short objectId, RAND_PARAM &rp)
 {
 	Battle::WARRIOR &player = me?m_player:m_enemy;
 	Battle::WARRIOR &enemy = me?m_enemy:m_player;
@@ -159,53 +159,59 @@ bool Battle::PlayerRand(bool me, RAND_PARAM &rp, Battle::Action act, short objec
 		}
 	}
 
-	//命中
+	rp.miss = rand()%100 + 1;//命中随机数
+	rp.sePro = rand()%100 + 1;//技能特效随机数
+	rp.iePro = rand()%100 + 1;//物品特效随机数
+	rp.tePro = rand()%100 + 1;//特性特效随机数
+	rp.luanWu = rand()%2 + 2;//乱舞回合数
+	rp.sleep = rand()%100 + 1;//睡眠随机数
+	rp.ice = rand()%100 + 1;//冰冻随机数
+	rp.luan = rand()%2;//混乱随机数
+	rp.hurt = rand()%(255 - 217 + 1) + 217;//伤害随机数217~255
+	rp.speed = rand()%100;//速度随机数
+
+	return true;
 }
 
 bool Battle::PlayerAction(bool me, Battle::Action act, short objectId, bool skillPro, bool itemPro, int speed, unsigned char randSH)
 {
-	if ( me )
+	Battle::WARRIOR &player = me?m_player:m_enemy;
+	Battle::WARRIOR &enemy = me?m_enemy:m_player;
+	if ( Battle::attack == act ) 
 	{
-		if ( Battle::attack == act ) 
+		player.pSkill = Skill(objectId, m_game->SkillBook());
+		if ( NULL == player.pSkill ) return false;
+	}
+	if ( Battle::useItem == act ) 
+	{
+		player.pItem = Item(objectId, m_game->ItemBook());
+		if ( NULL == player.pItem ) return false;
+	}
+	if ( Battle::change == act ) 
+	{
+		int i = 0;
+		for ( i = 0; i < player.pets.size(); i++ )
 		{
-			m_player.pSkill = Skill(objectId, m_game->SkillBook());
-			if ( NULL == m_player.pSkill ) return false;
-		}
-		if ( Battle::useItem == act ) 
-		{
-			if ( objectId != m_player.pCurPet->itemId ) return false;
-			m_player.pItem = Item(objectId, m_game->ItemBook());
-			if ( NULL == m_player.pItem ) return false;
-		}
-		if ( Battle::change == act ) 
-		{
-			int i = 0;
-			for ( i = 0; i < m_player.pets.size(); i++ )
+			if ( objectId == player.pets[i].id )
 			{
-				if ( objectId == m_player.pets[i].id )
-				{
-					m_player.pBuddy = Buddy(m_player.pets[i].number, m_game->BuddyBook());
-					if ( NULL == m_player.pBuddy ) return false;
-					m_player.pTalent = Talent(m_player.pets[i].talent, m_game->TalentBook());
-					if ( NULL == m_player.pTalent ) return false;
-					if ( 0 >= m_player.pets[i].curHP ) return false;
-					if ( 0 != m_player.pCurPet->itemId ) 
-					{
-						m_player.pItem = Item(m_player.pCurPet->itemId, m_game->ItemBook());
-						if ( NULL == m_player.pItem ) return false;
-					}
-				}
+				player.pBuddy = Buddy(player.pets[i].number, m_game->BuddyBook());
+				if ( NULL == player.pBuddy ) return false;
+				player.pTalent = Talent(player.pets[i].talent, m_game->TalentBook());
+				if ( NULL == player.pTalent ) return false;
+				if ( 0 >= player.pets[i].curHP ) return false;
 			}
 		}
+	}
+	player.act = act;
+	player.objId = objectId;
+	player.skillPro = skillPro;
+	player.itemPro = itemPro;
+	player.sdLevel = speed;
+	player.isReady = true;
+	player.randSH = randSH;
 
-		m_player.act = act;
-		m_player.objId = objectId;
-		m_player.skillPro = skillPro;
-		m_player.itemPro = itemPro;
-		m_player.sdLevel = speed;
-		m_player.isReady = true;
-		m_player.randSH = randSH;//rand()%(255 - 217 + 1) + 217;
-
+	if ( me )
+	{
 		m_pCurRound->me = act;
 		m_pCurRound->meObjectId = objectId;
 		m_pCurRound->meSkillPro = skillPro;
@@ -215,40 +221,6 @@ bool Battle::PlayerAction(bool me, Battle::Action act, short objectId, bool skil
 	}
 	else
 	{
-		if ( Battle::attack == act ) 
-		{
-			m_enemy.pSkill = Skill(objectId, m_game->SkillBook());
-			if ( NULL == m_enemy.pSkill ) return false;
-		}
-		if ( Battle::useItem == act ) 
-		{
-			m_enemy.pItem = Item(objectId, m_game->ItemBook());
-			if ( NULL == m_enemy.pItem ) return false;
-		}
-		if ( Battle::change == act ) 
-		{
-			int i = 0;
-			for ( i = 0; i < m_enemy.pets.size(); i++ )
-			{
-				if ( objectId == m_enemy.pets[i].id )
-				{
-					m_enemy.pBuddy = Buddy(m_enemy.pets[i].number, m_game->BuddyBook());
-					if ( NULL == m_enemy.pBuddy ) return false;
-					m_enemy.pTalent = Talent(m_enemy.pets[i].talent, m_game->TalentBook());
-					if ( NULL == m_enemy.pTalent ) return false;
-					if ( 0 >= m_enemy.pets[i].curHP ) return false;
-				}
-			}
-		}
-
-		m_enemy.act = act;
-		m_enemy.objId = objectId;
-		m_enemy.skillPro = skillPro;
-		m_enemy.itemPro = itemPro;
-		m_enemy.sdLevel = speed;
-		m_enemy.isReady = true;
-		m_enemy.randSH = randSH;
-
 		m_pCurRound->she = act;
 		m_pCurRound->sheObjectId = objectId;
 		m_pCurRound->sheSkillPro = skillPro;
