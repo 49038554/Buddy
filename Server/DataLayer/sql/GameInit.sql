@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2016-03-18 17:54:39
+Date: 2016-03-22 19:11:30
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -246,7 +246,6 @@ INSERT INTO `buddy_book_skill` VALUES ('66', '爆炎龙', '燕反', '1');
 INSERT INTO `buddy_book_skill` VALUES ('67', '爆炎龙', '飞行', '1');
 INSERT INTO `buddy_book_skill` VALUES ('68', '爆炎龙', '羽栖', '1');
 INSERT INTO `buddy_book_skill` VALUES ('69', '爆炎龙', '空气切割', '1');
-INSERT INTO `buddy_book_skill` VALUES ('70', '爆炎龙', '地裂', '0');
 INSERT INTO `buddy_book_skill` VALUES ('71', '爆炎龙', '地震', '0');
 INSERT INTO `buddy_book_skill` VALUES ('72', '爆炎龙', '岩崩', '0');
 INSERT INTO `buddy_book_skill` VALUES ('73', '爆炎龙', '沙暴', '0');
@@ -490,7 +489,6 @@ INSERT INTO `buddy_book_skill` VALUES ('413', '冰鸟', '羽栖', '1');
 INSERT INTO `buddy_book_skill` VALUES ('414', '冰鸟', '空气切割', '1');
 INSERT INTO `buddy_book_skill` VALUES ('415', '冰鸟', '反射盾', '0');
 INSERT INTO `buddy_book_skill` VALUES ('416', '冰鸟', '高速移动', '1');
-INSERT INTO `buddy_book_skill` VALUES ('417', '冰鸟', '绝对零度', '1');
 INSERT INTO `buddy_book_skill` VALUES ('418', '冰鸟', '冰刀', '0');
 INSERT INTO `buddy_book_skill` VALUES ('419', '冰鸟', '雪崩', '1');
 INSERT INTO `buddy_book_skill` VALUES ('420', '冰鸟', '冰雹', '0');
@@ -661,7 +659,6 @@ INSERT INTO `buddy_book_skill` VALUES ('632', '穿山鼠', '裸奔气合拳', '1
 INSERT INTO `buddy_book_skill` VALUES ('633', '穿山鼠', '冲击波', '1');
 INSERT INTO `buddy_book_skill` VALUES ('634', '穿山鼠', '燕反', '0');
 INSERT INTO `buddy_book_skill` VALUES ('635', '穿山鼠', '毒突', '1');
-INSERT INTO `buddy_book_skill` VALUES ('637', '穿山鼠', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('638', '穿山鼠', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('639', '穿山鼠', '撒菱', '1');
 INSERT INTO `buddy_book_skill` VALUES ('640', '穿山鼠', '大地之力', '1');
@@ -802,7 +799,6 @@ INSERT INTO `buddy_book_skill` VALUES ('827', '暴龙兔', '冲击波', '1');
 INSERT INTO `buddy_book_skill` VALUES ('828', '暴龙兔', '燕反', '1');
 INSERT INTO `buddy_book_skill` VALUES ('831', '暴龙兔', '毒突', '1');
 INSERT INTO `buddy_book_skill` VALUES ('832', '暴龙兔', '淤泥爆弹', '1');
-INSERT INTO `buddy_book_skill` VALUES ('833', '暴龙兔', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('834', '暴龙兔', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('835', '暴龙兔', '大地之力', '0');
 INSERT INTO `buddy_book_skill` VALUES ('836', '暴龙兔', '岩崩', '0');
@@ -871,7 +867,6 @@ INSERT INTO `buddy_book_skill` VALUES ('913', '铁甲兔', '裸奔气合拳', '0
 INSERT INTO `buddy_book_skill` VALUES ('914', '铁甲兔', '巨大化', '1');
 INSERT INTO `buddy_book_skill` VALUES ('915', '铁甲兔', '冲击波', '1');
 INSERT INTO `buddy_book_skill` VALUES ('916', '铁甲兔', '毒突', '0');
-INSERT INTO `buddy_book_skill` VALUES ('917', '铁甲兔', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('918', '铁甲兔', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('919', '铁甲兔', '大地之力', '1');
 INSERT INTO `buddy_book_skill` VALUES ('920', '铁甲兔', '岩崩', '1');
@@ -1253,7 +1248,6 @@ INSERT INTO `buddy_book_skill` VALUES ('1404', '土豆兄弟', '七伤拳', '0')
 INSERT INTO `buddy_book_skill` VALUES ('1405', '土豆兄弟', '音速拳', '0');
 INSERT INTO `buddy_book_skill` VALUES ('1406', '土豆兄弟', '燕反', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1407', '土豆兄弟', '淤泥爆弹', '0');
-INSERT INTO `buddy_book_skill` VALUES ('1408', '土豆兄弟', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1409', '土豆兄弟', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1410', '土豆兄弟', '撒菱', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1411', '土豆兄弟', '岩崩', '1');
@@ -1536,7 +1530,6 @@ INSERT INTO `buddy_book_skill` VALUES ('1775', '拳鸡', '裸奔气合拳', '0')
 INSERT INTO `buddy_book_skill` VALUES ('1776', '拳鸡', '巨大化', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1778', '拳鸡', '冲击波', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1779', '拳鸡', '毒突', '1');
-INSERT INTO `buddy_book_skill` VALUES ('1780', '拳鸡', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1781', '拳鸡', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1782', '拳鸡', '岩崩', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1784', '拳鸡', '子弹拳', '0');
@@ -1599,7 +1592,6 @@ INSERT INTO `buddy_book_skill` VALUES ('1861', '岩龟', '碎石踢', '0');
 INSERT INTO `buddy_book_skill` VALUES ('1862', '岩龟', '气合拳', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1863', '岩龟', '裸奔气合拳', '0');
 INSERT INTO `buddy_book_skill` VALUES ('1864', '岩龟', '冲击波', '1');
-INSERT INTO `buddy_book_skill` VALUES ('1865', '岩龟', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1866', '岩龟', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1867', '岩龟', '撒菱', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1868', '岩龟', '大地之力', '1');
@@ -1726,7 +1718,6 @@ INSERT INTO `buddy_book_skill` VALUES ('2030', '角海狮', '钻孔啄', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2031', '角海狮', '地震', '0');
 INSERT INTO `buddy_book_skill` VALUES ('2032', '角海狮', '百万角击', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2033', '角海狮', '虫鸣', '1');
-INSERT INTO `buddy_book_skill` VALUES ('2035', '角海狮', '绝对零度', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2036', '角海狮', '冰刀', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2037', '角海狮', '雪崩', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2038', '角海狮', '冰雹', '1');
@@ -1771,7 +1762,6 @@ INSERT INTO `buddy_book_skill` VALUES ('2090', '战船贝', '光栅加农', '1')
 INSERT INTO `buddy_book_skill` VALUES ('2092', '战船贝', '十万伏特', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2093', '战船贝', '打雷', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2094', '战船贝', '反射盾', '1');
-INSERT INTO `buddy_book_skill` VALUES ('2096', '战船贝', '绝对零度', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2097', '战船贝', '冰刀', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2098', '战船贝', '雪崩', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2099', '战船贝', '冰雹', '1');
@@ -1960,7 +1950,6 @@ INSERT INTO `buddy_book_skill` VALUES ('2347', '土地公公', '气合拳', '0')
 INSERT INTO `buddy_book_skill` VALUES ('2348', '土地公公', '裸奔气合拳', '0');
 INSERT INTO `buddy_book_skill` VALUES ('2349', '土地公公', '冲击波', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2350', '土地公公', '燕反', '1');
-INSERT INTO `buddy_book_skill` VALUES ('2351', '土地公公', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2352', '土地公公', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2353', '土地公公', '撒菱', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2354', '土地公公', '大地之力', '1');
@@ -2120,7 +2109,6 @@ INSERT INTO `buddy_book_skill` VALUES ('2556', '美人鱼', '冲浪', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2557', '美人鱼', '高压水炮', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2558', '美人鱼', '高速移动', '0');
 INSERT INTO `buddy_book_skill` VALUES ('2559', '美人鱼', '精神干扰', '0');
-INSERT INTO `buddy_book_skill` VALUES ('2560', '美人鱼', '绝对零度', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2561', '美人鱼', '冰刀', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2562', '美人鱼', '雪崩', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2563', '美人鱼', '急冻拳', '1');
@@ -2142,7 +2130,6 @@ INSERT INTO `buddy_book_skill` VALUES ('2581', '美人鱼', '裸奔气合拳', '
 INSERT INTO `buddy_book_skill` VALUES ('2582', '美人鱼', '巨大化', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2584', '美人鱼', '冲击波', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2585', '美人鱼', '地震', '1');
-INSERT INTO `buddy_book_skill` VALUES ('2586', '美人鱼', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2587', '美人鱼', '大地之力', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2588', '美人鱼', '岩崩', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2590', '美人鱼', '鬼爪', '1');
@@ -2222,7 +2209,6 @@ INSERT INTO `buddy_book_skill` VALUES ('2690', '钢角', '睡觉', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2691', '钢角', '剧毒', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2692', '钢角', '晴天', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2693', '钢角', '求雨', '1');
-INSERT INTO `buddy_book_skill` VALUES ('2694', '钢角', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2695', '钢角', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2696', '钢角', '岩崩', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2699', '钢角', '心灵压迫', '1');
@@ -2341,7 +2327,6 @@ INSERT INTO `buddy_book_skill` VALUES ('2847', '棉棉龟', '心灵压迫', '0')
 INSERT INTO `buddy_book_skill` VALUES ('2848', '棉棉龟', '反射盾', '0');
 INSERT INTO `buddy_book_skill` VALUES ('2849', '棉棉龟', '精神干扰', '0');
 INSERT INTO `buddy_book_skill` VALUES ('2850', '棉棉龟', '预知未来', '0');
-INSERT INTO `buddy_book_skill` VALUES ('2851', '棉棉龟', '绝对零度', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2852', '棉棉龟', '冰刀', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2853', '棉棉龟', '雪崩', '1');
 INSERT INTO `buddy_book_skill` VALUES ('2854', '棉棉龟', '急冻拳', '1');
@@ -2662,7 +2647,6 @@ INSERT INTO `buddy_book_skill` VALUES ('3269', '白凉紫', '打雷', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3270', '白凉紫', '光之壁', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3271', '白凉紫', '反射盾', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3272', '白凉紫', '高速移动', '1');
-INSERT INTO `buddy_book_skill` VALUES ('3273', '白凉紫', '绝对零度', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3274', '白凉紫', '冰刀', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3275', '白凉紫', '雪崩', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3276', '白凉紫', '急冻拳', '1');
@@ -2938,7 +2922,6 @@ INSERT INTO `buddy_book_skill` VALUES ('3625', '怪娃鱼', '求雨', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3626', '怪娃鱼', '碎石踢', '0');
 INSERT INTO `buddy_book_skill` VALUES ('3627', '怪娃鱼', '气合拳', '0');
 INSERT INTO `buddy_book_skill` VALUES ('3628', '怪娃鱼', '裸奔气合拳', '0');
-INSERT INTO `buddy_book_skill` VALUES ('3629', '怪娃鱼', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3630', '怪娃鱼', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3631', '怪娃鱼', '大地之力', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3632', '怪娃鱼', '岩崩', '1');
@@ -2995,7 +2978,6 @@ INSERT INTO `buddy_book_skill` VALUES ('3696', '铁蝎子', '黑眼', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3697', '铁蝎子', '睡觉', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3698', '铁蝎子', '剧毒', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3699', '铁蝎子', '晴天', '1');
-INSERT INTO `buddy_book_skill` VALUES ('3700', '铁蝎子', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3701', '铁蝎子', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3702', '铁蝎子', '撒菱', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3703', '铁蝎子', '岩崩', '1');
@@ -3172,7 +3154,6 @@ INSERT INTO `buddy_book_skill` VALUES ('3913', '皮皮象', '剧毒', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3914', '皮皮象', '晴天', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3915', '皮皮象', '碎石踢', '0');
 INSERT INTO `buddy_book_skill` VALUES ('3916', '皮皮象', '毒突', '0');
-INSERT INTO `buddy_book_skill` VALUES ('3917', '皮皮象', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3918', '皮皮象', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3919', '皮皮象', '撒菱', '1');
 INSERT INTO `buddy_book_skill` VALUES ('3920', '皮皮象', '岩崩', '1');
@@ -3362,7 +3343,6 @@ INSERT INTO `buddy_book_skill` VALUES ('4136', '大水狗', '碎石踢', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4137', '大水狗', '气合拳', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4138', '大水狗', '裸奔气合拳', '0');
 INSERT INTO `buddy_book_skill` VALUES ('4139', '大水狗', '巨大化', '1');
-INSERT INTO `buddy_book_skill` VALUES ('4140', '大水狗', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4141', '大水狗', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4142', '大水狗', '撒菱', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4143', '大水狗', '大地之力', '1');
@@ -3640,7 +3620,6 @@ INSERT INTO `buddy_book_skill` VALUES ('4435', '咬力蚁', '垂死挣扎', '1')
 INSERT INTO `buddy_book_skill` VALUES ('4436', '咬力蚁', '睡觉', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4437', '咬力蚁', '剧毒', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4438', '咬力蚁', '晴天', '1');
-INSERT INTO `buddy_book_skill` VALUES ('4440', '咬力蚁', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4441', '咬力蚁', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4442', '咬力蚁', '岩崩', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4443', '咬力蚁', '沙暴', '1');
@@ -3656,7 +3635,6 @@ INSERT INTO `buddy_book_skill` VALUES ('4453', '蜻蜓龙', '睡觉', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4454', '蜻蜓龙', '剧毒', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4455', '蜻蜓龙', '晴天', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4456', '蜻蜓龙', '碎石踢', '0');
-INSERT INTO `buddy_book_skill` VALUES ('4457', '蜻蜓龙', '地裂', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4458', '蜻蜓龙', '地震', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4459', '蜻蜓龙', '岩崩', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4460', '蜻蜓龙', '沙暴', '1');
@@ -4731,7 +4709,6 @@ CREATE TABLE `skill_book_effect` (
 -- ----------------------------
 -- Records of skill_book_effect
 -- ----------------------------
-INSERT INTO `skill_book_effect` VALUES ('1', '绝对零度', '战斗', '1击毙', '100', '0');
 INSERT INTO `skill_book_effect` VALUES ('2', '冰刀', '准备战斗', '先手', '100', '1');
 INSERT INTO `skill_book_effect` VALUES ('3', '雪崩', '战斗', '霸气', '30', '0');
 INSERT INTO `skill_book_effect` VALUES ('4', '急冻拳', '战斗', '冰封', '10', '0');
@@ -4784,7 +4761,6 @@ INSERT INTO `skill_book_effect` VALUES ('50', '蝶之舞', '战斗', '强化特�
 INSERT INTO `skill_book_effect` VALUES ('51', '蝶之舞', '战斗', '强化特防', '100', '1');
 INSERT INTO `skill_book_effect` VALUES ('52', '蝶之舞', '战斗', '强化速度', '100', '1');
 INSERT INTO `skill_book_effect` VALUES ('53', '虫鸣', '战斗', '弱化特防', '30', '0');
-INSERT INTO `skill_book_effect` VALUES ('54', '地裂', '战斗', '1击毙', '100', '0');
 INSERT INTO `skill_book_effect` VALUES ('55', '地震', '战斗', 'AOE', '100', '2');
 INSERT INTO `skill_book_effect` VALUES ('56', '撒菱', '战斗', '使上场巴迪受到1/8伤害', '100', '3');
 INSERT INTO `skill_book_effect` VALUES ('57', '大地之力', '战斗', '弱化特防', '30', '0');
@@ -4988,7 +4964,6 @@ INSERT INTO `skill_book_info` VALUES ('163', '火焰拳', '火', '80', '1', '100
 INSERT INTO `skill_book_info` VALUES ('164', '雪崩', '冰', '75', '1', '95', '00000000000', '30%使对方害怕');
 INSERT INTO `skill_book_info` VALUES ('165', '暗香突袭', '冰', '60', '3', '100', '00000000000', '必定暴击');
 INSERT INTO `skill_book_info` VALUES ('167', '冰刀', '冰', '40', '1', '100', '00000000000', '先制+1');
-INSERT INTO `skill_book_info` VALUES ('169', '绝对零度', '冰', '0', '1', '30', '00000000000', '1击毙');
 INSERT INTO `skill_book_info` VALUES ('170', '冰雹', '冰', '0', '2', '101', '00000000000', '5回合冰雹天气，冰属性以外的巴迪每回合开始受到1/16伤害');
 INSERT INTO `skill_book_info` VALUES ('173', '黑雾', '冰', '0', '2', '101', '00000000000', '全体能力等级复原');
 INSERT INTO `skill_book_info` VALUES ('175', '暴风雪', '冰', '110', '3', '80', '00000000000', '全体攻击，10%冰封');
@@ -5081,7 +5056,6 @@ INSERT INTO `skill_book_info` VALUES ('505', '蝶之舞', '虫', '0', '2', '101'
 INSERT INTO `skill_book_info` VALUES ('508', '岩崩', '岩', '75', '1', '95', '00000000000', '30%使对方害怕');
 INSERT INTO `skill_book_info` VALUES ('513', '原始力量', '岩', '90', '3', '100', '00000000000', '30%弱化特防');
 INSERT INTO `skill_book_info` VALUES ('515', '沙暴', '岩', '0', '2', '101', '00000000000', '5回合沙暴天气，地岩钢以外属性巴迪受到1/16伤害');
-INSERT INTO `skill_book_info` VALUES ('518', '地裂', '地', '0', '1', '30', '00000000000', '1击毙');
 INSERT INTO `skill_book_info` VALUES ('520', '地震', '地', '100', '1', '100', '00000000000', '全体攻击');
 INSERT INTO `skill_book_info` VALUES ('522', '大地之力', '地', '90', '3', '100', '00000000000', '30%弱化特防');
 INSERT INTO `skill_book_info` VALUES ('523', '撒菱', '地', '0', '2', '101', '00000000000', '使上场巴迪受到1/8伤害');
@@ -5116,7 +5090,7 @@ INSERT INTO `talent` VALUES ('6', '暴雨', '永久雨天');
 INSERT INTO `talent` VALUES ('7', '扬沙', '永久沙暴');
 INSERT INTO `talent` VALUES ('8', '干旱', '永久晴天');
 INSERT INTO `talent` VALUES ('9', '盔甲', '免疫暴击');
-INSERT INTO `talent` VALUES ('10', '结实', '不受1击毙，满体力时有忍耐效果');
+INSERT INTO `talent` VALUES ('10', '结实', '满体力时不受1击毙');
 INSERT INTO `talent` VALUES ('11', '柔软', '免疫麻痹');
 INSERT INTO `talent` VALUES ('12', '沙隐', '沙暴30%闪避');
 INSERT INTO `talent` VALUES ('13', '雪隐', '冰雹30%闪避');
@@ -5162,7 +5136,7 @@ INSERT INTO `talent` VALUES ('53', '魔法防御', '只收攻击技能伤害');
 INSERT INTO `talent` VALUES ('54', '技师', '威力小于60的技能伤害*1.5');
 INSERT INTO `talent` VALUES ('55', '叶片防御', '晴天不异常，解除异常');
 INSERT INTO `talent` VALUES ('56', '有色眼镜', '属性修正小于2倍时，威力翻倍');
-INSERT INTO `talent` VALUES ('57', '胆量', '可以击中鬼属性巴迪');
+INSERT INTO `talent` VALUES ('57', '胆量', '普和斗属性技能也可以击中鬼属性巴迪');
 INSERT INTO `talent` VALUES ('58', '冰冻身体', '受到物理攻击时，30%冰冻');
 INSERT INTO `talent` VALUES ('59', '舍身', '反噬类技能威力*1.2，不会因反噬体力归0');
 INSERT INTO `talent` VALUES ('60', '花之礼', '晴天强化特攻强化特防');

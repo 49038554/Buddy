@@ -36,7 +36,7 @@ public:
 	int CreateBattle(unsigned int mePlayerId, unsigned int shePlayerId, 
 		const std::string &playerName, const std::string &enemyName,
 		std::vector<data::PET*> &me, std::vector<data::PET*> &she);
-	bool PlayerAction(int battleId, bool me, Battle::Action act, short objectId, bool skillPro, bool itemPro, int speed, unsigned char randSH);
+	bool PlayerAction(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
 
 private:
 	bool LoadGameInit();

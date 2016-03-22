@@ -762,11 +762,11 @@ int Game::CreateBattle(unsigned int mePlayerId, unsigned int shePlayerId,
 	return battleId;
 }
 
-bool Game::PlayerAction(int battleId, bool me, Battle::Action act, short objectId, bool skillPro, bool itemPro, int speed, unsigned char randSH)
+bool Game::PlayerAction(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;
 	Battle &pBattle = m_battles[battleId];
-	pBattle.PlayerAction(me, act, objectId, skillPro, itemPro, speed, randSH);
+	pBattle.PlayerAction(me, act, objectId, rp);
 
 	return true;
 }

@@ -9,6 +9,7 @@ namespace Race
 {
 	enum Race
 	{
+		unknow = 0,
 		pu = 1	,//ÆÕ
 		huo = 2	,//»ð
 		shui = 3	,//Ë®

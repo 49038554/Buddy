@@ -31,30 +31,35 @@ public:
 		char luanWu;//乱舞回合数
 		char sleep;//睡眠随机数
 		char ice;//冰冻随机数
+		char dian;//麻痹随机数
 		bool luan;//混乱随机数
 		unsigned char	hurt;//伤害随机数217~255
 		unsigned char	speed;//速度随机数
 	}RAND_PARAM;
-	bool PlayerRand(bool me, Battle::Action act, short objectId, RAND_PARAM &rp);
-	bool PlayerAction(bool me, Battle::Action act, short objectId, bool skillPro, bool itemPro, int speed, unsigned char randSH);
-	void PlayRound();
-
+	bool PlayerRand(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	bool PlayerAction(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	enum BattleResult
+	{
+		unend = 0,//无结果
+		playerChange = 1,//玩家换人
+		enemyChange = 2,//敌方换人
+		playerEscape = 3,//玩家逃跑
+		enemyEscape = 4,//敌方逃跑
+		victory = 5,//胜
+		defeat = 6,//负
+		flat = 7,//平
+	};
+	Battle::BattleResult PlayRound();
 private:
 	typedef struct ROUND
 	{
 		Action	me;
 		int		meObjectId;
-		bool	meSkillPro;
-		bool	meItemPro;
-		int		meSpeed;
-		unsigned char	meRandSH;//217~255
+		RAND_PARAM	meRP;
 
 		Action	she;
 		int		sheObjectId;
-		bool	sheSkillPro;
-		bool	sheItemPro;
-		int		sheSpeed;
-		unsigned char	sheRandSH;//217~255
+		RAND_PARAM	sheRP;
 
 		std::vector<std::string> log;
 	}ROUND;
@@ -79,11 +84,10 @@ private:
 		char	unMiss;//命中强化
 		bool	changePetAble;//不能换人
 		short	lockSkill;//锁定技能
-		char	lockSkillTime;//锁定技能回合数量
+		char	lockSkillTime;//锁定技能回合数量,-1永久
 		bool	smell;//嗅觉
 
 		short	recvHP;//回复HP
-		char	sleep;//剩余回合
 		bool	seed;//种子
 		char	haQian;//中了哈欠
 		char	mieGe;//中了灭亡歌
@@ -92,20 +96,19 @@ private:
 		char	tiaoDou;//挑逗回合
 		bool	ban;//中封印
 		bool	tongGui;//中同归
+		char	sleep;//催眠剩余回合
+		char	frozen;//冰封剩余回合
 		char	hunLuan;//混乱剩余回合数
 
 		bool	race[18];//属性强化
 		bool	nail[18];//是否有钉子，属性id为下标，目前只有地属性钉子
 		char	wall[2];//物、特，剩余回合数 -1永久
-		bool	beAttacked;//被攻击了
 		std::map<short, bool>	lookSkill;
+		bool	isActioned;//已经行动
 
 		Action	act;
 		int		objId;
-		bool	skillPro;
-		bool	itemPro;
-		int		sdLevel;
-		unsigned char	randSH;//217~255
+		RAND_PARAM rp;
 		data::BUDDY *pBuddy;
 		data::ITEM *pItem;
 		data::TALENT *pTalent;
@@ -113,15 +116,23 @@ private:
 	}WARRIOR;
 
 	void StepStart();
-	void StepChange();
-	void StepAttack();
-	void StepEnd();
-	bool ChangePet(Battle::WARRIOR &player, int petId = 0);
+	Battle::BattleResult StepChange();
+	Battle::BattleResult StepAttack();
+	Battle::BattleResult StepEnd();
+	//交换巴迪的结果
+	enum ChangeResult
+	{
+		unchange = 0,
+		finished = 1,
+		faint = 2,
+	};
+	Battle::ChangeResult ChangePet(Battle::WARRIOR &player, int petId = 0);
 	void EntryStage(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	void LeaveStage(Battle::WARRIOR &player);
 	bool Hurt(Battle::WARRIOR &player, int HP);
 	bool AttackOrder(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
-	bool XianShou(Battle::WARRIOR &player);
+	bool IsUnwait(Battle::WARRIOR &player);
+	bool IsWait(Battle::WARRIOR &player);
 	int CalSpeed(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	int CalWG(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	int CalWF(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
@@ -130,6 +141,11 @@ private:
 	int CalPower(Battle::WARRIOR &pAck, Battle::WARRIOR &pDef);
 	bool Attack(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);
 	bool HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);
+	bool ActionAble(Battle::WARRIOR &player);
+	bool LaunchState(Battle::WARRIOR &player);
+	bool Medication(Battle::WARRIOR &player);
+	void ChangeSkill(Battle::WARRIOR &player);
+	bool BanSkill(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 
 private:
 	Game *m_game;
