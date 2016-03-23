@@ -36,20 +36,10 @@ public:
 		unsigned char	hurt;//伤害随机数217~255
 		unsigned char	speed;//速度随机数
 	}RAND_PARAM;
-	bool PlayerRand(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	const char* PlayerRand(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
 	bool PlayerAction(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
-	enum BattleResult
-	{
-		unend = 0,//无结果
-		playerChange = 1,//玩家换人
-		enemyChange = 2,//敌方换人
-		playerEscape = 3,//玩家逃跑
-		enemyEscape = 4,//敌方逃跑
-		victory = 5,//胜
-		defeat = 6,//负
-		flat = 7,//平
-	};
-	Battle::BattleResult PlayRound();
+	bool PlayRound();//完成返回true,中断返回false
+	bool IsEnd();
 private:
 	typedef struct ROUND
 	{
@@ -105,20 +95,21 @@ private:
 		char	wall[2];//物、特，剩余回合数 -1永久
 		std::map<short, bool>	lookSkill;
 		bool	isActioned;//已经行动
-
-		Action	act;
-		int		objId;
-		RAND_PARAM rp;
+		bool	lose;//失败
 		data::BUDDY *pBuddy;
 		data::ITEM *pItem;
 		data::TALENT *pTalent;
 		data::SKILL *pSkill;
+
+		Action	act;
+		int		objId;
+		RAND_PARAM rp;
 	}WARRIOR;
 
 	void StepStart();
-	Battle::BattleResult StepChange();
-	Battle::BattleResult StepAttack();
-	Battle::BattleResult StepEnd();
+	bool StepChange();//完成返回true,中断返回false
+	bool StepAttack();//完成返回true,中断返回false
+	bool StepEnd();//完成返回true,中断返回false
 	//交换巴迪的结果
 	enum ChangeResult
 	{
@@ -129,7 +120,7 @@ private:
 	Battle::ChangeResult ChangePet(Battle::WARRIOR &player, int petId = 0);
 	void EntryStage(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	void LeaveStage(Battle::WARRIOR &player);
-	bool Hurt(Battle::WARRIOR &player, int HP);
+	bool Hurt(Battle::WARRIOR &player, int HP);//true有巴迪倒下，false没有巴迪倒下
 	bool AttackOrder(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	bool IsUnwait(Battle::WARRIOR &player);
 	bool IsWait(Battle::WARRIOR &player);
@@ -139,13 +130,15 @@ private:
 	int CalTG(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	int CalTF(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	int CalPower(Battle::WARRIOR &pAck, Battle::WARRIOR &pDef);
-	bool Attack(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);
-	bool HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);
+	bool PetAction(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//true有巴迪战败，false没有巴迪战败
+	bool UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//true有巴迪战败，false没有巴迪战败
+	bool UseHelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//true有巴迪战败，false没有巴迪战败
 	bool ActionAble(Battle::WARRIOR &player);
 	bool LaunchState(Battle::WARRIOR &player);
 	bool Medication(Battle::WARRIOR &player);
 	void ChangeSkill(Battle::WARRIOR &player);
 	bool BanSkill(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
+	bool Confusion(Battle::WARRIOR &player);
 
 private:
 	Game *m_game;

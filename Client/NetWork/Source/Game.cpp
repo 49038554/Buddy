@@ -7,6 +7,15 @@ Game::Game(void)
 	m_gameInitVersion = 0;
 	m_gameInitLoaded = LoadGameInit();
 	m_lastBattleTime = time(NULL);
+
+	m_bornSkill.id = 0;
+	m_bornSkill.name = "肉搏";
+	m_bornSkill.race = Race::pu;//属性
+	m_bornSkill.power = 60;//威力0~300
+	m_bornSkill.type = 1;//1物理，2变化，3特殊
+	m_bornSkill.hitRate = 100;//命中率30~101, 101必中技
+	m_bornSkill.isMapSkill = false;//是地图技能
+	m_bornSkill.descript  = "无技能可用时使用的技能";//最大60byte
 }
 
 Game::~Game(void)
@@ -52,6 +61,10 @@ std::vector<data::BUDDY_MAP>& Game::BuddyMaps()
 	return m_buddyMaps;
 }
 
+data::SKILL* Game::BornSkill()
+{
+	return &m_bornSkill;
+}
 bool SaveRaceBook( mdk::File &db, std::map<unsigned char, std::string> &races )
 {
 	std::map<unsigned char, std::string>::iterator it = races.begin();
@@ -760,6 +773,13 @@ int Game::CreateBattle(unsigned int mePlayerId, unsigned int shePlayerId,
 	battleId++;
 	m_battles[battleId].Init(this, battleId, playerName, enemyName, mePlayerId, shePlayerId, me, she);
 	return battleId;
+}
+
+const char* Game::PlayerRand(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+{
+	if ( m_battles.end() == m_battles.find(battleId) ) return false;
+	Battle &pBattle = m_battles[battleId];
+	return pBattle.PlayerRand(me, act, objectId, rp);
 }
 
 bool Game::PlayerAction(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)

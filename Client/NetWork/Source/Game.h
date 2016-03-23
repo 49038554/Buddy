@@ -20,6 +20,7 @@ public:
 	std::vector<data::SKILL>& SkillBook();
 	std::vector<data::BUDDY>& BuddyBook();
 	std::vector<data::BUDDY_MAP>& BuddyMaps();
+	data::SKILL* BornSkill();
 
 	void SetRaceMap(std::map<unsigned char, std::string> &raceBook);
 	void SetItemBook(std::vector<data::ITEM> &itemBook);
@@ -36,14 +37,17 @@ public:
 	int CreateBattle(unsigned int mePlayerId, unsigned int shePlayerId, 
 		const std::string &playerName, const std::string &enemyName,
 		std::vector<data::PET*> &me, std::vector<data::PET*> &she);
+	const char* PlayerRand(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	
 	bool PlayerAction(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
 
 private:
 	bool LoadGameInit();
 	bool SaveGameInit();
 
-public:
+private:
 	bool									m_gameInitLoaded;
+	data::SKILL								m_bornSkill;//默认技能
 	//当前版本数据
 	int										m_gameInitVersion;
 	std::map<unsigned char, std::string>	m_raceBook;

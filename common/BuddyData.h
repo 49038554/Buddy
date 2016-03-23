@@ -157,6 +157,7 @@ namespace data
 		std::vector<char>	race;//17个属性的恶魔果实是否吃过
 
 		bool	synced;
+		std::string	nick;//昵称
 		char	state;//状态
 		short	curHP;//当前血量
 	}PET;

@@ -41,7 +41,6 @@
 #include "Protocl/cpp/Object/DBEntry/SyncItem.h"
 #include "Protocl/cpp/Object/DBEntry/SyncPlayer.h"
 
-#include "mdk/File.h"
 
 Client::Client(void)
 {
@@ -751,7 +750,7 @@ void Client::OnDBEntry(msg::Buffer &buffer)
 	}
 }
 
-int LoadItems(mdk::File &db, std::vector<data::PLAYER_ITEM> &items)
+int Client::LoadItems(mdk::File &db, std::vector<data::PLAYER_ITEM> &items)
 {
 	data::PLAYER_ITEM info;
 	short count = 0;
@@ -771,7 +770,7 @@ int LoadItems(mdk::File &db, std::vector<data::PLAYER_ITEM> &items)
 	return 0;
 }
 
-bool SaveItems(mdk::File &db, std::vector<data::PLAYER_ITEM> &items)
+bool Client::SaveItems(mdk::File &db, std::vector<data::PLAYER_ITEM> &items)
 {
 	data::PLAYER_ITEM *pInfo;
 	short count = items.size();
@@ -791,7 +790,7 @@ bool SaveItems(mdk::File &db, std::vector<data::PLAYER_ITEM> &items)
 	return true;
 }
 
-int LoadPets(mdk::File &db, std::vector<data::PET> &pets)
+int Client::LoadPets(mdk::File &db, std::vector<data::PET> &pets)
 {
 	data::PET info;
 	int count = 0;
@@ -802,6 +801,7 @@ int LoadPets(mdk::File &db, std::vector<data::PET> &pets)
 	char varChar;
 	for ( i = 0; i < count; i++ )
 	{
+		info.nick = "";
 		if ( mdk::File::success != db.Read(&info.id, sizeof(int)) ) return 3;
 		if ( mdk::File::success != db.Read(&info.number, sizeof(short)) ) return 4;
 		if ( mdk::File::success != db.Read(&info.talent, sizeof(char)) ) return 5;
@@ -837,6 +837,16 @@ int LoadPets(mdk::File &db, std::vector<data::PET> &pets)
 
 		if ( mdk::File::success != db.Read(&varChar, sizeof(char)) ) return 33;
 		info.synced = (0 == varChar?false:true);
+		char nickLen = 0;
+		if ( mdk::File::success != db.Read(&nickLen, sizeof(char)) ) return 41;
+		if ( 0 > nickLen || 20 < nickLen ) return 42;
+		if ( 0 != nickLen )
+		{
+			char nick[256];
+			if ( mdk::File::success != db.Read(nick, nickLen) ) return 43;
+			nick[nickLen] = 0;
+			info.nick = std::string(nick);
+		}
 		if ( mdk::File::success != db.Read(&info.curHP, sizeof(short)) ) return 34;
 		if ( mdk::File::success != db.Read(&info.state, sizeof(char)) ) return 35;
 		if ( mdk::File::success != db.Read(&info.skill1, sizeof(short)) ) return 36;
@@ -844,13 +854,19 @@ int LoadPets(mdk::File &db, std::vector<data::PET> &pets)
 		if ( mdk::File::success != db.Read(&info.skill3, sizeof(short)) ) return 38;
 		if ( mdk::File::success != db.Read(&info.skill4, sizeof(short)) ) return 39;
 		if ( mdk::File::success != db.Read(&info.itemId, sizeof(short)) ) return 40;
+		if ( "" == info.nick )
+		{
+			data::BUDDY *pBuddy = Buddy(info.number, m_game.BuddyBook());
+			if ( NULL == pBuddy ) continue;
+			info.nick = pBuddy->name;
+		}
 		pets.push_back(info);
 	}
 
 	return 0;
 }
 
-bool SavePets(mdk::File &db, std::vector<data::PET> &pets)
+bool Client::SavePets(mdk::File &db, std::vector<data::PET> &pets)
 {
 	data::PET *pInfo;
 	int count = pets.size();
@@ -896,6 +912,19 @@ bool SavePets(mdk::File &db, std::vector<data::PET> &pets)
 
 		varChar = pInfo->synced?1:0;
 		db.Write(&varChar, sizeof(char));
+		if ( "" == pInfo->nick )
+		{
+			data::BUDDY *pBuddy = Buddy(pInfo->number, m_game.BuddyBook());
+			if ( NULL == pBuddy ) pInfo->nick = "Î´Öª°ÍµÏ";
+			else pInfo->nick = pBuddy->name;
+		}
+		char nickLen = pInfo->nick.size();
+		if ( nickLen > 17 || nickLen < 0 ) nickLen = 0;
+		db.Write(&nickLen, sizeof(char));
+		if ( 0 != nickLen )
+		{
+			db.Write((void*)(pInfo->nick.c_str()), nickLen);
+		}
 		db.Write(&pInfo->curHP, sizeof(short));
 		db.Write(&pInfo->state, sizeof(char));
 		db.Write(&pInfo->skill1, sizeof(short));

@@ -3,6 +3,7 @@
 
 #include "NetWorker.h"
 #include "Game.h"
+#include "mdk/File.h"
 
 class Client : public NetWorker
 {
@@ -73,6 +74,10 @@ protected:
 	//game data tooler
 	bool SaveGame();
 	bool LoadGame();
+	bool SavePets(mdk::File &db, std::vector<data::PET> &pets);
+	int LoadPets(mdk::File &db, std::vector<data::PET> &pets);
+	bool SaveItems(mdk::File &db, std::vector<data::PLAYER_ITEM> &items);
+	int LoadItems(mdk::File &db, std::vector<data::PLAYER_ITEM> &items);
 	bool GameSaved();
 	void SyncGame();
 	void IOCoin( int count );

@@ -7,7 +7,6 @@ Battle::Battle()
 	m_enemy.playerId = 0;
 	m_player.name = "";
 	m_enemy.name = "";
-
 }
 
 
@@ -84,7 +83,7 @@ bool Battle::Init(Game *game, int id,
 	m_player.tongGui = false;//中同归
 	m_player.hunLuan = -1;//混乱剩余回合数
 	m_player.isActioned = false;//已经行动
-
+	m_player.lose = false;//失败
 	m_enemy.pCurPet = NULL;
 	m_enemy.wgCorrect = 1;
 	m_enemy.tgCorrect = 1;
@@ -114,6 +113,7 @@ bool Battle::Init(Game *game, int id,
 	m_enemy.tongGui = false;//中同归
 	m_enemy.hunLuan = -1;//混乱剩余回合数
 	m_enemy.isActioned = false;//已经行动
+	m_enemy.lose = false;//失败
 
 	for ( i = 0; i < 18; i++ ) m_player.nail[i] = m_player.race[i] = m_enemy.nail[i] = m_enemy.race[i] = false;
 	m_player.wall[0] = 0;
@@ -129,32 +129,40 @@ bool Battle::Init(Game *game, int id,
 	return true;
 }
 
-bool Battle::PlayerRand(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+const char* Battle::PlayerRand(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
+	static std::string reason;
 	Battle::WARRIOR &player = me?m_player:m_enemy;
 	Battle::WARRIOR &enemy = me?m_enemy:m_player;
+	if ( player.isReady ) return NULL;
+
 	if ( Battle::attack == act ) 
 	{
+		if ( 0 != player.lockSkill && 0 != player.lockSkillTime 
+			&& objectId != player.lockSkill ) return (reason = "不能更换技能").c_str();
+		if ( player.xunXing && objectId == player.lockSkill ) return (reason = "被寻衅，不能连续使用相同技能").c_str();
 		player.pSkill = Skill(objectId, m_game->SkillBook());
-		if ( NULL == player.pSkill ) return false;
+		if ( NULL == player.pSkill ) return (reason = "技能不存在").c_str();
+		if ( 0 != player.tiaoDou && 2 == player.pSkill->type ) return (reason = "被挑逗，只能使用攻击技能").c_str();
 	}
 	if ( Battle::useItem == act ) 
 	{
 		player.pItem = Item(objectId, m_game->ItemBook());
-		if ( NULL == player.pItem ) return false;
+		if ( NULL == player.pItem ) return (reason = "物品不存在").c_str();
 	}
 	if ( Battle::change == act ) 
 	{
+		if ( !player.changePetAble ) return (reason = "不能更换巴迪").c_str();
 		int i = 0;
 		for ( i = 0; i < player.pets.size(); i++ )
 		{
 			if ( objectId == player.pets[i].id )
 			{
 				player.pBuddy = Buddy(player.pets[i].number, m_game->BuddyBook());
-				if ( NULL == player.pBuddy ) return false;
+				if ( NULL == player.pBuddy ) return (reason = "巴迪不存在").c_str();
 				player.pTalent = Talent(player.pets[i].talent, m_game->TalentBook());
-				if ( NULL == player.pTalent ) return false;
-				if ( 0 >= player.pets[i].curHP ) return false;
+				if ( NULL == player.pTalent ) return (reason = "特性不存在").c_str();
+				if ( 0 >= player.pets[i].curHP ) return (reason = "巴迪已失去战斗能力").c_str();
 			}
 		}
 	}
@@ -170,13 +178,15 @@ bool Battle::PlayerRand(bool me, Battle::Action act, short objectId, Battle::RAN
 	rp.hurt = rand()%(255 - 217 + 1) + 217;//伤害随机数217~255
 	rp.speed = rand()%100;//速度随机数
 
-	return true;
+	return NULL;
 }
 
 bool Battle::PlayerAction(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	Battle::WARRIOR &player = me?m_player:m_enemy;
 	Battle::WARRIOR &enemy = me?m_enemy:m_player;
+	if ( player.isReady ) return false;
+
 	if ( Battle::attack == act ) 
 	{
 		player.pSkill = Skill(objectId, m_game->SkillBook());
@@ -219,25 +229,22 @@ bool Battle::PlayerAction(bool me, Battle::Action act, short objectId, Battle::R
 		m_pCurRound->sheObjectId = objectId;
 		m_pCurRound->sheRP = m_enemy.rp;
 	}
-	if ( !m_player.isReady || !m_enemy.isReady ) return true;
-
+	if ( !m_player.isReady || !m_enemy.isReady ) return false;
 	PlayRound();
 
 	return true;
 }
 
-Battle::BattleResult Battle::PlayRound()
+bool Battle::PlayRound()
 {
 	m_pCurRound = &m_log[m_curRound];
 	StepStart();
-	Battle::BattleResult ret = StepChange();
-	if ( Battle::unend != ret ) return ret;
-	ret = StepAttack();
-	if ( Battle::unend != ret ) return ret;
-	ret = StepEnd();
-	if ( Battle::unend != ret ) return ret;
+	if ( !StepChange() ) return false;
+	if ( !StepAttack() ) return false;
+	if ( !StepEnd() ) return false;
 	m_player.isReady = m_enemy.isReady = false;
-	return Battle::unend;
+
+	return true;
 }
 
 void Battle::StepStart()
@@ -247,29 +254,20 @@ void Battle::StepStart()
 	m_enemy.isActioned = false;
 }
 
-Battle::BattleResult Battle::StepChange()
+bool Battle::StepChange()
 {
-	ChangeResult meChanged = ChangePet(m_player);
-	if ( Battle::faint == meChanged ) 
-	{
-		if ( 1 < m_player.pets.size() ) return Battle::playerChange;
-	}
-	ChangeResult sheChanged = ChangePet(m_enemy);
-	if ( Battle::faint == meChanged )
-	{
-		if ( 1 < m_player.pets.size() ) return Battle::enemyChange;
-		if ( Battle::faint == meChanged ) return Battle::flat;//平手
-		else return Battle::victory;//玩家胜利
-	}
-	else if ( Battle::faint == meChanged ) return Battle::defeat;//敌方胜利
+	Battle::ChangeResult meChanged = ChangePet(m_player);
+	if ( Battle::faint == meChanged ) return false; 
+	Battle::ChangeResult sheChanged = ChangePet(m_enemy);
+	if ( Battle::faint == sheChanged ) return false;
 
 	if ( Battle::finished == meChanged ) EntryStage(m_player, m_enemy);
 	if ( Battle::finished == sheChanged ) EntryStage(m_enemy, m_player);
 
-	return Battle::unend;
+	return true;
 }
 
-Battle::BattleResult Battle::StepAttack()
+bool Battle::StepAttack()
 {
 	if ( Battle::attack == m_player.act && ActionAble(m_player) 
 		&& ( "气合拳" == m_player.pSkill->name || "裸奔气合拳" == m_player.pSkill->name ) )
@@ -277,9 +275,9 @@ Battle::BattleResult Battle::StepAttack()
 		if ( "裸奔气合拳" == m_player.pSkill->name ) 
 		{
 			m_player.tiShen = 0;
-			m_pCurRound->log.push_back( m_player.name + "的小巴迪舍弃了替身" );
+			m_pCurRound->log.push_back( m_player.pCurPet->nick + "舍弃了替身" );
 		}
-		m_pCurRound->log.push_back( m_player.name + "的小巴迪开始聚气" );
+		m_pCurRound->log.push_back( m_player.pCurPet->nick + "开始聚气" );
 	}
 	if ( Battle::attack == m_player.act && ActionAble(m_enemy) 
 		&& ( "气合拳" == m_enemy.pSkill->name || "裸奔气合拳" == m_enemy.pSkill->name ) )
@@ -287,38 +285,38 @@ Battle::BattleResult Battle::StepAttack()
 		if ( "裸奔气合拳" == m_player.pSkill->name ) 
 		{
 			m_enemy.tiShen = 0;
-			m_pCurRound->log.push_back( m_enemy.name + "的小巴迪舍弃了替身" );
+			m_pCurRound->log.push_back( m_enemy.pCurPet->nick + "舍弃了替身" );
 		}
-		m_pCurRound->log.push_back( m_enemy.name + "的小巴迪开始聚气" );
+		m_pCurRound->log.push_back( m_enemy.pCurPet->nick + "开始聚气" );
 	}
 
 	if ( AttackOrder(m_player, m_enemy) )
 	{
 		if ( Battle::attack == m_player.act && !m_player.isActioned )
 		{
-			if ( Attack(m_player, m_enemy) ) return Battle::enemyChange;
+			if ( PetAction(m_player, m_enemy) ) return false;
 		}
 		if ( Battle::attack == m_player.act && !m_player.isActioned )
 		{
-			if ( Attack(m_enemy, m_player) ) return Battle::playerChange;
+			if ( PetAction(m_enemy, m_player) ) return false;
 		}
 	}
 	else 
 	{
 		if ( Battle::attack == m_player.act && !m_player.isActioned )
 		{
-			if ( Attack(m_enemy, m_player) ) return Battle::playerChange;
+			if ( PetAction(m_enemy, m_player) ) return false;
 		}
 		if ( Battle::attack == m_player.act && !m_player.isActioned )
 		{
-			if ( Attack(m_player, m_enemy) ) return Battle::enemyChange;
+			if ( PetAction(m_player, m_enemy) ) return false;
 		}
 	}
 
-	return Battle::unend;
+	return true;
 }
 
-Battle::BattleResult Battle::StepEnd()
+bool Battle::StepEnd()
 {
 	if ( 0 < m_weatherCount )
 	{
@@ -353,7 +351,7 @@ Battle::BattleResult Battle::StepEnd()
 		if ( 0 == m_enemy.wall[1] ) m_pCurRound->log.push_back("对方反射盾消失了");
 	}
 	m_pCurRound->log.push_back("回合结束");
-	return Battle::unend;
+	return true;
 }
 
 void Battle::EntryStage(Battle::WARRIOR &player, Battle::WARRIOR &enemy)
@@ -427,28 +425,32 @@ void Battle::LeaveStage(Battle::WARRIOR &player)
 
 bool Battle::Hurt(Battle::WARRIOR &player, int HP)
 {
+	char strHP[256];
+	sprintf( strHP, "%d%%", HP/player.pCurPet->HP );
+	m_pCurRound->log.push_back("对" + player.pCurPet->nick + "造成了" + strHP + "伤害");
 	player.pCurPet->curHP -= HP;
 	if ( player.pCurPet->curHP <= 0 )
 	{
 		player.pCurPet->curHP = 0;
-		m_pCurRound->log.push_back("倒下了");
+		m_pCurRound->log.push_back(player.pCurPet->nick + "倒下了");
+		if ( 1 == player.pets.size() ) player.lose = true;
 		return true;
 	}
 	if ( player.pCurPet->curHP > player.pCurPet->HP/3 ) return false;
 	if ( 5 == player.pCurPet->itemId ) 
 	{
 		player.wgCorrect = 1.5;
-		m_pCurRound->log.push_back("吃了兴奋剂-攻");
+		m_pCurRound->log.push_back(player.pCurPet->nick + "吃了兴奋剂-攻");
 	}
 	if ( 6 == player.pCurPet->itemId ) 
 	{
 		player.tgCorrect = 1.5;
-		m_pCurRound->log.push_back("吃了兴奋剂-特攻");
+		m_pCurRound->log.push_back(player.pCurPet->nick + "吃了兴奋剂-特攻");
 	}
 	if ( 7 == player.pCurPet->itemId )
 	{
 		player.sdCorrect = 1.5;
-		m_pCurRound->log.push_back("吃了兴奋剂-速度");
+		m_pCurRound->log.push_back(player.pCurPet->nick + "吃了兴奋剂-速度");
 	}
 
 	return false;
@@ -514,22 +516,23 @@ Battle::ChangeResult Battle::ChangePet(Battle::WARRIOR &player, int petId)
 	for ( i = 0; i < 18; i++ ) player.race[i] = false;	
 	if ( player.nail[13] )
 	{
-		if ( Race::fei == player.pBuddy->race1
-			|| Race::fei == player.pBuddy->race2 ) return Battle::finished;
-		if ( "魔法防御" == player.pTalent->name 
-			|| "浮游" == player.pTalent->name ) return Battle::finished;
-
-		if ( Hurt(player, player.pCurPet->HP / 16) )  return Battle::faint;
+		if ( Race::fei != player.pBuddy->race1
+			&& Race::fei != player.pBuddy->race2  
+			&& "魔法防御" != player.pTalent->name 
+			&& "浮游" != player.pTalent->name ) 
+		{
+			if ( Hurt(player, player.pCurPet->HP / 16) )  return Battle::faint;
+		}
 	}
 	if ( "毒珠" == player.pItem->name )
 	{
 		player.pCurPet->state = Race::du;
-		m_pCurRound->log.push_back( m_player.name + "的小巴迪携带毒珠中毒了" );
+		m_pCurRound->log.push_back( m_player.pCurPet->nick + "携带毒珠中毒了" );
 	}
 	else if ( "火珠" == player.pItem->name )
 	{
 		player.pCurPet->state = Race::huo;
-		m_pCurRound->log.push_back( m_player.name + "的小巴迪携带火珠烧伤了" );
+		m_pCurRound->log.push_back( m_player.pCurPet->nick + "携带火珠烧伤了" );
 	}
 
 	return Battle::finished;
@@ -1007,21 +1010,31 @@ int Battle::CalPower(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 	return power;
 }
 
-bool Battle::Attack(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
+bool Battle::PetAction(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 {
 	playerAck.isActioned = true;
 	if ( LaunchState(playerAck) && !Medication(playerAck) ) return false;
+	if ( Confusion(playerAck) ) 
+	{
+		return UseSkill(playerAck, playerAck);
+	}
+
 	ChangeSkill(playerAck);
 	if ( BanSkill(playerAck, playerDef) ) 
 	{
-		m_pCurRound->log.push_back(playerAck.name + "的小巴迪受到封印，不能使用地方掌握的技能");
+		m_pCurRound->log.push_back(playerAck.pCurPet->nick + "受到封印，不能使用地方掌握的技能");
 		return false;
 	}
 
-	m_pCurRound->log.push_back(playerAck.name + "的小巴迪使用了" + playerAck.pSkill->name);
+	return UseSkill(playerAck, playerDef);
+}
+
+bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
+{
+	m_pCurRound->log.push_back(playerAck.pCurPet->nick + "使用了" + playerAck.pSkill->name);
 	playerAck.lockSkill = playerAck.pSkill->id;
 
-	if ( 2 == playerAck.pSkill->type ) return HelpSkill(playerAck, playerDef);
+	if ( 2 == playerAck.pSkill->type ) return UseHelpSkill(playerAck, playerDef);
 
 	int G = 0, F = 0, Power = 0;
 	if ( 1 == playerAck.pSkill->type ) 
@@ -1042,7 +1055,7 @@ bool Battle::Attack(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 	return Hurt(playerDef, shanghai);
 }
 
-bool Battle::HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
+bool Battle::UseHelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 {
 	if ( 0 < playerAck.tiaoDou )
 	{
@@ -1411,7 +1424,7 @@ bool Battle::HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 			if ( i >= playerDef.pets.size() ) i = 0;
 			if ( playerDef.pCurPet == &playerDef.pets[i] ) continue;
 			if ( 0 == rand()%2 ) continue;
-			ChangePet(playerDef, playerDef.pets[i].id);
+			if ( Battle::faint == ChangePet(playerDef, playerDef.pets[i].id) ) return true;
 			return false;
 		}
 	}
@@ -1435,7 +1448,7 @@ bool Battle::HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 			return false;
 		}
 		short skill = playerAck.lockSkill;
-		bool ret = Attack(playerAck, playerDef);
+		bool ret = UseSkill(playerAck, playerDef);
 		playerAck.lockSkill = skill;
 		return ret;
 	}
@@ -1626,8 +1639,8 @@ bool Battle::HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		data::ITEM *pItem = playerAck.pItem;
 		playerAck.pItem= playerDef.pItem;
 		playerDef.pItem = pItem;
-		m_pCurRound->log.push_back(playerAck.name + "的小巴迪得到了" + playerAck.pItem->name);
-		m_pCurRound->log.push_back(playerDef.name + "的小巴迪得到了" + playerDef.pItem->name);
+		m_pCurRound->log.push_back(playerAck.pCurPet->nick + "得到了" + playerAck.pItem->name);
+		m_pCurRound->log.push_back(playerDef.pCurPet->nick + "得到了" + playerDef.pItem->name);
 		return false;
 	}
 	if ( "香甜气息" == playerAck.pSkill->name )//		草	0	2	100	1	非战斗使用可引出野生巴迪
@@ -1751,24 +1764,24 @@ bool Battle::LaunchState(Battle::WARRIOR &player)
 	{
 		if ( 0 == player.sleep || 20 >= player.rp.sleep ) 
 		{
-			m_pCurRound->log.push_back( m_player.name + "的小巴迪醒来了" );
+			m_pCurRound->log.push_back( m_player.pCurPet->nick + "醒来了" );
 			return false;
 		}
-		m_pCurRound->log.push_back( m_player.name + "的小巴迪正在睡觉" );
+		m_pCurRound->log.push_back( m_player.pCurPet->nick + "正在睡觉" );
 	}
 	else if ( Race::bing == player.pCurPet->state ) 
 	{
 		if ( 0 == player.frozen || 20 >= player.rp.ice )
 		{
-			m_pCurRound->log.push_back( m_player.name + "的小巴迪解除了冰封" );
+			m_pCurRound->log.push_back( m_player.pCurPet->nick + "解除了冰封" );
 			return false;
 		}
-		m_pCurRound->log.push_back( m_player.name + "的小巴迪被冰封着" );
+		m_pCurRound->log.push_back( m_player.pCurPet->nick + "被冰封着" );
 	}
 	else if ( Race::dian == player.pCurPet->state ) 
 	{
 		if ( 25 >= player.rp.dian ) return false;
-		m_pCurRound->log.push_back( m_player.name + "的小巴迪麻痹了，不能行动" );
+		m_pCurRound->log.push_back( m_player.pCurPet->nick + "麻痹了，不能行动" );
 	}
 
 	return true;
@@ -1781,25 +1794,25 @@ bool Battle::Medication(Battle::WARRIOR &player)
 	if ( Race::pu == player.pCurPet->state ) 
 	{
 		if ( 0 == player.sleep || 20 >= player.rp.sleep ) return false;
-		m_pCurRound->log.push_back( m_player.name + "的小巴迪使用了万能药，解除了睡眠" );
+		m_pCurRound->log.push_back( m_player.pCurPet->nick + "使用了万能药，解除了睡眠" );
 	}
 	else if ( Race::bing == player.pCurPet->state ) 
 	{
 		if ( 0 == player.frozen || 20 >= player.rp.ice ) return false;
-		m_pCurRound->log.push_back( m_player.name + "的小巴迪使用了万能药，解除了冰封" );
+		m_pCurRound->log.push_back( m_player.pCurPet->nick + "使用了万能药，解除了冰封" );
 	}
 	else if ( Race::dian == player.pCurPet->state ) 
 	{
 		if ( 25 >= player.rp.dian ) return false;
-		m_pCurRound->log.push_back( m_player.name + "的小巴迪使用了万能药，解除了麻痹" );
+		m_pCurRound->log.push_back( m_player.pCurPet->nick + "使用了万能药，解除了麻痹" );
 	}
 	else if ( Race::huo == player.pCurPet->state ) 
 	{
-		m_pCurRound->log.push_back( m_player.name + "的小巴迪使用了万能药，解除了烧伤" );
+		m_pCurRound->log.push_back( m_player.pCurPet->nick + "使用了万能药，解除了烧伤" );
 	}
 	else if ( Race::gui == player.pCurPet->state ) 
 	{
-		m_pCurRound->log.push_back( m_player.name + "的小巴迪使用了万能药，解除了混乱" );
+		m_pCurRound->log.push_back( m_player.pCurPet->nick + "使用了万能药，解除了混乱" );
 	}
 	player.pCurPet->state = 0;
 
@@ -1812,7 +1825,7 @@ void Battle::ChangeSkill(Battle::WARRIOR &player)
 	data::SKILL *pSkill = Skill(player.lockSkill, m_game->SkillBook());
 	if ( NULL == pSkill || pSkill == player.pSkill ) return;
 	player.pSkill = pSkill;
-	m_pCurRound->log.push_back(player.name + "的小巴迪在掌声中不能更换技能");
+	m_pCurRound->log.push_back(player.pCurPet->nick + "在掌声中不能更换技能");
 }
 
 bool Battle::BanSkill(Battle::WARRIOR &player, Battle::WARRIOR &enemy)
@@ -1827,3 +1840,25 @@ bool Battle::BanSkill(Battle::WARRIOR &player, Battle::WARRIOR &enemy)
 	return true;
 }
 
+bool Battle::Confusion(Battle::WARRIOR &player)
+{
+	if ( Race::gui != player.pCurPet->state ) return false;
+	if ( 0 == player.hunLuan )
+	{
+		m_pCurRound->log.push_back( player.pCurPet->nick + "解除了混乱" );
+		return false;
+	}
+	m_pCurRound->log.push_back( player.pCurPet->nick + "混乱了" );
+	if ( !player.rp.luan ) return false;
+	m_pCurRound->log.push_back( player.pCurPet->nick + "误伤了自己" );
+	player.pSkill = m_game->BornSkill();
+
+	return true;
+}
+
+bool Battle::IsEnd()
+{
+	if ( m_player.lose || m_enemy.lose ) return true;
+
+	return false;
+}
