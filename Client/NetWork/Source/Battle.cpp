@@ -71,8 +71,8 @@ bool Battle::Init(Game *game, int id,
 	m_player.lockSkillTime = 0;
 	m_player.smell = false;
 	m_player.recvHP = 0;//回复HP
-	m_player.sleep = 0;//催眠剩余回合
-	m_player.frozen = 0;//冰封剩余回合
+	m_player.sleepRound = 0;//催眠剩余回合
+	m_player.frozenRound = 0;//冰封剩余回合
 	m_player.seed = false;//种子
 	m_player.haQian = -1;//中了哈欠
 	m_player.mieGe = -1;//中了灭亡歌
@@ -101,8 +101,8 @@ bool Battle::Init(Game *game, int id,
 	m_enemy.lockSkillTime = 0;
 	m_enemy.smell = false;
 	m_enemy.recvHP = 0;//回复HP
-	m_enemy.sleep = 0;//催眠剩余回合
-	m_enemy.frozen = 0;//冰封剩余回合
+	m_enemy.sleepRound = 0;//催眠剩余回合
+	m_enemy.frozenRound = 0;//冰封剩余回合
 	m_enemy.seed = false;//种子
 	m_enemy.haQian = -1;//中了哈欠
 	m_enemy.mieGe = -1;//中了灭亡歌
@@ -172,8 +172,8 @@ const char* Battle::PlayerRand(bool me, Battle::Action act, short objectId, Batt
 	rp.iePro = rand()%100 + 1;//物品特效随机数
 	rp.tePro = rand()%100 + 1;//特性特效随机数
 	rp.luanWu = rand()%2 + 2;//乱舞回合数
-	rp.sleep = rand()%100 + 1;//睡眠随机数
-	rp.ice = rand()%100 + 1;//冰冻随机数
+	rp.sleepRound = rand()%7;//睡眠随机数
+	rp.frozenRound = rand()%7;//冰冻随机数
 	rp.luan = rand()%2;//混乱随机数
 	rp.hurt = rand()%(255 - 217 + 1) + 217;//伤害随机数217~255
 	rp.speed = rand()%100;//速度随机数
@@ -245,6 +245,13 @@ bool Battle::PlayRound()
 	m_player.isReady = m_enemy.isReady = false;
 
 	return true;
+}
+
+bool Battle::IsEnd()
+{
+	if ( m_player.lose || m_enemy.lose ) return true;
+
+	return false;
 }
 
 void Battle::StepStart()
@@ -501,8 +508,6 @@ Battle::ChangeResult Battle::ChangePet(Battle::WARRIOR &player, int petId)
 	player.lockSkillTime = ("专爱头巾" == player.pItem->name?-1:0);
 	player.smell = false;
 	player.recvHP = ("剩饭" == player.pItem->name?player.pCurPet->HP/16:0);//回复HP
-	player.sleep = 0;//催眠剩余回合
-	player.frozen = 0;//冰封剩余回合
 	player.seed = false;//种子
 	player.haQian = -1;//中了哈欠
 	player.mieGe = -1;//中了灭亡歌
@@ -1456,7 +1461,7 @@ bool Battle::UseHelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef
 	{
 		playerAck.pCurPet->curHP = playerAck.pCurPet->HP;
 		playerAck.pCurPet->state = Race::pu;
-		playerAck.sleep = 3;
+		playerAck.sleepRound = 3;
 		m_pCurRound->log.push_back("睡着了，回复了全盛状态");
 		return false;
 	}
@@ -1599,6 +1604,7 @@ bool Battle::UseHelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef
 			return false;
 		}
 		playerDef.pCurPet->state = Race::pu;
+		playerDef.sleepRound = playerDef.rp.sleepRound;
 		m_pCurRound->log.push_back("对方睡着了");
 		return false;
 	}
@@ -1744,11 +1750,11 @@ bool Battle::ActionAble(Battle::WARRIOR &player)
 
 	if ( Race::pu == player.pCurPet->state ) 
 	{
-		if ( 0 == player.sleep || 20 >= player.rp.sleep ) return true;
+		if ( 0 == player.sleepRound ) return true;
 	}
 	else if ( Race::bing == player.pCurPet->state ) 
 	{
-		if ( 0 == player.frozen || 20 >= player.rp.ice ) return true;
+		if ( 0 == player.frozenRound ) return true;
 	}
 	else if ( Race::dian == player.pCurPet->state ) 
 	{
@@ -1762,8 +1768,9 @@ bool Battle::LaunchState(Battle::WARRIOR &player)
 {
 	if ( Race::pu == player.pCurPet->state ) 
 	{
-		if ( 0 == player.sleep || 20 >= player.rp.sleep ) 
+		if ( 0 == player.sleepRound ) 
 		{
+			player.pCurPet->state = 0;
 			m_pCurRound->log.push_back( m_player.pCurPet->nick + "醒来了" );
 			return false;
 		}
@@ -1771,8 +1778,9 @@ bool Battle::LaunchState(Battle::WARRIOR &player)
 	}
 	else if ( Race::bing == player.pCurPet->state ) 
 	{
-		if ( 0 == player.frozen || 20 >= player.rp.ice )
+		if ( 0 == player.frozenRound )
 		{
+			player.pCurPet->state = 0;
 			m_pCurRound->log.push_back( m_player.pCurPet->nick + "解除了冰封" );
 			return false;
 		}
@@ -1793,12 +1801,14 @@ bool Battle::Medication(Battle::WARRIOR &player)
 
 	if ( Race::pu == player.pCurPet->state ) 
 	{
-		if ( 0 == player.sleep || 20 >= player.rp.sleep ) return false;
+		if ( 0 == player.sleepRound ) return false;
+		player.pCurPet->state = 0;
 		m_pCurRound->log.push_back( m_player.pCurPet->nick + "使用了万能药，解除了睡眠" );
 	}
 	else if ( Race::bing == player.pCurPet->state ) 
 	{
-		if ( 0 == player.frozen || 20 >= player.rp.ice ) return false;
+		if ( 0 == player.frozenRound ) return false;
+		player.pCurPet->state = 0;
 		m_pCurRound->log.push_back( m_player.pCurPet->nick + "使用了万能药，解除了冰封" );
 	}
 	else if ( Race::dian == player.pCurPet->state ) 
@@ -1856,9 +1866,3 @@ bool Battle::Confusion(Battle::WARRIOR &player)
 	return true;
 }
 
-bool Battle::IsEnd()
-{
-	if ( m_player.lose || m_enemy.lose ) return true;
-
-	return false;
-}

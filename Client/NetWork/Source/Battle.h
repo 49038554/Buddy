@@ -29,8 +29,8 @@ public:
 		char iePro;//物品特效随机数
 		char tePro;//特性特效随机数
 		char luanWu;//乱舞回合数
-		char sleep;//睡眠随机数
-		char ice;//冰冻随机数
+		char sleepRound;//睡眠回合随机数
+		char frozenRound;//冰冻回合随机数
 		char dian;//麻痹随机数
 		bool luan;//混乱随机数
 		unsigned char	hurt;//伤害随机数217~255
@@ -38,8 +38,8 @@ public:
 	}RAND_PARAM;
 	const char* PlayerRand(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
 	bool PlayerAction(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
-	bool PlayRound();//完成返回true,中断返回false
 	bool IsEnd();
+
 private:
 	typedef struct ROUND
 	{
@@ -86,8 +86,8 @@ private:
 		char	tiaoDou;//挑逗回合
 		bool	ban;//中封印
 		bool	tongGui;//中同归
-		char	sleep;//催眠剩余回合
-		char	frozen;//冰封剩余回合
+		char	sleepRound;//催眠剩余回合
+		char	frozenRound;//冰封剩余回合
 		char	hunLuan;//混乱剩余回合数
 
 		bool	race[18];//属性强化
@@ -106,6 +106,7 @@ private:
 		RAND_PARAM rp;
 	}WARRIOR;
 
+	bool PlayRound();//完成返回true,中断返回false
 	void StepStart();
 	bool StepChange();//完成返回true,中断返回false
 	bool StepAttack();//完成返回true,中断返回false
