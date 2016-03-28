@@ -16,6 +16,9 @@ Game::Game(void)
 	m_bornSkill.hitRate = 100;//命中率30~101, 101必中技
 	m_bornSkill.isMapSkill = false;//是地图技能
 	m_bornSkill.descript  = "无技能可用时使用的技能";//最大60byte
+
+	m_nullItem.id = 0;
+	m_nullItem.name = "空";
 }
 
 Game::~Game(void)
@@ -65,6 +68,12 @@ data::SKILL* Game::BornSkill()
 {
 	return &m_bornSkill;
 }
+
+data::ITEM* Game::NullItem()
+{
+	return &m_nullItem;
+}
+
 bool SaveRaceBook( mdk::File &db, std::map<unsigned char, std::string> &races )
 {
 	std::map<unsigned char, std::string>::iterator it = races.begin();

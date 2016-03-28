@@ -70,8 +70,6 @@ private:
 		char	tf;//特防强化等级
 		char	sd;//速度强化等级
 		char	ct;//暴击强化等级
-		char	miss;//闪避强化
-		char	unMiss;//命中强化
 		bool	changePetAble;//不能换人
 		short	lockSkill;//锁定技能
 		char	lockSkillTime;//锁定技能回合数量,-1永久
@@ -89,6 +87,8 @@ private:
 		char	sleepRound;//催眠剩余回合
 		char	frozenRound;//冰封剩余回合
 		char	hunLuan;//混乱剩余回合数
+		char	fear;//害怕
+		bool	defensed;//防守过了
 
 		bool	race[18];//属性强化
 		bool	nail[18];//是否有钉子，属性id为下标，目前只有地属性钉子
@@ -100,6 +100,8 @@ private:
 		data::ITEM *pItem;
 		data::TALENT *pTalent;
 		data::SKILL *pSkill;
+		data::ITEM *pUseItem;
+
 
 		Action	act;
 		int		objId;
@@ -111,6 +113,7 @@ private:
 	bool StepChange();//完成返回true,中断返回false
 	bool StepAttack();//完成返回true,中断返回false
 	bool StepEnd();//完成返回true,中断返回false
+	bool WaitPlayerCMD();//等待玩家指令
 	//交换巴迪的结果
 	enum ChangeResult
 	{
@@ -121,25 +124,31 @@ private:
 	Battle::ChangeResult ChangePet(Battle::WARRIOR &player, int petId = 0);
 	void EntryStage(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	void LeaveStage(Battle::WARRIOR &player);
-	bool Hurt(Battle::WARRIOR &player, int HP);//true有巴迪倒下，false没有巴迪倒下
+	bool Hurt(Battle::WARRIOR &player, int HP, bool unFaint = false);//true有巴迪倒下，false没有巴迪倒下
 	bool AttackOrder(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	bool IsUnwait(Battle::WARRIOR &player);
 	bool IsWait(Battle::WARRIOR &player);
 	int CalSpeed(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
+	bool CalHitRate(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);
+	bool CriticalHit(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);
 	int CalWG(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
-	int CalWF(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
+	int CalWF(Battle::WARRIOR &player, bool ct, Battle::WARRIOR &enemy);
 	int CalTG(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
-	int CalTF(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
-	int CalPower(Battle::WARRIOR &pAck, Battle::WARRIOR &pDef);
+	int CalTF(Battle::WARRIOR &player, bool ct, Battle::WARRIOR &enemy);
+	int CalPower(Battle::WARRIOR &pAck, bool ct, Battle::WARRIOR &pDef);
 	bool PetAction(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//true有巴迪战败，false没有巴迪战败
 	bool UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//true有巴迪战败，false没有巴迪战败
-	bool UseHelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//true有巴迪战败，false没有巴迪战败
+	bool HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//辅助技能,不是辅助技能返回false
+	bool InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//干扰技能
 	bool ActionAble(Battle::WARRIOR &player);
 	bool LaunchState(Battle::WARRIOR &player);
 	bool Medication(Battle::WARRIOR &player);
 	void ChangeSkill(Battle::WARRIOR &player);
 	bool BanSkill(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	bool Confusion(Battle::WARRIOR &player);
+	bool AttackEffect(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//攻击特效
+	bool AttackCost(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//攻击代价
+	bool ForcedLeave(Battle::WARRIOR &player);
 
 private:
 	Game *m_game;
@@ -155,6 +164,12 @@ private:
 	char					m_weather;//天气属性对应
 	char					m_weatherCount;//天气剩余回合数 -1永久
 	char					m_foolSpace;//欺骗空间剩余回合数 -1永久
+// 	摘星术
+// 	阳光烈焰
+// 
+// 	破灭之愿
+// 	预知未来
+
 };
 
 #endif //BATTLE_H

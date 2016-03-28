@@ -21,6 +21,7 @@ public:
 	std::vector<data::BUDDY>& BuddyBook();
 	std::vector<data::BUDDY_MAP>& BuddyMaps();
 	data::SKILL* BornSkill();
+	data::ITEM* NullItem(); 
 
 	void SetRaceMap(std::map<unsigned char, std::string> &raceBook);
 	void SetItemBook(std::vector<data::ITEM> &itemBook);
@@ -48,6 +49,7 @@ private:
 private:
 	bool									m_gameInitLoaded;
 	data::SKILL								m_bornSkill;//默认技能
+	data::ITEM								m_nullItem;//
 	//当前版本数据
 	int										m_gameInitVersion;
 	std::map<unsigned char, std::string>	m_raceBook;
