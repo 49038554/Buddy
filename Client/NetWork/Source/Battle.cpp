@@ -80,6 +80,9 @@ bool Battle::Init(Game *game, int id,
 	m_player.defensed = false;//防守过了
 	m_player.rest = false;//休息
 	m_player.luanWu = 0;//乱舞剩余回合
+	m_player.sunReady = false;//阳光烈焰准备中
+	m_player.doomDesireRound = -1;//破灭之愿剩余回合
+	m_player.predictRound = -1;//预知未来剩余回合
 
 	m_player.fear = false;//害怕
 	m_player.isChanged = false;//有换人
@@ -115,6 +118,9 @@ bool Battle::Init(Game *game, int id,
 	m_enemy.defensed = false;//防守过了
 	m_enemy.rest = false;//休息
 	m_enemy.luanWu = 0;//乱舞剩余回合
+	m_enemy.sunReady = false;//阳光烈焰准备中
+	m_enemy.doomDesireRound = -1;//破灭之愿剩余回合
+	m_enemy.predictRound = -1;//预知未来剩余回合
 
 	m_enemy.fear = false;//害怕
 	m_enemy.isChanged = false;//有换人
@@ -167,7 +173,7 @@ const char* Battle::PlayerRand(bool me, Battle::Action act, short objectId, Batt
 	if ( Battle::attack == act ) 
 	{
 		if ( 0 != player.lockSkill 
-			&& (0 != player.lockSkillTime || 0 != player.luanWu)
+			&& (0 != player.lockSkillTime || 0 != player.luanWu || player.sunReady)
 			&& objectId != player.lockSkill ) return (reason = "不能更换技能").c_str();
 		if ( player.xunXing && objectId == player.lockSkill ) return (reason = "被寻衅，不能连续使用相同技能").c_str();
 		player.pSkill = Skill(objectId, m_game->SkillBook());
@@ -600,6 +606,7 @@ bool Battle::ChangePet(Battle::WARRIOR &player, int petId)
 	player.defensed = false;//防守过了
 	player.rest = false;//休息
 	player.luanWu = 0;//乱舞剩余回合
+	player.sunReady = false;//阳光烈焰准备中
 	player.fear = false;//害怕
 
 	for ( i = 0; i < 18; i++ ) player.race[i] = false;	
@@ -1259,7 +1266,47 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		}
 		return true;
 	}
+
 	//攻击技能
+	if ( "阳光烈焰" == playerAck.pSkill->name && Race::huo != m_weather )
+	{
+		if ( !playerAck.sunReady )
+		{
+			playerAck.sunReady = true;
+			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "吸收了太阳光线");
+			return true;
+		}
+		else playerAck.sunReady = false;
+	}
+	if ( "破灭之愿" == playerAck.pSkill->name )
+	{
+		if ( 0 < playerAck.doomDesireRound ) 
+		{
+			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "失败了");
+			return false;
+		}
+		if ( -1 == playerAck.doomDesireRound )
+		{
+			playerAck.doomDesireRound = 3;
+			return true;
+		}
+		playerAck.doomDesireRound = -1;
+	}
+	if ( "预知未来" == playerAck.pSkill->name )
+	{
+		if ( 0 < playerAck.predictRound ) 
+		{
+			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "失败了");
+			return false;
+		}
+		if ( -1 == playerAck.predictRound )
+		{
+			playerAck.predictRound = 3;
+			return true;
+		}
+		playerAck.predictRound = -1;
+	}
+
 	if ( "保护" == playerDef.pSkill->name && playerDef.defensed ) 
 	{
 		m_pCurRound->log.push_back(playerDef.pCurPet->nick + "保护住了自己");
@@ -1302,8 +1349,11 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 	}
 	playerAck.outputHurt = shanghai;
 	Hurt(playerDef, shanghai, unFaint); 
-	AttackEffect(playerAck, playerDef);
-	AttackCost(playerAck, playerDef); 
+	if ( "破灭之愿" != playerAck.pSkill->name && "预知未来" != playerAck.pSkill->name )
+	{
+		AttackEffect(playerAck, playerDef);
+		AttackCost(playerAck, playerDef);
+	}
 
 	return true;
 }
@@ -2420,6 +2470,25 @@ void Battle::PlayerEnd(Battle::WARRIOR &player, Battle::WARRIOR &enemy)
 {
 	if ( player.isEnd ) return;
 	player.isEnd = true;
+
+	if ( 0 < player.doomDesireRound )//破灭之愿剩余回合
+	{
+		player.doomDesireRound--;
+		if ( 0 == player.doomDesireRound ) 
+		{
+			UseSkill(player, enemy);
+			if (WaitPlayerCMD()) return;
+		}
+	}
+	if ( 0 < player.predictRound )//预知未来剩余回合
+	{
+		player.predictRound--;
+		if ( 0 == player.predictRound ) 
+		{
+			UseSkill(player, enemy);
+			if (WaitPlayerCMD()) return;
+		}
+	}
 
 	if ( player.seed )//种子
 	{

@@ -93,6 +93,9 @@ private:
 		bool	defensed;//防守过了
 		bool	rest;//休息
 		char	luanWu;//乱舞剩余回合
+		bool	sunReady;//阳光烈焰准备中
+		char	doomDesireRound;//破灭之愿剩余回合
+		char	predictRound;//预知未来剩余回合
 		int		outputHurt;//输出伤害
 		bool	race[18];//属性强化
 		bool	nail[18];//是否有钉子，属性id为下标，目前只有地属性钉子
@@ -170,10 +173,6 @@ private:
 	char					m_weatherCount;//天气剩余回合数 -1永久
 	char					m_foolSpace;//欺骗空间剩余回合数 -1永久
 // 	摘星术
-// 	阳光烈焰
-// 
-// 	破灭之愿
-// 	预知未来
 
 };
 
