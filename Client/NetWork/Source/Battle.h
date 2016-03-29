@@ -38,6 +38,7 @@ public:
 	}RAND_PARAM;
 	const char* PlayerRand(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
 	bool PlayerAction(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	const char* PlayerChangePet(bool me, short petId);
 	bool IsEnd();
 
 private:
@@ -46,10 +47,12 @@ private:
 		Action	me;
 		int		meObjectId;
 		RAND_PARAM	meRP;
+		std::vector<short> mePetId;
 
 		Action	she;
 		int		sheObjectId;
 		RAND_PARAM	sheRP;
+		std::vector<short> shePetId;
 
 		std::vector<std::string> log;
 	}ROUND;
@@ -87,14 +90,19 @@ private:
 		char	sleepRound;//催眠剩余回合
 		char	frozenRound;//冰封剩余回合
 		char	hunLuan;//混乱剩余回合数
-		char	fear;//害怕
 		bool	defensed;//防守过了
-
+		bool	rest;//休息
+		char	luanWu;//乱舞剩余回合
+		int		outputHurt;//输出伤害
 		bool	race[18];//属性强化
 		bool	nail[18];//是否有钉子，属性id为下标，目前只有地属性钉子
 		char	wall[2];//物、特，剩余回合数 -1永久
 		std::map<short, bool>	lookSkill;
+
+		char	fear;//害怕
+		bool	isChanged;//有换人
 		bool	isActioned;//已经行动
+		bool	isEnd;//回合结束
 		bool	lose;//失败
 		data::BUDDY *pBuddy;
 		data::ITEM *pItem;
@@ -108,20 +116,14 @@ private:
 		RAND_PARAM rp;
 	}WARRIOR;
 
+	const char* SetPetInfo(Battle::WARRIOR &player, int petId);
 	bool PlayRound();//完成返回true,中断返回false
 	void StepStart();
 	bool StepChange();//完成返回true,中断返回false
 	bool StepAttack();//完成返回true,中断返回false
 	bool StepEnd();//完成返回true,中断返回false
 	bool WaitPlayerCMD();//等待玩家指令
-	//交换巴迪的结果
-	enum ChangeResult
-	{
-		unchange = 0,
-		finished = 1,
-		faint = 2,
-	};
-	Battle::ChangeResult ChangePet(Battle::WARRIOR &player, int petId = 0);
+	bool ChangePet(Battle::WARRIOR &player, int petId = 0);
 	void EntryStage(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	void LeaveStage(Battle::WARRIOR &player);
 	bool Hurt(Battle::WARRIOR &player, int HP, bool unFaint = false);//true有巴迪倒下，false没有巴迪倒下
@@ -149,6 +151,9 @@ private:
 	bool AttackEffect(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//攻击特效
 	bool AttackCost(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//攻击代价
 	bool ForcedLeave(Battle::WARRIOR &player);
+	bool ImmuneState(Battle::WARRIOR &player);//免疫异常状态
+	bool Faint(Battle::WARRIOR &player);
+	void PlayerEnd(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 
 private:
 	Game *m_game;

@@ -49,10 +49,7 @@ bool Battle::Init(Game *game, int id,
 	m_enemy.pTalent = Talent(m_enemy.pets[0].talent, m_game->TalentBook());
 	if ( NULL == m_enemy.pTalent ) return false;
 
-	Battle::ROUND round;
-	m_log.push_back(round);
-	m_curRound = 0;
-	m_pCurRound = &m_log[m_curRound];
+	m_curRound = -1;
 	m_player.isReady = m_enemy.isReady = false;
 	m_player.pCurPet = NULL;
 	m_player.wgCorrect = 1;
@@ -73,16 +70,19 @@ bool Battle::Init(Game *game, int id,
 	m_player.frozenRound = 0;//冰封剩余回合
 	m_player.seed = false;//种子
 	m_player.haQian = -1;//中了哈欠
-	m_player.mieGe = -1;//中了灭亡歌
+	m_player.mieGe = 0;//中了灭亡歌
 	m_player.tiShen = 0;//替身生命
 	m_player.xunXing = false;//中寻衅
 	m_player.tiaoDou = -1;//挑逗回合
 	m_player.ban = false;//中封印
 	m_player.tongGui = false;//中同归
 	m_player.hunLuan = -1;//混乱剩余回合数
-	m_player.fear = false;//害怕
 	m_player.defensed = false;//防守过了
+	m_player.rest = false;//休息
+	m_player.luanWu = 0;//乱舞剩余回合
 
+	m_player.fear = false;//害怕
+	m_player.isChanged = false;//有换人
 	m_player.isActioned = false;//已经行动
 	m_player.lose = false;//失败
 
@@ -105,16 +105,19 @@ bool Battle::Init(Game *game, int id,
 	m_enemy.frozenRound = 0;//冰封剩余回合
 	m_enemy.seed = false;//种子
 	m_enemy.haQian = -1;//中了哈欠
-	m_enemy.mieGe = -1;//中了灭亡歌
+	m_enemy.mieGe = 0;//中了灭亡歌
 	m_enemy.tiShen = 0;//替身生命
 	m_enemy.xunXing = false;//中寻衅
 	m_enemy.tiaoDou = -1;//挑逗回合
 	m_enemy.ban = false;//中封印
 	m_enemy.tongGui = false;//中同归
 	m_enemy.hunLuan = -1;//混乱剩余回合数
-	m_enemy.fear = false;//害怕
 	m_enemy.defensed = false;//防守过了
+	m_enemy.rest = false;//休息
+	m_enemy.luanWu = 0;//乱舞剩余回合
 
+	m_enemy.fear = false;//害怕
+	m_enemy.isChanged = false;//有换人
 	m_enemy.isActioned = false;//已经行动
 	m_enemy.lose = false;//失败
 
@@ -132,6 +135,28 @@ bool Battle::Init(Game *game, int id,
 	return true;
 }
 
+const char* Battle::SetPetInfo(Battle::WARRIOR &player, int petId)
+{
+	static std::string reason;
+	int i = 0;
+	for ( i = 0; i < player.pets.size(); i++ )
+	{
+		if ( petId == player.pets[i].id ) 
+		{
+			player.pBuddy = Buddy(player.pets[i].number, m_game->BuddyBook());
+			if ( NULL == player.pBuddy ) return (reason = "巴迪不存在").c_str();
+			player.pTalent = Talent(player.pets[i].talent, m_game->TalentBook());
+			if ( NULL == player.pTalent ) return (reason = "特性不存在").c_str();
+			if ( 0 >= player.pets[i].curHP ) return (reason = "巴迪已失去战斗能力").c_str();
+			player.pItem = Item(player.pCurPet->itemId, m_game->ItemBook());
+			if ( NULL == player.pItem ) player.pItem == m_game->NullItem();
+			return NULL;
+		}
+	}
+
+	return (reason = "不存在的宠物").c_str();
+}
+
 const char* Battle::PlayerRand(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	static std::string reason;
@@ -141,42 +166,32 @@ const char* Battle::PlayerRand(bool me, Battle::Action act, short objectId, Batt
 
 	if ( Battle::attack == act ) 
 	{
-		if ( 0 != player.lockSkill && 0 != player.lockSkillTime 
+		if ( 0 != player.lockSkill 
+			&& (0 != player.lockSkillTime || 0 != player.luanWu)
 			&& objectId != player.lockSkill ) return (reason = "不能更换技能").c_str();
 		if ( player.xunXing && objectId == player.lockSkill ) return (reason = "被寻衅，不能连续使用相同技能").c_str();
 		player.pSkill = Skill(objectId, m_game->SkillBook());
 		if ( NULL == player.pSkill ) return (reason = "技能不存在").c_str();
 		if ( 0 != player.tiaoDou && 2 == player.pSkill->type ) return (reason = "被挑逗，只能使用攻击技能").c_str();
-		if ( "忍耐" == player.pSkill->name 
-			|| "保护" == player.pSkill->name 
-			 )
+		if ( "忍耐" == player.pSkill->name || "保护" == player.pSkill->name )
 		{
 			if ( player.defensed ) player.defensed = rand()%2;
 			else player.defensed = true;
 		}
+		else player.defensed = false;
 	}
 	if ( Battle::useItem == act ) 
 	{
+		player.defensed = false;
+		player.rest = false;
 		player.pUseItem = Item(objectId, m_game->ItemBook());
 		if ( NULL == player.pUseItem ) return (reason = "物品不存在").c_str();
 	}
 	if ( Battle::change == act ) 
 	{
 		if ( !player.changePetAble ) return (reason = "不能更换巴迪").c_str();
-		int i = 0;
-		for ( i = 0; i < player.pets.size(); i++ )
-		{
-			if ( objectId == player.pets[i].id )
-			{
-				player.pBuddy = Buddy(player.pets[i].number, m_game->BuddyBook());
-				if ( NULL == player.pBuddy ) return (reason = "巴迪不存在").c_str();
-				player.pTalent = Talent(player.pets[i].talent, m_game->TalentBook());
-				if ( NULL == player.pTalent ) return (reason = "特性不存在").c_str();
-				if ( 0 >= player.pets[i].curHP ) return (reason = "巴迪已失去战斗能力").c_str();
-				player.pItem = Item(player.pCurPet->itemId, m_game->ItemBook());
-				if ( NULL == player.pItem ) player.pItem == m_game->NullItem();
-			}
-		}
+		const char *ret = SetPetInfo(player, objectId);
+		if ( NULL != ret ) return ret;
 	}
 
 	rp.miss = rand()%100 + 1;//命中随机数
@@ -195,6 +210,8 @@ const char* Battle::PlayerRand(bool me, Battle::Action act, short objectId, Batt
 
 bool Battle::PlayerAction(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
+	if ( m_player.lose || m_enemy.lose ) return false;
+
 	Battle::WARRIOR &player = me?m_player:m_enemy;
 	Battle::WARRIOR &enemy = me?m_enemy:m_player;
 	if ( player.isReady ) return false;
@@ -211,20 +228,7 @@ bool Battle::PlayerAction(bool me, Battle::Action act, short objectId, Battle::R
 	}
 	if ( Battle::change == act ) 
 	{
-		int i = 0;
-		for ( i = 0; i < player.pets.size(); i++ )
-		{
-			if ( objectId == player.pets[i].id )
-			{
-				player.pBuddy = Buddy(player.pets[i].number, m_game->BuddyBook());
-				if ( NULL == player.pBuddy ) return false;
-				player.pTalent = Talent(player.pets[i].talent, m_game->TalentBook());
-				if ( NULL == player.pTalent ) return false;
-				if ( 0 >= player.pets[i].curHP ) return false;
-				player.pItem = Item(player.pCurPet->itemId, m_game->ItemBook());
-				if ( NULL == player.pItem ) player.pItem == m_game->NullItem();
-			}
-		}
+		if ( NULL != SetPetInfo(player, objectId) ) return false;
 	}
 	player.act = act;
 	player.objId = objectId;
@@ -244,16 +248,57 @@ bool Battle::PlayerAction(bool me, Battle::Action act, short objectId, Battle::R
 		m_pCurRound->sheRP = m_enemy.rp;
 	}
 	if ( !m_player.isReady || !m_enemy.isReady ) return false;
+
+	StepStart();
+	int petId;
+	if ( Battle::change == m_player.act || NULL == m_player.pCurPet )
+	{
+		if ( Battle::change == m_player.act ) petId = m_player.objId;
+		else petId = m_player.pets[0].id;
+		m_player.isChanged = ChangePet(m_player, petId);
+	}
+	if ( Battle::change == m_enemy.act || NULL == m_enemy.pCurPet )
+	{
+		if ( Battle::change == m_enemy.act ) petId = m_enemy.objId;
+		else petId = m_enemy.pets[0].id;
+		m_enemy.isChanged = ChangePet(m_enemy, petId);
+	}
 	PlayRound();
 
 	return true;
 }
 
+const char* Battle::PlayerChangePet(bool me, short petId)
+{
+	static std::string reason;
+	Battle::WARRIOR &player = me?m_player:m_enemy;
+	Battle::WARRIOR &enemy = me?m_enemy:m_player;
+
+	int i = 0;
+	for ( i = 0; i < player.pets.size(); i++ )
+	{
+		if ( petId == player.pets[i].id )
+		{
+			player.pBuddy = Buddy(player.pets[i].number, m_game->BuddyBook());
+			if ( NULL == player.pBuddy ) return (reason = "巴迪不存在").c_str();
+			player.pTalent = Talent(player.pets[i].talent, m_game->TalentBook());
+			if ( NULL == player.pTalent ) return (reason = "特性不存在").c_str();
+			if ( 0 >= player.pets[i].curHP ) return (reason = "巴迪已失去战斗能力").c_str();
+			player.pItem = Item(player.pCurPet->itemId, m_game->ItemBook());
+			if ( NULL == player.pItem ) player.pItem == m_game->NullItem();
+		}
+	}
+	m_player.isChanged = ChangePet(player, petId);
+	PlayRound();
+
+	return NULL;
+}
+
 bool Battle::PlayRound()
 {
-	m_pCurRound = &m_log[m_curRound];
-	StepStart();
-	if ( !StepChange() ) return false;
+	if ( WaitPlayerCMD() || m_player.lose || m_enemy.lose ) return false;
+
+	StepChange();
 	if ( !StepAttack() ) return false;
 	if ( !StepEnd() ) return false;
 	m_player.isReady = m_enemy.isReady = false;
@@ -270,6 +315,11 @@ bool Battle::IsEnd()
 
 void Battle::StepStart()
 {
+	Battle::ROUND round;
+	m_log.push_back(round);
+	m_curRound++;
+	m_pCurRound = &m_log[m_curRound];
+
 	m_pCurRound->log.push_back("回合开始");
 	m_player.isActioned = false;
 	m_enemy.isActioned = false;
@@ -277,13 +327,8 @@ void Battle::StepStart()
 
 bool Battle::StepChange()
 {
-	Battle::ChangeResult meChanged = ChangePet(m_player);
-	if ( Battle::faint == meChanged ) return false; 
-	Battle::ChangeResult sheChanged = ChangePet(m_enemy);
-	if ( Battle::faint == sheChanged ) return false;
-
-	if ( Battle::finished == meChanged ) EntryStage(m_player, m_enemy);
-	if ( Battle::finished == sheChanged ) EntryStage(m_enemy, m_player);
+	EntryStage(m_player, m_enemy);
+	EntryStage(m_enemy, m_player);
 
 	return true;
 }
@@ -315,22 +360,26 @@ bool Battle::StepAttack()
 	{
 		if ( Battle::attack == m_player.act && !m_player.isActioned )
 		{
-			if ( PetAction(m_player, m_enemy) ) return false;
+			PetAction(m_player, m_enemy);
+			if ( WaitPlayerCMD() || m_player.lose || m_enemy.lose ) return false;
 		}
 		if ( Battle::attack == m_player.act && !m_player.isActioned )
 		{
-			if ( PetAction(m_enemy, m_player) ) return false;
+			PetAction(m_enemy, m_player);
+			if ( WaitPlayerCMD() || m_player.lose || m_enemy.lose ) return false;
 		}
 	}
 	else 
 	{
 		if ( Battle::attack == m_player.act && !m_player.isActioned )
 		{
-			if ( PetAction(m_enemy, m_player) ) return false;
+			PetAction(m_enemy, m_player);
+			if ( WaitPlayerCMD() || m_player.lose || m_enemy.lose ) return false;
 		}
 		if ( Battle::attack == m_player.act && !m_player.isActioned )
 		{
-			if ( PetAction(m_player, m_enemy) ) return false;
+			PetAction(m_player, m_enemy);
+			if ( WaitPlayerCMD() || m_player.lose || m_enemy.lose ) return false;
 		}
 	}
 
@@ -339,6 +388,11 @@ bool Battle::StepAttack()
 
 bool Battle::StepEnd()
 {
+	PlayerEnd(m_player, m_enemy);
+	if ( 0 >= m_player.pCurPet->curHP ) return false; 
+	PlayerEnd(m_enemy, m_player);
+	if ( 0 >= m_player.pCurPet->curHP ) return false; 
+
 	if ( 0 < m_weatherCount )
 	{
 		m_weatherCount--;
@@ -351,26 +405,7 @@ bool Battle::StepEnd()
 			m_weather = 0;
 		}
 	}
-	if ( 0 < m_player.wall[0] )
-	{
-		m_player.wall[0]--;
-		if ( 0 == m_player.wall[0] ) m_pCurRound->log.push_back("我方反射盾消失了");
-	}
-	if ( 0 < m_player.wall[1] )
-	{
-		m_player.wall[1]--;
-		if ( 0 == m_player.wall[1] ) m_pCurRound->log.push_back("我方反射盾消失了");
-	}
-	if ( 0 < m_enemy.wall[0] )
-	{
-		m_enemy.wall[0]--;
-		if ( 0 == m_enemy.wall[0] ) m_pCurRound->log.push_back("对方反射盾消失了");
-	}
-	if ( 0 < m_enemy.wall[1] )
-	{
-		m_enemy.wall[1]--;
-		if ( 0 == m_enemy.wall[1] ) m_pCurRound->log.push_back("对方反射盾消失了");
-	}
+
 	m_pCurRound->log.push_back("回合结束");
 	return true;
 }
@@ -378,8 +413,8 @@ bool Battle::StepEnd()
 bool Battle::WaitPlayerCMD()
 {
 	if ( m_player.lose || m_enemy.lose ) return false;
-	if ( NULL == m_player.pCurPet || m_player.pCurPet->curHP < 0 
-		|| NULL == m_enemy.pCurPet || m_enemy.pCurPet->curHP < 0 ) 
+	if ( NULL == m_player.pCurPet || 0 >= m_player.pCurPet->curHP 
+		|| NULL == m_enemy.pCurPet || 0 >= m_enemy.pCurPet->curHP ) 
 	{
 		return true;
 	}
@@ -389,6 +424,9 @@ bool Battle::WaitPlayerCMD()
 
 void Battle::EntryStage(Battle::WARRIOR &player, Battle::WARRIOR &enemy)
 {
+	if ( !player.isChanged ) return;
+	player.isChanged = false;
+
 	if ( "威吓" == player.pTalent->name ) 
 	{
 		if ( "净体" == enemy.pTalent->name )
@@ -436,13 +474,11 @@ void Battle::EntryStage(Battle::WARRIOR &player, Battle::WARRIOR &enemy)
 			+ enemy.pCurPet->nick + "不能逃跑" );
 		enemy.changePetAble = false;
 	}
-	
-	player.recvHP = 0;
 }
 
 void Battle::LeaveStage(Battle::WARRIOR &player)
 {
-	m_pCurRound->log.push_back("收回");
+	m_pCurRound->log.push_back(player.name + "收回" + player.pCurPet->nick);
 	if ( 0 >= player.pCurPet->curHP ) 
 	{
 		std::vector<data::PET>::iterator it = player.pets.begin();
@@ -474,21 +510,16 @@ bool Battle::Hurt(Battle::WARRIOR &player, int HP, bool unFaint)
 {
 	char strHP[256];
 	sprintf( strHP, "%d%%", HP/player.pCurPet->HP );
-	m_pCurRound->log.push_back("对" + player.pCurPet->nick + "造成了" + strHP + "伤害");
+	m_pCurRound->log.push_back(player.pCurPet->nick + "受到" + strHP + "伤害");
 	player.pCurPet->curHP -= HP;
 
 	if ( unFaint && player.pCurPet->curHP <= 0 )
 	{
 		player.pCurPet->curHP = 1;
-		m_pCurRound->log.push_back(player.pCurPet->nick + "承受住了攻击");
+		m_pCurRound->log.push_back(player.pCurPet->nick + "承受住了伤害");
 	}
-	if ( player.pCurPet->curHP <= 0 )
-	{
-		player.pCurPet->curHP = 0;
-		m_pCurRound->log.push_back(player.pCurPet->nick + "倒下了");
-		if ( 1 == player.pets.size() ) player.lose = true;
-		return true;
-	}
+	if ( Faint(player) ) return true;
+
 	if ( player.pCurPet->curHP > player.pCurPet->HP/3 ) return false;
 	if ( 5 == player.pCurPet->itemId ) 
 	{
@@ -512,33 +543,35 @@ bool Battle::Hurt(Battle::WARRIOR &player, int HP, bool unFaint)
 	return false;
 }
 
-Battle::ChangeResult Battle::ChangePet(Battle::WARRIOR &player, int petId)
+bool Battle::ChangePet(Battle::WARRIOR &player, int petId)
 {
-	if ( Battle::change != player.act && NULL != m_player.pCurPet && 0 == petId ) return Battle::unchange;
 	player.isActioned = true;//已经行动
 
-	int id;
-	if ( 0 < petId ) id = petId;
-	else if ( Battle::change == player.act ) id = player.objId;
-	else id = player.pets[0].id;
-
 	int i = 0;
-	if ( NULL != player.pCurPet && player.pCurPet->id != id )
+	if ( NULL != player.pCurPet && player.pCurPet->id != petId )
 	{
 		LeaveStage(player);
 	}
-	if ( NULL != player.pCurPet ) return Battle::unchange;
+	if ( NULL != player.pCurPet ) 
+	{
+		m_pCurRound->log.push_back("放出已出场的巴迪 ");
+		return false;
+	}
 
 	for ( i = 0; i < player.pets.size(); i++ )
 	{
-		if ( id == player.pets[i].id )
+		if ( petId == player.pets[i].id )
 		{
 			player.pCurPet = &player.pets[i];
 			m_pCurRound->log.push_back("放出");
 			break;
 		}
 	}
-	if ( NULL == player.pCurPet ) return Battle::unchange;
+	if ( NULL == player.pCurPet ) 
+	{
+		m_pCurRound->log.push_back("指定不存在的巴迪出场");
+		return false;
+	}
 
 	player.wgCorrect = 1;
 	player.tgCorrect = 1;
@@ -554,18 +587,20 @@ Battle::ChangeResult Battle::ChangePet(Battle::WARRIOR &player, int petId)
 	player.lockSkill = 0;
 	player.lockSkillTime = ("专爱头巾" == player.pItem->name?-1:0);
 	player.smell = false;
-	player.recvHP = ("剩饭" == player.pItem->name?player.pCurPet->HP/16:0);//回复HP
+	player.recvHP = 0;//回复HP
 	player.seed = false;//种子
 	player.haQian = -1;//中了哈欠
-	player.mieGe = -1;//中了灭亡歌
+	player.mieGe = 0;//中了灭亡歌
 	player.tiShen = 0;//替身生命
 	player.xunXing = false;//中寻衅
 	player.tiaoDou = -1;//挑逗回合
 	player.ban = false;//中封印
 	player.tongGui = false;//中同归
 	player.hunLuan = -1;//混乱剩余回合数
-	player.fear = false;//害怕
 	player.defensed = false;//防守过了
+	player.rest = false;//休息
+	player.luanWu = 0;//乱舞剩余回合
+	player.fear = false;//害怕
 
 	for ( i = 0; i < 18; i++ ) player.race[i] = false;	
 	if ( player.nail[13] )
@@ -575,7 +610,7 @@ Battle::ChangeResult Battle::ChangePet(Battle::WARRIOR &player, int petId)
 			&& "魔法防御" != player.pTalent->name 
 			&& "浮游" != player.pTalent->name ) 
 		{
-			if ( Hurt(player, player.pCurPet->HP / 16) )  return Battle::faint;
+			if ( Hurt(player, player.pCurPet->HP / 16) ) return false;//出场就挂了
 		}
 	}
 	if ( "毒珠" == player.pItem->name )
@@ -589,7 +624,7 @@ Battle::ChangeResult Battle::ChangePet(Battle::WARRIOR &player, int petId)
 		m_pCurRound->log.push_back( m_player.pCurPet->nick + "携带火珠烧伤了" );
 	}
 
-	return Battle::finished;
+	return true;
 }
 
 bool Battle::AttackOrder(Battle::WARRIOR &player, Battle::WARRIOR &enemy)
@@ -1119,10 +1154,40 @@ int Battle::CalPower(Battle::WARRIOR &playerAck, bool ct, Battle::WARRIOR &playe
 	{
 		if ( playerDef.lookSkill[playerAck.pSkill->id] ) 
 		{
-			power *= 0;
+			power = 0;
 			m_pCurRound->log.push_back("被圣斗士看过1次的技能是无效的");
 		}
 		else playerDef.lookSkill[playerAck.pSkill->id] = true;
+	}
+	if ( "食草" == playerDef.pTalent->name && Race::cao == playerAck.pSkill->race )
+	{
+		power = 0;
+		if ( 6 > playerDef.wg ) 
+		{
+			playerDef.wg++;
+			m_pCurRound->log.push_back("对方吸收了攻击，物攻提升");
+		}
+	}
+	if ( "蓄水" == playerDef.pTalent->name && Race::shui == playerAck.pSkill->race )
+	{
+		power = 0;
+		playerDef.pCurPet->curHP += playerDef.pCurPet->HP / 4;
+		m_pCurRound->log.push_back("对方吸收水了分，恢复1/4HP");
+	}
+	if ( "引火" == playerDef.pTalent->name && Race::huo == playerAck.pSkill->race )
+	{
+		power = 0;
+		playerDef.race[Race::huo] = true;
+		m_pCurRound->log.push_back("对方吸收了火焰，火系威力提升");
+	}
+	if ( "电气引擎" == playerDef.pTalent->name && Race::dian == playerAck.pSkill->race )
+	{
+		power = 0;
+		if ( 6 > playerDef.sd ) 
+		{
+			playerDef.sd++;
+			m_pCurRound->log.push_back("对方吸收了能量，速度提升");
+		}
 	}
 
 	return power;
@@ -1131,6 +1196,12 @@ int Battle::CalPower(Battle::WARRIOR &playerAck, bool ct, Battle::WARRIOR &playe
 bool Battle::PetAction(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 {
 	playerAck.isActioned = true;
+	if ( playerAck.rest )
+	{
+		playerAck.rest = false;
+		m_pCurRound->log.push_back(playerAck.pCurPet->nick + "需要休息,不能行动");
+		return false;
+	}
 	if ( playerAck.fear )
 	{
 		m_pCurRound->log.push_back(playerAck.pCurPet->nick + "害怕了,不能行动");
@@ -1144,8 +1215,7 @@ bool Battle::PetAction(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 	if ( LaunchState(playerAck) && !Medication(playerAck) ) return false;
 	if ( Confusion(playerAck) ) 
 	{
-		UseSkill(playerAck, playerAck);
-		return WaitPlayerCMD();
+		return UseSkill(playerAck, playerAck);
 	}
 
 	ChangeSkill(playerAck);
@@ -1155,8 +1225,7 @@ bool Battle::PetAction(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		return false;
 	}
 
-	UseSkill(playerAck, playerDef);
-	return WaitPlayerCMD();
+	return UseSkill(playerAck, playerDef);
 }
 
 bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
@@ -1231,10 +1300,10 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		unFaint = true;
 		playerDef.pCurPet->itemId = 0;
 	}
-
+	playerAck.outputHurt = shanghai;
 	Hurt(playerDef, shanghai, unFaint); 
-	AttackCost(playerAck, playerDef); 
 	AttackEffect(playerAck, playerDef);
+	AttackCost(playerAck, playerDef); 
 
 	return true;
 }
@@ -1246,7 +1315,6 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 		m_pCurRound->log.push_back(playerAck.pCurPet->nick + "的攻击没有命中" );
 		return false;
 	}
-
 
 	if ( "撒菱" == playerAck.pSkill->name )//		地	0	2	101	0	使上场巴迪受到1/8伤害
 	{
@@ -1264,7 +1332,9 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 	if ( "吼叫" == playerAck.pSkill->name //	普	0	2	101	0	最后出手，强制对方退场
 		|| "吹飞" == playerAck.pSkill->name )//		飞	0	2	101	0	最后出手，强制对方退场
 	{
-		return ForcedLeave(playerDef);
+		ForcedLeave(playerDef);
+		EntryStage(playerDef, playerAck);
+		return true;
 	}
 
 	if ( 0 < playerDef.tiShen )
@@ -1274,17 +1344,15 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 	}
 	if ( "鬼火" == playerAck.pSkill->name )//		火	0	2	95	0	烧伤
 	{
-		if ( "磷粉" == playerDef.pTalent->name
-			|| ("湿润身躯" != playerDef.pTalent->name && Race::shui == m_weather) 
-			|| ("叶片防御" != playerDef.pTalent->name && Race::huo == m_weather) )
-		{
-			m_pCurRound->log.push_back("对方免疫了攻击");
-			return false;
-		}
 		if ( "引火" == playerDef.pTalent->name )
 		{
 			playerDef.race[Race::huo] = true;
 			m_pCurRound->log.push_back("对方吸收了火焰，火系威力提升");
+			return false;
+		}
+		if ( ImmuneState(playerDef) )
+		{
+			m_pCurRound->log.push_back("对方免疫了攻击");
 			return false;
 		}
 		playerDef.pCurPet->state = Race::huo;
@@ -1293,20 +1361,21 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 	}
 	if ( "电磁波" == playerAck.pSkill->name )//		电	0	2	100	0	麻痹
 	{
-		if ( "磷粉" == playerDef.pTalent->name 
-			|| ("湿润身躯" != playerDef.pTalent->name && Race::shui == m_weather) 
-			|| ("叶片防御" != playerDef.pTalent->name && Race::huo == m_weather) 
+		if ( "电气引擎" == playerDef.pTalent->name )
+		{
+			if ( 6 > playerDef.sd ) 
+			{
+				playerDef.sd++;
+				m_pCurRound->log.push_back("对方吸收了能量，速度提升");
+			}
+			return false;
+		}
+		if ( ImmuneState(playerDef)  
 			|| "柔软" == playerDef.pTalent->name
 			|| Race::di == playerDef.pBuddy->race1
 			|| Race::di == playerDef.pBuddy->race2)
 		{
 			m_pCurRound->log.push_back("对方免疫了攻击");
-			return false;
-		}
-		if ( "电气引擎" == playerDef.pTalent->name )
-		{
-			if ( 6 > playerDef.sd ) playerDef.sd++;
-			m_pCurRound->log.push_back("对方吸收了能量，速度提升");
 			return false;
 		}
 		playerDef.pCurPet->state = Race::dian;
@@ -1315,18 +1384,18 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 	}
 	if ( "麻痹粉" == playerAck.pSkill->name )//		草	0	2	75	0	麻痹
 	{
-		if ( "磷粉" == playerDef.pTalent->name 
-			|| ("湿润身躯" != playerDef.pTalent->name && Race::shui == m_weather) 
-			|| ("叶片防御" != playerDef.pTalent->name && Race::huo == m_weather) 
-			|| "柔软" == playerDef.pTalent->name )
-		{
-			m_pCurRound->log.push_back("对方免疫了攻击");
-			return false;
-		}
 		if ( "食草" == playerDef.pTalent->name )
 		{
-			if ( 6 > playerDef.wg ) playerDef.wg++;
-			m_pCurRound->log.push_back("对方吸收了攻击，物攻提升");
+			if ( 6 > playerDef.wg ) 
+			{
+				playerDef.wg++;
+				m_pCurRound->log.push_back("对方吸收了攻击，物攻提升");
+			}
+			return false;
+		}
+		if ( ImmuneState(playerDef) || "柔软" == playerDef.pTalent->name )
+		{
+			m_pCurRound->log.push_back("对方免疫了攻击");
 			return false;
 		}
 		playerDef.pCurPet->state = Race::dian;
@@ -1335,10 +1404,7 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 	}
 	if ( "剧毒" == playerAck.pSkill->name )//		毒	0	2	85	0	中毒
 	{
-		if ( "磷粉" == playerDef.pTalent->name 
-			|| ("湿润身躯" != playerDef.pTalent->name && Race::shui == m_weather) 
-			|| ("叶片防御" != playerDef.pTalent->name && Race::huo == m_weather) 
-			|| "免疫" == playerDef.pTalent->name 
+		if ( ImmuneState(playerDef) || "免疫" == playerDef.pTalent->name 
 			|| Race::gang == playerDef.pBuddy->race1
 			|| Race::gang == playerDef.pBuddy->race2 )
 		{
@@ -1354,18 +1420,15 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 		||"黑洞" == playerAck.pSkill->name //		恶	0	2	80	0	催眠对方
 		||"睡眠粉" == playerAck.pSkill->name )//		草	0	2	100	0	催眠对方
 	{
-		if ( "磷粉" == playerDef.pTalent->name 
-			|| ("湿润身躯" != playerDef.pTalent->name && Race::shui == m_weather) 
-			|| ("叶片防御" != playerDef.pTalent->name && Race::huo == m_weather) 
-			|| "失眠" == playerDef.pTalent->name )
-		{
-			m_pCurRound->log.push_back("对方免疫了攻击");
-			return false;
-		}
 		if ( "睡眠粉" == playerAck.pSkill->name && "食草" == playerDef.pTalent->name )
 		{
 			if ( 6 > playerDef.wg ) playerDef.wg++;
 			m_pCurRound->log.push_back("对方吸收了攻击，物攻提升");
+			return false;
+		}
+		if ( ImmuneState(playerDef) || "失眠" == playerDef.pTalent->name )
+		{
+			m_pCurRound->log.push_back("对方免疫了攻击");
 			return false;
 		}
 		playerDef.pCurPet->state = Race::pu;
@@ -1432,17 +1495,12 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 	}
 	if ( "哈欠" == playerAck.pSkill->name )//		普	0	2	100	0	对方下回合被催眠
 	{
-		if ( "磷粉" == playerDef.pTalent->name 
-			|| ("湿润身躯" != playerDef.pTalent->name && Race::shui == m_weather) 
-			|| ("叶片防御" != playerDef.pTalent->name && Race::huo == m_weather) 
-			|| "失眠" == playerDef.pTalent->name )
+		if ( ImmuneState(playerDef) || "失眠" == playerDef.pTalent->name )
 		{
 			m_pCurRound->log.push_back("对方免疫了攻击");
 			return false;
 		}
-		if ( 1 == playerDef.haQian 
-			|| Race::pu == playerDef.pCurPet->state 
-			)
+		if ( -1 != playerDef.haQian )
 		{
 			m_pCurRound->log.push_back("没有效果");
 			return false;
@@ -1504,9 +1562,7 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 	}
 	if ( "奇怪光" == playerAck.pSkill->name )//		鬼	0	2	100	0	混乱
 	{
-		if ( "磷粉" == playerDef.pTalent->name 
-			|| ("湿润身躯" != playerDef.pTalent->name && Race::shui == m_weather) 
-			|| ("叶片防御" != playerDef.pTalent->name && Race::huo == m_weather) )
+		if ( ImmuneState(playerDef) )
 		{
 			m_pCurRound->log.push_back("对方免疫了攻击");
 			return false;
@@ -1859,7 +1915,7 @@ bool Battle::HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 	}
 	else if ( "急救液" == playerAck.pSkill->name )//		水	0	2	101	0	5回合，每回合回复1/16HP
 	{
-		playerAck.recvHP += playerAck.pCurPet->HP / 16;
+		playerAck.recvHP = playerAck.pCurPet->HP / 16;
 		m_pCurRound->log.push_back("被营养液包围着，每回合回复体力");
 	}
 	else if ( "睡觉" == playerAck.pSkill->name )//		超	0	2	101	0	睡3回合，HP全满，状态解除
@@ -1918,16 +1974,8 @@ bool Battle::HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 			m_pCurRound->log.push_back("没有效果");
 			return true;
 		}
-		if ( 0 == playerAck.mieGe ) 
-		{
-			playerAck.mieGe = 3;
-			m_pCurRound->log.push_back("只剩下2回合");
-		}
-		if ( 0 == playerDef.mieGe ) 
-		{
-			playerDef.mieGe = 3;
-			m_pCurRound->log.push_back("只剩下2回合");
-		}
+		if ( 0 == playerAck.mieGe ) playerAck.mieGe = 3;
+		if ( 0 == playerDef.mieGe ) playerDef.mieGe = 3;
 	}
 	else if ( "分享痛楚" == playerAck.pSkill->name )//		普	0	2	100	0	双方HP平分
 	{
@@ -2072,11 +2120,7 @@ bool Battle::AttackEffect(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef
 	int i = 0;
 	for ( i = 0; i < playerAck.pSkill->effects.size(); i++ )
 	{
-		if ("磷粉" != playerDef.pTalent->name
-			&& !("湿润身躯" == playerDef.pTalent->name && Race::shui == m_weather) 
-			&& !("叶片防御" == playerDef.pTalent->name && Race::huo == m_weather) 
-			&& 0 == playerDef.pCurPet->state
-			)
+		if ( 0 < playerDef.pCurPet->curHP && !ImmuneState(playerDef) )
 		{
 			if ( 1 == playerAck.pSkill->effects[i].id ) //huo
 			{
@@ -2110,7 +2154,7 @@ bool Battle::AttackEffect(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef
 				m_pCurRound->log.push_back(playerDef.pCurPet->nick + "中毒了");
 			}
 		}
-		else if ( "磷粉" != playerDef.pTalent->name )
+		else if ( 0 < playerDef.pCurPet->curHP && "磷粉" != playerDef.pTalent->name )
 		{
 			if ( 42 == playerAck.pSkill->effects[i].id && "净体" != playerDef.pTalent->name ) //-WF
 			{
@@ -2130,12 +2174,14 @@ bool Battle::AttackEffect(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef
 				playerDef.tf--;
 				m_pCurRound->log.push_back(playerDef.pCurPet->nick + "特殊防御下降了");
 			}
-			else if ( 86 == playerAck.pSkill->effects[i].id 
+			else if ( 0 < playerDef.pCurPet->curHP 
+				&& 86 == playerAck.pSkill->effects[i].id 
 				&& "精神力" != playerDef.pTalent->name ) //haki
 			{
 				haiPa = true;
 				char addCount = 0;
 				if ( "王冠" == playerAck.pItem->name ) addCount = 15;
+				if ( "霸气" == playerAck.pTalent->name ) addCount += 20;
 				if ( playerAck.rp.sePro > playerAck.pSkill->effects[i].probability + addCount )  continue;
 				playerDef.fear = true;
 			}
@@ -2149,21 +2195,26 @@ bool Battle::AttackEffect(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef
 		}
 	}
 
-
-	if ("王冠" == playerAck.pItem->name 
-		&&"给力" != playerAck.pTalent->name
+	if ( 0 < playerDef.pCurPet->curHP
+		&& ("王冠" == playerAck.pItem->name || "霸气" == playerAck.pTalent->name)
+		&& "给力" != playerAck.pTalent->name
 		&& "精神力" != playerDef.pTalent->name
-		&& haiPa )
+		&& !haiPa )
 	{
-		if ( playerAck.rp.sePro <= 15 )
+		char addCount = 0;
+		if ( "王冠" == playerAck.pItem->name ) addCount = 15;
+		if ( "霸气" == playerAck.pTalent->name ) addCount += 20;
+		if ( playerAck.rp.sePro <= addCount )
 		{
 			playerDef.fear = true;
 		}
 	}
-	if ( "毒手" == playerAck.pTalent->name 
+	if ( 0 < playerDef.pCurPet->curHP
+		&& "毒手" == playerAck.pTalent->name 
+		&& !ImmuneState(playerDef)
 		&& "免疫" != playerDef.pTalent->name
 		&& 0 == playerDef.pCurPet->state 
-		&& duShou )
+		&& !duShou )
 	{
 		if ( playerAck.rp.tePro <= 30 )  
 		{
@@ -2182,7 +2233,12 @@ bool Battle::AttackEffect(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef
 		|| "鲤鱼摆尾" == playerAck.pSkill->name  
 		|| "龙之尾" == playerAck.pSkill->name ) 
 	{
-		return ForcedLeave(playerDef);
+		if ( 0 < playerDef.pCurPet->curHP ) 
+		{
+			ForcedLeave(playerDef);
+			EntryStage(playerDef, playerAck);
+			return true;
+		}
 	}
 
 	return true;
@@ -2201,14 +2257,330 @@ bool Battle::ForcedLeave(Battle::WARRIOR &player)
 		if ( i >= player.pets.size() ) i = 0;
 		if ( player.pCurPet == &player.pets[i] ) continue;
 		if ( 0 == rand()%2 ) continue;
-		ChangePet(player, player.pets[i].id);
+		if ( NULL != SetPetInfo(player, player.pets[i].id) ) 
+		{
+			m_pCurRound->log.push_back(player.name + "队伍中存在非法巴迪");
+			return false;
+		}
+
+		player.isChanged = ChangePet(player, player.pets[i].id);
 		return true;
 	}
 
-	return false;
+	return true;
 }
 
 bool Battle::AttackCost(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 {
+	if ( 0 >= playerDef.pCurPet->curHP ) //同归
+	{
+		if ( playerAck.tongGui ) 
+		{
+			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "拉" 
+				+ playerAck.pCurPet->nick + "一起倒下了");
+			playerAck.pCurPet->curHP = 0;
+			Faint(playerAck);
+		}
+		return true;
+	}
+	//特性影响
+	if ( 1 == playerAck.pSkill->type && !ImmuneState(playerAck) )
+	{
+		if ( "静电" == playerDef.pTalent->name //受到物理攻击时，30%麻痹对手
+			&& "柔软" != playerAck.pTalent->name
+			)
+		{
+			playerAck.pCurPet->state = Race::dian;
+			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "的" 
+				+ playerDef.pTalent->name + "使" + playerAck.pCurPet->nick + "麻痹了");
+		}
+		if ( "孢子" == playerDef.pTalent->name //受到物理攻击时，30%中毒
+			&& "免疫" != playerAck.pTalent->name
+			)
+		{
+			playerAck.pCurPet->state = Race::du;
+			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "的" 
+				+ playerDef.pTalent->name + "使" + playerAck.pCurPet->nick + "中毒了");
+		}
+		if ( "火焰体" == playerDef.pTalent->name )//	不冰冻，受到物理攻击时，30%烧伤
+		{
+			playerAck.pCurPet->state = Race::huo;
+			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "的" 
+				+ playerDef.pTalent->name + "使" + playerAck.pCurPet->nick + "烧伤了");
+		}
+		if ( "冰冻身体" == playerDef.pTalent->name //	受到物理攻击时，30%冰冻
+			&& "火焰体" != playerAck.pTalent->name)
+		{
+			playerAck.pCurPet->state = Race::bing;
+			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "的" 
+				+ playerDef.pTalent->name + "使" + playerAck.pCurPet->nick + "冰封了");
+		}
+	}
+	if ( "正义心" == playerDef.pTalent->name && Race::e == playerAck.pSkill->race 
+		&& 6 > playerDef.wg )//	被恶属性攻击，强化物攻
+	{
+		playerDef.wg++;
+		m_pCurRound->log.push_back(playerDef.pCurPet->nick + "的" 
+			+ playerDef.pTalent->name + "提高了攻击");
+	}
+	if ( 1 == playerAck.pSkill->type && "蛇皮" == playerDef.pTalent->name 
+		&& "魔法防御" != playerAck.pTalent->name
+		&& "石脑" != playerAck.pTalent->name )//反噬
+	{
+		float hurt = playerAck.outputHurt / 3;
+		bool unFaint = false;
+		if ( "舍身" == playerAck.pTalent->name ) unFaint = true;
+		m_pCurRound->log.push_back(playerAck.pCurPet->nick + "受到反弹伤害");
+		Hurt( playerAck, hurt, unFaint );
+		if ( 0 >= playerAck.pCurPet->curHP ) return true;//挂了
+	}
+	if ( ("生命玉" == playerAck.pItem->name || BiteSkill(playerAck.pSkill) )
+		&& "魔法防御" != playerAck.pTalent->name 
+		&& "石脑" != playerAck.pTalent->name )//反噬
+	{
+		float hurt = 0;
+		if ( BiteSkill(playerAck.pSkill) ) hurt = playerAck.outputHurt / 3;
+		if ( "生命玉" == playerAck.pItem->name ) hurt += playerAck.pCurPet->HP / 8;
+		bool unFaint = false;
+		if ( "舍身" == playerAck.pTalent->name ) unFaint = true;
+		m_pCurRound->log.push_back(playerAck.pCurPet->nick + "受到反弹伤害");
+		Hurt( playerAck, hurt, unFaint );
+		if ( 0 >= playerAck.pCurPet->curHP ) return true;//挂了
+	}
+	//技能
+	if ( "进身击" == playerAck.pSkill->name )//弱化自身物防，弱化自身特防
+	{
+		if ( -6 < playerAck.wf )
+		{
+			playerAck.wf--;
+			m_pCurRound->log.push_back(playerAck.pCurPet->nick + "的防御降低了");
+		}
+		if ( -6 < playerAck.tf )
+		{
+			playerAck.tf--;
+			m_pCurRound->log.push_back(playerAck.pCurPet->nick + "的特殊防御降低了");
+		}
+	}
+	if ( "最终手段" == playerAck.pSkill->name )//不能更换技能，不能交换巴迪，不能逃跑。并大幅弱化自身物防
+	{
+		if ( -6 < playerAck.wf )
+		{
+			playerAck.wf -=2;
+			if ( -6 > playerAck.wf ) playerAck.wf = -6;
+			m_pCurRound->log.push_back(playerAck.pCurPet->nick + "的防御大幅下降");
+		}
+		playerAck.lockSkillTime = -1;
+		playerAck.changePetAble = false;
+	}
+	if ( "高压水炮" == playerAck.pSkill->name
+		|| "亿万冲击" == playerAck.pSkill->name)//下回合不能行动
+	{
+		playerAck.rest = true;
+	}
+	if ( "花瓣舞" == playerAck.pSkill->name
+		|| "鲤鱼摆尾" == playerAck.pSkill->name
+		|| "蜂涌" == playerAck.pSkill->name
+		|| "精神病" == playerAck.pSkill->name
+		|| "风之伤" == playerAck.pSkill->name
+		|| "暴走" == playerAck.pSkill->name
+		|| "逆鳞" == playerAck.pSkill->name
+		|| "异次元冲锋" == playerAck.pSkill->name
+		|| "激流涌进" == playerAck.pSkill->name
+		|| "龙之尾" == playerAck.pSkill->name
+		)//乱舞，连续使用2~3回合
+	{
+		playerAck.luanWu = playerAck.rp.luanWu;
+	}
+
 	return true;
+}
+
+bool Battle::ImmuneState(Battle::WARRIOR &player)
+{
+	if ( 0 < player.tiShen ) return true;
+	if ( "磷粉" == player.pTalent->name ) return true;
+	if ( ("湿润身躯" == player.pTalent->name && Race::shui == m_weather) ) return true;
+	if ( ("叶片防御" == player.pTalent->name && Race::huo == m_weather) ) return true;
+	if ( 0 == player.pCurPet->state ) return true;
+
+	return false;
+}
+
+bool Battle::Faint(Battle::WARRIOR &player)
+{
+	if ( player.pCurPet->curHP > 0 ) return false;
+
+	player.pCurPet->curHP = 0;
+	m_pCurRound->log.push_back(player.pCurPet->nick + "倒下了");
+	if ( 1 == player.pets.size() ) player.lose = true;
+	return true;
+}
+
+void Battle::PlayerEnd(Battle::WARRIOR &player, Battle::WARRIOR &enemy)
+{
+	if ( player.isEnd ) return;
+	player.isEnd = true;
+
+	if ( player.seed )//种子
+	{
+		m_pCurRound->log.push_back(enemy.pCurPet->nick + "吸收了" 
+			+ player.pCurPet->nick + "的体力");
+		int hurt = player.pCurPet->HP / 8;
+		hurt = hurt > player.pCurPet->curHP?player.pCurPet->curHP:hurt;
+		Hurt(player, hurt);
+		enemy.pCurPet->curHP += hurt;
+		if ( 0 >= player.pCurPet->curHP ) return;//挂了
+	}
+
+	if ( 0 < player.mieGe )//中了灭亡歌
+	{
+		player.mieGe--;
+		if ( 2 == player.mieGe ) m_pCurRound->log.push_back(player.pCurPet->nick + "只剩下2回合生命");
+		if ( 1 == player.mieGe ) m_pCurRound->log.push_back(player.pCurPet->nick + "只剩下1回合生命");
+		if ( 0 == player.mieGe )
+		{
+			player.pCurPet->curHP = 0;
+			Faint(player);
+			return;
+		}
+	}
+
+	if ( -1 != player.haQian )//中了哈欠
+	{
+		player.haQian--;
+		if ( -1 == player.haQian )
+		{
+			player.pCurPet->state = Race::pu;
+			player.sleepRound = player.rp.sleepRound;
+			m_pCurRound->log.push_back(player.pCurPet->nick + "睡着了");
+			player.sleepRound--;
+		}
+	}
+	//锁定技能回合数量:0未锁定，>0鼓掌,-1专爱/最终手段
+	if ( 0 < player.lockSkillTime )
+	{
+		player.lockSkillTime--;
+		if ( 0 == player.lockSkillTime )
+		{
+			m_pCurRound->log.push_back(player.pCurPet->nick + "的鼓掌结束了");
+		}
+	}
+	if ( 0 < player.tiaoDou ) //挑逗剩余回合
+	{
+		player.tiaoDou--;
+		if ( 0 == player.tiaoDou )
+		{
+			m_pCurRound->log.push_back(player.pCurPet->nick + "不受挑逗影响了");
+		}
+	}
+	if ( 0 < player.sleepRound ) player.sleepRound--;//催眠剩余回合
+	if ( 0 < player.frozenRound ) player.frozenRound--;//冰封剩余回合
+	if ( 0 < player.hunLuan ) player.hunLuan--;//混乱剩余回合数
+	if ( 0 < player.luanWu )//乱舞剩余回合
+	{
+		player.luanWu--;
+		if ( 0 == player.luanWu )
+		{
+			m_pCurRound->log.push_back(player.pCurPet->nick + "停止了乱舞");
+		}
+	}
+
+	if ( 0 != player.pCurPet->state && "蜕皮" != player.pTalent->name && player.rp.tePro <= 30 )
+	{
+		player.pCurPet->state = 0;
+		m_pCurRound->log.push_back(player.pCurPet->nick + "蜕皮解除了异常");
+	}
+	if ( "魔法防御" != player.pTalent->name )
+	{
+		if ( Race::bing == m_weather 
+			&& Race::bing != player.pBuddy->race1
+			&& Race::bing != player.pBuddy->race2 ) 
+		{
+			m_pCurRound->log.push_back(player.pCurPet->nick + "受到冰雹伤害");
+			Hurt(player, player.pCurPet->HP / 16);
+		}
+		else if ( Race::huo == m_weather && "太阳力量" == player.pTalent->name )
+		{
+			m_pCurRound->log.push_back(player.pCurPet->nick + "受到太阳力量反噬");
+			Hurt(player, player.pCurPet->HP / 8);
+		}
+		else if ( Race::yan == m_weather
+			&& Race::di != player.pBuddy->race1
+			&& Race::di != player.pBuddy->race2
+			&& Race::yan != player.pBuddy->race1
+			&& Race::yan != player.pBuddy->race2
+			&& Race::gang != player.pBuddy->race1
+			&& Race::gang != player.pBuddy->race2
+			&& "挖沙" != player.pTalent->name ) 
+		{
+			m_pCurRound->log.push_back(player.pCurPet->nick + "受到沙尘暴伤害");
+			Hurt(player, player.pCurPet->HP / 16);
+		}
+		if ( 0 >= player.pCurPet->curHP ) return;//挂了
+
+		if ( Race::huo == player.pCurPet->state )
+		{
+			m_pCurRound->log.push_back(player.pCurPet->nick + "被烧伤");
+			Hurt(player, player.pCurPet->HP / 8);
+		}
+		if ( 0 >= player.pCurPet->curHP ) return;//挂了
+
+		if ( Race::du == player.pCurPet->state
+			&& "毒疗" != player.pTalent->name )
+		{
+			m_pCurRound->log.push_back(player.pCurPet->nick + "中毒了");
+			Hurt(player, player.pCurPet->HP / 8);
+		}
+		if ( 0 >= player.pCurPet->curHP ) return;//挂了
+	}
+
+	if ( 6 > player.sd )
+	{
+		if ( "加速" == player.pTalent->name )
+		{
+			player.sd++;
+			m_pCurRound->log.push_back(player.pCurPet->nick + "的速度提升了");
+		}
+	}
+	if ( player.pCurPet->curHP < player.pCurPet->HP )
+	{
+		if ( 0 > player.recvHP )//急救液
+		{
+			player.pCurPet->curHP += player.pCurPet->HP/16;
+			m_pCurRound->log.push_back(player.pCurPet->nick + "使用急救液,恢复了体力");
+		}
+		if ( Race::shui == m_weather && "雨盘" == player.pTalent->name ) 
+		{
+			player.pCurPet->curHP += player.pCurPet->HP/16;
+			m_pCurRound->log.push_back(player.pCurPet->nick + "使用雨盘,恢复了体力");
+		}
+		if ( Race::du == player.pCurPet->state && "毒疗" == player.pTalent->name )
+		{
+			m_pCurRound->log.push_back(player.pCurPet->nick + "毒疗恢复了体力");
+			player.pCurPet->curHP += player.pCurPet->HP / 8;
+		}
+		if ( "剩饭" == player.pItem->name )
+		{
+			player.pCurPet->curHP += player.pCurPet->HP/16;
+			m_pCurRound->log.push_back(player.pCurPet->nick + "使用剩饭,恢复了体力");
+		}
+		if ( player.pCurPet->curHP > player.pCurPet->HP )
+		{
+			player.pCurPet->curHP = player.pCurPet->HP;
+		}
+	}
+
+	if ( 0 < player.wall[0] )
+	{
+		player.wall[0]--;
+		if ( 0 == player.wall[0] ) m_pCurRound->log.push_back(player.name + "的反射盾消失了");
+	}
+	if ( 0 < player.wall[1] )
+	{
+		player.wall[1]--;
+		if ( 0 == player.wall[1] ) m_pCurRound->log.push_back(player.name + "的光之墙消失了");
+	}
+	player.tongGui = false;//中同归
+	player.fear = false;//害怕
+	player.isActioned = false;//已经行动
 }
