@@ -11,6 +11,17 @@ data::ITEM* Item(short id, std::vector<data::ITEM> &items)
 	return NULL;
 }
 
+data::ITEM* Item(const std::string name, std::vector<data::ITEM> &items)
+{
+	int i = 0;
+	for ( i = 0; i < items.size(); i++ )
+	{
+		if ( name == items[i].name ) return &items[i];
+	}
+
+	return NULL;
+}
+
 data::TALENT* Talent(short id, std::vector<data::TALENT> &talents)
 {
 	int i = 0;
@@ -22,12 +33,34 @@ data::TALENT* Talent(short id, std::vector<data::TALENT> &talents)
 	return NULL;
 }
 
+data::TALENT* Talent(const std::string name, std::vector<data::TALENT> &talents)
+{
+	int i = 0;
+	for ( i = 0; i < talents.size(); i++ )
+	{
+		if ( name == talents[i].name ) return &talents[i];
+	}
+
+	return NULL;
+}
+
 data::SKILL* Skill(short id, std::vector<data::SKILL> &skills)
 {
 	int i = 0;
 	for ( i = 0; i < skills.size(); i++ )
 	{
 		if ( id == skills[i].id ) return &skills[i];
+	}
+
+	return NULL;
+}
+
+data::SKILL* Skill(const std::string name, std::vector<data::SKILL> &skills)
+{
+	int i = 0;
+	for ( i = 0; i < skills.size(); i++ )
+	{
+		if ( name == skills[i].name ) return &skills[i];
 	}
 
 	return NULL;
@@ -90,7 +123,7 @@ data::PET* Pet(int id, std::vector<data::PET> &pets)
 
 int GetNature(const std::string &add, const std::string &dec)
 {
-	if ("-" == add && "-" == dec ) return 0;
+	if ("-" == add || "-" == dec ) return 0;
 
 	if ("WG" == add && "WF" == dec ) return 1;
 	if ("WG" == add && "TG" == dec ) return 2;
@@ -116,6 +149,8 @@ int GetNature(const std::string &add, const std::string &dec)
 	if ("SD" == add && "WF" == dec ) return 18;
 	if ("SD" == add && "TG" == dec ) return 19;
 	if ("SD" == add && "TF" == dec ) return 20;
+
+	return 0;
 }
 
 double GetNatureCal(int nature, const std::string &attr)

@@ -36,10 +36,16 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	//Game
 	void SetLBS(int mapId);
-	std::string TestLuck();
-	std::string UseItem( short itemId, int count );
-	std::string Buy( short itemId, int count );
-	std::string Devour( short itemId, int count );
+	std::string TestLuck();//试手气（摇钱树）
+	std::string UseItem( short itemId, int count );//使用物品
+	std::string Buy( short itemId, int count );//购买物品
+	std::string Devour( short itemId, int count );//吞噬物品
+	//战斗接口
+	int CreateBattle( unsigned int shePlayerId, const std::string &enemyName,
+		std::vector<data::PET> &she);//对战
+	int CreateBattle();//野战
+	const char* Ready(int battleId, Battle::Action act, short objectId);//操作完成，准备
+	const char* ChangePet(int battleId, short petId);//更换巴迪
 
 protected:
 	virtual void Main();

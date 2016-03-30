@@ -19,6 +19,7 @@ Game::Game(void)
 
 	m_nullItem.id = 0;
 	m_nullItem.name = "¿Õ";
+	m_petTooler.SetGame(this);
 }
 
 Game::~Game(void)
@@ -774,9 +775,9 @@ data::BUDDY* Game::Encounter( int mapId )
 	return NULL;
 }
 
-int Game::CreateBattle(unsigned int mePlayerId, unsigned int shePlayerId, 
-	const std::string &playerName, const std::string &enemyName,
-	std::vector<data::PET*> &me, std::vector<data::PET*> &she)
+int Game::CreateBattle(unsigned int mePlayerId, const std::string &playerName, 
+	std::vector<data::PET> &me, unsigned int shePlayerId, 
+	const std::string &enemyName, std::vector<data::PET> &she)
 {
 	static int battleId = 0;
 	battleId++;
@@ -784,18 +785,50 @@ int Game::CreateBattle(unsigned int mePlayerId, unsigned int shePlayerId,
 	return battleId;
 }
 
-const char* Game::PlayerRand(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+int Game::CreateBattle(unsigned int mePlayerId, 
+	const std::string &playerName, std::vector<data::PET> &me)
 {
-	if ( m_battles.end() == m_battles.find(battleId) ) return false;
-	Battle &pBattle = m_battles[battleId];
-	return pBattle.PlayerRand(me, act, objectId, rp);
+	unsigned int shePlayerId = 0; 
+	const std::string enemyName = "Ò¶ÈãÑþ";
+	std::vector<data::PET> she;
+	data::PET pet;
+	int id = 1;
+
+	pet = m_petTooler.Pet("¹ÖÍÜ²Ý");
+	m_petTooler.SetTalent(pet, "Ò¶ÂÌËØ");
+	m_petTooler.AddItem(pet, "Íõ¹Ú");
+	m_petTooler.SetNature(pet, "SD", "WF");
+	m_petTooler.FullSkill(pet);
+	m_petTooler.SetHealthy(pet, 31, 31, 31, 31, 31, 31);
+	m_petTooler.SetMuscle(pet, 6, 252, 0, 0, 0, 252);
+	m_petTooler.SetSkill(pet, "", "", "", "");
+	pet.id = id++;
+	she.push_back(pet);
+
+
+
+	return CreateBattle(mePlayerId, playerName, me, shePlayerId, enemyName, she);
 }
 
-bool Game::PlayerAction(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+const char* Game::CheckReady(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+{
+	if ( m_battles.end() == m_battles.find(battleId) ) return "Õ½¶·²»´æÔÚ";
+	Battle &pBattle = m_battles[battleId];
+	return pBattle.CheckReady(me, act, objectId, rp);
+}
+
+bool Game::Ready(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;
 	Battle &pBattle = m_battles[battleId];
-	pBattle.PlayerAction(me, act, objectId, rp);
+	pBattle.Ready(me, act, objectId, rp);
 
 	return true;
+}
+
+const char* Game::ChangePet(int battleId, bool me, short petId)
+{
+	if ( m_battles.end() == m_battles.find(battleId) ) return "Õ½¶·²»´æÔÚ";
+	Battle &pBattle = m_battles[battleId];
+	return pBattle.ChangePet(me, petId);
 }

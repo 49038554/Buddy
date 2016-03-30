@@ -4,6 +4,7 @@
 #include <ctime>
 #include "common/BuddyData.h"
 #include "Battle.h"
+#include "PetFactory.h"
 
 class Game
 {
@@ -35,12 +36,21 @@ public:
 	std::string Buy( short itemId, int count, int &coin );
 	std::string Devour( short itemId, int count, int &coin );
 	data::BUDDY* Encounter( int mapId );
-	int CreateBattle(unsigned int mePlayerId, unsigned int shePlayerId, 
-		const std::string &playerName, const std::string &enemyName,
-		std::vector<data::PET*> &me, std::vector<data::PET*> &she);
-	const char* PlayerRand(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
-	
-	bool PlayerAction(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	//////////////////////////////////////////////////////////////////////////
+	//战斗接口
+	int CreateBattle(unsigned int mePlayerId, const std::string &playerName, 
+		std::vector<data::PET> &me, unsigned int shePlayerId, 
+		const std::string &enemyName, std::vector<data::PET> &she);
+
+	int CreateBattle(unsigned int mePlayerId, 
+		const std::string &playerName, std::vector<data::PET> &me);
+	//检查玩家输入参数
+	const char* CheckReady(int battleId, bool me, Battle::Action act, 
+						short objectId, Battle::RAND_PARAM &rp);
+	//操作完成，已准备
+	bool Ready(int battleId, bool me, Battle::Action act, 
+						short objectId, Battle::RAND_PARAM &rp);
+	const char* ChangePet(int battleId, bool me, short petId);//更换巴迪
 
 private:
 	bool LoadGameInit();
@@ -69,6 +79,9 @@ private:
 
 	time_t m_lastBattleTime;
 	std::map<int, Battle>	m_battles;
+
+	//npc
+	PetFactory	m_petTooler;
 };
 
 #endif //GAME_H

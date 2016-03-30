@@ -173,8 +173,11 @@ namespace data
 }
 
 data::ITEM* Item(short id, std::vector<data::ITEM> &items);
+data::ITEM* Item(const std::string name, std::vector<data::ITEM> &items);
 data::TALENT* Talent(short id, std::vector<data::TALENT> &talents);
+data::TALENT* Talent(const std::string name, std::vector<data::TALENT> &talents);
 data::SKILL* Skill(short id, std::vector<data::SKILL> &skills);
+data::SKILL* Skill(const std::string name, std::vector<data::SKILL> &skills);
 data::BUDDY* Buddy(short number, std::vector<data::BUDDY> &buddys);
 data::BUDDY* Buddy(const std::string name, std::vector<data::BUDDY> &buddys);
 data::BUDDY_MAP* BuddyMap(int id, std::vector<data::BUDDY_MAP> &BuddyMaps);
@@ -182,6 +185,7 @@ data::BUDDY_MAP* BuddyMap(int id, std::vector<data::BUDDY_MAP> &BuddyMaps);
 data::PLAYER_ITEM* PlayerItem(short id, std::vector<data::PLAYER_ITEM> &items);
 data::PET* Pet(int id, std::vector<data::PET> &pets);
 
+int GetNature(const std::string &add, const std::string &dec);
 double GetNatureCal(int nature, const std::string &attr);
 
 #endif //BUDDY_DATA_H

@@ -60,6 +60,7 @@
     <ClCompile Include="..\Source\Client.cpp" />
     <ClCompile Include="..\Source\Game.cpp" />
     <ClCompile Include="..\Source\NetWorker.cpp" />
+    <ClCompile Include="..\Source\PetFactory.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
@@ -116,6 +117,7 @@
     <ClInclude Include="..\Source\Client.h" />
     <ClInclude Include="..\Source\Game.h" />
     <ClInclude Include="..\Source\NetWorker.h" />
+    <ClInclude Include="..\Source\PetFactory.h" />
     <ClInclude Include="Console.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

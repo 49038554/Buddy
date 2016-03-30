@@ -239,6 +239,16 @@ char* OnCommand(std::vector<std::string> *param)
 		std::string ret = g_cli.Devour(id, count);
 		if ( "" != ret ) printf( "%s\n", ret.c_str() );
 	}
+	else if ( "battle" == cmd[0] )
+	{
+		if ( 1 != cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		int id = g_cli.CreateBattle();
+		printf( "Õ½¶·(%d)¿ªÊ¼\n", id );
+	}
 	else Helper();
 
 	return NULL;

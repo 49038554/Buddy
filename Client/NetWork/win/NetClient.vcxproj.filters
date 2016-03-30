@@ -185,6 +185,9 @@
     <ClCompile Include="..\Source\Battle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\PetFactory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Protocl\cpp\Buffer.h">
@@ -342,6 +345,9 @@
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Battle.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\PetFactory.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

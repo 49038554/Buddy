@@ -1029,21 +1029,22 @@ void Client::OnPets(msg::Buffer &buffer)
 				pInfo->skill1 = it->first;
 				continue;
 			}
-			if ( 0 == pInfo->skill2 ) 
+			else if ( 0 == pInfo->skill2 ) 
 			{
 				pInfo->skill2 = it->first;
 				continue;
 			}
-			if ( 0 == pInfo->skill3 ) 
+			else if ( 0 == pInfo->skill3 ) 
 			{
 				pInfo->skill3 = it->first;
 				continue;
 			}
-			if ( 0 == pInfo->skill4 ) 
+			else if ( 0 == pInfo->skill4 ) 
 			{
 				pInfo->skill4 = it->first;
 				continue;
 			}
+			else break;
 		}
 	}
 }
@@ -1280,4 +1281,31 @@ void Client::OnSyncPets(msg::Buffer &buffer)
 void Client::SetLBS(int mapId)
 {
 	m_mapId = mapId;
+}
+
+int Client::CreateBattle( unsigned int shePlayerId, const std::string &enemyName,
+	std::vector<data::PET> &she)
+{
+	return m_game.CreateBattle(m_player.playerId, "≈≠œ…–∞", m_pets, shePlayerId, enemyName, she);
+}
+
+int Client::CreateBattle()
+{
+	return m_game.CreateBattle(m_player.playerId, "≈≠œ…–∞", m_pets);
+}
+
+const char* Client::Ready(int battleId, Battle::Action act, short objectId)
+{
+	Battle::RAND_PARAM rp;
+	const char *ret = m_game.CheckReady(battleId, true, act, objectId, rp);
+	if ( NULL != ret ) return ret;
+	m_game.Ready(battleId, true, act, objectId, rp);
+	return NULL;
+}
+
+const char* Client::ChangePet(int battleId, short petId)
+{
+	const char *ret = m_game.ChangePet(battleId, true, petId);
+	if ( NULL != ret ) return ret;
+	return NULL;
 }

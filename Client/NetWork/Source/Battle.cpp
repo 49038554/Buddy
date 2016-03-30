@@ -17,7 +17,7 @@ Battle::~Battle()
 bool Battle::Init(Game *game, int id, 
 	const std::string &playerName, const std::string &enemyName, 
 	unsigned int playerId, unsigned int enemyId, 
-	std::vector<data::PET*> &me, std::vector<data::PET*> &she)
+	std::vector<data::PET> &me, std::vector<data::PET> &she)
 {
 	m_game = game;
 	m_id = id;
@@ -32,13 +32,13 @@ bool Battle::Init(Game *game, int id,
 	int i = 0;
 	for ( i = 0; i < me.size(); i++ )
 	{
-		m_playerInitPets.push_back(*me[i]);
-		m_player.pets.push_back(*me[i]);
+		m_playerInitPets.push_back(me[i]);
+		m_player.pets.push_back(me[i]);
 	}
 	for ( i = 0; i < she.size(); i++ )
 	{
-		m_enemyInitPets.push_back(*she[i]);
-		m_enemy.pets.push_back(*she[i]);
+		m_enemyInitPets.push_back(she[i]);
+		m_enemy.pets.push_back(she[i]);
 	}
 	m_player.pBuddy = Buddy(m_player.pets[0].number, m_game->BuddyBook());
 	if ( NULL == m_player.pBuddy ) return false;
@@ -163,7 +163,7 @@ const char* Battle::SetPetInfo(Battle::WARRIOR &player, int petId)
 	return (reason = "不存在的宠物").c_str();
 }
 
-const char* Battle::PlayerRand(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	static std::string reason;
 	Battle::WARRIOR &player = me?m_player:m_enemy;
@@ -214,7 +214,7 @@ const char* Battle::PlayerRand(bool me, Battle::Action act, short objectId, Batt
 	return NULL;
 }
 
-bool Battle::PlayerAction(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+bool Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	if ( m_player.lose || m_enemy.lose ) return false;
 
@@ -274,7 +274,7 @@ bool Battle::PlayerAction(bool me, Battle::Action act, short objectId, Battle::R
 	return true;
 }
 
-const char* Battle::PlayerChangePet(bool me, short petId)
+const char* Battle::ChangePet(bool me, short petId)
 {
 	static std::string reason;
 	Battle::WARRIOR &player = me?m_player:m_enemy;

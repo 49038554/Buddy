@@ -21,7 +21,7 @@ public:
 	bool Init(Game *game, int id, 
 		const std::string &playerName, const std::string &enemyName, 
 		unsigned int playerId, unsigned int enemyId, 
-		std::vector<data::PET*> &me, std::vector<data::PET*> &she);
+		std::vector<data::PET> &me, std::vector<data::PET> &she);
 	typedef struct RAND_PARAM
 	{
 		char miss;//命中随机数
@@ -36,9 +36,9 @@ public:
 		unsigned char	hurt;//伤害随机数217~255
 		unsigned char	speed;//速度随机数
 	}RAND_PARAM;
-	const char* PlayerRand(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
-	bool PlayerAction(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
-	const char* PlayerChangePet(bool me, short petId);
+	const char* CheckReady(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	bool Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	const char* ChangePet(bool me, short petId);
 	bool IsEnd();
 
 private:
