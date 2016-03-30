@@ -279,6 +279,8 @@ const char* Battle::PlayerChangePet(bool me, short petId)
 	static std::string reason;
 	Battle::WARRIOR &player = me?m_player:m_enemy;
 	Battle::WARRIOR &enemy = me?m_enemy:m_player;
+	if ( me ) m_pCurRound->mePetId.push_back(petId);
+	else m_pCurRound->shePetId.push_back(petId);
 
 	int i = 0;
 	for ( i = 0; i < player.pets.size(); i++ )
