@@ -40,6 +40,7 @@ std::map<unsigned char, std::string>& Game::RaceBook()
 {
 	return m_raceBook;
 }
+
 std::vector<data::ITEM>& Game::ItemBook()
 {
 	return m_itemBook;
@@ -797,11 +798,11 @@ int Game::CreateBattle(unsigned int mePlayerId,
 	pet = m_petTooler.Pet("¹ÖÍÜ²İ");
 	m_petTooler.SetTalent(pet, "Ò¶ÂÌËØ");
 	m_petTooler.AddItem(pet, "Íõ¹Ú");
-	m_petTooler.SetNature(pet, "SD", "WF");
+	m_petTooler.SetNature(pet, "SD", "TF");
 	m_petTooler.FullSkill(pet);
 	m_petTooler.SetHealthy(pet, 31, 31, 31, 31, 31, 31);
 	m_petTooler.SetMuscle(pet, 6, 252, 0, 0, 0, 252);
-	m_petTooler.SetSkill(pet, "", "", "", "");
+	m_petTooler.SetSkill(pet, "¼ÄÉúÖÖ×Ó", "¶¾Í»", "ºğ½Ğ", "·´Éä¶Ü");
 	pet.id = id++;
 	she.push_back(pet);
 
