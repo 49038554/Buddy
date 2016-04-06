@@ -1,3 +1,2 @@
-V1.95(2015-08-10 14:29)
-1.ConfigFile int64()运算符使用atoi()会丢失，修正为sscanf()
-2.Lock改为递归锁，与windows下行为一致
+V1.96(2016-04-6 12:46)
+1.NetConnect::SendData() 崩溃bug
