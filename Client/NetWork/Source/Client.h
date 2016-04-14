@@ -46,6 +46,9 @@ public:
 	int CreateBattle();//野战
 	const char* Ready(int battleId, Battle::Action act, short objectId);//操作完成，准备
 	const char* ChangePet(int battleId, short petId);//更换巴迪
+	//对方行动
+	const char* SheReady(int battleId, Battle::Action act, short objectId);
+	const char* SheChangePet(int battleId, short petId);
 
 protected:
 	virtual void Main();

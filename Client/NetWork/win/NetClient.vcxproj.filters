@@ -34,6 +34,9 @@
     <Filter Include="Protocl\Object\DBEntry">
       <UniqueIdentifier>{214c2e92-65ba-44a7-898c-b61228dcb07d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PetCFG">
+      <UniqueIdentifier>{f18dd3f0-1070-4c79-8c52-c1a4225bb830}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Protocl\cpp\Buffer.cpp">
@@ -186,6 +189,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\PetFactory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\BuddyWorld.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -348,6 +354,9 @@
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\PetFactory.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\BuddyWorld.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

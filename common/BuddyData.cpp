@@ -1,4 +1,5 @@
 #include "BuddyData.h"
+#include <ctype.h>
 
 data::ITEM* Item(short id, std::vector<data::ITEM> &items)
 {
@@ -121,34 +122,45 @@ data::PET* Pet(int id, std::vector<data::PET> &pets)
 	return NULL;
 }
 
+bool StrSame(const std::string &str1, const std::string &str2)
+{
+	if ( str1.size() != str2.size() ) return false;
+
+	int i = 0;
+	for ( i = 0; i < str1.size(); i++ )
+	{
+		if ( toupper(str1.c_str()[i]) != toupper(str2.c_str()[i]) ) return false;
+	}
+
+	return true;
+}
+
 int GetNature(const std::string &add, const std::string &dec)
 {
-	if ("-" == add || "-" == dec ) return 0;
+	if (StrSame("WG", add) && StrSame("WF", dec) ) return 1;
+	if (StrSame("WG", add) && StrSame("TG", dec) ) return 2;
+	if (StrSame("WG", add) && StrSame("TF", dec) ) return 3;
+	if (StrSame("WG", add) && StrSame("SD", dec) ) return 4;
 
-	if ("WG" == add && "WF" == dec ) return 1;
-	if ("WG" == add && "TG" == dec ) return 2;
-	if ("WG" == add && "TF" == dec ) return 3;
-	if ("WG" == add && "SD" == dec ) return 4;
+	if (StrSame("WF", add) && StrSame("WG", dec) ) return 5;
+	if (StrSame("WF", add) && StrSame("TG", dec) ) return 6;
+	if (StrSame("WF", add) && StrSame("TF", dec) ) return 7;
+	if (StrSame("WF", add) && StrSame("SD", dec) ) return 8;
 
-	if ("WF" == add && "WG" == dec ) return 5;
-	if ("WF" == add && "TG" == dec ) return 6;
-	if ("WF" == add && "TF" == dec ) return 7;
-	if ("WF" == add && "SD" == dec ) return 8;
+	if (StrSame("TG", add) && StrSame("WG", dec) ) return 9;
+	if (StrSame("TG", add) && StrSame("WF", dec) ) return 10;
+	if (StrSame("TG", add) && StrSame("TF", dec) ) return 11;
+	if (StrSame("TG", add) && StrSame("SD", dec) ) return 12;
 
-	if ("TG" == add && "WG" == dec ) return 9;
-	if ("TG" == add && "WF" == dec ) return 10;
-	if ("TG" == add && "TF" == dec ) return 11;
-	if ("TG" == add && "SD" == dec ) return 12;
+	if (StrSame("TF", add) && StrSame("WG", dec) ) return 13;
+	if (StrSame("TF", add) && StrSame("WF", dec) ) return 14;
+	if (StrSame("TF", add) && StrSame("TG", dec) ) return 15;
+	if (StrSame("TF", add) && StrSame("SD", dec) ) return 16;
 
-	if ("TF" == add && "WG" == dec ) return 13;
-	if ("TF" == add && "WF" == dec ) return 14;
-	if ("TF" == add && "TG" == dec ) return 15;
-	if ("TF" == add && "SD" == dec ) return 16;
-
-	if ("SD" == add && "WG" == dec ) return 17;
-	if ("SD" == add && "WF" == dec ) return 18;
-	if ("SD" == add && "TG" == dec ) return 19;
-	if ("SD" == add && "TF" == dec ) return 20;
+	if (StrSame("SD", add) && StrSame("WG", dec) ) return 17;
+	if (StrSame("SD", add) && StrSame("WF", dec) ) return 18;
+	if (StrSame("SD", add) && StrSame("TG", dec) ) return 19;
+	if (StrSame("SD", add) && StrSame("TF", dec) ) return 20;
 
 	return 0;
 }

@@ -4,7 +4,7 @@
 #include <ctime>
 #include "common/BuddyData.h"
 #include "Battle.h"
-#include "PetFactory.h"
+#include "BuddyWorld.h"
 
 class Game
 {
@@ -81,7 +81,7 @@ private:
 	std::map<int, Battle>	m_battles;
 
 	//npc
-	PetFactory	m_petTooler;
+	BuddyWorld	m_buddyWorld;
 };
 
 #endif //GAME_H

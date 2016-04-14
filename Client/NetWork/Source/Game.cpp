@@ -19,7 +19,7 @@ Game::Game(void)
 
 	m_nullItem.id = 0;
 	m_nullItem.name = "¿Õ";
-	m_petTooler.SetGame(this);
+	m_buddyWorld.SetGame(this);
 }
 
 Game::~Game(void)
@@ -795,14 +795,10 @@ int Game::CreateBattle(unsigned int mePlayerId,
 	data::PET pet;
 	int id = 1;
 
-	pet = m_petTooler.Pet("¹ÖÍÜ²İ");
-	m_petTooler.SetTalent(pet, "Ò¶ÂÌËØ");
-	m_petTooler.AddItem(pet, "Íõ¹Ú");
-	m_petTooler.SetNature(pet, "SD", "TF");
-	m_petTooler.FullSkill(pet);
-	m_petTooler.SetHealthy(pet, 31, 31, 31, 31, 31, 31);
-	m_petTooler.SetMuscle(pet, 6, 252, 0, 0, 0, 252);
-	m_petTooler.SetSkill(pet, "¼ÄÉúÖÖ×Ó", "¶¾Í»", "ºğ½Ğ", "·´Éä¶Ü");
+	pet = m_buddyWorld.Buddy001();
+	pet.id = id++;
+	she.push_back(pet);
+	pet = m_buddyWorld.Buddy001();
 	pet.id = id++;
 	she.push_back(pet);
 

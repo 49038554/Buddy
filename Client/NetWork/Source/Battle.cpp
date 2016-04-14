@@ -73,7 +73,7 @@ bool Battle::Init(Game *game, int id,
 	m_player.mieGe = 0;//中了灭亡歌
 	m_player.tiShen = 0;//替身生命
 	m_player.xunXing = false;//中寻衅
-	m_player.tiaoDou = -1;//挑逗回合
+	m_player.tiaoDou = 0;//挑逗回合
 	m_player.ban = false;//中封印
 	m_player.tongGui = false;//中同归
 	m_player.hunLuan = -1;//混乱剩余回合数
@@ -111,7 +111,7 @@ bool Battle::Init(Game *game, int id,
 	m_enemy.mieGe = 0;//中了灭亡歌
 	m_enemy.tiShen = 0;//替身生命
 	m_enemy.xunXing = false;//中寻衅
-	m_enemy.tiaoDou = -1;//挑逗回合
+	m_enemy.tiaoDou = 0;//挑逗回合
 	m_enemy.ban = false;//中封印
 	m_enemy.tongGui = false;//中同归
 	m_enemy.hunLuan = -1;//混乱剩余回合数
@@ -138,6 +138,7 @@ bool Battle::Init(Game *game, int id,
 	m_weather = 0;
 	m_weatherCount = 0;
 
+	StepStart();
 	return true;
 }
 
@@ -178,7 +179,7 @@ const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Batt
 		if ( player.xunXing && objectId == player.lockSkill ) return (reason = "被寻衅，不能连续使用相同技能").c_str();
 		player.pSkill = Skill(objectId, m_game->SkillBook());
 		if ( NULL == player.pSkill ) return (reason = "技能不存在").c_str();
-		if ( 0 != player.tiaoDou && 2 == player.pSkill->type ) return (reason = "被挑逗，只能使用攻击技能").c_str();
+		if ( 0 < player.tiaoDou && 2 == player.pSkill->type ) return (reason = "被挑逗，只能使用攻击技能").c_str();
 		if ( "忍耐" == player.pSkill->name || "保护" == player.pSkill->name )
 		{
 			if ( player.defensed ) player.defensed = rand()%2;
@@ -255,7 +256,6 @@ bool Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PAR
 	}
 	if ( !m_player.isReady || !m_enemy.isReady ) return false;
 
-	StepStart();
 	int petId;
 	if ( Battle::change == m_player.act || NULL == m_player.pCurPet )
 	{
@@ -310,7 +310,7 @@ bool Battle::PlayRound()
 	if ( !StepAttack() ) return false;
 	if ( !StepEnd() ) return false;
 	m_player.isReady = m_enemy.isReady = false;
-
+	StepStart();
 	return true;
 }
 
@@ -601,7 +601,7 @@ bool Battle::ChangePet(Battle::WARRIOR &player, int petId)
 	player.mieGe = 0;//中了灭亡歌
 	player.tiShen = 0;//替身生命
 	player.xunXing = false;//中寻衅
-	player.tiaoDou = -1;//挑逗回合
+	player.tiaoDou = 0;//挑逗回合
 	player.ban = false;//中封印
 	player.tongGui = false;//中同归
 	player.hunLuan = -1;//混乱剩余回合数

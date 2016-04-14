@@ -19,7 +19,7 @@ void PetFactory::SetGame(Game *game)
 data::PET PetFactory::Pet(const std::string &name)
 {
 	data::PET pet;
-	pet.id = 0;
+	pet.id = -1;
 	pet.synced = false;
 	data::BUDDY *pBuddy = Buddy(name, m_game->BuddyBook());
 	if ( NULL == pBuddy ) return pet;
@@ -42,42 +42,30 @@ data::PET PetFactory::Pet(const std::string &name)
 	pet.TGMuscle = 0;//特攻后天修炼
 	pet.TFMuscle = 0;//特防后天修炼
 	pet.SDMuscle = 0;//速度后天修炼
-	pet.skill1 = pet.skill2 = pet.skill3 = pet.skill4 = 0;
 	InitSkill(pet, pBuddy);
 	CalAbility(pet, pBuddy);
 
 	pet.synced = true;
+	pet.id = 1;
 
 	return pet;
 }
 
 void PetFactory::InitSkill(data::PET &pet, data::BUDDY *pBuddy)
 {
-	std::map<unsigned short, bool>::iterator it;
-	for ( it = pBuddy->skills.begin(); it != pBuddy->skills.end(); it++ )
+	pet.skill1 = pet.skill2 = pet.skill3 = pet.skill4 = 0;
+	std::map<unsigned short, bool>::iterator it = pBuddy->skills.begin();
+	data::SKILL *pSkill;
+	for ( ; it != pBuddy->skills.end(); it++ )
 	{
-		if ( !it->second ) continue;
-		if ( 0 == pet.skill1 ) 
-		{
-			pet.skill1 = it->first;
-			continue;
-		}
-		else if ( 0 == pet.skill2 ) 
-		{
-			pet.skill2 = it->first;
-			continue;
-		}
-		else if ( 0 == pet.skill3 ) 
-		{
-			pet.skill3 = it->first;
-			continue;
-		}
-		else if ( 0 == pet.skill4 ) 
-		{
-			pet.skill4 = it->first;
-			continue;
-		}
-		else return;
+		pSkill = Skill(it->first, m_game->SkillBook());
+		if ( !it->second && !SkillAble(pet, pSkill) ) continue;
+		if ( 0 >= pSkill->power ) continue;
+		if ( 0 == pet.skill1 ) pet.skill1 = pSkill->id;
+		else if ( 0 == pet.skill2 ) pet.skill2 = pSkill->id;
+		else if ( 0 == pet.skill3 ) pet.skill3 = pSkill->id;
+		else if ( 0 == pet.skill4 ) pet.skill4 = pSkill->id;
+		else break;
 	}
 
 	return;
@@ -212,10 +200,11 @@ bool PetFactory::SetSkill( data::PET &pet, const std::string name1, const std::s
 	data::BUDDY *pBuddy = Buddy(pet.number, m_game->BuddyBook());
 	if ( NULL == pBuddy ) return false;
 
+	data::SKILL *pSkill = NULL;
 	data::SKILL *pSkill1 = Skill(name1, m_game->SkillBook());
-	data::SKILL *pSkill2 = Skill(name1, m_game->SkillBook());
-	data::SKILL *pSkill3 = Skill(name1, m_game->SkillBook());
-	data::SKILL *pSkill4 = Skill(name1, m_game->SkillBook());
+	data::SKILL *pSkill2 = Skill(name2, m_game->SkillBook());
+	data::SKILL *pSkill3 = Skill(name3, m_game->SkillBook());
+	data::SKILL *pSkill4 = Skill(name4, m_game->SkillBook());
 	if ( NULL == pSkill1 || NULL == pSkill2 
 		|| NULL == pSkill3 || NULL == pSkill4 ) return false;
 	pet.skill1 = pet.skill2 = pet.skill3 = pet.skill4 = 0;
@@ -223,11 +212,12 @@ bool PetFactory::SetSkill( data::PET &pet, const std::string name1, const std::s
 	std::map<unsigned short, bool>::iterator it;
 	for ( it = pBuddy->skills.begin(); it != pBuddy->skills.end(); it++ )
 	{
-		if ( !it->second ) continue;
-		if ( pSkill1->id == it->first ) pet.skill1 = it->first;
-		if ( pSkill2->id == it->first ) pet.skill2 = it->first;
-		if ( pSkill3->id == it->first ) pet.skill3 = it->first;
-		if ( pSkill4->id == it->first ) pet.skill4 = it->first;
+		pSkill = Skill(it->first, m_game->SkillBook());
+		if ( !it->second && !SkillAble(pet, pSkill) ) continue;
+		if ( pSkill1 == pSkill ) pet.skill1 = it->first;
+		if ( pSkill2 == pSkill ) pet.skill2 = it->first;
+		if ( pSkill3 == pSkill ) pet.skill3 = it->first;
+		if ( pSkill4 == pSkill ) pet.skill4 = it->first;
 	}
 
 	return true;
@@ -296,4 +286,72 @@ bool PetFactory::AddMuscle(data::PET &pet, short add)
 	CalAbility(pet, pBuddy);
 
 	return true;
+}
+
+data::PET PetFactory::WildBuddy(data::BUDDY *pBuddy)
+{
+	data::PET pet;
+	pet = Pet(pBuddy->name);
+	if ( 0 > pet.id ) return pet;
+
+	//随机特性
+	int n = rand()%3;
+	if ( 0 == n ) pet.talent = pBuddy->talent1;
+	else if ( 1 == n ) pet.talent = pBuddy->talent2;
+	else pet.talent = pBuddy->talent3;
+	if ( 0 >= pet.talent ) pet.talent = pBuddy->talent1;
+	//随机性格
+	pet.nature = rand()%21;
+	//随机个体
+	n = rand()%7;
+	int i = 0;
+	int attr[7];
+	for ( i = 0; i < 6; i++ ) attr[i] = rand()%31;
+	for ( i = 0; i < n; i++ )
+	{
+		for ( ; true; )
+		{
+			int pos = rand()%6;
+			if ( 31 == attr[pos] ) continue;
+			attr[pos] = 31;
+			break;
+		}
+	}
+	if ( !SetHealthy(pet, attr[0], attr[1], attr[2], attr[3], attr[4], attr[5]) ) return pet;
+
+	pet.id = 1;//也怪每次出1只
+
+	return pet;
+}
+
+data::PET PetFactory::BestBuddy(const std::string &name)
+{
+	data::PET pet;
+	pet.id = -1;
+	data::BUDDY *pBuddy = Buddy(name, m_game->BuddyBook());
+	if ( NULL == pBuddy ) return pet;
+
+	pet = Pet(name);
+	if ( 0 > pet.id ) return pet;
+	if ( !SetHealthy(pet, 31, 31, 31, 31, 31, 31) ) return pet;
+
+	FullSkill(pet);
+	InitSkill(pet, pBuddy);
+	pet.id = 0;
+
+	return pet;
+}
+
+bool PetFactory::SkillAble(data::PET &pet, data::SKILL *pSkill)
+{
+	if ( NULL == pSkill ) return false;
+
+	int i = 0;
+	for ( i = 0; i < pet.race.size(); i++ )
+	{
+		if ( pSkill->race != pet.race[i] ) continue;
+		return true;
+	}
+
+	return false;
 }

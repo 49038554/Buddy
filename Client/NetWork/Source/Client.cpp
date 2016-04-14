@@ -66,7 +66,7 @@ void Client::Main()
 	if ( !m_game.IsInit() || !m_palyerDataLoaded ) return;
 	if ( Client::idle == m_state )
 	{
-		data::BUDDY *pBuddy= m_game.Encounter(m_mapId);
+//		data::BUDDY *pBuddy= m_game.Encounter(m_mapId);
 	}
 }
 
@@ -1306,6 +1306,22 @@ const char* Client::Ready(int battleId, Battle::Action act, short objectId)
 const char* Client::ChangePet(int battleId, short petId)
 {
 	const char *ret = m_game.ChangePet(battleId, true, petId);
+	if ( NULL != ret ) return ret;
+	return NULL;
+}
+
+const char* Client::SheReady(int battleId, Battle::Action act, short objectId)
+{
+	Battle::RAND_PARAM rp;
+	const char *ret = m_game.CheckReady(battleId, false, act, objectId, rp);
+	if ( NULL != ret ) return ret;
+	m_game.Ready(battleId, false, act, objectId, rp);
+	return NULL;
+}
+
+const char* Client::SheChangePet(int battleId, short petId)
+{
+	const char *ret = m_game.ChangePet(battleId, false, petId);
 	if ( NULL != ret ) return ret;
 	return NULL;
 }

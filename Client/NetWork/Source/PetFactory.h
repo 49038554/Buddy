@@ -10,8 +10,8 @@ public:
 	PetFactory();
 	virtual ~PetFactory();
 	void SetGame(Game *game);
-	data::PET Pet(const std::string &name);
-	void InitSkill(data::PET &pet, data::BUDDY *pBuddy);
+	data::PET Pet(const std::string &name); //pet.id<0Ê§°Ü
+	void InitSkill(data::PET &pet, data::BUDDY *pBuddy);//È«¹¥¼¼ÄÜ
 	void CalAbility(data::PET &pet, data::BUDDY *pBuddy);
 	void FullSkill(data::PET &pet);
 	bool AddSkill(data::PET &pet, Race::Race skill);
@@ -22,6 +22,12 @@ public:
 	bool SetMuscle(data::PET &pet, short hp, short wg, short wf, short tg, short tf, short sd );
 	bool SetSkill( data::PET &pet, const std::string name1, const std::string name2, const std::string name3, const std::string name4 );
 	bool AddMuscle(data::PET &pet, short add);
+
+	bool SkillAble(data::PET &pet, data::SKILL *pSkill);
+	//Ò°¹Ö
+	data::PET WildBuddy(data::BUDDY *pBuddy);//pet.id<0Ê§°Ü
+	//¼«Æ·
+	data::PET BestBuddy(const std::string &name);//pet.id<0Ê§°Ü
 
 private:
 	Game *m_game;

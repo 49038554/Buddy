@@ -249,6 +249,22 @@ char* OnCommand(std::vector<std::string> *param)
 		int id = g_cli.CreateBattle();
 		printf( "Õ½¶·(%d)¿ªÊ¼\n", id );
 	}
+	else if ( "ack" == cmd[0] )
+	{
+		if ( 3 > cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		int uId = 1;
+		if ( 4 == cmd.size() ) uId = 2;
+		int bId = atoi(cmd[1].c_str());
+		int oId = atoi(cmd[2].c_str());
+		const char *ret = NULL;
+		if ( 1 == uId ) ret = g_cli.Ready(bId, Battle::attack, oId);
+		else ret = g_cli.SheReady(bId, Battle::attack, oId);
+		if ( NULL != ret ) printf( "%s\n", ret );
+	}
 	else Helper();
 
 	return NULL;
@@ -271,4 +287,7 @@ void Helper()
 	printf( "\t\tuse itemId count\n" );
 	printf( "\t\tbuy itemId count\n" );
 	printf( "\t\teat itemId count\n" );
+	printf( "\t\tbattle\n" );
+	printf( "\t\tack battleId, skillId\n" );
+	printf( "\t\tchange battleId, petId\n" );
 }
