@@ -185,13 +185,13 @@
     <ClCompile Include="..\Source\Game.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Battle.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\PetFactory.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\BuddyWorld.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Battle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -350,13 +350,13 @@
     <ClInclude Include="..\Source\Game.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Battle.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\PetFactory.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\BuddyWorld.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Battle.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

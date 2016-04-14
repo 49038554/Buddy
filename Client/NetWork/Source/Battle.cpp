@@ -40,14 +40,19 @@ bool Battle::Init(Game *game, int id,
 		m_enemyInitPets.push_back(she[i]);
 		m_enemy.pets.push_back(she[i]);
 	}
-	m_player.pBuddy = Buddy(m_player.pets[0].number, m_game->BuddyBook());
-	if ( NULL == m_player.pBuddy ) return false;
-	m_player.pTalent = Talent(m_player.pets[0].talent, m_game->TalentBook());
-	if ( NULL == m_player.pTalent ) return false;
-	m_enemy.pBuddy = Buddy(m_enemy.pets[0].number, m_game->BuddyBook());
-	if ( NULL == m_enemy.pBuddy ) return false;
-	m_enemy.pTalent = Talent(m_enemy.pets[0].talent, m_game->TalentBook());
-	if ( NULL == m_enemy.pTalent ) return false;
+	const char *ret = SetPetInfo(m_player, m_player.pets[0].id);
+	if ( NULL != ret ) return false;
+	ret = SetPetInfo(m_enemy, m_enemy.pets[0].id);
+	if ( NULL != ret ) return false;
+
+//	m_player.pBuddy = Buddy(m_player.pets[0].number, m_game->BuddyBook());
+//	if ( NULL == m_player.pBuddy ) return false;
+//	m_player.pTalent = Talent(m_player.pets[0].talent, m_game->TalentBook());
+//	if ( NULL == m_player.pTalent ) return false;
+//	m_enemy.pBuddy = Buddy(m_enemy.pets[0].number, m_game->BuddyBook());
+//	if ( NULL == m_enemy.pBuddy ) return false;
+//	m_enemy.pTalent = Talent(m_enemy.pets[0].talent, m_game->TalentBook());
+//	if ( NULL == m_enemy.pTalent ) return false;
 
 	m_curRound = -1;
 	m_player.isReady = m_enemy.isReady = false;
@@ -155,8 +160,8 @@ const char* Battle::SetPetInfo(Battle::WARRIOR &player, int petId)
 			player.pTalent = Talent(player.pets[i].talent, m_game->TalentBook());
 			if ( NULL == player.pTalent ) return (reason = "特性不存在").c_str();
 			if ( 0 >= player.pets[i].curHP ) return (reason = "巴迪已失去战斗能力").c_str();
-			player.pItem = Item(player.pCurPet->itemId, m_game->ItemBook());
-			if ( NULL == player.pItem ) player.pItem == m_game->NullItem();
+			player.pItem = Item(player.pets[i].itemId, m_game->ItemBook());
+			if ( NULL == player.pItem ) player.pItem = m_game->NullItem();
 			return NULL;
 		}
 	}
@@ -571,7 +576,7 @@ bool Battle::ChangePet(Battle::WARRIOR &player, int petId)
 		if ( petId == player.pets[i].id )
 		{
 			player.pCurPet = &player.pets[i];
-			m_pCurRound->log.push_back("放出");
+			m_pCurRound->log.push_back(player.name + "放出" + player.pBuddy->name);
 			break;
 		}
 	}
