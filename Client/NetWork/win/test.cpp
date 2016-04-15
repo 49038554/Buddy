@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 	g_cli.Connect(Client::TcpSvr, "127.0.0.1", 6601);
 	g_cli.Start();
 
-	mdk::Console cmd("Buddy", 256);
+	mdk::Console cmd("ご主人は入ります", 256);
 	cmd.Start((mdk::FuntionPointer)OnCommand);
 	cmd.WaitStop();
 
@@ -253,7 +253,9 @@ char* OnCommand(std::vector<std::string> *param)
 			printf( "战斗初始化错误\n" );
 			return NULL;
 		}
-		printf( "战斗(%d)开始\n", battleId );
+		printf( "战斗(%d)开始： %s VS %s\n", battleId,
+			g_cli.Fighter(battleId, true)->name.c_str(),
+			g_cli.Fighter(battleId, false)->name.c_str() );
 		PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
 		PrintWarrior(g_cli.Fighter(battleId, false), g_cli.GetGame());
 	}
