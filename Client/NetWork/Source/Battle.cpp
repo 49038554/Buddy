@@ -378,17 +378,17 @@ bool Battle::StepAttack()
 			PetAction(m_player, m_enemy);
 			if ( WaitPlayerCMD() || m_player.lose || m_enemy.lose ) return false;
 		}
-		if ( Battle::attack == m_player.act && !m_player.isActioned )
+		if ( Battle::attack == m_enemy.act && !m_enemy.isActioned )
 		{
-			PetAction(m_enemy, m_player);
+			PetAction(m_player, m_enemy);
 			if ( WaitPlayerCMD() || m_player.lose || m_enemy.lose ) return false;
 		}
 	}
 	else 
 	{
-		if ( Battle::attack == m_player.act && !m_player.isActioned )
+		if ( Battle::attack == m_enemy.act && !m_enemy.isActioned )
 		{
-			PetAction(m_enemy, m_player);
+			PetAction(m_player, m_enemy);
 			if ( WaitPlayerCMD() || m_player.lose || m_enemy.lose ) return false;
 		}
 		if ( Battle::attack == m_player.act && !m_player.isActioned )

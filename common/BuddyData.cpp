@@ -216,3 +216,16 @@ double GetNatureCal(int nature, const std::string &attr)
 
 	return 1;
 }
+
+char* StateDes( char state )
+{
+	if ( Race::unknow == state ) return "Õı³£";
+	if ( Race::pu == state ) return "Ë¯";
+	if ( Race::bing == state ) return "±ù";
+	if ( Race::huo == state ) return "ÉÕ";
+	if ( Race::dian == state ) return "Âé";
+	if ( Race::du == state ) return "¶¾";
+	if ( Race::gui == state ) return "ÂÒ";
+	
+	return "Õı³£";
+}

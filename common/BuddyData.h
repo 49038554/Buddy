@@ -189,5 +189,6 @@ data::PET* Pet(int id, std::vector<data::PET> &pets);
 int GetNature(const std::string &add, const std::string &dec);
 double GetNatureCal(int nature, const std::string &attr);
 bool StrSame(const std::string &str1, const std::string &str2);
+char* StateDes( char state );
 
 #endif //BUDDY_DATA_H

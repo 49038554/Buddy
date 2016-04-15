@@ -319,7 +319,10 @@ void PrintWarrior(Battle::WARRIOR *pPlayer, Game *pGame)
 	}
 	data::PET *pPet = pPlayer->pCurPet;
 	if ( NULL == pPet ) pPet = &pPlayer->pets[0];
-	printf( "\t出场宠物\n\t%s\tid:%d\t(%s)\n", pPet->nick.c_str(), pPet->id, pPlayer->pBuddy->name.c_str() );
+	printf( "\t出场宠物\n\t\t%s\tid:%d\t(%s)(%s) %s HP:%d/%d 速度:%d\n", 
+		pPet->nick.c_str(), pPet->id, pPlayer->pBuddy->name.c_str(),
+		pPlayer->pItem->name.c_str(),
+		StateDes(pPet->state), pPet->curHP, pPet->HP, pPet->SD );
 	printf( "\t\t" );
 	data::SKILL *pSkill = Skill(pPet->skill1, pGame->SkillBook());
 	if ( NULL == pSkill ) printf("非法技能 (%d), ", pPet->skill1);
