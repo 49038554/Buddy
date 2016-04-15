@@ -334,7 +334,7 @@ void PrintWarrior(Battle::WARRIOR *pPlayer, Game *pGame)
 	if ( NULL == pSkill ) printf("非法技能 (%d), ", pPet->skill3);
 	else printf( "%s (%d), ", pSkill->name.c_str(), pPet->skill3 );
 	pSkill = Skill(pPet->skill4, pGame->SkillBook());
-	if ( NULL == pSkill ) printf("非法技能 (%d), ", pPet->skill4);
-	else printf( "%s (%d), ", pSkill->name.c_str(), pPet->skill4 );
+	if ( NULL == pSkill ) printf("非法技能 (%d) ", pPet->skill4);
+	else printf( "%s (%d) ", pSkill->name.c_str(), pPet->skill4 );
 	printf( "\n\n" );
 }
