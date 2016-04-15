@@ -1325,3 +1325,13 @@ const char* Client::SheChangePet(int battleId, short petId)
 	if ( NULL != ret ) return ret;
 	return NULL;
 }
+
+Game* Client::GetGame()
+{
+	return &m_game;
+}
+
+Battle::WARRIOR* Client::Fighter(int battleId, bool me)
+{
+	return m_game.Fighter(battleId, me);
+}

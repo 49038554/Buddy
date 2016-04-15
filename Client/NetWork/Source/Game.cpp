@@ -782,7 +782,11 @@ int Game::CreateBattle(unsigned int mePlayerId, const std::string &playerName,
 {
 	static int battleId = 0;
 	battleId++;
-	m_battles[battleId].Init(this, battleId, playerName, enemyName, mePlayerId, shePlayerId, me, she);
+	if ( !m_battles[battleId].Init(this, battleId, playerName, enemyName, mePlayerId, shePlayerId, me, she) )
+	{
+		battleId--;
+		return 0;
+	}
 	return battleId;
 }
 
@@ -798,7 +802,7 @@ int Game::CreateBattle(unsigned int mePlayerId,
 	pet = m_buddyWorld.Buddy001();
 	pet.id = id++;
 	she.push_back(pet);
-	pet = m_buddyWorld.Buddy001();
+	pet = m_buddyWorld.Buddy002();
 	pet.id = id++;
 	she.push_back(pet);
 
@@ -828,4 +832,11 @@ const char* Game::ChangePet(int battleId, bool me, short petId)
 	if ( m_battles.end() == m_battles.find(battleId) ) return "Õ½¶·²»´æÔÚ";
 	Battle &pBattle = m_battles[battleId];
 	return pBattle.ChangePet(me, petId);
+}
+
+Battle::WARRIOR* Game::Fighter(int battleId, bool me)
+{
+	if ( m_battles.end() == m_battles.find(battleId) ) return NULL;
+	Battle &pBattle = m_battles[battleId];
+	return pBattle.Player(me);
 }

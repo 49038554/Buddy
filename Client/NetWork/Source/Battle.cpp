@@ -45,14 +45,16 @@ bool Battle::Init(Game *game, int id,
 	ret = SetPetInfo(m_enemy, m_enemy.pets[0].id);
 	if ( NULL != ret ) return false;
 
-//	m_player.pBuddy = Buddy(m_player.pets[0].number, m_game->BuddyBook());
-//	if ( NULL == m_player.pBuddy ) return false;
-//	m_player.pTalent = Talent(m_player.pets[0].talent, m_game->TalentBook());
-//	if ( NULL == m_player.pTalent ) return false;
-//	m_enemy.pBuddy = Buddy(m_enemy.pets[0].number, m_game->BuddyBook());
-//	if ( NULL == m_enemy.pBuddy ) return false;
-//	m_enemy.pTalent = Talent(m_enemy.pets[0].talent, m_game->TalentBook());
-//	if ( NULL == m_enemy.pTalent ) return false;
+/*
+	m_player.pBuddy = Buddy(m_player.pets[0].number, m_game->BuddyBook());
+	if ( NULL == m_player.pBuddy ) return false;
+	m_player.pTalent = Talent(m_player.pets[0].talent, m_game->TalentBook());
+	if ( NULL == m_player.pTalent ) return false;
+	m_enemy.pBuddy = Buddy(m_enemy.pets[0].number, m_game->BuddyBook());
+	if ( NULL == m_enemy.pBuddy ) return false;
+	m_enemy.pTalent = Talent(m_enemy.pets[0].talent, m_game->TalentBook());
+	if ( NULL == m_enemy.pTalent ) return false;
+*/
 
 	m_curRound = -1;
 	m_player.isReady = m_enemy.isReady = false;
@@ -2659,4 +2661,10 @@ void Battle::PlayerEnd(Battle::WARRIOR &player, Battle::WARRIOR &enemy)
 	player.tongGui = false;//中同归
 	player.fear = false;//害怕
 	player.isActioned = false;//已经行动
+}
+
+Battle::WARRIOR* Battle::Player(bool me)
+{
+	if ( me ) return &m_player;
+	return &m_enemy;
 }

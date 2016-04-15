@@ -50,6 +50,9 @@ public:
 	const char* SheReady(int battleId, Battle::Action act, short objectId);
 	const char* SheChangePet(int battleId, short petId);
 
+	Game* GetGame();
+	Battle::WARRIOR* Fighter(int battleId, bool me);
+
 protected:
 	virtual void Main();
 	virtual void OnConnect(int svrType, net::Socket &svr);

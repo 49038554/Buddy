@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
 }
 
 void Helper();
+void PrintWarrior(Battle::WARRIOR *pPlayer, Game *pGame);
 char* OnCommand(std::vector<std::string> *param)
 {
 	std::vector<std::string> &cmd = *param;
@@ -246,8 +247,15 @@ char* OnCommand(std::vector<std::string> *param)
 			Helper();
 			return NULL;
 		}
-		int id = g_cli.CreateBattle();
-		printf( "战斗(%d)开始\n", id );
+		int battleId = g_cli.CreateBattle();
+		if ( 0 == battleId )
+		{
+			printf( "战斗初始化错误\n" );
+			return NULL;
+		}
+		printf( "战斗(%d)开始\n", battleId );
+		PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
+		PrintWarrior(g_cli.Fighter(battleId, false), g_cli.GetGame());
 	}
 	else if ( "ack" == cmd[0] )
 	{
@@ -290,4 +298,40 @@ void Helper()
 	printf( "\t\tbattle\n" );
 	printf( "\t\tack battleId, skillId\n" );
 	printf( "\t\tchange battleId, petId\n" );
+}
+
+void PrintWarrior(Battle::WARRIOR *pPlayer, Game *pGame)
+{
+	printf( "%s\n\t宠物列表\n", pPlayer->name.c_str() );
+	int i = 0;
+	data::BUDDY *pBuddy;
+	for ( i = 0; i < pPlayer->pets.size(); i++ )
+	{
+		pBuddy = Buddy(pPlayer->pets[i].number, pGame->BuddyBook());
+		if ( NULL == pBuddy )
+		{
+			printf( "\t\t不存在的宠物%s\tid:%d\t(%d)\n", pPlayer->pets[i].nick.c_str(), pPlayer->pets[i].number );
+			continue;
+		}
+		printf( "\t\t%s\tid:%d\t(%s)\n", pPlayer->pets[i].nick.c_str(),
+			pPlayer->pets[i].id,
+			pBuddy->name.c_str() );
+	}
+	data::PET *pPet = pPlayer->pCurPet;
+	if ( NULL == pPet ) pPet = &pPlayer->pets[0];
+	printf( "\t出场宠物\n\t%s\tid:%d\t(%s)\n", pPet->nick.c_str(), pPet->id, pPlayer->pBuddy->name.c_str() );
+	printf( "\t\t" );
+	data::SKILL *pSkill = Skill(pPet->skill1, pGame->SkillBook());
+	if ( NULL == pSkill ) printf("非法技能 (%d), ", pPet->skill1);
+	else printf( "%s (%d), ", pSkill->name.c_str(), pPet->skill1 );
+	pSkill = Skill(pPet->skill2, pGame->SkillBook());
+	if ( NULL == pSkill ) printf("非法技能 (%d), ", pPet->skill2);
+	else printf( "%s (%d), ", pSkill->name.c_str(), pPet->skill2 );
+	pSkill = Skill(pPet->skill3, pGame->SkillBook());
+	if ( NULL == pSkill ) printf("非法技能 (%d), ", pPet->skill3);
+	else printf( "%s (%d), ", pSkill->name.c_str(), pPet->skill3 );
+	pSkill = Skill(pPet->skill4, pGame->SkillBook());
+	if ( NULL == pSkill ) printf("非法技能 (%d), ", pPet->skill4);
+	else printf( "%s (%d), ", pSkill->name.c_str(), pPet->skill4 );
+	printf( "\n\n" );
 }

@@ -52,6 +52,8 @@ public:
 						short objectId, Battle::RAND_PARAM &rp);
 	const char* ChangePet(int battleId, bool me, short petId);//¸ü»»°ÍµÏ
 
+	Battle::WARRIOR* Game::Fighter(int battleId, bool me);
+
 private:
 	bool LoadGameInit();
 	bool SaveGameInit();

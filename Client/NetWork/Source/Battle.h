@@ -36,27 +36,6 @@ public:
 		unsigned char	hurt;//伤害随机数217~255
 		unsigned char	speed;//速度随机数
 	}RAND_PARAM;
-	const char* CheckReady(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
-	bool Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
-	const char* ChangePet(bool me, short petId);
-	bool IsEnd();
-
-private:
-	typedef struct ROUND
-	{
-		Action	me;
-		int		meObjectId;
-		RAND_PARAM	meRP;
-		std::vector<short> mePetId;
-
-		Action	she;
-		int		sheObjectId;
-		RAND_PARAM	sheRP;
-		std::vector<short> shePetId;
-
-		std::vector<std::string> log;
-	}ROUND;
-
 	typedef struct WARRIOR
 	{
 		unsigned int			playerId;
@@ -118,6 +97,28 @@ private:
 		int		objId;
 		RAND_PARAM rp;
 	}WARRIOR;
+	Battle::WARRIOR* Player(bool me);
+	const char* CheckReady(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	bool Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	const char* ChangePet(bool me, short petId);
+	bool IsEnd();
+
+private:
+	typedef struct ROUND
+	{
+		Action	me;
+		int		meObjectId;
+		RAND_PARAM	meRP;
+		std::vector<short> mePetId;
+
+		Action	she;
+		int		sheObjectId;
+		RAND_PARAM	sheRP;
+		std::vector<short> shePetId;
+
+		std::vector<std::string> log;
+	}ROUND;
+
 
 	const char* SetPetInfo(Battle::WARRIOR &player, int petId);
 	bool PlayRound();//完成返回true,中断返回false
