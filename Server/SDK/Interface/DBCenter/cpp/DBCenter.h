@@ -10,10 +10,10 @@
 #include "Protocl/cpp/Object/SNS/SetUserData.h"
 #include "mdk/Lock.h"
 
-#include "Protocl/cpp/Object/Game/SkillBook.h"
-#include "Protocl/cpp/Object/Game/ItemBook.h"
-#include "Protocl/cpp/Object/Game/BuddyBook.h"
-#include "Protocl/cpp/Object/Game/BuddyMap.h"
+#include "Protocl/cpp/Object/DBEntry/SkillBook.h"
+#include "Protocl/cpp/Object/DBEntry/ItemBook.h"
+#include "Protocl/cpp/Object/DBEntry/BuddyBook.h"
+#include "Protocl/cpp/Object/DBEntry/BuddyMap.h"
 
 #include <vector>
 #include <string>

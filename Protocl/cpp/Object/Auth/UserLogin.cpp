@@ -26,6 +26,7 @@ bool UserLogin::Build(bool isResult)
 	if (!isResult || ResultCode::Success != m_code) return true;
 
 	if (!AddData(m_userId)) return false; // ”√ªßid
+	if (!AddData(m_nick)) return false; // Í«≥∆
 
 	return true;
 }
@@ -45,6 +46,7 @@ bool UserLogin::Parse(void)
 	if (!IsResult() || ResultCode::Success != m_code) return true;
 
 	if (!GetData(m_userId)) return false;
+	if (!GetData(m_nick)) return false;
 
 	return true;
 }

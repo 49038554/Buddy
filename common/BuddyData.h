@@ -117,6 +117,7 @@ namespace data
 	typedef struct PLAYER
 	{
 		unsigned int					playerId;
+		std::string						nick;
 		int								coin;
 		char							petCount;
 		short							pet[6];

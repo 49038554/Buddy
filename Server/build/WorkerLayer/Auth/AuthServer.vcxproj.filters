@@ -122,6 +122,24 @@
     <ClCompile Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.cpp">
       <Filter>Interface\DBCenter</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.cpp">
+      <Filter>Message\Object\DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.cpp">
+      <Filter>Message\Object\DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.cpp">
+      <Filter>Message\Object\DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.cpp">
+      <Filter>Message\Object\DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.cpp">
+      <Filter>Message\Object\DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.cpp">
+      <Filter>Message\Object\DataBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h">
@@ -201,6 +219,24 @@
     </ClInclude>
     <ClInclude Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.h">
       <Filter>Interface\DBCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.h">
+      <Filter>Message\Object\DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.h">
+      <Filter>Message\Object\DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.h">
+      <Filter>Message\Object\DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.h">
+      <Filter>Message\Object\DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.h">
+      <Filter>Message\Object\DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.h">
+      <Filter>Message\Object\DataBase</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

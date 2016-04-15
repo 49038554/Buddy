@@ -20,6 +20,12 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\UserLogin.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\UserLogout.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRegister.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp" />
     <ClCompile Include="..\..\..\SDK\common\common.cpp" />
@@ -47,6 +53,12 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\UserLogin.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\UserLogout.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Auth\UserRegister.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Protocl.h" />

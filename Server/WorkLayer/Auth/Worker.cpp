@@ -268,10 +268,12 @@ bool Worker::OnUserLogin(mdk::NetHost& host, msg::Buffer& buffer)
 		{
 			msg.m_code = ResultCode::DBError;
 			msg.m_reason = "保存登录状态失败！";
+			break;
 		}
 
 		// 成功，填充回复消息
 		msg.m_userId = userId;
+		msg.m_nick = userInfo.nickName;
 	}
 	while (false);
 	if ( ResultCode::Success != msg.m_code )

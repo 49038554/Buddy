@@ -17,7 +17,8 @@ public:
 	std::string              m_pwd;         // 密码md5(明文)
 
 	// 回应参数
-	unsigned int			m_userId; // 用户id
+	unsigned int			m_userId;	// 用户id
+	std::string				m_nick;		// 昵称
 
 public:
 	UserLogin(void);

@@ -205,6 +205,7 @@ void Client::OnLogin(msg::Buffer &buffer)
 		m_items.clear();
 		m_pets.clear();
 	}
+	m_player.nick = msg.m_nick;
 	if ( !m_palyerDataLoaded )//œ¬‘ÿ
 	{
 		msg::GetPlayerData msg;
@@ -942,7 +943,18 @@ bool Client::SaveGame()
 	mdk::File db("D:/data", "player.db");
 
 	if ( mdk::File::success != db.Open(mdk::File::write, mdk::File::assii) ) return false;
-	db.Write(&m_player, sizeof(data::PLAYER));
+
+	db.Write(&m_player.playerId, sizeof(unsigned int));
+	db.Write(&m_player.coin, sizeof(int));
+	db.Write(&m_player.petCount, sizeof(char));
+	db.Write(&m_player.pet[6], sizeof(short));
+	db.Write(&m_player.lastLuckTime, sizeof(time_t));
+	db.Write(&m_player.luckCoin, sizeof(short));
+	db.Write(&m_player.synced, sizeof(bool));
+	short len = m_player.nick.size();
+	db.Write(&len, sizeof(short));
+	db.Write((void*)m_player.nick.c_str(), len);
+
 	SaveItems(db, m_items);//
 	SavePets(db, m_pets);//
 
@@ -954,7 +966,19 @@ bool Client::LoadGame()
 	mdk::File db("D:/data", "player.db");
 
 	if ( mdk::File::success != db.Open(mdk::File::read, mdk::File::assii) ) return false;
-	if ( mdk::File::success != db.Read(&m_player, sizeof(data::PLAYER)) ) return false;
+	if ( mdk::File::success != db.Read(&m_player.playerId, sizeof(unsigned int)) ) return false;
+	if ( mdk::File::success != db.Read(&m_player.coin, sizeof(int)) ) return false;
+	if ( mdk::File::success != db.Read(&m_player.petCount, sizeof(char)) ) return false;
+	if ( mdk::File::success != db.Read(&m_player.pet[6], sizeof(short)) ) return false;
+	if ( mdk::File::success != db.Read(&m_player.lastLuckTime, sizeof(time_t)) ) return false;
+	if ( mdk::File::success != db.Read(&m_player.luckCoin, sizeof(short)) ) return false;
+	if ( mdk::File::success != db.Read(&m_player.synced, sizeof(bool)) ) return false;
+	short len = 0;
+	if ( mdk::File::success != db.Read(&len, sizeof(short)) ) return false;
+	char buf[256];
+	if ( mdk::File::success != db.Read(buf, len) ) return false;
+	buf[len] = 0;
+	m_player.nick = buf;
 	int ret = LoadItems(db, m_items);//
 	if ( 0 != ret ) return false;
 	ret = LoadPets(db, m_pets);//
@@ -969,7 +993,9 @@ void Client::OnPlayer(msg::Buffer &buffer)
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
 	time_t t = m_player.lastLuckTime;
+	std::string nick = m_player.nick;
 	m_player = msg.m_player;
+	m_player.nick = nick;
 	m_player.lastLuckTime = t;
 	m_player.synced = true;
 }
@@ -1286,12 +1312,12 @@ void Client::SetLBS(int mapId)
 int Client::CreateBattle( unsigned int shePlayerId, const std::string &enemyName,
 	std::vector<data::PET> &she)
 {
-	return m_game.CreateBattle(m_player.playerId, "≈≠œ…–∞", m_pets, shePlayerId, enemyName, she);
+	return m_game.CreateBattle(m_player.playerId, m_player.nick, m_pets, shePlayerId, enemyName, she);
 }
 
 int Client::CreateBattle()
 {
-	return m_game.CreateBattle(m_player.playerId, "≈≠œ…–∞", m_pets);
+	return m_game.CreateBattle(m_player.playerId, m_player.nick, m_pets);
 }
 
 const char* Client::Ready(int battleId, Battle::Action act, short objectId)

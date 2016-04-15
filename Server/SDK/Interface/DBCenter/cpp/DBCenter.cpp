@@ -1,6 +1,6 @@
 #include "DBCenter.h"
-#include "Protocl/cpp/Object/Game/SetupVersion.h"
-#include "Protocl/cpp/Object/Game/RaceMap.h"
+#include "Protocl/cpp/Object/DBEntry/SetupVersion.h"
+#include "Protocl/cpp/Object/DBEntry/RaceMap.h"
 
 //将一个整数存储到字节流buf，按照小端字节序(低位在前，高位在后)
 static void itomemSmall( unsigned char *buf, uint64 value, int size )
@@ -219,7 +219,6 @@ bool DBCenter::GetGameSetupData(
 				Close();
 				return false;
 			}
-			raceVersion = reply.m_raceVersion;
 			races = reply.m_races;
 		}
 		else if ( MsgId::skillBook == buf.Id() )
@@ -231,7 +230,6 @@ bool DBCenter::GetGameSetupData(
 				Close();
 				return false;
 			}
-			skillVersion = reply.m_skillVersion;
 			count = reply.m_skills.size();
 			for ( i = 0; i < count; i++ ) skills.push_back(reply.m_skills[i]);
 		}
@@ -244,7 +242,6 @@ bool DBCenter::GetGameSetupData(
 				Close();
 				return false;
 			}
-			itemVersion = reply.m_itemVersion;
 			count = reply.m_items.size();
 			for ( i = 0; i < count; i++ ) items.push_back(reply.m_items[i]);
 		}
@@ -257,7 +254,6 @@ bool DBCenter::GetGameSetupData(
 				Close();
 				return false;
 			}
-			buddyVersion = reply.m_buddyVersion;
 			count = reply.m_buddys.size();
 			for ( i = 0; i < count; i++ ) buddys.push_back(reply.m_buddys[i]);
 		}
@@ -270,7 +266,6 @@ bool DBCenter::GetGameSetupData(
 				Close();
 				return false;
 			}
-			lbsVersion = reply.m_lbsVersion;
 			count = reply.m_buddyMaps.size();
 			for ( i = 0; i < count; i++ ) buddyMaps.push_back(reply.m_buddyMaps[i]);
 		}
