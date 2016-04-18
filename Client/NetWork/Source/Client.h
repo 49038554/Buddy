@@ -44,6 +44,7 @@ public:
 	int CreateBattle( unsigned int shePlayerId, const std::string &enemyName,
 		std::vector<data::PET> &she);//对战
 	int CreateBattle();//野战
+	bool Log( int battleId, std::vector<std::string> &log );
 	const char* Ready(int battleId, Battle::Action act, short objectId);//操作完成，准备
 	const char* ChangePet(int battleId, short petId);//更换巴迪
 	//对方行动

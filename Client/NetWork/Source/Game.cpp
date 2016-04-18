@@ -818,6 +818,13 @@ const char* Game::CheckReady(int battleId, bool me, Battle::Action act, short ob
 	return pBattle.CheckReady(me, act, objectId, rp);
 }
 
+bool Game::Log( int battleId, std::vector<std::string> &log )
+{
+	if ( m_battles.end() == m_battles.find(battleId) ) return false;
+	Battle &pBattle = m_battles[battleId];
+	return pBattle.Log(log);
+}
+
 bool Game::Ready(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;
@@ -840,3 +847,4 @@ Battle::WARRIOR* Game::Fighter(int battleId, bool me)
 	Battle &pBattle = m_battles[battleId];
 	return pBattle.Player(me);
 }
+

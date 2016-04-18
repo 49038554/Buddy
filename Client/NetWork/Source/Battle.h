@@ -102,6 +102,7 @@ public:
 	bool Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
 	const char* ChangePet(bool me, short petId);
 	bool IsEnd();
+	bool Log( std::vector<std::string> &log );
 
 private:
 	typedef struct ROUND
@@ -117,6 +118,7 @@ private:
 		std::vector<short> shePetId;
 
 		std::vector<std::string> log;
+		int	showPos;
 	}ROUND;
 
 

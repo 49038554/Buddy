@@ -45,17 +45,6 @@ bool Battle::Init(Game *game, int id,
 	ret = SetPetInfo(m_enemy, m_enemy.pets[0].id);
 	if ( NULL != ret ) return false;
 
-/*
-	m_player.pBuddy = Buddy(m_player.pets[0].number, m_game->BuddyBook());
-	if ( NULL == m_player.pBuddy ) return false;
-	m_player.pTalent = Talent(m_player.pets[0].talent, m_game->TalentBook());
-	if ( NULL == m_player.pTalent ) return false;
-	m_enemy.pBuddy = Buddy(m_enemy.pets[0].number, m_game->BuddyBook());
-	if ( NULL == m_enemy.pBuddy ) return false;
-	m_enemy.pTalent = Talent(m_enemy.pets[0].talent, m_game->TalentBook());
-	if ( NULL == m_enemy.pTalent ) return false;
-*/
-
 	m_curRound = -1;
 	m_player.isReady = m_enemy.isReady = false;
 	m_player.pCurPet = NULL;
@@ -145,7 +134,15 @@ bool Battle::Init(Game *game, int id,
 	m_weather = 0;
 	m_weatherCount = 0;
 
-	StepStart();
+	Battle::ROUND round;
+	m_log.push_back(round);
+	m_curRound++;
+	m_pCurRound = &m_log[m_curRound];
+	m_pCurRound->showPos = 0;
+	m_player.isChanged = ChangePet(m_player, m_player.pets[0].id);
+	m_enemy.isChanged = ChangePet(m_enemy, m_enemy.pets[0].id);
+	StepChange();
+
 	return true;
 }
 
@@ -276,6 +273,7 @@ bool Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PAR
 		else petId = m_enemy.pets[0].id;
 		m_enemy.isChanged = ChangePet(m_enemy, petId);
 	}
+	StepStart();
 	PlayRound();
 
 	return true;
@@ -317,7 +315,7 @@ bool Battle::PlayRound()
 	if ( !StepAttack() ) return false;
 	if ( !StepEnd() ) return false;
 	m_player.isReady = m_enemy.isReady = false;
-	StepStart();
+
 	return true;
 }
 
@@ -328,14 +326,28 @@ bool Battle::IsEnd()
 	return false;
 }
 
+bool Battle::Log( std::vector<std::string> &log )
+{
+	log.clear();
+	for ( ; m_pCurRound->showPos < m_pCurRound->log.size(); m_pCurRound->showPos++ )
+	{
+		log.push_back(m_pCurRound->log[m_pCurRound->showPos]);
+	}
+	if ( 0 >= log.size() ) return false;
+
+	return true;
+}
+
 void Battle::StepStart()
 {
 	Battle::ROUND round;
 	m_log.push_back(round);
 	m_curRound++;
 	m_pCurRound = &m_log[m_curRound];
+	
 
 	m_pCurRound->log.push_back("回合开始");
+	m_pCurRound->showPos = 0;
 	m_player.isActioned = false;
 	m_enemy.isActioned = false;
 }
@@ -2098,7 +2110,7 @@ bool Battle::LaunchState(Battle::WARRIOR &player)
 		m_pCurRound->log.push_back( m_player.pCurPet->nick + "麻痹了，不能行动" );
 	}
 
-	return true;
+	return false;
 }
 
 bool Battle::Medication(Battle::WARRIOR &player)

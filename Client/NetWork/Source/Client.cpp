@@ -1320,6 +1320,11 @@ int Client::CreateBattle()
 	return m_game.CreateBattle(m_player.playerId, m_player.nick, m_pets);
 }
 
+bool Client::Log( int battleId, std::vector<std::string> &log )
+{
+	return m_game.Log(battleId, log);
+}
+
 const char* Client::Ready(int battleId, Battle::Action act, short objectId)
 {
 	Battle::RAND_PARAM rp;

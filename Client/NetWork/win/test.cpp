@@ -35,6 +35,8 @@ int main(int argc, char* argv[])
 
 void Helper();
 void PrintWarrior(Battle::WARRIOR *pPlayer, Game *pGame);
+void ShowLog(int battleId);
+
 char* OnCommand(std::vector<std::string> *param)
 {
 	std::vector<std::string> &cmd = *param;
@@ -258,6 +260,7 @@ char* OnCommand(std::vector<std::string> *param)
 			g_cli.Fighter(battleId, false)->name.c_str() );
 		PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
 		PrintWarrior(g_cli.Fighter(battleId, false), g_cli.GetGame());
+		ShowLog(battleId);
 	}
 	else if ( "ack" == cmd[0] )
 	{
@@ -274,6 +277,7 @@ char* OnCommand(std::vector<std::string> *param)
 		if ( 1 == uId ) ret = g_cli.Ready(bId, Battle::attack, oId);
 		else ret = g_cli.SheReady(bId, Battle::attack, oId);
 		if ( NULL != ret ) printf( "%s\n", ret );
+		ShowLog(bId);
 	}
 	else Helper();
 
@@ -339,4 +343,16 @@ void PrintWarrior(Battle::WARRIOR *pPlayer, Game *pGame)
 	if ( NULL == pSkill ) printf("非法技能 (%d) ", pPet->skill4);
 	else printf( "%s (%d) ", pSkill->name.c_str(), pPet->skill4 );
 	printf( "\n\n" );
+}
+
+void ShowLog(int battleId)
+{
+	std::vector<std::string> log;
+	if ( !g_cli.Log(battleId, log) ) return;
+
+	int i = 0;
+	for ( i = 0; i < log.size(); i++ )
+	{
+		printf( "%s\n", log[i].c_str() );
+	}
 }
