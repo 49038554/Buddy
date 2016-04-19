@@ -34,8 +34,10 @@ int main(int argc, char* argv[])
 }
 
 void Helper();
+void PrintPets(Battle::WARRIOR *pPlayer, Game *pGame);
 void PrintWarrior(Battle::WARRIOR *pPlayer, Game *pGame);
-void ShowLog(int battleId);
+void PrintUI(int battleId);
+bool ShowLog(int battleId);
 
 char* OnCommand(std::vector<std::string> *param)
 {
@@ -258,9 +260,8 @@ char* OnCommand(std::vector<std::string> *param)
 		printf( "战斗(%d)开始： %s VS %s\n", battleId,
 			g_cli.Fighter(battleId, true)->name.c_str(),
 			g_cli.Fighter(battleId, false)->name.c_str() );
-		PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
-		PrintWarrior(g_cli.Fighter(battleId, false), g_cli.GetGame());
 		ShowLog(battleId);
+		PrintUI(battleId);
 	}
 	else if ( "ack" == cmd[0] )
 	{
@@ -271,13 +272,70 @@ char* OnCommand(std::vector<std::string> *param)
 		}
 		int uId = 1;
 		if ( 4 == cmd.size() ) uId = 2;
-		int bId = atoi(cmd[1].c_str());
+		int battleId = atoi(cmd[1].c_str());
 		int oId = atoi(cmd[2].c_str());
 		const char *ret = NULL;
-		if ( 1 == uId ) ret = g_cli.Ready(bId, Battle::attack, oId);
-		else ret = g_cli.SheReady(bId, Battle::attack, oId);
+		if ( 1 == uId ) ret = g_cli.Ready(battleId, Battle::attack, oId);
+		else ret = g_cli.SheReady(battleId, Battle::attack, oId);
 		if ( NULL != ret ) printf( "%s\n", ret );
-		ShowLog(bId);
+		if ( ShowLog(battleId) )
+		{
+			PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
+			PrintWarrior(g_cli.Fighter(battleId, false), g_cli.GetGame());
+		}
+	}
+	else if ( "change" == cmd[0] )
+	{
+		if ( 3 > cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		int uId = 1;
+		if ( 4 == cmd.size() ) uId = 2;
+		int battleId = atoi(cmd[1].c_str());
+		int oId = atoi(cmd[2].c_str());
+		const char *ret = NULL;
+		if ( 1 == uId ) ret = g_cli.Ready(battleId, Battle::change, oId);
+		else ret = g_cli.SheReady(battleId, Battle::change, oId);
+		if ( NULL != ret ) printf( "%s\n", ret );
+		ShowLog(battleId);
+		if ( ShowLog(battleId) )
+		{
+			PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
+			PrintWarrior(g_cli.Fighter(battleId, false), g_cli.GetGame());
+		}
+	}
+	else if ( "send" == cmd[0] )
+	{
+		if ( 3 > cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		int uId = 1;
+		if ( 4 == cmd.size() ) uId = 2;
+		int battleId = atoi(cmd[1].c_str());
+		int oId = atoi(cmd[2].c_str());
+		const char *ret = NULL;
+		if ( 1 == uId ) ret = g_cli.ChangePet(battleId, oId);
+		else ret = g_cli.SheChangePet(battleId, oId);
+		if ( NULL != ret ) printf( "%s\n", ret );
+		ShowLog(battleId);
+		PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
+		PrintWarrior(g_cli.Fighter(battleId, false), g_cli.GetGame());
+	}
+	else if ( "pets" == cmd[0] )
+	{
+		if ( 2 > cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		bool me = true;
+		if ( 3 == cmd.size() ) me = false;
+		int battleId = atoi(cmd[1].c_str());
+		PrintPets(g_cli.Fighter(battleId, me), g_cli.GetGame());
 	}
 	else Helper();
 
@@ -302,34 +360,22 @@ void Helper()
 	printf( "\t\tbuy itemId count\n" );
 	printf( "\t\teat itemId count\n" );
 	printf( "\t\tbattle\n" );
-	printf( "\t\tack battleId, skillId\n" );
-	printf( "\t\tchange battleId, petId\n" );
+	printf( "\t\tack battleId skillId [she]\n" );
+	printf( "\t\tchange battleId petId [she]\n" );
+	printf( "\t\tsend battleId petId [she]\n" );
+	printf( "\t\tpets battleId [she]\n" );
 }
 
 void PrintWarrior(Battle::WARRIOR *pPlayer, Game *pGame)
 {
-	printf( "%s\n\t宠物列表\n", pPlayer->name.c_str() );
-	int i = 0;
-	data::BUDDY *pBuddy;
-	for ( i = 0; i < pPlayer->pets.size(); i++ )
-	{
-		pBuddy = Buddy(pPlayer->pets[i].number, pGame->BuddyBook());
-		if ( NULL == pBuddy )
-		{
-			printf( "\t\t不存在的宠物%s\tid:%d\t(%d)\n", pPlayer->pets[i].nick.c_str(), pPlayer->pets[i].number );
-			continue;
-		}
-		printf( "\t\t%s\tid:%d\t(%s)\n", pPlayer->pets[i].nick.c_str(),
-			pPlayer->pets[i].id,
-			pBuddy->name.c_str() );
-	}
 	data::PET *pPet = pPlayer->pCurPet;
 	if ( NULL == pPet ) pPet = &pPlayer->pets[0];
-	printf( "\t出场宠物\n\t\t%s\tid:%d\t(%s)(%s) %s HP:%d/%d 速度:%d\n", 
+	printf( "%s\t出场宠物\n\t%s\tid:%d\t(%s)(%s) %s HP:%d/%d 速度:%d\n",
+		pPlayer->name.c_str(),
 		pPet->nick.c_str(), pPet->id, pPlayer->pBuddy->name.c_str(),
 		pPlayer->pItem->name.c_str(),
-		StateDes(pPet->state), pPet->curHP, pPet->HP, pPet->SD );
-	printf( "\t\t" );
+		0 >= pPet->curHP?"休克":StateDes(pPet->state), pPet->curHP, pPet->HP, pPet->SD );
+	printf( "\t" );
 	data::SKILL *pSkill = Skill(pPet->skill1, pGame->SkillBook());
 	if ( NULL == pSkill ) printf("非法技能 (%d), ", pPet->skill1);
 	else printf( "%s (%d), ", pSkill->name.c_str(), pPet->skill1 );
@@ -345,14 +391,51 @@ void PrintWarrior(Battle::WARRIOR *pPlayer, Game *pGame)
 	printf( "\n\n" );
 }
 
-void ShowLog(int battleId)
+void PrintPets(Battle::WARRIOR *pPlayer, Game *pGame)
+{
+	printf( "%s\t宠物列表\n", pPlayer->name.c_str() );
+	int i = 0;
+	data::BUDDY *pBuddy;
+	for ( i = 0; i < pPlayer->pets.size(); i++ )
+	{
+		pBuddy = Buddy(pPlayer->pets[i].number, pGame->BuddyBook());
+		if ( NULL == pBuddy )
+		{
+			printf( "\t不存在的宠物%s\tid:%d\t(%d)\n", pPlayer->pets[i].nick.c_str(), pPlayer->pets[i].number );
+			continue;
+		}
+		printf( "\t%s\tid:%d\t(%s)\n", pPlayer->pets[i].nick.c_str(),
+			pPlayer->pets[i].id,
+			pBuddy->name.c_str() );
+	}
+	printf( "\n\n" );
+}
+
+void PrintUI(int battleId)
+{
+	PrintPets(g_cli.Fighter(battleId, true), g_cli.GetGame());
+	PrintPets(g_cli.Fighter(battleId, false), g_cli.GetGame());
+
+	if ( 0 < g_cli.Fighter(battleId, true)->pCurPet->curHP )
+	{
+		PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
+	}
+	if ( 0 < g_cli.Fighter(battleId, false)->pCurPet->curHP )
+	{
+		PrintWarrior(g_cli.Fighter(battleId, false), g_cli.GetGame());
+	}
+}
+
+bool ShowLog(int battleId)
 {
 	std::vector<std::string> log;
-	if ( !g_cli.Log(battleId, log) ) return;
+	if ( !g_cli.Log(battleId, log) ) return false;
 
 	int i = 0;
 	for ( i = 0; i < log.size(); i++ )
 	{
 		printf( "%s\n", log[i].c_str() );
 	}
+
+	return true;
 }
