@@ -17,6 +17,14 @@ public:
 
 	data::PET Buddy001();
 	data::PET Buddy002();
+	data::PET Buddy003();
+	data::PET Buddy006();
+	data::PET Buddy008();
+	data::PET Buddy023();
+	data::PET Buddy026();
+	data::PET Buddy095();
+	data::PET Buddy103();
+	data::PET Buddy110();
 
 
 private:
