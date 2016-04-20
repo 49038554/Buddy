@@ -46,6 +46,14 @@ Client::Client(void)
 {
 	m_palyerDataLoaded = LoadGame();
 	m_mapId = 5;
+	PetFactory pf;
+	pf.SetGame(&m_game);
+	data::PET pet = pf.Pet("Ğü¸¡Ä§Å¼");
+	pf.SetSkill(pet, "´ó±¬Õ¨", "ÈöÁâ", "ÇçÌì", "ÇóÓê");
+	m_pets[4].skill1 = pet.skill1;
+	m_pets[4].skill2 = pet.skill2;
+	m_pets[4].skill3 = pet.skill3;
+	m_pets[4].skill4 = pet.skill4;
 }
 
 Client::~Client(void)

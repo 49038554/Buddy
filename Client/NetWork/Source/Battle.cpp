@@ -151,6 +151,8 @@ bool Battle::Init(Game *game, int id,
 const char* Battle::SetPetInfo(Battle::WARRIOR &player, int petId)
 {
 	static std::string reason;
+	player.pSkill = NULL;
+
 	int i = 0;
 	for ( i = 0; i < player.pets.size(); i++ )
 	{
@@ -197,6 +199,7 @@ const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Batt
 	}
 	if ( Battle::useItem == act ) 
 	{
+		player.pSkill = NULL;
 		player.defensed = false;
 		player.rest = false;
 		player.pUseItem = Item(objectId, m_game->ItemBook());
@@ -238,6 +241,7 @@ bool Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PAR
 	}
 	if ( Battle::useItem == act ) 
 	{
+		player.pSkill = NULL;
 		player.pUseItem = Item(objectId, m_game->ItemBook());
 		if ( NULL == player.pUseItem ) return false;
 	}
@@ -726,6 +730,7 @@ bool Battle::IsUnwait(Battle::WARRIOR &player)
 
 bool Battle::IsWait(Battle::WARRIOR &player)
 {
+	if ( NULL == player.pSkill ) return false;
 	if ( "飘花淡雪浮香吹" == player.pSkill->name ) return true;
 	if ( "吹飞" == player.pSkill->name ) return true;
 	if ( "吼叫" == player.pSkill->name ) return true;
@@ -1271,6 +1276,10 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 {
 	m_pCurRound->log.push_back(playerAck.pCurPet->nick + "使用了" + playerAck.pSkill->name);
 	playerAck.lockSkill = playerAck.pSkill->id;
+	if ( "保护" == playerAck.pSkill->name || "忍耐" == playerAck.pSkill->name )
+	{
+		if ( !playerAck.defensed ) m_pCurRound->log.push_back("但是失败了");
+	}
 
 	//非攻击技能
 	if ( 2 == playerAck.pSkill->type ) 

@@ -805,8 +805,18 @@ int Game::CreateBattle(unsigned int mePlayerId,
 	pet = m_buddyWorld.Buddy002();
 	pet.id = id++;
 	she.push_back(pet);
-
-
+	pet = m_buddyWorld.Buddy003();
+	pet.id = id++;
+	she.push_back(pet);
+	pet = m_buddyWorld.Buddy006();
+	pet.id = id++;
+	she.push_back(pet);
+	pet = m_buddyWorld.Buddy008();
+	pet.id = id++;
+	she.push_back(pet);
+	pet = m_buddyWorld.Buddy023();
+	pet.id = id++;
+	she.push_back(pet);
 
 	return CreateBattle(mePlayerId, playerName, me, shePlayerId, enemyName, she);
 }

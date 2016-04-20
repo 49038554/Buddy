@@ -299,7 +299,6 @@ char* OnCommand(std::vector<std::string> *param)
 		if ( 1 == uId ) ret = g_cli.Ready(battleId, Battle::change, oId);
 		else ret = g_cli.SheReady(battleId, Battle::change, oId);
 		if ( NULL != ret ) printf( "%s\n", ret );
-		ShowLog(battleId);
 		if ( ShowLog(battleId) )
 		{
 			PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
