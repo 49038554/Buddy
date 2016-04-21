@@ -2301,6 +2301,19 @@ bool Battle::AttackEffect(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef
 			playerAck.wg++;
 			m_pCurRound->log.push_back(playerAck.pCurPet->nick + "攻击上升了");
 		}
+		if ( 120 == playerAck.pSkill->effects[i].id ) //清场
+		{
+			if ( playerAck.nail[Race::di] )
+			{
+				playerAck.nail[Race::di] = false;
+				m_pCurRound->log.push_back(playerAck.name + "场上钉子被清除干净了");
+			}
+			if ( playerAck.seed )
+			{
+				playerAck.seed = false;
+				m_pCurRound->log.push_back(playerAck.pCurPet->nick + "拜托了种子");
+			}
+		}
 	}
 
 	if ( 0 < playerDef.pCurPet->curHP
