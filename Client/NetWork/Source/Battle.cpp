@@ -132,7 +132,7 @@ bool Battle::Init(Game *game, int id,
 	m_enemy.wall[1] = 0;
 	m_player.lookSkill.clear();
 	m_enemy.lookSkill.clear();
-	
+
 	m_weather = 0;
 	m_weatherCount = 0;
 
@@ -363,7 +363,7 @@ void Battle::StepStart()
 	m_log.push_back(round);
 	m_curRound++;
 	m_pCurRound = &m_log[m_curRound];
-	
+
 	char log[256];
 	sprintf( log, "回合%d开始", m_curRound );
 	m_pCurRound->log.push_back(log);
@@ -658,10 +658,10 @@ bool Battle::ChangePet(Battle::WARRIOR &player, int petId)
 	player.fear = false;//害怕
 
 	for ( i = 0; i < 18; i++ ) player.race[i] = false;	
-	if ( player.nail[13] )
+	if ( player.nail[Race::di] )
 	{
 		if ( Race::fei != player.pBuddy->race1
-			&& Race::fei != player.pBuddy->race2  
+			&& Race::fei != player.pBuddy->race2 
 			&& "魔法防御" != player.pTalent->name 
 			&& "浮游" != player.pTalent->name ) 
 		{
@@ -777,7 +777,7 @@ bool Battle::CalHitRate(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 	if ( 100 < playerAck.pSkill->hitRate 
 		|| "锐利目光" == playerAck.pTalent->name
 		|| "放大镜" == playerAck.pItem->name ) return true;
-	
+
 	float hr = playerAck.pSkill->hitRate;
 	if ( "压力" == playerDef.pTalent->name ) hr *= 0.85;
 	if ( "沙隐" == playerDef.pTalent->name && Race::yan == m_weather ) hr *= 0.7;
@@ -824,7 +824,7 @@ int Battle::CalWG(Battle::WARRIOR &player, Battle::WARRIOR &enemy)
 	else if ( "超级炮台" == player.pTalent->name ) WG *= 1.2;
 	else if ( "根性" == player.pTalent->name && 0 != player.pCurPet->state ) WG *= 1.5;
 	if ( 2 == player.pCurPet->state && "根性" != player.pTalent->name ) WG /= 2;
-	
+
 	return WG;
 }
 
@@ -1727,7 +1727,7 @@ bool Battle::HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		m_weather = Race::yan;//天气属性对应
 		m_weatherCount = 5;//天气剩余回合数 -1永久
 		if ( "磁盘" == playerAck.pItem->name ) m_weatherCount = 8;
-		
+
 		m_pCurRound->log.push_back("沙尘暴来了");
 	}
 	else if ( "光之壁" == playerAck.pSkill->name )//		超	0	2	101	0	5回合特殊伤害减半
