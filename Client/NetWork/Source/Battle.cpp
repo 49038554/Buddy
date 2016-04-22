@@ -1338,7 +1338,7 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 	}
 
 
-	int shanghai = G*Power/F*0.84*playerAck.rp.hurt/255;
+	playerAck.outputHurt = G*Power/F*0.84*playerAck.rp.hurt/255;
 	bool unFaint = false;
 	if ( "ÄæÈÐµ¶" == playerAck.pSkill->name ) unFaint = true;
 	else if ( Battle::attack == playerDef.act && "ÈÌÄÍ" == playerDef.pSkill->name && playerDef.defensed ) unFaint = true;
@@ -1348,7 +1348,7 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		unFaint = true;
 		playerDef.pCurPet->itemId = 0;
 	}
-	playerAck.outputHurt = Hurt(playerDef, shanghai, unFaint); 
+	playerAck.outputHurt = Hurt(playerDef, playerAck.outputHurt, unFaint); 
 	if ( "ÆÆÃðÖ®Ô¸" != playerAck.pSkill->name
 		&& "Ô¤ÖªÎ´À´" != playerAck.pSkill->name )
 	{
