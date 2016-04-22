@@ -530,9 +530,10 @@ void Battle::LeaveStage(Battle::WARRIOR &player)
 int Battle::Hurt(Battle::WARRIOR &player, int HP, bool unFaint)
 {
 	HP = HP <= player.pCurPet->curHP?HP:player.pCurPet->curHP;
-	char strHP[256];
-	sprintf( strHP, "%d伤害(%d%%)", HP, HP*100/player.pCurPet->HP );
-	m_pCurRound->log.push_back(player.pCurPet->nick + "受到" + strHP);
+	char strHurt[256];
+	sprintf( strHurt, "%s受到%d伤害(%d%%)", player.pCurPet->nick.c_str(), 
+		HP, HP*100/player.pCurPet->HP );
+	m_pCurRound->log.push_back(strHurt);
 	player.pCurPet->curHP -= HP;
 
 	if ( unFaint && player.pCurPet->curHP <= 0 )
