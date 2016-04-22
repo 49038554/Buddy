@@ -38,11 +38,40 @@ public:
 	}RAND_PARAM;
 	typedef struct WARRIOR
 	{
-		unsigned int			playerId;
-		std::string				name;
-		std::vector<data::PET>	pets;
-		bool					isReady;
-		data::PET				*pCurPet;
+		//////////////////////////////////////////////////////////////////////////
+		//只初始化
+		unsigned int			playerId;//玩家Id，0npc
+		std::string				name;//玩家/npc昵称
+		std::vector<data::PET>	pets;//宠物列表
+		data::PET				*pCurPet;//当前场上巴迪
+		bool	lose;//失败
+		bool	isChanged;//有换人
+		int		outputHurt;//输出伤害
+
+		char	doomDesireRound;//破灭之愿剩余回合
+		char	predictRound;//预知未来剩余回合
+		bool	nail[18];//是否有钉子，属性id为下标，目前只有地属性钉子
+		char	wall[2];//物、特，剩余回合数 -1永久
+
+		//////////////////////////////////////////////////////////////////////////
+		//回合开始重置数据
+		bool	isReady;//操作已选择
+		bool	isActioned;//已经行动
+		bool	isEnd;//已完成回合结束动作。换人时也要重置
+
+		//////////////////////////////////////////////////////////////////////////
+		//玩家输入设置
+		data::BUDDY *pBuddy;
+		data::ITEM *pItem;
+		data::TALENT *pTalent;
+		data::SKILL *pSkill;
+		data::ITEM *pUseItem;
+		Action	act;
+		int		objId;
+		RAND_PARAM rp;
+
+		//////////////////////////////////////////////////////////////////////////
+		//上场重置数据
 		float	wgCorrect;//物攻修正
 		float	tgCorrect;//特攻修正
 		float	sdCorrect;//速修正
@@ -52,11 +81,10 @@ public:
 		char	tf;//特防强化等级
 		char	sd;//速度强化等级
 		char	ct;//暴击强化等级
-		bool	changePetAble;//不能换人
+		bool	changePetAble;//允许换人
 		short	lockSkill;//锁定技能
 		char	lockSkillTime;//锁定技能回合数量,-1永久
 		bool	smell;//嗅觉
-
 		short	recvHP;//回复HP
 		bool	seed;//种子
 		char	haQian;//中了哈欠
@@ -66,36 +94,19 @@ public:
 		char	tiaoDou;//挑逗回合
 		bool	ban;//中封印
 		bool	tongGui;//中同归
-		char	sleepRound;//催眠剩余回合
-		char	frozenRound;//冰封剩余回合
 		char	hunLuan;//混乱剩余回合数
 		bool	defensed;//防守过了
 		bool	rest;//休息
 		char	luanWu;//乱舞剩余回合
 		bool	sunReady;//阳光烈焰准备中
-		char	doomDesireRound;//破灭之愿剩余回合
-		char	predictRound;//预知未来剩余回合
-		int		outputHurt;//输出伤害
-		bool	race[18];//属性强化
-		bool	nail[18];//是否有钉子，属性id为下标，目前只有地属性钉子
-		char	wall[2];//物、特，剩余回合数 -1永久
-		std::map<short, bool>	lookSkill;
-
 		char	fear;//害怕
-		bool	isChanged;//有换人
-		bool	isActioned;//已经行动
-		bool	isEnd;//回合结束
-		bool	lose;//失败
-		data::BUDDY *pBuddy;
-		data::ITEM *pItem;
-		data::TALENT *pTalent;
-		data::SKILL *pSkill;
-		data::ITEM *pUseItem;
+		bool	race[18];//属性强化
+		std::map<short, bool>	lookSkill;//圣斗士见过的技能
 
 
-		Action	act;
-		int		objId;
-		RAND_PARAM rp;
+		WARRIOR();
+		void NewRound();//回合开始前需要重置的数据
+		void ChangePet();//交换巴迪时需要重置的数据
 	}WARRIOR;
 	Battle::WARRIOR* Player(bool me);
 	const char* CheckReady(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);

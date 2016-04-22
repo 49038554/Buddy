@@ -161,6 +161,8 @@ namespace data
 		std::string	nick;//昵称
 		char	state;//状态
 		short	curHP;//当前血量
+		char	sleepRound;//催眠剩余回合
+		char	frozenRound;//冰封剩余回合
 	}PET;
 
 	typedef struct PLAYER_ITEM
