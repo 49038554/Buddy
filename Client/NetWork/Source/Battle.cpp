@@ -531,7 +531,7 @@ int Battle::Hurt(Battle::WARRIOR &player, int HP, bool unFaint)
 {
 	HP = HP <= player.pCurPet->curHP?HP:player.pCurPet->curHP;
 	char strHurt[256];
-	sprintf( strHurt, "%s受到%d伤害(%d%%)", player.pCurPet->nick.c_str(), 
+	sprintf( strHurt, "%s受到%d%%(%d点)伤害", player.pCurPet->nick.c_str(), 
 		HP, HP*100/player.pCurPet->HP );
 	m_pCurRound->log.push_back(strHurt);
 	player.pCurPet->curHP -= HP;
