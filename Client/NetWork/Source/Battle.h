@@ -143,7 +143,7 @@ private:
 	bool ChangePet(Battle::WARRIOR &player, int petId = 0);
 	void EntryStage(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	void LeaveStage(Battle::WARRIOR &player);
-	bool Hurt(Battle::WARRIOR &player, int HP, bool unFaint = false);//true有巴迪倒下，false没有巴迪倒下
+	int Hurt(Battle::WARRIOR &player, int HP, bool unFaint = false);//返回实际伤害
 	bool AttackOrder(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	bool IsUnwait(Battle::WARRIOR &player);
 	bool IsWait(Battle::WARRIOR &player);

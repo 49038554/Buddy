@@ -527,11 +527,12 @@ void Battle::LeaveStage(Battle::WARRIOR &player)
 	player.pCurPet = NULL;
 }
 
-bool Battle::Hurt(Battle::WARRIOR &player, int HP, bool unFaint)
+int Battle::Hurt(Battle::WARRIOR &player, int HP, bool unFaint)
 {
+	HP = HP <= player.pCurPet->curHP?HP:player.pCurPet->curHP;
 	char strHP[256];
-	sprintf( strHP, "%d%%", HP*100/player.pCurPet->HP );
-	m_pCurRound->log.push_back(player.pCurPet->nick + "受到" + strHP + "伤害");
+	sprintf( strHP, "%d伤害(%d%%)", HP, HP*100/player.pCurPet->HP );
+	m_pCurRound->log.push_back(player.pCurPet->nick + "受到" + strHP);
 	player.pCurPet->curHP -= HP;
 
 	if ( unFaint && player.pCurPet->curHP <= 0 )
@@ -539,9 +540,9 @@ bool Battle::Hurt(Battle::WARRIOR &player, int HP, bool unFaint)
 		player.pCurPet->curHP = 1;
 		m_pCurRound->log.push_back(player.pCurPet->nick + "承受住了伤害");
 	}
-	if ( Faint(player) ) return true;
+	if ( Faint(player) ) return HP;
 
-	if ( player.pCurPet->curHP > player.pCurPet->HP/3 ) return false;
+	if ( player.pCurPet->curHP > player.pCurPet->HP/3 ) return HP;
 	if ( 5 == player.pCurPet->itemId ) 
 	{
 		player.wgCorrect = 1.5;
@@ -561,7 +562,7 @@ bool Battle::Hurt(Battle::WARRIOR &player, int HP, bool unFaint)
 		m_pCurRound->log.push_back(player.pCurPet->nick + "吃了兴奋剂-速度");
 	}
 
-	return false;
+	return HP;
 }
 
 bool Battle::ChangePet(Battle::WARRIOR &player, int petId)
@@ -597,12 +598,13 @@ bool Battle::ChangePet(Battle::WARRIOR &player, int petId)
 
 	if ( player.nail[Race::di] )
 	{
-		if ( Race::fei != player.pBuddy->race1
+		if ( Race::fei != player.pBuddy->race1 
 			&& Race::fei != player.pBuddy->race2 
 			&& "魔法防御" != player.pTalent->name 
 			&& "浮游" != player.pTalent->name ) 
 		{
-			if ( Hurt(player, player.pCurPet->HP / 4) ) return false;//出场就挂了
+			Hurt( player, player.pCurPet->HP / 4 );
+			if ( 0 >= player.pCurPet->curHP ) return false;//出场就挂了
 		}
 	}
 	if ( "毒珠" == player.pItem->name )
@@ -1345,8 +1347,7 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		unFaint = true;
 		playerDef.pCurPet->itemId = 0;
 	}
-	playerAck.outputHurt = shanghai;
-	Hurt(playerDef, shanghai, unFaint); 
+	playerAck.outputHurt = Hurt(playerDef, shanghai, unFaint); 
 	if ( "破灭之愿" != playerAck.pSkill->name
 		&& "预知未来" != playerAck.pSkill->name )
 	{
@@ -1509,7 +1510,7 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 		}
 		if ( playerDef.pCurPet->curHP > playerAck.pCurPet->curHP )
 		{
-			Hurt(playerDef, playerDef.pCurPet->curHP - playerAck.pCurPet->curHP);
+			playerAck.outputHurt = Hurt(playerDef, playerDef.pCurPet->curHP - playerAck.pCurPet->curHP);
 		}
 		return true;
 	}
@@ -2210,7 +2211,7 @@ bool Battle::AttackEffect(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef
 				m_pCurRound->log.push_back(playerDef.pCurPet->nick + "中毒了");
 			}
 		}
-		else if ( 0 < playerDef.pCurPet->curHP && "磷粉" != playerDef.pTalent->name )
+		if ( 0 < playerDef.pCurPet->curHP && "磷粉" != playerDef.pTalent->name )
 		{
 			if ( 42 == playerAck.pSkill->effects[i].id && "净体" != playerDef.pTalent->name ) //-WF
 			{
@@ -2342,7 +2343,8 @@ bool Battle::AttackCost(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 {
 	if ( "大爆炸" == playerAck.pSkill->name ) 
 	{
-		return Hurt(playerAck, playerAck.pCurPet->curHP);
+		Hurt(playerAck, playerAck.pCurPet->curHP);
+		return true;
 	}
 	if ( 0 >= playerDef.pCurPet->curHP && playerAck.tongGui) //同归
 	{
@@ -2523,7 +2525,7 @@ void Battle::PlayerEnd(Battle::WARRIOR &player, Battle::WARRIOR &enemy)
 			+ player.pCurPet->nick + "的体力");
 		int hurt = player.pCurPet->HP / 8;
 		hurt = hurt > player.pCurPet->curHP?player.pCurPet->curHP:hurt;
-		Hurt(player, hurt);
+		hurt = Hurt(player, hurt);
 		enemy.pCurPet->curHP += hurt;
 		if ( 0 >= player.pCurPet->curHP ) return;//挂了
 	}
