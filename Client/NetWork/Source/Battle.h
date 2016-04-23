@@ -58,6 +58,7 @@ public:
 		bool	isReady;//操作已选择
 		bool	isActioned;//已经行动
 		bool	isEnd;//已完成回合结束动作。换人时也要重置
+		bool	attacked;//被攻击
 
 		//////////////////////////////////////////////////////////////////////////
 		//玩家输入设置
@@ -102,7 +103,7 @@ public:
 		char	fear;//害怕
 		bool	race[18];//属性强化
 		std::map<short, bool>	lookSkill;//圣斗士见过的技能
-
+		char	duRound;//中毒回合
 
 		WARRIOR();
 		void NewRound();//回合开始前需要重置的数据
@@ -135,6 +136,7 @@ private:
 
 	const char* SetPetInfo(Battle::WARRIOR &player, int petId);
 	bool PlayRound();//完成返回true,中断返回false
+	void End();//战斗结束
 	void StepStart();
 	bool StepChange();//完成返回true,中断返回false
 	bool StepAttack();//完成返回true,中断返回false

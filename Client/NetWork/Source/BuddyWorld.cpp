@@ -76,7 +76,7 @@ data::PET BuddyWorld::Buddy006()
 	m_factory.SetTalent(pet, "×ÔÈ»»Ö¸´");
 	m_factory.AddItem(pet, "Ê£·¹");
 	m_factory.SetNature(pet, "SD", "TF");
-	m_factory.SetSkill(pet, "Ô¤ÖªÎ´À´", "ÕªĞÇÊõ", "òßòÑ»Ø×ª", "Æ®»¨µ­Ñ©¸¡Ïã´µ");
+	m_factory.SetSkill(pet, "Ô¤ÖªÎ´À´", "ÓÙÄà±¬µ¯", "òßòÑ»Ø×ª", "Æ®»¨µ­Ñ©¸¡Ïã´µ");
 	m_factory.SetMuscle(pet, 6, 0, 0, 252, 0, 252);
 	pet.id = 1;
 
@@ -104,7 +104,7 @@ data::PET BuddyWorld::Buddy023()
 	m_factory.SetTalent(pet, "ÕıÒåĞÄ");
 	m_factory.AddItem(pet, "Íõ¹Ú");
 	m_factory.SetNature(pet, "SD", "TF");
-	m_factory.SetSkill(pet, "Ò¶ÈĞÕ¶", "¿ÕÆøÇĞ¸î", "ÅçÉä»ğÑæ", "ÓÙÄà±¬µ¯");
+	m_factory.SetSkill(pet, "Ò¶ÈĞÕ¶", "¿ÕÆøÇĞ¸î", "ÅçÉä»ğÑæ", "Ñ°ĞÆ");
 	m_factory.SetMuscle(pet, 6, 0, 0, 252, 0, 252);
 	pet.id = 1;
 

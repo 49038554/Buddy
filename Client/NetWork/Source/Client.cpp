@@ -1370,6 +1370,11 @@ Game* Client::GetGame()
 	return &m_game;
 }
 
+Battle* Client::GetBattle(int battleId)
+{
+	return m_game.GetBattle(battleId);
+}
+
 Battle::WARRIOR* Client::Fighter(int battleId, bool me)
 {
 	return m_game.Fighter(battleId, me);

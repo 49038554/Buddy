@@ -799,22 +799,22 @@ int Game::CreateBattle(unsigned int mePlayerId,
 	data::PET pet;
 	int id = 1;
 
-	pet = m_buddyWorld.Buddy001();
-	pet.id = id++;
-	she.push_back(pet);
 	pet = m_buddyWorld.Buddy002();
 	pet.id = id++;
 	she.push_back(pet);
-	pet = m_buddyWorld.Buddy003();
-	pet.id = id++;
-	she.push_back(pet);
-	pet = m_buddyWorld.Buddy006();
-	pet.id = id++;
-	she.push_back(pet);
-	pet = m_buddyWorld.Buddy008();
-	pet.id = id++;
-	she.push_back(pet);
 	pet = m_buddyWorld.Buddy023();
+	pet.id = id++;
+	she.push_back(pet);
+	pet = m_buddyWorld.Buddy026();
+	pet.id = id++;
+	she.push_back(pet);
+	pet = m_buddyWorld.Buddy095();
+	pet.id = id++;
+	she.push_back(pet);
+	pet = m_buddyWorld.Buddy103();
+	pet.id = id++;
+	she.push_back(pet);
+	pet = m_buddyWorld.Buddy110();
 	pet.id = id++;
 	she.push_back(pet);
 
@@ -849,6 +849,12 @@ const char* Game::ChangePet(int battleId, bool me, short petId)
 	if ( m_battles.end() == m_battles.find(battleId) ) return "Õ½¶·²»´æÔÚ";
 	Battle &pBattle = m_battles[battleId];
 	return pBattle.ChangePet(me, petId);
+}
+
+Battle* Game::GetBattle(int battleId)
+{
+	if ( m_battles.end() == m_battles.find(battleId) ) return NULL;
+	return &m_battles[battleId];
 }
 
 Battle::WARRIOR* Game::Fighter(int battleId, bool me)

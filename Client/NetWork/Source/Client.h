@@ -52,6 +52,7 @@ public:
 	const char* SheChangePet(int battleId, short petId);
 
 	Game* GetGame();
+	Battle* GetBattle(int battleId);
 	Battle::WARRIOR* Fighter(int battleId, bool me);
 
 protected:

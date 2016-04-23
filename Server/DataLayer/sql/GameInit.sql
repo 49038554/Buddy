@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2016-03-22 19:11:30
+Date: 2016-04-19 16:31:00
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -201,7 +201,7 @@ CREATE TABLE `buddy_book_skill` (
   KEY `buddy_key` (`buddy`),
   CONSTRAINT `buddy_key` FOREIGN KEY (`buddy`) REFERENCES `buddy_book_info` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `skill_key` FOREIGN KEY (`skill`) REFERENCES `skill_book_info` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4760 DEFAULT CHARSET=gb2312 COMMENT='巴迪兽图鉴——技能表';
+) ENGINE=InnoDB AUTO_INCREMENT=4763 DEFAULT CHARSET=gb2312 COMMENT='巴迪兽图鉴——技能表';
 
 -- ----------------------------
 -- Records of buddy_book_skill
@@ -1557,7 +1557,6 @@ INSERT INTO `buddy_book_skill` VALUES ('1812', '外星水母', '剧毒', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1813', '外星水母', '晴天', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1814', '外星水母', '求雨', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1817', '外星水母', '毒突', '1');
-INSERT INTO `buddy_book_skill` VALUES ('1819', '外星水母', '剧毒', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1820', '外星水母', '淤泥爆弹', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1821', '外星水母', '奇怪光', '1');
 INSERT INTO `buddy_book_skill` VALUES ('1823', '外星水母', '反射盾', '1');
@@ -3914,6 +3913,7 @@ INSERT INTO `buddy_book_skill` VALUES ('4756', '虎鲨', '跃龙门', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4757', '虎鲨', '激流涌进', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4758', '虎鲨', '冲浪', '1');
 INSERT INTO `buddy_book_skill` VALUES ('4759', '虎鲨', '高压水炮', '1');
+INSERT INTO `buddy_book_skill` VALUES ('4762', '怪蛙草', '剧毒', '1');
 
 -- ----------------------------
 -- Table structure for `buddy_book_update`
@@ -4382,7 +4382,6 @@ INSERT INTO `ex_effect` VALUES ('2', '麻痹', '速度降低75%');
 INSERT INTO `ex_effect` VALUES ('3', '冰封', '不能行动0~6回合，每回合25%几率解除');
 INSERT INTO `ex_effect` VALUES ('4', '催眠', '不能行动0~6回合，每回合25%几率解除');
 INSERT INTO `ex_effect` VALUES ('5', '中毒', '每回合损失最大体力8%');
-INSERT INTO `ex_effect` VALUES ('11', '1击毙', '1击毙');
 INSERT INTO `ex_effect` VALUES ('12', '睡觉', '睡3回合，HP全满，状态解除');
 INSERT INTO `ex_effect` VALUES ('13', '混乱', '50%攻击自己');
 INSERT INTO `ex_effect` VALUES ('14', '每回合吸收1/8体力', '每回合吸收1/8体力');
@@ -4424,10 +4423,8 @@ INSERT INTO `ex_effect` VALUES ('66', '强制退场', null);
 INSERT INTO `ex_effect` VALUES ('68', '胆量', '普和斗属性技能可打中鬼系巴迪');
 INSERT INTO `ex_effect` VALUES ('69', '解除异常', null);
 INSERT INTO `ex_effect` VALUES ('70', '吸引全场火力', null);
-INSERT INTO `ex_effect` VALUES ('72', '交换巴迪', null);
 INSERT INTO `ex_effect` VALUES ('73', '梦话', '睡着时，随机使用技能');
 INSERT INTO `ex_effect` VALUES ('74', '免疫1击毙', null);
-INSERT INTO `ex_effect` VALUES ('76', '永久复制对手技能', null);
 INSERT INTO `ex_effect` VALUES ('77', '听过的巴迪，3回合内不换下，则濒死', null);
 INSERT INTO `ex_effect` VALUES ('79', '免疫技能无效', null);
 INSERT INTO `ex_effect` VALUES ('86', '霸气', '使对方害怕');
@@ -4435,7 +4432,6 @@ INSERT INTO `ex_effect` VALUES ('87', '先手', null);
 INSERT INTO `ex_effect` VALUES ('88', '暴击', null);
 INSERT INTO `ex_effect` VALUES ('90', '反噬', '1/3伤害反弹');
 INSERT INTO `ex_effect` VALUES ('92', '下回合不能行动', null);
-INSERT INTO `ex_effect` VALUES ('93', '无盲点', null);
 INSERT INTO `ex_effect` VALUES ('94', 'AOE', null);
 INSERT INTO `ex_effect` VALUES ('95', '乱舞', '连续攻击2~3回合，然后混乱');
 INSERT INTO `ex_effect` VALUES ('96', '非战斗使用可拆除建筑物', null);
@@ -4459,7 +4455,6 @@ INSERT INTO `ex_effect` VALUES ('129', '5回合雨天', '');
 INSERT INTO `ex_effect` VALUES ('130', '5回合沙暴天气，地岩钢以外属性巴迪受到1/16伤害', '');
 INSERT INTO `ex_effect` VALUES ('131', '5回合特殊伤害减半', '');
 INSERT INTO `ex_effect` VALUES ('132', '5回合物理伤害减半', '');
-INSERT INTO `ex_effect` VALUES ('133', '5回合浮游与飞行系能被地系技能打中', '');
 INSERT INTO `ex_effect` VALUES ('134', '5回合速度慢的先行动', '');
 INSERT INTO `ex_effect` VALUES ('135', '5回合不被命中要害', '');
 INSERT INTO `ex_effect` VALUES ('136', '5回合，每回合回复8%HP', '');
@@ -4495,7 +4490,6 @@ INSERT INTO `ex_effect` VALUES ('168', '免疫特效', null);
 INSERT INTO `ex_effect` VALUES ('169', '只受攻击伤害', null);
 INSERT INTO `ex_effect` VALUES ('170', '火系提升', null);
 INSERT INTO `ex_effect` VALUES ('171', '水系提升', null);
-INSERT INTO `ex_effect` VALUES ('172', '反转回复', null);
 INSERT INTO `ex_effect` VALUES ('175', '草系提升', null);
 INSERT INTO `ex_effect` VALUES ('176', '虫系提升', null);
 INSERT INTO `ex_effect` VALUES ('177', '重伤时发动', null);
@@ -4505,7 +4499,6 @@ INSERT INTO `ex_effect` VALUES ('180', '晴天特效', null);
 INSERT INTO `ex_effect` VALUES ('181', '冰雹特效', null);
 INSERT INTO `ex_effect` VALUES ('182', '沙暴特效', null);
 INSERT INTO `ex_effect` VALUES ('183', '速度翻倍', null);
-INSERT INTO `ex_effect` VALUES ('184', '复制特性', null);
 INSERT INTO `ex_effect` VALUES ('185', '微量回复', '恢复1/16体力');
 INSERT INTO `ex_effect` VALUES ('186', '冰火属性伤害减半', null);
 INSERT INTO `ex_effect` VALUES ('187', '免疫留场', null);
@@ -4600,7 +4593,7 @@ INSERT INTO `item_book` VALUES ('31', '放大镜', '20000', '必中');
 INSERT INTO `item_book` VALUES ('32', '四叶草', '10000', '15%暴击');
 INSERT INTO `item_book` VALUES ('33', '先制爪', '10000', '20%先制');
 INSERT INTO `item_book` VALUES ('34', '剩饭', '30000', '1/16回血');
-INSERT INTO `item_book` VALUES ('35', '免死金牌', '30000', '忍耐');
+INSERT INTO `item_book` VALUES ('35', '免死金牌', '30000', '满HP时不会被攻击击倒');
 INSERT INTO `item_book` VALUES ('36', '磁盘', '50000', '场地效果持续8回合');
 INSERT INTO `item_book` VALUES ('37', '专爱头巾', '50000', '携带后，物攻*1.5，不能换技能');
 INSERT INTO `item_book` VALUES ('38', '生命玉', '30000', '携带后，伤害*1.25，每次攻击损失1/8体力');
@@ -4704,7 +4697,7 @@ CREATE TABLE `skill_book_effect` (
   CONSTRAINT `effect_name1` FOREIGN KEY (`effect`) REFERENCES `ex_effect` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `skill_name1` FOREIGN KEY (`skill`) REFERENCES `skill_book_info` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `step_name1` FOREIGN KEY (`step`) REFERENCES `battle_step` (`step`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=183 DEFAULT CHARSET=gb2312;
+) ENGINE=InnoDB AUTO_INCREMENT=184 DEFAULT CHARSET=gb2312;
 
 -- ----------------------------
 -- Records of skill_book_effect
@@ -4752,7 +4745,6 @@ INSERT INTO `skill_book_effect` VALUES ('41', '精神冲击', '战斗', '物理�
 INSERT INTO `skill_book_effect` VALUES ('42', '精神病', '战斗', '乱舞', '100', '1');
 INSERT INTO `skill_book_effect` VALUES ('43', '预知未来', '战斗', '攻击延后2回合', '100', '3');
 INSERT INTO `skill_book_effect` VALUES ('44', '精神增压', '战斗', '大幅弱化特攻', '100', '1');
-INSERT INTO `skill_book_effect` VALUES ('45', '蜻蜓回转', '战斗', '交换巴迪', '100', '1');
 INSERT INTO `skill_book_effect` VALUES ('46', '十字剪', '战斗', '暴击', '20', '0');
 INSERT INTO `skill_book_effect` VALUES ('47', '蜂涌', '战斗', '乱舞', '100', '1');
 INSERT INTO `skill_book_effect` VALUES ('48', '终极针刺', '战斗', '七伤拳', '100', '1');
@@ -4782,7 +4774,7 @@ INSERT INTO `skill_book_effect` VALUES ('72', '气合拳', '战斗', '蓄力', '
 INSERT INTO `skill_book_effect` VALUES ('73', '裸奔气合拳', '战斗', '蓄力', '100', '1');
 INSERT INTO `skill_book_effect` VALUES ('74', '巨大化', '战斗', '强化物攻', '100', '1');
 INSERT INTO `skill_book_effect` VALUES ('75', '巨大化', '战斗', '强化物防', '100', '1');
-INSERT INTO `skill_book_effect` VALUES ('76', '毒突', '战斗', '弱化物防', '20', '0');
+INSERT INTO `skill_book_effect` VALUES ('76', '毒突', '战斗', '中毒', '20', '0');
 INSERT INTO `skill_book_effect` VALUES ('77', '淤泥爆弹', '战斗', '中毒', '20', '0');
 INSERT INTO `skill_book_effect` VALUES ('78', '偷袭', '战斗', '暴击', '100', '0');
 INSERT INTO `skill_book_effect` VALUES ('79', '暗算', '准备战斗', '先手', '100', '1');
@@ -4843,8 +4835,6 @@ INSERT INTO `skill_book_effect` VALUES ('133', '亿万冲击', '战斗', '下回
 INSERT INTO `skill_book_effect` VALUES ('134', '最终手段', '战斗', '不能更换技能', '100', '1');
 INSERT INTO `skill_book_effect` VALUES ('135', '最终手段', '战斗', '留场', '100', '1');
 INSERT INTO `skill_book_effect` VALUES ('136', '最终手段', '战斗', '大幅弱化物防', '100', '1');
-INSERT INTO `skill_book_effect` VALUES ('137', '最终手段', '战斗', '弱化特防', '100', '1');
-INSERT INTO `skill_book_effect` VALUES ('138', '大爆炸', '战斗', '1击毙', '100', '1');
 INSERT INTO `skill_book_effect` VALUES ('139', '吼叫', '准备战斗', '后手', '100', '1');
 INSERT INTO `skill_book_effect` VALUES ('140', '吼叫', '战斗', '强制退场', '100', '0');
 INSERT INTO `skill_book_effect` VALUES ('142', '黑眼', '战斗', '留场', '100', '0');
@@ -4884,6 +4874,7 @@ INSERT INTO `skill_book_effect` VALUES ('179', '岩崩', '战斗', '霸气', '30
 INSERT INTO `skill_book_effect` VALUES ('180', '沙暴', '战斗', '5回合沙暴天气，地岩钢以外属性巴迪受到1/16伤害', '100', '3');
 INSERT INTO `skill_book_effect` VALUES ('181', '原始力量', '战斗', '弱化特防', '30', '0');
 INSERT INTO `skill_book_effect` VALUES ('182', '月光', '战斗', '日月精华', '100', '1');
+INSERT INTO `skill_book_effect` VALUES ('183', '蜻蜓回转', '战斗', '交换巴迪', '100', '1');
 
 -- ----------------------------
 -- Table structure for `skill_book_info`
@@ -4914,7 +4905,7 @@ INSERT INTO `skill_book_info` VALUES ('14', '逆刃刀', '普', '40', '1', '100'
 INSERT INTO `skill_book_info` VALUES ('16', '吼叫', '普', '0', '2', '101', '00000000000', '最后出手，强制对方退场');
 INSERT INTO `skill_book_info` VALUES ('19', '舍身撞', '普', '120', '1', '100', '00000000000', '1/3反伤');
 INSERT INTO `skill_book_info` VALUES ('26', '亿万冲击', '普', '150', '1', '90', '00000000000', '1回合不能行动，可换人');
-INSERT INTO `skill_book_info` VALUES ('28', '最终手段', '普', '160', '1', '100', '00000000000', '副作用：更换技能，交换巴迪，逃跑。并大幅弱化自身物防');
+INSERT INTO `skill_book_info` VALUES ('28', '最终手段', '普', '160', '1', '100', '00000000000', '副作用：不能更换技能，不能交换巴迪，不能逃跑。并大幅弱化自身物防');
 INSERT INTO `skill_book_info` VALUES ('35', '黑眼', '恶', '0', '2', '101', '00000000000', '防止对方换人和逃跑');
 INSERT INTO `skill_book_info` VALUES ('36', '嗅觉', '普', '0', '2', '101', '00000000000', '普和斗属性技能可打中鬼系巴迪');
 INSERT INTO `skill_book_info` VALUES ('41', '清新', '普', '0', '2', '101', '00000000000', '解除自身异常');
@@ -5027,7 +5018,6 @@ INSERT INTO `skill_book_info` VALUES ('335', '精神冲击', '超', '95', '3', '
 INSERT INTO `skill_book_info` VALUES ('336', '精神病', '超', '120', '3', '100', '00000000000', '连续攻击2~3回合');
 INSERT INTO `skill_book_info` VALUES ('337', '预知未来', '超', '120', '3', '100', '00000000000', '2回合后攻击出现');
 INSERT INTO `skill_book_info` VALUES ('338', '精神增压', '超', '140', '3', '90', '00000000000', '大幅弱化自身特攻');
-INSERT INTO `skill_book_info` VALUES ('339', '催眠术', '超', '0', '2', '60', '00000000000', '催眠对方');
 INSERT INTO `skill_book_info` VALUES ('340', '高速移动', '超', '0', '2', '101', '00000000000', '大幅强化速度');
 INSERT INTO `skill_book_info` VALUES ('342', '光之壁', '超', '0', '2', '101', '00000000000', '5回合特殊伤害减半');
 INSERT INTO `skill_book_info` VALUES ('343', '反射盾', '超', '0', '2', '101', '00000000000', '5回合物理伤害减半');
@@ -5059,7 +5049,7 @@ INSERT INTO `skill_book_info` VALUES ('515', '沙暴', '岩', '0', '2', '101', '
 INSERT INTO `skill_book_info` VALUES ('520', '地震', '地', '100', '1', '100', '00000000000', '全体攻击');
 INSERT INTO `skill_book_info` VALUES ('522', '大地之力', '地', '90', '3', '100', '00000000000', '30%弱化特防');
 INSERT INTO `skill_book_info` VALUES ('523', '撒菱', '地', '0', '2', '101', '00000000000', '使上场巴迪受到1/8伤害');
-INSERT INTO `skill_book_info` VALUES ('526', '毒突', '毒', '90', '1', '100', '00000000000', '20%弱化物防');
+INSERT INTO `skill_book_info` VALUES ('526', '毒突', '毒', '90', '1', '100', '00000000000', '20%中毒');
 INSERT INTO `skill_book_info` VALUES ('529', '淤泥爆弹', '毒', '90', '3', '100', '00000000000', '20%中毒');
 INSERT INTO `skill_book_info` VALUES ('531', '剧毒', '毒', '0', '2', '85', '00000000000', '中毒');
 INSERT INTO `skill_book_info` VALUES ('534', '香甜气息', '草', '0', '2', '100', '00000000001', '非战斗使用可引出野生巴迪');
@@ -5104,7 +5094,7 @@ INSERT INTO `talent` VALUES ('20', '失眠', '不会睡眠');
 INSERT INTO `talent` VALUES ('21', '免疫', '不会中毒');
 INSERT INTO `talent` VALUES ('22', '磷粉', '不吃特效');
 INSERT INTO `talent` VALUES ('23', '咬脚', '禁止逃跑，换人');
-INSERT INTO `talent` VALUES ('24', '蛇皮', '受到物理攻击时，反弹');
+INSERT INTO `talent` VALUES ('24', '蛇皮', '受到物理攻击时，反弹1/3');
 INSERT INTO `talent` VALUES ('25', '蜕皮', '30%解除异常');
 INSERT INTO `talent` VALUES ('26', '根性', '异常时物攻*1.5，烧伤不减物攻');
 INSERT INTO `talent` VALUES ('27', '神秘鳞片', '异常时物防*1.5');
@@ -5127,7 +5117,7 @@ INSERT INTO `talent` VALUES ('44', '逃走', '必定可以交换和逃跑');
 INSERT INTO `talent` VALUES ('45', '锐利目光', '技能必中');
 INSERT INTO `talent` VALUES ('46', '不屈', '害怕后强化速度');
 INSERT INTO `talent` VALUES ('47', '正义心', '被恶属性攻击，强化物攻');
-INSERT INTO `talent` VALUES ('48', '毒疗', '中毒时回合结束恢复1/16');
+INSERT INTO `talent` VALUES ('48', '毒疗', '中毒时回合结束恢复1/8');
 INSERT INTO `talent` VALUES ('49', '湿润身躯', '雨天不异常，解除异常');
 INSERT INTO `talent` VALUES ('50', '太阳力量', '晴天特攻*1.5，每回合结束损失1/8体力');
 INSERT INTO `talent` VALUES ('51', '飞毛腿', '异常时候速度*1.5，麻痹不减速度');
@@ -5148,10 +5138,10 @@ INSERT INTO `talent` VALUES ('65', '分析', '后手威力翻倍');
 INSERT INTO `talent` VALUES ('66', '穿透', '无视光墙，反射盾');
 INSERT INTO `talent` VALUES ('67', '魔装反射', '反弹对方变化技能');
 INSERT INTO `talent` VALUES ('68', '沙之力', '沙暴中地岩钢技能威力*1.5');
-INSERT INTO `talent` VALUES ('69', '天空皮肤', '普系边飞行，且威力*130%');
+INSERT INTO `talent` VALUES ('69', '天空皮肤', '普系变飞行，且威力*130%');
 INSERT INTO `talent` VALUES ('70', '黑暗气息', '恶系威力*1.5');
 INSERT INTO `talent` VALUES ('71', '疾风之翼', '飞行系技能先至+1');
-INSERT INTO `talent` VALUES ('72', '冰冻皮肤', '普系边冰，且威力*130%');
+INSERT INTO `talent` VALUES ('72', '冰冻皮肤', '普系变冰，且威力*130%');
 INSERT INTO `talent` VALUES ('73', '超级炮台', '伤害*1.2，速度*1.2');
 INSERT INTO `talent` VALUES ('74', '暴力', '物攻*2');
 INSERT INTO `talent` VALUES ('75', '暴雪', '永久冰雹');
@@ -5282,7 +5272,7 @@ INSERT INTO `talent_book_effect` VALUES ('357', '沙之力', '战斗', '沙暴�
 INSERT INTO `talent_book_effect` VALUES ('358', '沙之力', '战斗', '地系提升', '100', '1');
 INSERT INTO `talent_book_effect` VALUES ('359', '沙之力', '战斗', '岩系提升', '100', '1');
 INSERT INTO `talent_book_effect` VALUES ('360', '沙之力', '战斗', '钢系提升', '100', '1');
-INSERT INTO `talent_book_effect` VALUES ('361', '天空皮肤', '战斗', '普系边冰，且威力*130%', '100', '1');
+INSERT INTO `talent_book_effect` VALUES ('361', '天空皮肤', '战斗', '普系边飞行，且威力*130%', '100', '1');
 INSERT INTO `talent_book_effect` VALUES ('362', '黑暗气息', '战斗', '恶系提升', '100', '1');
 INSERT INTO `talent_book_effect` VALUES ('363', '疾风之翼', '战斗', '飞行技能特效', '100', '1');
 INSERT INTO `talent_book_effect` VALUES ('364', '疾风之翼', '战斗', '先手', '100', '1');

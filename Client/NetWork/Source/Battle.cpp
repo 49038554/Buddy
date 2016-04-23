@@ -29,6 +29,7 @@ Battle::WARRIOR::WARRIOR()
 	outputHurt = 0;//输出伤害
 	doomDesireRound = -1;//破灭之愿剩余回合
 	predictRound = -1;//预知未来剩余回合
+	attacked = false;//被攻击
 	int i = 0;
 	for ( i = 0; i < 18; i++ ) nail[i] = false;//没有钉子，属性id为下标，目前只有地属性钉子
 	wall[0] = 0;
@@ -40,6 +41,7 @@ void Battle::WARRIOR::NewRound()
 	isReady = false;//未选择操作
 	isActioned = false;//未行动
 	isEnd = false;//未完成回合结束动作
+	attacked = false;//被攻击
 }
 
 void Battle::WARRIOR::ChangePet()
@@ -77,6 +79,7 @@ void Battle::WARRIOR::ChangePet()
 	int i = 0;
 	for ( i = 0; i < 18; i++ ) race[i] = false;//属性强化
 	lookSkill.clear();//圣斗士见过的技能
+	duRound = 0;//中毒回合
 	act = change;
 }
 
@@ -159,6 +162,8 @@ const char* Battle::SetPetInfo(Battle::WARRIOR &player, int petId)
 const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	static std::string reason;
+	if ( IsEnd() ) return (reason = "战斗结束").c_str();
+
 	Battle::WARRIOR &player = me?m_player:m_enemy;
 	Battle::WARRIOR &enemy = me?m_enemy:m_player;
 	if ( player.isReady ) return NULL;
@@ -214,7 +219,7 @@ const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Batt
 
 bool Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
-	if ( m_player.lose || m_enemy.lose ) return false;
+	if ( IsEnd() ) return false;
 
 	Battle::WARRIOR &player = me?m_player:m_enemy;
 	Battle::WARRIOR &enemy = me?m_enemy:m_player;
@@ -270,7 +275,7 @@ bool Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PAR
 		m_enemy.isChanged = ChangePet(m_enemy, m_enemy.objId);
 	}
 	PlayRound();
-
+	End();
 	return true;
 }
 
@@ -290,6 +295,7 @@ const char* Battle::ChangePet(bool me, short petId)
 	if ( NULL != ret ) return ret;
 	player.isChanged = ChangePet(player, petId);
 	PlayRound();
+	End();
 
 	return NULL;
 }
@@ -306,6 +312,41 @@ bool Battle::PlayRound()
 	m_enemy.NewRound();
 
 	return true;
+}
+
+void Battle::End()
+{
+	if ( !IsEnd() ) return;
+
+	int i = 0;
+	int enemyCount = 0;
+	for ( i = 0; i < m_enemy.pets.size(); i++ )
+	{
+		if ( 0 < m_enemy.pets[i].curHP ) enemyCount++;
+	}
+	int playerCount = 0;
+	for ( i = 0; i < m_player.pets.size(); i++ )
+	{
+		if ( 0 < m_player.pets[i].curHP ) playerCount++;
+	}
+	char result[256];
+	if ( m_player.lose && m_enemy.lose ) 
+	{
+		sprintf( result, "平局" );
+	}
+	else if ( m_player.lose ) 
+	{
+		sprintf( result, "%d:%d %s胜", 
+			playerCount, enemyCount, m_enemy.name.c_str() );
+	}
+	else 
+	{
+		sprintf( result, "%d:%d %s胜", 
+			playerCount, enemyCount, m_player.name.c_str() );
+	}
+	m_pCurRound->log.push_back( result );
+
+	return;
 }
 
 bool Battle::IsEnd()
@@ -362,10 +403,10 @@ bool Battle::StepAttack()
 		}
 		m_pCurRound->log.push_back( m_player.pCurPet->nick + "开始聚气" );
 	}
-	if ( Battle::attack == m_player.act && ActionAble(m_enemy) 
+	if ( Battle::attack == m_enemy.act && ActionAble(m_enemy)
 		&& ( "气合拳" == m_enemy.pSkill->name || "裸奔气合拳" == m_enemy.pSkill->name ) )
 	{
-		if ( "裸奔气合拳" == m_player.pSkill->name ) 
+		if ( "裸奔气合拳" == m_enemy.pSkill->name ) 
 		{
 			m_enemy.tiShen = 0;
 			m_pCurRound->log.push_back( m_enemy.pCurPet->nick + "舍弃了替身" );
@@ -514,12 +555,13 @@ void Battle::LeaveStage(Battle::WARRIOR &player)
 		return;
 	}
 
-	if ( "自然回复" == player.pTalent->name ) //
+	data::TALENT *pTalent = Talent(player.pCurPet->talent, m_game->TalentBook());
+	if ( "自然恢复" == pTalent->name ) //
 	{
 		player.pCurPet->state = 0;
 		m_pCurRound->log.push_back("恢复了正常状态");
 	}
-	if ( "再生" == player.pTalent->name ) //
+	if ( "再生" == pTalent->name ) //
 	{
 		player.pCurPet->curHP += player.pCurPet->HP / 3;
 		m_pCurRound->log.push_back("恢复了1/3的HP");
@@ -532,7 +574,7 @@ int Battle::Hurt(Battle::WARRIOR &player, int HP, bool unFaint)
 	HP = HP <= player.pCurPet->curHP?HP:player.pCurPet->curHP;
 	char strHurt[256];
 	sprintf( strHurt, "%s受到%d%%(%d点)伤害", player.pCurPet->nick.c_str(), 
-		HP, HP*100/player.pCurPet->HP );
+		HP*100/player.pCurPet->HP, HP );
 	m_pCurRound->log.push_back(strHurt);
 	player.pCurPet->curHP -= HP;
 
@@ -611,6 +653,7 @@ bool Battle::ChangePet(Battle::WARRIOR &player, int petId)
 	if ( "毒珠" == player.pItem->name )
 	{
 		player.pCurPet->state = Race::du;
+		player.duRound = 0;
 		m_pCurRound->log.push_back( m_player.pCurPet->nick + "携带毒珠中毒了" );
 	}
 	else if ( "火珠" == player.pItem->name )
@@ -686,6 +729,8 @@ bool Battle::IsWait(Battle::WARRIOR &player)
 	if ( "飘花淡雪浮香吹" == player.pSkill->name ) return true;
 	if ( "吹飞" == player.pSkill->name ) return true;
 	if ( "吼叫" == player.pSkill->name ) return true;
+	if ( "气合拳" == player.pSkill->name ) return true;
+	if ( "裸奔气合拳" == player.pSkill->name ) return true;
 
 	return false;
 }
@@ -1208,6 +1253,13 @@ bool Battle::PetAction(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		}
 		return false;
 	}
+	if ( playerAck.attacked 
+		&& ( "气合拳" == playerAck.pSkill->name 
+		|| "裸奔气合拳" == playerAck.pSkill->name ) )
+	{
+		m_pCurRound->log.push_back(playerAck.pCurPet->nick + "聚气被中断");
+		return false;
+	}
 	if ( LaunchState(playerAck) && !Medication(playerAck) ) return false;
 	if ( Confusion(playerAck) ) 
 	{
@@ -1334,7 +1386,7 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 	}
 	if ( ct ) 		
 	{
-		m_pCurRound->log.push_back(playerAck.pCurPet->nick + "这个狗屎出暴击了" );
+		m_pCurRound->log.push_back(playerAck.pCurPet->nick + "暴击！！！宝宝威武！！！" );
 	}
 
 
@@ -1349,6 +1401,7 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		playerDef.pCurPet->itemId = 0;
 	}
 	playerAck.outputHurt = Hurt(playerDef, playerAck.outputHurt, unFaint); 
+	playerDef.attacked = true;
 	if ( "破灭之愿" != playerAck.pSkill->name
 		&& "预知未来" != playerAck.pSkill->name )
 	{
@@ -1462,6 +1515,7 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 			return false;
 		}
 		playerDef.pCurPet->state = Race::du;
+		playerDef.duRound = 0;
 		m_pCurRound->log.push_back(playerDef.pCurPet->nick + "中毒了");
 		return true;
 	}
@@ -2052,18 +2106,18 @@ bool Battle::ActionAble(Battle::WARRIOR &player)
 
 	if ( Race::pu == player.pCurPet->state ) 
 	{
-		if ( 0 == player.pCurPet->sleepRound ) return true;
+		if ( 0 < player.pCurPet->sleepRound ) return false;
 	}
 	else if ( Race::bing == player.pCurPet->state ) 
 	{
-		if ( 0 == player.pCurPet->frozenRound ) return true;
+		if ( 0 < player.pCurPet->frozenRound ) return false;
 	}
 	else if ( Race::dian == player.pCurPet->state ) 
 	{
-		if ( 25 >= player.rp.dian ) return true;
+		if ( 25 >= player.rp.dian ) return false;
 	}
 
-	return false;
+	return true;
 }
 
 bool Battle::LaunchState(Battle::WARRIOR &player)
@@ -2209,6 +2263,7 @@ bool Battle::AttackEffect(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef
 				if ( "毒手" == playerAck.pTalent->name ) addCount = 30;
 				if ( playerAck.rp.sePro > playerAck.pSkill->effects[i].probability + addCount )  continue;
 				playerDef.pCurPet->state = Race::du;
+				playerDef.duRound = 0;
 				m_pCurRound->log.push_back(playerDef.pCurPet->nick + "中毒了");
 			}
 		}
@@ -2290,6 +2345,7 @@ bool Battle::AttackEffect(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef
 		if ( playerAck.rp.tePro <= 30 )  
 		{
 			playerDef.pCurPet->state = Race::du;
+			playerDef.duRound = 0;
 			m_pCurRound->log.push_back(playerAck.pCurPet->nick + "使用" 
 				+ playerAck.pTalent->name + playerDef.pCurPet->nick + "中毒了");
 		}
@@ -2371,6 +2427,7 @@ bool Battle::AttackCost(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 			)
 		{
 			playerAck.pCurPet->state = Race::du;
+			playerDef.duRound = 0;
 			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "的" 
 				+ playerDef.pTalent->name + "使" + playerAck.pCurPet->nick + "中毒了");
 		}
@@ -2628,7 +2685,8 @@ void Battle::PlayerEnd(Battle::WARRIOR &player, Battle::WARRIOR &enemy)
 			&& "毒疗" != player.pTalent->name )
 		{
 			m_pCurRound->log.push_back(player.pCurPet->nick + "中毒了");
-			Hurt(player, player.pCurPet->HP / 8);
+			player.duRound++;
+			Hurt(player, player.pCurPet->HP * player.duRound / 8);
 		}
 		if ( 0 >= player.pCurPet->curHP ) return;//挂了
 	}
