@@ -160,11 +160,12 @@ private:
 	int CalPower(Battle::WARRIOR &pAck, bool ct, Battle::WARRIOR &pDef);
 	bool PetAction(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//true有巴迪战败，false没有巴迪战败
 	bool UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//true有巴迪战败，false没有巴迪战败
+	bool ImmuneSkill(Battle::WARRIOR &player, Battle::WARRIOR &enemy);//免疫技能
 	bool HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//辅助技能,不是辅助技能返回false
 	bool InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//干扰技能
 	bool ActionAble(Battle::WARRIOR &player);
-	bool LaunchState(Battle::WARRIOR &player);
-	bool Medication(Battle::WARRIOR &player);
+	bool LaunchState(Battle::WARRIOR &player);//不能行动状态发动
+	bool Medication(Battle::WARRIOR &player);//吃万能药
 	void ChangeSkill(Battle::WARRIOR &player);
 	bool BanSkill(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	bool Confusion(Battle::WARRIOR &player);

@@ -1153,19 +1153,11 @@ int Battle::CalPower(Battle::WARRIOR &playerAck, bool ct, Battle::WARRIOR &playe
 		power *= 1.3;
 	}
 	float vf = RaceGood(skillRace, playerDef.pBuddy->race1);
-	if ( 0.4 > vf )
-	{
-		if ( Race::pu == skillRace 
-			&& ("胆量" == playerAck.pTalent->name||playerAck.smell) ) vf = 1;
-		else return 0;
-	}
+	if ( 0.4 > vf ) return 0;
+
 	vf *= RaceGood(skillRace, playerDef.pBuddy->race2);
-	if ( 0.4 > vf )
-	{
-		if ( Race::pu == skillRace 
-			&& ("胆量" == playerAck.pTalent->name||playerAck.smell) ) vf = 1;
-		else return 0;
-	}
+	if ( 0.4 > vf ) return 0;
+
 	power *= vf;
 	if ( skillRace == playerAck.pBuddy->race1 
 		|| skillRace == playerAck.pBuddy->race2 ) power *= 1.5;
@@ -1217,45 +1209,6 @@ int Battle::CalPower(Battle::WARRIOR &playerAck, bool ct, Battle::WARRIOR &playe
 	//防御特性
 	if ( "肥脂肪" == playerDef.pTalent->name 
 		&& (Race::huo == skillRace || Race::bing == skillRace) ) power /= 2;
-	if ( "圣斗士" == playerDef.pTalent->name ) 
-	{
-		if ( playerDef.lookSkill[playerAck.pSkill->id] ) 
-		{
-			power = 0;
-			m_pCurRound->log.push_back("被圣斗士看过1次的技能是无效的");
-		}
-		else playerDef.lookSkill[playerAck.pSkill->id] = true;
-	}
-	if ( "食草" == playerDef.pTalent->name && Race::cao == playerAck.pSkill->race )
-	{
-		power = 0;
-		if ( 6 > playerDef.wg ) 
-		{
-			playerDef.wg++;
-			m_pCurRound->log.push_back("对方吸收了攻击，物攻提升");
-		}
-	}
-	if ( "蓄水" == playerDef.pTalent->name && Race::shui == playerAck.pSkill->race )
-	{
-		power = 0;
-		playerDef.pCurPet->curHP += playerDef.pCurPet->HP / 4;
-		m_pCurRound->log.push_back("对方吸收水了分，恢复1/4HP");
-	}
-	if ( "引火" == playerDef.pTalent->name && Race::huo == playerAck.pSkill->race )
-	{
-		power = 0;
-		playerDef.race[Race::huo] = true;
-		m_pCurRound->log.push_back("对方吸收了火焰，火系威力提升");
-	}
-	if ( "电气引擎" == playerDef.pTalent->name && Race::dian == playerAck.pSkill->race )
-	{
-		power = 0;
-		if ( 6 > playerDef.sd ) 
-		{
-			playerDef.sd++;
-			m_pCurRound->log.push_back("对方吸收了能量，速度提升");
-		}
-	}
 
 	return power;
 }
@@ -1299,20 +1252,21 @@ bool Battle::PetAction(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		return false;
 	}
 
-	return UseSkill(playerAck, playerDef);
+	if ( !UseSkill(playerAck, playerDef) )
+	{
+		if ( "大爆炸" == playerAck.pSkill->name ) Hurt(playerAck, playerAck.pCurPet->curHP);
+	}
+
+	return true;
 }
 
 bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 {
 	m_pCurRound->log.push_back(playerAck.pCurPet->nick + "使用了" + playerAck.pSkill->name);
 	playerAck.lockSkill = playerAck.pSkill->id;
-	if ( "保护" == playerAck.pSkill->name || "忍耐" == playerAck.pSkill->name )
-	{
-		if ( !playerAck.defensed ) m_pCurRound->log.push_back("但是失败了");
-		return true;
-	}
 
-	//非攻击技能
+	//////////////////////////////////////////////////////////////////////////
+	//辅助技能
 	if ( 2 == playerAck.pSkill->type ) 
 	{
 		if ( 0 < playerAck.tiaoDou )
@@ -1320,27 +1274,8 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 			m_pCurRound->log.push_back(playerAck.pCurPet->nick + "被挑逗不能使用辅助技能");
 			return false;
 		}
-		if ( !HelpSkill(playerAck, playerDef) ) 
-		{
-			if ( Battle::attack == playerDef.act && "保护" == playerDef.pSkill->name && playerDef.defensed ) 
-			{
-				m_pCurRound->log.push_back(playerDef.pCurPet->nick + "保护住了自己");
-				if ( "大爆炸" == playerAck.pSkill->name ) Hurt(playerAck, playerAck.pCurPet->curHP);
-				return false;
-			}
-			if ( "魔装反射" == playerDef.pTalent->name ) 
-			{
-				m_pCurRound->log.push_back(playerDef.pCurPet->nick + "的" 
-					+ playerDef.pTalent->name + "反弹了技能");
-				InterfereSkill(playerAck, playerAck);
-				return false;
-			}
-			return InterfereSkill(playerAck, playerDef);
-		}
-		return true;
+		if ( HelpSkill(playerAck, playerDef) ) return true;
 	}
-
-	//攻击技能
 	if ( "阳光烈焰" == playerAck.pSkill->name && Race::huo != m_weather )
 	{
 		if ( !playerAck.sunReady )
@@ -1382,17 +1317,35 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		playerAck.predictRound = -1;
 	}
 
-	if ( Battle::attack == playerDef.act && "保护" == playerDef.pSkill->name && playerDef.defensed ) 
+
+	//非辅助技能
+	if ( ImmuneSkill(playerAck, playerDef) ) //免疫
 	{
-		m_pCurRound->log.push_back(playerDef.pCurPet->nick + "保护住了自己");
-		if ( "大爆炸" == playerAck.pSkill->name ) Hurt(playerAck, playerAck.pCurPet->curHP);
+		m_pCurRound->log.push_back(playerDef.pCurPet->nick + "免疫了技能");
 		return false;
 	}
-	if ( !CalHitRate(playerAck, playerDef) )
+	if ( !CalHitRate(playerAck, playerDef) )//miss
 	{
 		m_pCurRound->log.push_back(playerAck.pCurPet->nick + "的攻击没有命中" );
 		return false;
 	}
+	if ( Battle::attack == playerDef.act && "保护" == playerDef.pSkill->name && playerDef.defensed ) 
+	{
+		m_pCurRound->log.push_back(playerDef.pCurPet->nick + "保护住了自己");
+		return false;
+	}
+	//干扰技能
+	if ( 2 == playerAck.pSkill->type ) 
+	{
+		if ( "魔装反射" == playerDef.pTalent->name ) 
+		{
+			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "的" 
+				+ playerDef.pTalent->name + "反弹了技能");
+			return InterfereSkill(playerAck, playerAck);
+		}
+		return InterfereSkill(playerAck, playerDef);
+	}
+	//攻击技能
 	bool ct = CriticalHit(playerAck, playerDef);
 	int G = 0, F = 0, Power = 0;
 	if ( 1 == playerAck.pSkill->type ) 
@@ -1409,9 +1362,10 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 	Power = CalPower(playerAck, ct, playerDef);
 	if ( 0 == Power ) 
 	{
-		if ( "大爆炸" == playerAck.pSkill->name ) Hurt(playerAck, playerAck.pCurPet->curHP);
+		m_pCurRound->log.push_back( "发现程序漏洞：ImmuneSkill()方法未考虑所有免疫情况" );
 		return false;
 	}
+
 	if ( ct ) 		
 	{
 		m_pCurRound->log.push_back(playerAck.pCurPet->nick + "暴击！！！宝宝威武！！！" );
@@ -1439,28 +1393,15 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		playerAck.outputHurt = playerAck.outputHurt <= playerDef.tiShen?playerAck.outputHurt:playerDef.tiShen;
 		m_pCurRound->log.push_back( playerDef.pCurPet->nick + "的替身承受了伤害" );
 	}
-	if ( "破灭之愿" != playerAck.pSkill->name
-		&& "预知未来" != playerAck.pSkill->name )
-	{
-		AttackEffect(playerAck, playerDef);
-	}
-	if ( 0 < playerDef.tiShen )
-	{
-		playerDef.tiShen -= playerAck.outputHurt;
-		if ( 0 > playerDef.tiShen ) playerDef.tiShen = 0;
-	}
+	if ( "破灭之愿" == playerAck.pSkill->name || "预知未来" == playerAck.pSkill->name ) return true;
+
+	AttackEffect(playerAck, playerDef);
 
 	return true;
 }
 
 bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 {
-	if ( !CalHitRate(playerAck, playerDef) )
-	{
-		m_pCurRound->log.push_back(playerAck.pCurPet->nick + "的攻击没有命中" );
-		return false;
-	}
-
 	if ( "撒菱" == playerAck.pSkill->name )//		地	0	2	101	0	使上场巴迪受到1/8伤害
 	{
 		if ( playerDef.nail[Race::di] )
@@ -1489,12 +1430,6 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 	}
 	if ( "鬼火" == playerAck.pSkill->name )//		火	0	2	95	0	烧伤
 	{
-		if ( "引火" == playerDef.pTalent->name )
-		{
-			playerDef.race[Race::huo] = true;
-			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "吸收了火焰，火系威力提升");
-			return false;
-		}
 		if ( ImmuneState(playerDef) )
 		{
 			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "免疫了攻击");
@@ -1506,19 +1441,7 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 	}
 	if ( "电磁波" == playerAck.pSkill->name )//		电	0	2	100	0	麻痹
 	{
-		if ( "电气引擎" == playerDef.pTalent->name )
-		{
-			if ( 6 > playerDef.sd ) 
-			{
-				playerDef.sd++;
-				m_pCurRound->log.push_back(playerDef.pCurPet->nick + "吸收了能量，速度提升");
-			}
-			return false;
-		}
-		if ( ImmuneState(playerDef)  
-			|| "柔软" == playerDef.pTalent->name
-			|| Race::di == playerDef.pBuddy->race1
-			|| Race::di == playerDef.pBuddy->race2)
+		if ( ImmuneState(playerDef) || "柔软" == playerDef.pTalent->name )
 		{
 			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "免疫了攻击");
 			return false;
@@ -1529,15 +1452,6 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 	}
 	if ( "麻痹粉" == playerAck.pSkill->name )//		草	0	2	75	0	麻痹
 	{
-		if ( "食草" == playerDef.pTalent->name )
-		{
-			if ( 6 > playerDef.wg ) 
-			{
-				playerDef.wg++;
-				m_pCurRound->log.push_back(playerDef.pCurPet->nick + "吸收了攻击，物攻提升");
-			}
-			return false;
-		}
 		if ( ImmuneState(playerDef) || "柔软" == playerDef.pTalent->name )
 		{
 			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "免疫了攻击");
@@ -1549,9 +1463,7 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 	}
 	if ( "剧毒" == playerAck.pSkill->name )//		毒	0	2	85	0	中毒
 	{
-		if ( ImmuneState(playerDef) || "免疫" == playerDef.pTalent->name 
-			|| Race::gang == playerDef.pBuddy->race1
-			|| Race::gang == playerDef.pBuddy->race2 )
+		if ( ImmuneState(playerDef) || "免疫" == playerDef.pTalent->name )
 		{
 			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "免疫了攻击");
 			return false;
@@ -1566,12 +1478,6 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 		||"黑洞" == playerAck.pSkill->name //		恶	0	2	80	0	催眠对方
 		||"睡眠粉" == playerAck.pSkill->name )//		草	0	2	100	0	催眠对方
 	{
-		if ( "睡眠粉" == playerAck.pSkill->name && "食草" == playerDef.pTalent->name )
-		{
-			if ( 6 > playerDef.wg ) playerDef.wg++;
-			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "吸收了攻击，物攻提升");
-			return false;
-		}
 		if ( ImmuneState(playerDef) || "失眠" == playerDef.pTalent->name )
 		{
 			m_pCurRound->log.push_back(playerDef.pCurPet->nick + "免疫了攻击");
@@ -1607,14 +1513,6 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 	}
 	if ( "莽撞" == playerAck.pSkill->name )//		普	0	2	100	0	对方HP减少到与自己相同
 	{
-		if ( Race::gui == playerDef.pBuddy->race1 )
-		{
-			if ( "胆量" != playerAck.pTalent->name && !playerAck.smell )
-			{
-				m_pCurRound->log.push_back(playerDef.pCurPet->nick + "免疫了攻击");
-				return false;
-			}
-		}
 		if ( playerDef.pCurPet->curHP > playerAck.pCurPet->curHP )
 		{
 			playerAck.outputHurt = Hurt(playerDef, playerDef.pCurPet->curHP - playerAck.pCurPet->curHP);
@@ -1694,7 +1592,6 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 		m_pCurRound->log.push_back(playerDef.pCurPet->nick + "3回合不能使用辅助技能");
 		return true;
 	}
-
 	if ( "封印" == playerAck.pSkill->name )//		超	0	2	101	0	对方不能使用我方会的技能
 	{
 		if ( playerDef.ban )
@@ -1735,6 +1632,11 @@ bool Battle::InterfereSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerD
 
 bool Battle::HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 {
+	if ( "保护" == playerAck.pSkill->name || "忍耐" == playerAck.pSkill->name )
+	{
+		if ( !playerAck.defensed ) m_pCurRound->log.push_back("但是失败了");
+		return true;
+	}
 	if ( "晴天" == playerAck.pSkill->name )//		火	0	2	101	0	5回合晴天
 	{
 		if ( Race::huo == m_weather )
@@ -2117,7 +2019,10 @@ bool Battle::HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 			return true;
 		}
 		short skill = playerAck.lockSkill;
-		UseSkill(playerAck, playerDef);
+		if ( !UseSkill(playerAck, playerDef) )
+		{
+			if ( "大爆炸" == playerAck.pSkill->name ) Hurt(playerAck, playerAck.pCurPet->curHP);
+		}
 		playerAck.lockSkill = skill;
 	}
 	else if ( "香甜气息" == playerAck.pSkill->name )//		草	0	2	100	1	非战斗使用可引出野生巴迪
@@ -2148,9 +2053,8 @@ bool Battle::HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		if ( n >= playerDef.pCurPet->curHP ) playerDef.pCurPet->curHP = n;
 		else Hurt(playerDef, playerDef.pCurPet->curHP - n);
 	}
-	else return false;
-
-	return true;
+	
+	return false;
 }
 
 bool Battle::ActionAble(Battle::WARRIOR &player)
@@ -2452,6 +2356,10 @@ bool Battle::ForcedLeave(Battle::WARRIOR &player)
 
 bool Battle::AttackCost(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 {
+	char skillRace = playerAck.pSkill->race;
+	if ( "天空皮肤" == playerAck.pTalent->name && Race::pu == skillRace ) skillRace = Race::fei;
+	else if ( "冰冻皮肤" == playerAck.pTalent->name && Race::pu == skillRace ) skillRace = Race::bing;
+
 	if ( "大爆炸" == playerAck.pSkill->name ) 
 	{
 		Hurt(playerAck, playerAck.pCurPet->curHP);
@@ -2499,7 +2407,7 @@ bool Battle::AttackCost(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 				+ playerDef.pTalent->name + "使" + playerAck.pCurPet->nick + "冰封了");
 		}
 	}
-	if ( "正义心" == playerDef.pTalent->name && Race::e == playerAck.pSkill->race 
+	if ( "正义心" == playerDef.pTalent->name && Race::e == skillRace 
 		&& 6 > playerDef.wg )//	被恶属性攻击，强化物攻
 	{
 		playerDef.wg++;
@@ -2830,4 +2738,146 @@ Battle::WARRIOR* Battle::Player(bool me)
 {
 	if ( me ) return &m_player;
 	return &m_enemy;
+}
+
+bool Battle::ImmuneSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
+{
+	//全技能免疫
+	if ( "圣斗士" == playerDef.pTalent->name )
+	{
+		if ( playerDef.lookSkill[playerAck.pSkill->id] ) 
+		{
+			m_pCurRound->log.push_back("被圣斗士看过1次的技能是无效的");
+			return true;
+		}
+		playerDef.lookSkill[playerAck.pSkill->id] = true;
+	}
+
+	//不能被按照属性区分免疫的技能
+	if ( "吼叫" == playerAck.pSkill->name //	普	0	2	101	0	最后出手，强制对方退场
+		|| "吹飞" == playerAck.pSkill->name //		飞	0	2	101	0	最后出手，强制对方退场
+		|| "催眠术" == playerAck.pSkill->name //		超	0	2	60	0	催眠对方
+		|| "恶魔吻" == playerAck.pSkill->name //		普	0	2	75	0	催眠对方
+		|| "黑洞" == playerAck.pSkill->name //		恶	0	2	80	0	催眠对方
+		|| "吞噬" == playerAck.pSkill->name //	恶	0	2	101	1	禁止换人和逃跑。非战斗使用可以吞掉物品，法宝转换为正能量
+		|| "黑眼" == playerAck.pSkill->name //	黑眼	普	0	2	101	0	防止对方换人和逃跑
+		|| "掉包" == playerAck.pSkill->name //		恶	0	2	100	0	交换物品
+		|| "哈欠" == playerAck.pSkill->name //		普	0	2	100	0	对方下回合被催眠
+		|| "鼓掌" == playerAck.pSkill->name //		普	0	2	100	0	3回合不能更换技能
+		|| "寻衅" == playerAck.pSkill->name //		恶	0	2	100	0	使对方不能连续使用相同技能
+		|| "挑拨" == playerAck.pSkill->name //		恶	0	2	100	0	使对方3回合不能使用变化技能
+		|| "封印" == playerAck.pSkill->name //		超	0	2	101	0	对方不能使用我方会的技能
+		|| "同归" == playerAck.pSkill->name //		鬼	0	2	101	0	受到攻击体力归0时，拉对手一起倒下
+		|| "奇怪光" == playerAck.pSkill->name //		鬼	0	2	100	0	混乱
+		) return false;
+
+	//按照属性免疫
+	char skillRace = playerAck.pSkill->race;
+	if ( "天空皮肤" == playerAck.pTalent->name && Race::pu == skillRace ) skillRace = Race::fei;
+	else if ( "冰冻皮肤" == playerAck.pTalent->name && Race::pu == skillRace ) skillRace = Race::bing;
+
+	if ( Race::huo == skillRace )//火系免疫
+	{
+		if ( "引火" == playerDef.pTalent->name )
+		{
+			if ( !playerDef.race[Race::huo] ) 
+			{
+				playerDef.race[Race::huo] = true;
+				m_pCurRound->log.push_back(playerDef.pCurPet->nick + "吸收了火焰，火系威力提升");
+			}
+			return true;
+		}
+	}
+	if ( Race::shui == skillRace )//水系免疫
+	{
+		if ( "蓄水" == playerDef.pTalent->name )
+		{
+			if ( playerDef.pCurPet->curHP < playerDef.pCurPet->HP ) 
+			{
+				playerDef.pCurPet->curHP += playerDef.pCurPet->HP / 4;
+				if ( playerDef.pCurPet->HP > playerDef.pCurPet->HP ) playerDef.pCurPet->HP = playerDef.pCurPet->HP;
+				m_pCurRound->log.push_back(playerDef.pCurPet->nick + "吸收了水分，回复1/4体力");
+			}
+			return true;
+		}
+	}
+	if ( Race::dian == skillRace )//电系免疫
+	{
+		if ( "电气引擎" == playerDef.pTalent->name )
+		{
+			if ( 6 > playerDef.sd ) 
+			{
+				playerDef.sd++;
+				m_pCurRound->log.push_back(playerDef.pCurPet->nick + "吸收了能量，速度提升");
+			}
+			return true;
+		}
+		if ( Race::di == playerDef.pBuddy->race1 || Race::di == playerDef.pBuddy->race2 ) return true;
+	}
+	if ( Race::cao == skillRace )//草系免疫
+	{
+		if ( "食草" == playerDef.pTalent->name )
+		{
+			if ( 6 > playerDef.wg ) 
+			{
+				playerDef.wg++;
+				m_pCurRound->log.push_back(playerDef.pCurPet->nick + "吸收了攻击，物攻提升");
+			}
+			return true;
+		}
+	}
+	if ( Race::du == skillRace )//毒系免疫
+	{
+		if ( "免疫" == playerDef.pTalent->name 
+			|| Race::gang == playerDef.pBuddy->race1
+			|| Race::gang == playerDef.pBuddy->race2 )
+		{
+			return true;
+		}
+	}
+	if ( Race::di == skillRace )//地系免疫
+	{
+		if ( "浮游" == playerDef.pTalent->name 
+			|| Race::fei == playerDef.pBuddy->race1
+			|| Race::fei == playerDef.pBuddy->race2 )
+		{
+			return true;
+		}
+	}
+	if ( Race::chao == skillRace )//超系免疫
+	{
+		if ( Race::e == playerDef.pBuddy->race1
+			|| Race::e == playerDef.pBuddy->race2 )
+		{
+			return true;
+		}
+	}
+	if ( Race::dou == skillRace )//斗系免疫
+	{
+		if ( Race::gui == playerDef.pBuddy->race1
+			|| Race::gui == playerDef.pBuddy->race2 )
+		{
+			if ( "胆量" == playerAck.pTalent->name || playerAck.smell ) return false;
+			return true;
+		}
+	}
+	if ( Race::pu == skillRace )//普系免疫
+	{
+		if ( Race::gui == playerDef.pBuddy->race1
+			|| Race::gui == playerDef.pBuddy->race2 )
+		{
+			if ( "胆量" == playerAck.pTalent->name || playerAck.smell ) return false;
+			return true;
+		}
+	}
+	if ( Race::gui == skillRace )//鬼系免疫
+	{
+		if ( Race::pu == playerDef.pBuddy->race1
+			|| Race::pu == playerDef.pBuddy->race2 )
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
