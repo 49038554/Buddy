@@ -143,8 +143,8 @@ data::PET BuddyWorld::Buddy103()
 {
 	data::PET pet;
 	pet = m_factory.BestBuddy("暗杀兔");
-	m_factory.SetTalent(pet, "火珠");
-	m_factory.AddItem(pet, "四叶草");
+	m_factory.SetTalent(pet, "根性");
+	m_factory.AddItem(pet, "火珠");
 	m_factory.SetNature(pet, "SD", "TF");
 	m_factory.SetSkill(pet, "空元气", "进身击", "裸奔气合拳", "替身");
 	m_factory.SetMuscle(pet, 6, 0, 0, 252, 0, 252);

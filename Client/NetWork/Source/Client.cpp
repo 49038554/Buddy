@@ -48,12 +48,14 @@ Client::Client(void)
 	m_mapId = 5;
 	PetFactory pf;
 	pf.SetGame(&m_game);
-	data::PET pet = pf.Pet("Ğü¸¡Ä§Å¼");
-	pf.SetSkill(pet, "´ó±¬Õ¨", "ÈöÁâ", "ÇçÌì", "ÇóÓê");
-	m_pets[4].skill1 = pet.skill1;
-	m_pets[4].skill2 = pet.skill2;
-	m_pets[4].skill3 = pet.skill3;
-	m_pets[4].skill4 = pet.skill4;
+// 	data::PET pet = pf.Pet("Ğü¸¡Ä§Å¼");
+	pf.SetSkill(m_pets[4], "´ó±¬Õ¨", "ÈöÁâ", "ÇçÌì", "ÇóÓê");
+// 	m_pets[4].skill1 = pet.skill1;
+// 	m_pets[4].skill2 = pet.skill2;
+// 	m_pets[4].skill3 = pet.skill3;
+// 	m_pets[4].skill4 = pet.skill4;
+//	pf.AddItem(m_pets[0], "×¨°®Í·½í");
+	;
 }
 
 Client::~Client(void)

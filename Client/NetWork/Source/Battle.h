@@ -82,9 +82,10 @@ public:
 		char	tf;//特防强化等级
 		char	sd;//速度强化等级
 		char	ct;//暴击强化等级
-		bool	changePetAble;//允许换人
+		char	banChangeRound;//禁止交换回合数,-1永久
 		short	lockSkill;//锁定技能
 		char	lockSkillTime;//锁定技能回合数量,-1永久
+		bool	guZhang;//中了鼓掌
 		bool	smell;//嗅觉
 		short	recvHP;//回复HP
 		bool	seed;//种子
@@ -152,9 +153,9 @@ private:
 	int CalSpeed(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
 	bool CalHitRate(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);
 	bool CriticalHit(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);
-	int CalWG(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
+	int CalWG(Battle::WARRIOR &player, bool ct, Battle::WARRIOR &enemy);
 	int CalWF(Battle::WARRIOR &player, bool ct, Battle::WARRIOR &enemy);
-	int CalTG(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
+	int CalTG(Battle::WARRIOR &player, bool ct, Battle::WARRIOR &enemy);
 	int CalTF(Battle::WARRIOR &player, bool ct, Battle::WARRIOR &enemy);
 	int CalPower(Battle::WARRIOR &pAck, bool ct, Battle::WARRIOR &pDef);
 	bool PetAction(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef);//true有巴迪战败，false没有巴迪战败
