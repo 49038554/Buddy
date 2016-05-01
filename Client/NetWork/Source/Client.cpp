@@ -48,14 +48,10 @@ Client::Client(void)
 	m_mapId = 5;
 	PetFactory pf;
 	pf.SetGame(&m_game);
-// 	data::PET pet = pf.Pet("悬浮魔偶");
-	pf.SetSkill(m_pets[4], "大爆炸", "撒菱", "晴天", "求雨");
-// 	m_pets[4].skill1 = pet.skill1;
-// 	m_pets[4].skill2 = pet.skill2;
-// 	m_pets[4].skill3 = pet.skill3;
-// 	m_pets[4].skill4 = pet.skill4;
-//	pf.AddItem(m_pets[0], "专爱头巾");
-	;
+	pf.SetSkill(m_pets[4], "沙暴", "撒菱", "晴天", "求雨");
+	pf.SetSkill(m_pets[3], "末日歌", "黑雾", "替身", "龙之爪");
+	pf.SetSkill(m_pets[5], "裸奔气合拳", "气合拳", "同归", "掉包");
+	pf.AddItem(m_pets[5], "专爱头巾");
 }
 
 Client::~Client(void)
