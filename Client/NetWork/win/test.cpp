@@ -324,6 +324,25 @@ char* OnCommand(std::vector<std::string> *param)
 		PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
 		PrintWarrior(g_cli.Fighter(battleId, false), g_cli.GetGame());
 	}
+	else if ( "buse" == cmd[0] )
+	{
+		if ( 3 > cmd.size() ) 
+		{
+			Helper();
+			return NULL;
+		}
+		int uId = 1;
+		if ( 4 == cmd.size() ) uId = 2;
+		int battleId = atoi(cmd[1].c_str());
+		int itemId = atoi(cmd[2].c_str());
+		const char *ret = NULL;
+		if ( 1 == uId ) ret = g_cli.Ready(battleId, Battle::useItem, itemId);
+		else ret = g_cli.SheReady(battleId, Battle::useItem, itemId);
+		if ( NULL != ret ) printf( "%s\n", ret );
+		ShowLog(battleId);
+		PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
+		PrintWarrior(g_cli.Fighter(battleId, false), g_cli.GetGame());
+	}
 	else if ( "pets" == cmd[0] )
 	{
 		if ( 2 > cmd.size() ) 
@@ -362,6 +381,7 @@ void Helper()
 	printf( "\t\tack battleId skillId [she]\n" );
 	printf( "\t\tchange battleId petId [she]\n" );
 	printf( "\t\tsend battleId petId [she]\n" );
+	printf( "\t\tbuse battleId itemId count\n" );
 	printf( "\t\tpets battleId [she]\n" );
 }
 

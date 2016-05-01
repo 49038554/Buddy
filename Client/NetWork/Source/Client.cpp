@@ -1333,6 +1333,12 @@ bool Client::Log( int battleId, std::vector<std::string> &log )
 
 const char* Client::Ready(int battleId, Battle::Action act, short objectId)
 {
+	static std::string reason;
+	if ( Battle::useItem == act ) 
+	{
+		reason = UseItem(objectId, 1);
+		if ( "" != reason ) return reason.c_str();
+	}
 	Battle::RAND_PARAM rp;
 	const char *ret = m_game.CheckReady(battleId, true, act, objectId, rp);
 	if ( NULL != ret ) return ret;
