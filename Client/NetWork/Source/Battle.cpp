@@ -1441,7 +1441,6 @@ bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		unFaint = true;
 		playerDef.pCurPet->itemId = 0;
 	}
-	playerDef.pCurPet->curHP = playerAck.pCurPet->curHP = 9999;
 	if ( 0 == playerDef.tiShen )
 	{
 		playerAck.outputHurt = Hurt(playerDef, playerAck.outputHurt, unFaint); 
