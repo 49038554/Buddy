@@ -143,11 +143,6 @@ namespace data
 		short	TG;//特攻
 		short	TF;//特防
 		short	SD;//速度
-		char	HPHealthy;//血先天体质
-		char	WGHealthy;//攻先天体质
-		char	WFHealthy;//防先天体质
-		char	TGHealthy;//特攻先天体质
-		char	TFHealthy;//特防先天体质
 		char	SDHealthy;//速度先天体质
 		unsigned char	HPMuscle;//血后天修炼
 		unsigned char	WGMuscle;//攻后天修炼

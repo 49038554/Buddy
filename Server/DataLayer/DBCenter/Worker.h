@@ -112,12 +112,10 @@ private:
 	bool SyncItem(unsigned int userId, int itemId, int count);
 	bool SyncPlayer(data::PLAYER &player);
 	bool SyncPet( unsigned int userId, int petId, 
-		int number, char talent, char nature, 
-		char HPHealthy, char WGHealthy, char WFHealthy, char TGHealthy, char TFHealthy, char SDHealthy,
+		int number, char talent, char nature, char SDHealthy,
 		unsigned char HPMuscle, unsigned char WGMuscle, unsigned char WFMuscle, unsigned char TGMuscle, unsigned char TFMuscle, unsigned char SDMuscle,
 		std::vector<char> race );
-	bool AddPet( int number, unsigned userId, int petId, char talent, char nature, 
-		char HPHealthy, char WGHealthy, char WFHealthy, char TGHealthy, char TFHealthy, char SDHealthy);
+	bool AddPet( int number, unsigned userId, int petId, char talent, char nature, char SDHealthy);
 
 private:
 	mdk::Logger     m_log;

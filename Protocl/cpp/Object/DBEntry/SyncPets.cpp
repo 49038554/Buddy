@@ -60,26 +60,6 @@ bool SyncPets::Build(bool isResult)
 		{
 			return false;
 		}
-		if ( !AddData(m_pets[i].HPHealthy) )//Ñª
-		{
-			return false;
-		}
-		if ( !AddData(m_pets[i].WGHealthy) )//¹¥
-		{
-			return false;
-		}
-		if ( !AddData(m_pets[i].WFHealthy) )//·À
-		{
-			return false;
-		}
-		if ( !AddData(m_pets[i].TGHealthy) )//ÌØ¹¥
-		{
-			return false;
-		}
-		if ( !AddData(m_pets[i].TFHealthy) )//ÌØ·À
-		{
-			return false;
-		}
 		if ( !AddData(m_pets[i].SDHealthy) )//ËÙ¶È
 		{
 			return false;
@@ -184,26 +164,6 @@ bool SyncPets::Parse()
 			return false;
 		}
 		if ( !GetData(pet.nature) )//ÐÔ¸ñ
-		{
-			return false;
-		}
-		if ( !GetData(pet.HPHealthy) )//Ñª
-		{
-			return false;
-		}
-		if ( !GetData(pet.WGHealthy) )//¹¥
-		{
-			return false;
-		}
-		if ( !GetData(pet.WFHealthy) )//·À
-		{
-			return false;
-		}
-		if ( !GetData(pet.TGHealthy) )//ÌØ¹¥
-		{
-			return false;
-		}
-		if ( !GetData(pet.TFHealthy) )//ÌØ·À
 		{
 			return false;
 		}

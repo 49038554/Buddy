@@ -12,11 +12,17 @@ ServerEx::ServerEx(void)
 	m_threadObjSeted = false;
 	m_freeFun = NULL;
 	m_pFreeFunObj = NULL;
+	m_pCfg = NULL;
 }
 
 ServerEx::~ServerEx(void)
 {
 	SaveId();
+	if ( NULL != m_pCfg )
+	{
+		delete m_pCfg;
+		m_pCfg = NULL;
+	}
 	if ( NULL != m_freeFun )
 	{
 		int i = 0;
@@ -113,6 +119,7 @@ void ServerEx::SaveId( bool now )
 {
 	static uint64 count = 0;
 	static uint64 lastSave = 0;
+	if ( NULL == m_pCfg ) return;
 	ConfigFile &cfg = *m_pCfg;
 
 	count++;

@@ -18,7 +18,7 @@ public:
 	bool AddItem(data::PET &pet, const std::string &name);
 	bool SetTalent(data::PET &pet, const std::string &name);
 	bool SetNature(data::PET &pet, const std::string &add, const std::string &del);
-	bool SetHealthy(data::PET &pet, short hp, short wg, short wf, short tg, short tf, short sd );
+	bool SetHealthy(data::PET &pet, char sd );
 	bool SetMuscle(data::PET &pet, short hp, short wg, short wf, short tg, short tf, short sd );
 	bool SetSkill( data::PET &pet, const std::string name1, const std::string name2, const std::string name3, const std::string name4 );
 	bool AddMuscle(data::PET &pet, short add);

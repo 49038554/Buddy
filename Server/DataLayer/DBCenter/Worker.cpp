@@ -1479,22 +1479,22 @@ bool Worker::CreatePlayer(unsigned int userId)
 	int petId = 0;
 	//ÀÏÅ£
 	petId++;
-	if ( !AddPet( pBuddy1->number, userId, petId, pBuddy1->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	if ( !AddPet( pBuddy1->number, userId, petId, pBuddy1->talent1, 0, 25 ) ) return false;
 	//Ì°³Ô¹í
 	petId++;
-	if ( !AddPet( pBuddy2->number, userId, petId, pBuddy2->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	if ( !AddPet( pBuddy2->number, userId, petId, pBuddy2->talent1, 0, 25 ) ) return false;
 	//»¢öè
 	petId++;
-	if ( !AddPet( pBuddy3->number, userId, petId, pBuddy3->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	if ( !AddPet( pBuddy3->number, userId, petId, pBuddy3->talent1, 0, 25 ) ) return false;
 	//ÔÆÈ¸
 	petId++;
-	if ( !AddPet( pBuddy4->number, userId, petId, pBuddy4->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	if ( !AddPet( pBuddy4->number, userId, petId, pBuddy4->talent1, 0, 25 ) ) return false;
 	//Ðü¸¡Ä§Å¼
 	petId++;
-	if ( !AddPet( pBuddy5->number, userId, petId, pBuddy5->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	if ( !AddPet( pBuddy5->number, userId, petId, pBuddy5->talent1, 0, 25 ) ) return false;
 	//Ò¹Ä§ÈË
 	petId++;
-	if ( !AddPet( pBuddy6->number, userId, petId, pBuddy6->talent1, 0, 25, 25, 25, 25, 25, 25 ) ) return false;
+	if ( !AddPet( pBuddy6->number, userId, petId, pBuddy6->talent1, 0, 25 ) ) return false;
 
 	return true;
 }
@@ -1558,6 +1558,7 @@ bool Worker::ReadPets(MySqlClient *pMysql, unsigned int userId, std::vector<data
 		return false;
 	}
 	data::PET pet;
+	short muscle;
 	while ( !pMysql->IsEof() )
 	{
 		pMysql->GetValue("petId", pet.id);
@@ -1568,23 +1569,18 @@ bool Worker::ReadPets(MySqlClient *pMysql, unsigned int userId, std::vector<data
 		pMysql->GetValue("skill3", pet.skill3);
 		pMysql->GetValue("skill4", pet.skill4);
 		pMysql->GetValue("nature", pet.nature);
-		pMysql->GetValue("HPMuscle", pet.HPHealthy);
-		pMysql->GetValue("WGMuscle", pet.WGHealthy);
-		pMysql->GetValue("WFMuscle", pet.WFHealthy);
-		pMysql->GetValue("TGMuscle", pet.TGHealthy);
-		pMysql->GetValue("TFMuscle", pet.TFHealthy);
-		pMysql->GetValue("SDMuscle", pet.SDHealthy);
-		pet.HPMuscle = pet.HPHealthy;
-		pet.WGMuscle = pet.WGHealthy;
-		pet.WFMuscle = pet.WFHealthy;
-		pet.TGMuscle = pet.TGHealthy;
-		pet.TFMuscle = pet.TFHealthy;
-		pet.SDMuscle = pet.SDHealthy;
-		pMysql->GetValue("HPHealthy", pet.HPHealthy);
-		pMysql->GetValue("WGHealthy", pet.WGHealthy);
-		pMysql->GetValue("WFHealthy", pet.WFHealthy);
-		pMysql->GetValue("TGHealthy", pet.TGHealthy);
-		pMysql->GetValue("TFHealthy", pet.TFHealthy);
+		pMysql->GetValue("HPMuscle", muscle);
+		pet.HPMuscle = muscle;
+		pMysql->GetValue("WGMuscle", muscle);
+		pet.WGMuscle = muscle;
+		pMysql->GetValue("WFMuscle", muscle);
+		pet.WFMuscle = muscle;
+		pMysql->GetValue("TGMuscle", muscle);
+		pet.TGMuscle = muscle;
+		pMysql->GetValue("TFMuscle", muscle);
+		pet.TFMuscle = muscle;
+		pMysql->GetValue("SDMuscle", muscle);
+		pet.SDMuscle = muscle;
 		pMysql->GetValue("SDHealthy", pet.SDHealthy);
 		pMysql->GetValue("itemId", pet.itemId);
 		pMysql->MoveNext();
@@ -1724,9 +1720,7 @@ void Worker::OnSyncPets(mdk::STNetHost &host, msg::Buffer &buffer)
 	{
 		pBuddy = Buddy(msg.m_pets[i].number, m_buddys);
 		msg.m_pets[i].synced = SyncPet(msg.m_objectId, msg.m_pets[i].id, 
-			msg.m_pets[i].number, msg.m_pets[i].talent, msg.m_pets[i].nature, 
-			msg.m_pets[i].HPHealthy, msg.m_pets[i].WGHealthy, msg.m_pets[i].WFHealthy, 
-			msg.m_pets[i].TGHealthy, msg.m_pets[i].TFHealthy, msg.m_pets[i].SDHealthy, 
+			msg.m_pets[i].number, msg.m_pets[i].talent, msg.m_pets[i].nature, msg.m_pets[i].SDHealthy, 
 			msg.m_pets[i].HPMuscle, msg.m_pets[i].WGMuscle, msg.m_pets[i].WFMuscle, 
 			msg.m_pets[i].TGMuscle, msg.m_pets[i].TFMuscle, msg.m_pets[i].SDMuscle, 
 			msg.m_pets[i].race);
@@ -1981,8 +1975,7 @@ bool Worker::SyncPlayer(data::PLAYER &player)
 }
 
 bool Worker::SyncPet( unsigned int userId, int petId, 
-	int number, char talent, char nature, 
-	char HPHealthy, char WGHealthy, char WFHealthy, char TGHealthy, char TFHealthy, char SDHealthy,
+	int number, char talent, char nature, char SDHealthy,
 	unsigned char HPMuscle, unsigned char WGMuscle, unsigned char WFMuscle, unsigned char TGMuscle, unsigned char TFMuscle, unsigned char SDMuscle,
 	std::vector<char> race )
 {
@@ -2000,11 +1993,9 @@ bool Worker::SyncPet( unsigned int userId, int petId,
 	if ( pMysql->IsEmpty() ) 
 	{
 		sprintf( sql, "insert into pet (userId, number, petId, talent, nature, "
-			"HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy, "
-			"HPMuscle, WGMuscle, WFMuscle, TGMuscle, TFMuscle, SDMuscle) "
-			"values (%u, %d, %d, %d, %d, %d,%d,%d,%d,%d,%d, %d,%d,%d,%d,%d,%d) ", 
-			userId, number, petId, talent, nature,
-			HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy,
+			"SDHealthy, HPMuscle, WGMuscle, WFMuscle, TGMuscle, TFMuscle, SDMuscle) "
+			"values (%u, %d, %d, %d, %d, %d, %d,%d,%d,%d,%d,%d) ", 
+			userId, number, petId, talent, nature, SDHealthy,
 			HPMuscle, WGMuscle, WFMuscle, TGMuscle, TFMuscle, SDMuscle );
 	}
 	else
@@ -2012,11 +2003,10 @@ bool Worker::SyncPet( unsigned int userId, int petId,
 		sprintf( sql, "update pet "
 			"set number = %d, "
 			"talent = %d, "
-			"HPHealthy = %d, WGHealthy = %d, WFHealthy = %d, TGHealthy = %d, TFHealthy = %d, SDHealthy = %d, "
+			"SDHealthy = %d, "
 			"HPMuscle = %d, WGMuscle = %d, WFMuscle = %d, TGMuscle = %d, TFMuscle = %d, SDMuscle = %d "
 			"where userId = %u and petId = %d", 
-			number, talent, 
-			HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy,
+			number, talent, SDHealthy,
 			HPMuscle, WGMuscle, WFMuscle, TGMuscle, TFMuscle, SDMuscle,
 			userId, petId);
 	}
@@ -2042,12 +2032,9 @@ bool Worker::SyncPet( unsigned int userId, int petId,
 	return sync;
 }
 
-bool Worker::AddPet( int number, unsigned userId, int petId, char talent, char nature, 
-	char HPHealthy, char WGHealthy, char WFHealthy, char TGHealthy, char TFHealthy, char SDHealthy)
+bool Worker::AddPet( int number, unsigned userId, int petId, char talent, char nature, char SDHealthy)
 {
 	std::vector<char> race;
-	return SyncPet(userId, petId, number, talent, nature, 
-		HPHealthy, WGHealthy, WFHealthy, TGHealthy, TFHealthy, SDHealthy,
-		0,0,0,0,0,0, race );
+	return SyncPet(userId, petId, number, talent, nature, SDHealthy, 0, 222, 0, 0, 0, 0, race );
 }
 

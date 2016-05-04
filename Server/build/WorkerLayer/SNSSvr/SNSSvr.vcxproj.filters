@@ -55,6 +55,9 @@
     <Filter Include="Protocl\Object\SNS\Buddy">
       <UniqueIdentifier>{a70c094b-71f2-4dd1-820f-89ea809eaa06}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Protocl\Object\DBEntry">
+      <UniqueIdentifier>{4ded1776-cbc4-4a5a-90e4-5a7962d1f7e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\WorkLayer\SNSSvr\bin\list.sh" />
@@ -151,6 +154,24 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\SNS\GetUserData.cpp">
       <Filter>Protocl\Object\SNS\User</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\WorkLayer\SNSSvr\Main.h">
@@ -242,6 +263,24 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\SNS\GetUserData.h">
       <Filter>Protocl\Object\SNS\User</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

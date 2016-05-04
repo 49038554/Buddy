@@ -22,6 +22,12 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Buffer.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp" />
@@ -53,6 +59,12 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Buffer.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h" />

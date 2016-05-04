@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost
+Source Server         : localhost_3306
 Source Server Version : 50150
 Source Host           : localhost:3306
 Source Database       : gamebuddy
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2016-03-14 20:02:32
+Date: 2016-05-04 22:36:22
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -41,11 +41,6 @@ CREATE TABLE `pet` (
   `petId` int(11) NOT NULL COMMENT '宠物id',
   `talent` int(11) NOT NULL COMMENT '特性',
   `nature` int(11) NOT NULL COMMENT '性格',
-  `HPHealthy` int(11) NOT NULL COMMENT 'HP体质',
-  `WGHealthy` int(11) NOT NULL COMMENT 'WG体质',
-  `WFHealthy` int(11) NOT NULL COMMENT 'WF体质',
-  `TGHealthy` int(11) NOT NULL COMMENT 'TG体质',
-  `TFHealthy` int(11) NOT NULL COMMENT 'TF体质',
   `SDHealthy` int(11) NOT NULL COMMENT 'SD体质',
   `HPMuscle` int(11) DEFAULT '0' COMMENT 'HP努力',
   `WGMuscle` int(11) DEFAULT '0' COMMENT 'WG努力',

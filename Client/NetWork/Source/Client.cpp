@@ -46,12 +46,12 @@ Client::Client(void)
 {
 	m_palyerDataLoaded = LoadGame();
 	m_mapId = 5;
-	PetFactory pf;
-	pf.SetGame(&m_game);
-	pf.SetSkill(m_pets[4], "沙暴", "撒菱", "晴天", "求雨");
-	pf.SetSkill(m_pets[3], "末日歌", "黑雾", "替身", "龙之爪");
-	pf.SetSkill(m_pets[5], "裸奔气合拳", "气合拳", "同归", "掉包");
-	pf.AddItem(m_pets[5], "专爱头巾");
+// 	PetFactory pf;
+// 	pf.SetGame(&m_game);
+// 	pf.SetSkill(m_pets[4], "沙暴", "撒菱", "晴天", "求雨");
+// 	pf.SetSkill(m_pets[3], "末日歌", "黑雾", "替身", "龙之爪");
+// 	pf.SetSkill(m_pets[5], "裸奔气合拳", "气合拳", "同归", "掉包");
+// 	pf.AddItem(m_pets[5], "专爱头巾");
 }
 
 Client::~Client(void)
@@ -819,11 +819,6 @@ int Client::LoadPets(mdk::File &db, std::vector<data::PET> &pets)
 		if ( mdk::File::success != db.Read(&info.TG, sizeof(short)) ) return 15;
 		if ( mdk::File::success != db.Read(&info.TF, sizeof(short)) ) return 16;
 		if ( mdk::File::success != db.Read(&info.SD, sizeof(short)) ) return 17;
-		if ( mdk::File::success != db.Read(&info.HPHealthy, sizeof(char)) ) return 18;
-		if ( mdk::File::success != db.Read(&info.WGHealthy, sizeof(char)) ) return 19;
-		if ( mdk::File::success != db.Read(&info.WFHealthy, sizeof(char)) ) return 20;
-		if ( mdk::File::success != db.Read(&info.TGHealthy, sizeof(char)) ) return 21;
-		if ( mdk::File::success != db.Read(&info.TFHealthy, sizeof(char)) ) return 22;
 		if ( mdk::File::success != db.Read(&info.SDHealthy, sizeof(char)) ) return 23;
 		if ( mdk::File::success != db.Read(&info.HPMuscle, sizeof(char)) ) return 24;
 		if ( mdk::File::success != db.Read(&info.WGMuscle, sizeof(char)) ) return 25;
@@ -895,11 +890,6 @@ bool Client::SavePets(mdk::File &db, std::vector<data::PET> &pets)
 		db.Write(&pInfo->TG, sizeof(short));
 		db.Write(&pInfo->TF, sizeof(short));
 		db.Write(&pInfo->SD, sizeof(short));
-		db.Write(&pInfo->HPHealthy, sizeof(char));
-		db.Write(&pInfo->WGHealthy, sizeof(char));
-		db.Write(&pInfo->WFHealthy, sizeof(char));
-		db.Write(&pInfo->TGHealthy, sizeof(char));
-		db.Write(&pInfo->TFHealthy, sizeof(char));
 		db.Write(&pInfo->SDHealthy, sizeof(char));
 		db.Write(&pInfo->HPMuscle, sizeof(char));
 		db.Write(&pInfo->WGMuscle, sizeof(char));
@@ -1040,11 +1030,11 @@ void Client::OnPets(msg::Buffer &buffer)
 		if ( NULL == pInfo ) m_pets.push_back(msg.m_pets[i]);
 		else *pInfo = msg.m_pets[i];
 		pInfo = Pet(msg.m_pets[i].id, m_pets);
-		pInfo->curHP = pInfo->HP = (pBuddy->hitPoint * 2 + pInfo->HPMuscle/4 + pInfo->HPHealthy) + 100 + 10;//血
-		pInfo->WG = ((pBuddy->physicalA * 2 + pInfo->WGMuscle/4 + pInfo->WGHealthy) + 5) * GetNatureCal(pInfo->nature, "WG");//攻
-		pInfo->WF = ((pBuddy->physicalD * 2 + pInfo->WFMuscle/4 + pInfo->WFHealthy) + 5) * GetNatureCal(pInfo->nature, "WF");//防
-		pInfo->TG = ((pBuddy->specialA * 2 + pInfo->TFMuscle/4 + pInfo->TGHealthy) + 5) * GetNatureCal(pInfo->nature, "TG");//特攻
-		pInfo->TF = ((pBuddy->specialD * 2 + pInfo->TFMuscle/4 + pInfo->TFHealthy) + 5) * GetNatureCal(pInfo->nature, "TF");//特防
+		pInfo->curHP = pInfo->HP = (pBuddy->hitPoint * 2 + pInfo->HPMuscle/4 + 31) + 100 + 10;//血
+		pInfo->WG = ((pBuddy->physicalA * 2 + pInfo->WGMuscle/4 + 31) + 5) * GetNatureCal(pInfo->nature, "WG");//攻
+		pInfo->WF = ((pBuddy->physicalD * 2 + pInfo->WFMuscle/4 + 31) + 5) * GetNatureCal(pInfo->nature, "WF");//防
+		pInfo->TG = ((pBuddy->specialA * 2 + pInfo->TFMuscle/4 + 31) + 5) * GetNatureCal(pInfo->nature, "TG");//特攻
+		pInfo->TF = ((pBuddy->specialD * 2 + pInfo->TFMuscle/4 + 31) + 5) * GetNatureCal(pInfo->nature, "TF");//特防
 		pInfo->SD = ((pBuddy->speed * 2 + pInfo->SDMuscle/4 + pInfo->SDHealthy) + 5) * GetNatureCal(pInfo->nature, "SD");//速度
 		pInfo->state = 0;
 		pInfo->itemId = 0;
@@ -1143,26 +1133,23 @@ void Client::SyncGame()
 			m_tcpEntry.Send(msg, msg.Size());
 		}
 	}
-	if ( false )
+	msg::SyncPets msg;
+	int i = 0;
+	for ( i = 0; i < m_pets.size(); i++ )
 	{
-		msg::SyncPets msg;
-		int i = 0;
-		for ( i = 0; i < m_pets.size(); i++ )
-		{
-			if ( m_pets[i].synced ) continue;
-			msg.m_pets.push_back(m_pets[i]);
-			if ( msg.m_pets.size() == 100 )
-			{
-				msg.Build();
-				m_tcpEntry.Send(msg, msg.Size());
-				msg.m_pets.clear();
-			}
-		}
-		if ( msg.m_pets.size() > 0 )
+		if ( m_pets[i].synced ) continue;
+		msg.m_pets.push_back(m_pets[i]);
+		if ( msg.m_pets.size() == 100 )
 		{
 			msg.Build();
 			m_tcpEntry.Send(msg, msg.Size());
+			msg.m_pets.clear();
 		}
+	}
+	if ( msg.m_pets.size() > 0 )
+	{
+		msg.Build();
+		m_tcpEntry.Send(msg, msg.Size());
 	}
 }
 

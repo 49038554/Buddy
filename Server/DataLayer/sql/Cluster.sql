@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost
+Source Server         : localhost_3306
 Source Server Version : 50150
 Source Host           : localhost:3306
 Source Database       : cluster
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2016-03-08 13:41:32
+Date: 2016-05-04 22:36:14
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -54,12 +54,12 @@ CREATE TABLE `node` (
 -- ----------------------------
 -- Records of node
 -- ----------------------------
-INSERT INTO `node` VALUES ('sns服务', '1', '移动', '192.168.11.109', '6702');
-INSERT INTO `node` VALUES ('Tcp入口', '1', '电信', '192.168.11.109', '6601');
-INSERT INTO `node` VALUES ('数据入口', '1', '电信', '192.168.11.109', '6901');
-INSERT INTO `node` VALUES ('游戏服务', '1', '移动', '192.168.11.109', '6703');
-INSERT INTO `node` VALUES ('认证服务', '1', '电信', '192.168.11.109', '6701');
-INSERT INTO `node` VALUES ('通知服务', '1', '电信', '192.168.11.109', '6802');
+INSERT INTO `node` VALUES ('sns服务', '1', '移动', '192.168.1.105', '6702');
+INSERT INTO `node` VALUES ('Tcp入口', '1', '电信', '192.168.1.105', '6601');
+INSERT INTO `node` VALUES ('数据入口', '1', '电信', '192.168.1.105', '6901');
+INSERT INTO `node` VALUES ('游戏服务', '1', '移动', '192.168.1.105', '6703');
+INSERT INTO `node` VALUES ('认证服务', '1', '电信', '192.168.1.105', '6701');
+INSERT INTO `node` VALUES ('通知服务', '1', '电信', '192.168.1.105', '6802');
 
 -- ----------------------------
 -- Table structure for node_type
@@ -83,20 +83,3 @@ INSERT INTO `node_type` VALUES ('8', '游戏服务');
 INSERT INTO `node_type` VALUES ('3', '认证服务');
 INSERT INTO `node_type` VALUES ('1', '运维服务');
 INSERT INTO `node_type` VALUES ('4', '通知服务');
-
--- ----------------------------
--- Table structure for room
--- ----------------------------
-DROP TABLE IF EXISTS `room`;
-CREATE TABLE `room` (
-  `nodeNo` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `roomId` int(11) NOT NULL,
-  PRIMARY KEY (`nodeNo`,`name`,`roomId`),
-  KEY `roomSvrKey` (`name`,`nodeNo`),
-  CONSTRAINT `roomSvrKey` FOREIGN KEY (`name`, `nodeNo`) REFERENCES `node` (`name`, `nodeNo`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-
--- ----------------------------
--- Records of room
--- ----------------------------

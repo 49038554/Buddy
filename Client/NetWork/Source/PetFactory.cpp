@@ -29,11 +29,6 @@ data::PET PetFactory::Pet(const std::string &name)
 	pet.nick = pBuddy->name;//昵称
 	pet.talent = pBuddy->talent1;//特性
 	pet.nature = GetNature("-", "-");//性格
-	pet.HPHealthy = rand() % 31;//血先天体质
-	pet.WGHealthy = rand() % 31;//攻先天体质
-	pet.WFHealthy = rand() % 31;//防先天体质
-	pet.TGHealthy = rand() % 31;//特攻先天体质
-	pet.TFHealthy = rand() % 31;//特防先天体质
 	pet.SDHealthy = rand() % 31;//速度先天体质
 	pet.itemId = 0;
 	pet.HPMuscle = 0;//血后天修炼
@@ -73,11 +68,11 @@ void PetFactory::InitSkill(data::PET &pet, data::BUDDY *pBuddy)
 
 void PetFactory::CalAbility(data::PET &pet, data::BUDDY *pBuddy)
 {
-	pet.curHP = pet.HP = (pBuddy->hitPoint * 2 + pet.HPMuscle/4 + pet.HPHealthy) + 100 + 10;//血
-	pet.WG = ((pBuddy->physicalA * 2 + pet.WGMuscle/4 + pet.WGHealthy) + 5) * GetNatureCal(pet.nature, "WG");//攻
-	pet.WF = ((pBuddy->physicalD * 2 + pet.WFMuscle/4 + pet.WFHealthy) + 5) * GetNatureCal(pet.nature, "WF");//防
-	pet.TG = ((pBuddy->specialA * 2 + pet.TFMuscle/4 + pet.TGHealthy) + 5) * GetNatureCal(pet.nature, "TG");//特攻
-	pet.TF = ((pBuddy->specialD * 2 + pet.TFMuscle/4 + pet.TFHealthy) + 5) * GetNatureCal(pet.nature, "TF");//特防
+	pet.curHP = pet.HP = (pBuddy->hitPoint * 2 + pet.HPMuscle/4 + 31) + 100 + 10;//血
+	pet.WG = ((pBuddy->physicalA * 2 + pet.WGMuscle/4 + 31) + 5) * GetNatureCal(pet.nature, "WG");//攻
+	pet.WF = ((pBuddy->physicalD * 2 + pet.WFMuscle/4 + 31) + 5) * GetNatureCal(pet.nature, "WF");//防
+	pet.TG = ((pBuddy->specialA * 2 + pet.TFMuscle/4 + 31) + 5) * GetNatureCal(pet.nature, "TG");//特攻
+	pet.TF = ((pBuddy->specialD * 2 + pet.TFMuscle/4 + 31) + 5) * GetNatureCal(pet.nature, "TF");//特防
 	pet.SD = ((pBuddy->speed * 2 + pet.SDMuscle/4 + pet.SDHealthy) + 5) * GetNatureCal(pet.nature, "SD");//速度
 
 	return;
@@ -140,22 +135,13 @@ bool PetFactory::SetNature(data::PET &pet, const std::string &add, const std::st
 	return true;
 }
 
-bool PetFactory::SetHealthy(data::PET &pet, short hp, short wg, short wf, short tg, short tf, short sd )
+bool PetFactory::SetHealthy(data::PET &pet, char sd )
 {
-	if ( 31 < hp || 31 < wg || 31 < wf
-		|| 31 < tg || 31 < tf || 31 < sd
-		|| 0 > hp || 0 > wg || 0 > wf
-		|| 0 > tg || 0 > tf || 0 > sd
-		) return false;
+	if ( 31 < sd || 0 > sd ) return false;
 
 	data::BUDDY *pBuddy = Buddy(pet.number, m_game->BuddyBook());
 	if ( NULL == pBuddy ) return false;
 
-	pet.HPHealthy = hp;
-	pet.WGHealthy = wg;
-	pet.WFHealthy = wf;
-	pet.TGHealthy = tg;
-	pet.TFHealthy = tf;
 	pet.SDHealthy = sd;
 
 	CalAbility(pet, pBuddy);
@@ -303,21 +289,8 @@ data::PET PetFactory::WildBuddy(data::BUDDY *pBuddy)
 	//随机性格
 	pet.nature = rand()%21;
 	//随机个体
-	n = rand()%7;
-	int i = 0;
-	int attr[7];
-	for ( i = 0; i < 6; i++ ) attr[i] = rand()%31;
-	for ( i = 0; i < n; i++ )
-	{
-		for ( ; true; )
-		{
-			int pos = rand()%6;
-			if ( 31 == attr[pos] ) continue;
-			attr[pos] = 31;
-			break;
-		}
-	}
-	if ( !SetHealthy(pet, attr[0], attr[1], attr[2], attr[3], attr[4], attr[5]) ) return pet;
+	char sd = rand()%32;
+	if ( !SetHealthy(pet, sd) ) return pet;
 
 	pet.id = 1;//也怪每次出1只
 
@@ -333,7 +306,7 @@ data::PET PetFactory::BestBuddy(const std::string &name)
 
 	pet = Pet(name);
 	if ( 0 > pet.id ) return pet;
-	if ( !SetHealthy(pet, 31, 31, 31, 31, 31, 31) ) return pet;
+	if ( !SetHealthy(pet, 31) ) return pet;
 
 	FullSkill(pet);
 	InitSkill(pet, pBuddy);
