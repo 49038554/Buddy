@@ -847,6 +847,16 @@ bool Worker::ReadItem(MySqlClient *pMysql, std::vector<data::ITEM> &imtes)
 		pMysql->GetValue("name", info.name);
 		pMysql->GetValue("coin", info.coin);
 		pMysql->GetValue("descript", info.descript);
+		if ( "" == info.descript ) 
+		{
+			info.descript = "---";
+			m_log.Info("Error", "%s物品说明为空", info.name.c_str());
+		}
+		if ( 128 < info.descript.size() ) 
+		{
+			info.descript = "---";
+			m_log.Info("Error", "%s物品说明超出超度", info.name.c_str());
+		}
 		pMysql->MoveNext();
 		imtes.push_back(info);
 	}
@@ -905,6 +915,17 @@ bool Worker::ReadTalent(MySqlClient *pMysql, std::vector<data::TALENT> &talents)
 		pMysql->GetValue("id", info.id);
 		pMysql->GetValue("name", info.name);
 		pMysql->GetValue("descript", info.descript);
+		if ( "" == info.descript ) 
+		{
+			info.descript = "---";
+			m_log.Info("Error", "%s特性说明为空", info.name.c_str());
+		}
+		if ( 128 < info.descript.size() ) 
+		{
+			info.descript = "---";
+			m_log.Info("Error", "%s特性说明超出超度", info.name.c_str());
+		}
+
 		pMysql->MoveNext();
 		talents.push_back(info);
 	}
@@ -975,7 +996,16 @@ bool Worker::ReadSkill(MySqlClient *pMysql, std::vector<data::SKILL> &skills)
 		pMysql->GetValue("isMapSkill", iVal);//是地图技能
 		info.isMapSkill = 0 == iVal?false:true;
 		pMysql->GetValue("descript", info.descript);//最大60byte
-		if ( "" == info.descript ) info.descript = "---";
+		if ( "" == info.descript ) 
+		{
+			info.descript = "---";
+			m_log.Info("Error", "%s技能说明为空", info.name.c_str());
+		}
+		if ( 128 < info.descript.size() ) 
+		{
+			info.descript = "---";
+			m_log.Info("Error", "%s技能说明超出超度", info.name.c_str());
+		}
 		pMysql->MoveNext();
 		skills.push_back(info);
 	}
@@ -1039,7 +1069,17 @@ bool Worker::ReadBuddy(MySqlClient *pMysql, std::vector<data::BUDDY> &buddys)
 		pMysql->GetValue("number", info.number);//全国编号
 		pMysql->GetValue("name", info.name);//名字
 		pMysql->GetValue("descript", info.descript);//描述,最大60byte
-		if ( "" == info.descript ) info.descript = "---";
+		if ( "" == info.descript ) 
+		{
+			info.descript = "---";
+			m_log.Info("Error", "%s巴迪说明为空", info.name.c_str());
+		}
+		if ( 60 < info.descript.size() ) 
+		{
+			info.descript = "---";
+			m_log.Info("Error", "%s巴迪说明超出超度", info.name.c_str());
+		}
+
 		pMysql->GetValue("raceId1", info.race1);//属性1
 		pMysql->GetValue("raceId2", info.race2);//属性2
 		pMysql->GetValue("talent1", info.talent1);//特性1
@@ -1226,7 +1266,7 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 		for ( i = 0; i < m_talents.size(); i++ )
 		{
 			msg.m_talents.push_back(m_talents[i]);
-			if ( 100 == msg.m_talents.size() )
+			if ( 50 == msg.m_talents.size() )
 			{
 				msg.Build();
 				host.Send(msg, msg.Size());

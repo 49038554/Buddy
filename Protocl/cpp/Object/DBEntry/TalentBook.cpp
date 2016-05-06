@@ -15,7 +15,7 @@ TalentBook::~TalentBook()
 bool TalentBook::Build()
 {
 	unsigned char count = m_talents.size();
-	if ( 0 >= count || count > 100 ) 
+	if ( 0 >= count || count > 50 ) 
 	{
 		return false;
 	}
@@ -81,7 +81,7 @@ bool TalentBook::Parse()
 	//回应参数
 	unsigned char count;
 	if ( !GetData(count) ) return false;
-	if ( 0 >= count || count > 100 ) return false;
+	if ( 0 >= count || count > 50 ) return false;
 
 	int i = 0;
 	data::TALENT info;

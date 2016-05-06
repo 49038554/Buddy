@@ -176,7 +176,7 @@ int LoadItemBook( mdk::File &db, std::vector<data::ITEM> &items )
 		info.name = std::string(buf, len);
 		if ( mdk::File::success != db.Read(&info.coin, sizeof(int)) ) return 7;
 		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 8;
-		if ( 60 < len || 0 >= len ) return 9;
+		if ( 128 < len || 0 >= len ) return 9;
 		if ( mdk::File::success != db.Read(&buf, len) ) return 10;
 		info.descript = std::string(buf, len);
 
@@ -256,7 +256,7 @@ int LoadTalentBook(mdk::File &db, std::vector<data::TALENT> &talents)
 		if ( mdk::File::success != db.Read(buf, len) ) return 6;
 		info.name = std::string(buf, len);
 		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 7;
-		if ( 60 < len || 0 >= len ) return 8;
+		if ( 128 < len || 0 >= len ) return 8;
 		if ( mdk::File::success != db.Read(&buf, len) ) return 9;
 		info.descript = std::string(buf, len);
 
@@ -343,7 +343,7 @@ int LoadSkillBook(mdk::File &db, std::vector<data::SKILL> &skills)
 		if ( mdk::File::success != db.Read(buf, len) ) return 6;
 		info.name = std::string(buf, len);
 		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 7;
-		if ( 60 < len || 0 >= len ) return 8;
+		if ( 128 < len || 0 >= len ) return 8;
 		if ( mdk::File::success != db.Read(&buf, len) ) return 9;
 		info.descript = std::string(buf, len);
 		if ( mdk::File::success != db.Read(&info.race, sizeof(char)) ) return 10;
@@ -580,10 +580,11 @@ bool Game::LoadGameInit()
 {
 	if ( m_gameInitLoaded ) return true;
 
+	int gameInitVersion;
 	mdk::File db("D:/data", "buddy.db");
 
 	if ( mdk::File::success != db.Open(mdk::File::read, mdk::File::assii) ) return false;
-	if ( mdk::File::success != db.Read(&m_gameInitVersion, sizeof(int)) ) return false;
+	if ( mdk::File::success != db.Read(&gameInitVersion, sizeof(int)) ) return false;
 
 	int ret = LoadRaceBook(db, m_raceBook);//
 	if ( 0 != ret ) return false;
@@ -597,6 +598,7 @@ bool Game::LoadGameInit()
 	if ( 0 != ret ) return false;
 	ret = LoadBuddyMap(db, m_buddyMaps);//
 	if ( 0 != ret ) return false;
+	m_gameInitVersion = gameInitVersion;
 
 	return true;
 }

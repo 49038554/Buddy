@@ -49,7 +49,7 @@ namespace data
 		std::string		name;
 		int				coin;//价值
 		std::vector<EFFECT>	effects;//特效,最多5个
-		std::string		descript;//最大60byte
+		std::string		descript;//最大128byte
 	}ITEM;
 
 	//特性
@@ -58,7 +58,7 @@ namespace data
 		short			id;
 		std::string		name;
 		std::vector<EFFECT>	effects;//特效,最多5个
-		std::string		descript;//最大60byte
+		std::string		descript;//最大128byte
 	}TALENT;
 
 	//技能
@@ -72,7 +72,7 @@ namespace data
 		char				hitRate;//命中率30~101, 101必中技
 		std::vector<EFFECT>	effects;//特效,最多5个
 		bool				isMapSkill;//是地图技能
-		std::string			descript;//最大60byte
+		std::string			descript;//最大128byte
 	}SKILL;
 
 	//巴迪兽

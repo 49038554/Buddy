@@ -14,7 +14,7 @@ class TalentBook : public Buffer
 {
 public:
 	//回应参数
-	std::vector<data::TALENT>		m_talents;//最大100个
+	std::vector<data::TALENT>		m_talents;//最大50个
 
 public:
 	TalentBook ();

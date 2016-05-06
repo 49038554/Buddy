@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2016-05-04 22:36:31
+Date: 2016-05-06 12:45:57
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -4551,7 +4551,7 @@ CREATE TABLE `item_book` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `name` varchar(14) NOT NULL COMMENT '名字',
   `coin` int(11) NOT NULL COMMENT '价值',
-  `descript` varchar(60) NOT NULL COMMENT '描述',
+  `descript` varchar(128) NOT NULL COMMENT '描述',
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=gb2312 COMMENT='物品图鉴';
@@ -4888,7 +4888,7 @@ CREATE TABLE `skill_book_info` (
   `type` int(11) DEFAULT '1' COMMENT '技能类型：\r\n1物理 2变化 3特殊',
   `hitRate` int(11) DEFAULT '100' COMMENT '命中率30~101， 101为必中技能',
   `isMapSkill` int(11) unsigned zerofill DEFAULT '00000000000' COMMENT '是否地图技能：\r\n1是 0不是',
-  `descript` varchar(60) NOT NULL COMMENT '描述，最大60byte',
+  `descript` varchar(128) NOT NULL COMMENT '描述，最大60byte',
   PRIMARY KEY (`id`),
   KEY `race_name` (`race`),
   KEY `name` (`name`),
@@ -5060,8 +5060,8 @@ INSERT INTO `skill_book_info` VALUES ('534', '香甜气息', '草', '0', '2', '1
 DROP TABLE IF EXISTS `talent`;
 CREATE TABLE `talent` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL COMMENT '特性名',
-  `descript` varchar(255) DEFAULT NULL COMMENT '特性描述',
+  `name` varchar(20) DEFAULT NULL COMMENT '特性名',
+  `descript` varchar(128) DEFAULT NULL COMMENT '特性描述',
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `name_2` (`name`),
