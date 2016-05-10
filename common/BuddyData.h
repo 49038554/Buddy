@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "mdk/File.h"
 
 namespace Race
 {
@@ -187,5 +188,7 @@ int GetNature(const std::string &add, const std::string &dec);
 double GetNatureCal(int nature, const std::string &attr);
 bool StrSame(const std::string &str1, const std::string &str2);
 char* StateDes( char state );
+bool SavePets(mdk::File &db, std::vector<data::PET> &pets, std::vector<data::BUDDY> &buddyBook);
+int LoadPets(mdk::File &db, std::vector<data::PET> &pets, std::vector<data::BUDDY> &buddyBook);
 
 #endif //BUDDY_DATA_H

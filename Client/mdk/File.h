@@ -48,7 +48,9 @@ public:
 	Error Move(int pos);
 	bool IsEnd();
 	Error Read(void *content, int count);
+	Error Read(std::string &val, int limitedLen);
 	Error Write(void *content, int count);
+	Error Write(std::string &val, int limitedLen);
 
 private:
 	std::string m_dir;

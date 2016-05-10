@@ -116,7 +116,7 @@ bool Battle::Init(Game *game, int id,
 	if ( NULL != ret ) return false;
 	ret = SetPetInfo(m_enemy, m_enemy.pets[0].id);
 	if ( NULL != ret ) return false;
-
+// 	Save();
 	m_curRound = -1;
 	m_weather = 0;
 	m_weatherCount = 0;
@@ -2989,4 +2989,40 @@ bool Battle::ImmuneSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 	}
 
 	return false;
+}
+
+bool Battle::Save()
+{
+	mdk::File logFile("D:/data", "LastBattle");
+	if ( mdk::File::success != logFile.Open(mdk::File::write, mdk::File::assii) ) return false;
+	logFile.Write(&m_player.playerId, sizeof(unsigned int));
+	short len = m_player.name.size();
+	logFile.Write(&len, sizeof(short));
+	logFile.Write((char*)m_player.name.c_str(), len);
+	SavePets(logFile, m_playerInitPets, m_game->BuddyBook());
+	
+	logFile.Write(&m_enemy.playerId, sizeof(unsigned int));
+	len = m_enemy.name.size();
+	logFile.Write(&len, sizeof(short));
+	logFile.Write((char*)m_enemy.name.c_str(), len);
+	SavePets(logFile, m_enemyInitPets, m_game->BuddyBook());
+
+	return true;
+}
+
+int Battle::Load()
+{
+	mdk::File logFile("D:/data", "LastBattle");
+	if ( mdk::File::success != logFile.Open(mdk::File::read, mdk::File::assii) ) return -1;
+	if ( mdk::File::success != logFile.Read(&m_player.playerId, sizeof(unsigned int)) ) return -2;
+	if ( mdk::File::success != logFile.Read(&m_player.name, 20) ) return -3;
+	int ret = LoadPets(logFile, m_playerInitPets, m_game->BuddyBook());
+	if ( 0 != ret ) return ret;
+
+	if ( mdk::File::success != logFile.Read(&m_enemy.playerId, sizeof(unsigned int)) ) return -2;
+	if ( mdk::File::success != logFile.Read(&m_enemy.name, 20) ) return -3;
+	ret = LoadPets(logFile, m_enemyInitPets, m_game->BuddyBook());
+	if ( 0 != ret ) return ret;
+
+	return 0;
 }

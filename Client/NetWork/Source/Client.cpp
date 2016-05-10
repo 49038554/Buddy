@@ -797,143 +797,6 @@ bool Client::SaveItems(mdk::File &db, std::vector<data::PLAYER_ITEM> &items)
 	return true;
 }
 
-int Client::LoadPets(mdk::File &db, std::vector<data::PET> &pets)
-{
-	data::PET info;
-	int count = 0;
-	if ( mdk::File::success != db.Read(&count, sizeof(int)) ) return 1;
-	if ( count <= 0 ) return 2;
-
-	int i = 0;
-	char varChar;
-	for ( i = 0; i < count; i++ )
-	{
-		info.nick = "";
-		if ( mdk::File::success != db.Read(&info.id, sizeof(int)) ) return 3;
-		if ( mdk::File::success != db.Read(&info.number, sizeof(short)) ) return 4;
-		if ( mdk::File::success != db.Read(&info.talent, sizeof(char)) ) return 5;
-		if ( mdk::File::success != db.Read(&info.nature, sizeof(char)) ) return 6;
-		if ( mdk::File::success != db.Read(&info.HP, sizeof(short)) ) return 12;
-		if ( mdk::File::success != db.Read(&info.WG, sizeof(short)) ) return 13;
-		if ( mdk::File::success != db.Read(&info.WF, sizeof(short)) ) return 14;
-		if ( mdk::File::success != db.Read(&info.TG, sizeof(short)) ) return 15;
-		if ( mdk::File::success != db.Read(&info.TF, sizeof(short)) ) return 16;
-		if ( mdk::File::success != db.Read(&info.SD, sizeof(short)) ) return 17;
-		if ( mdk::File::success != db.Read(&info.SDHealthy, sizeof(char)) ) return 23;
-		if ( mdk::File::success != db.Read(&info.HPMuscle, sizeof(char)) ) return 24;
-		if ( mdk::File::success != db.Read(&info.WGMuscle, sizeof(char)) ) return 25;
-		if ( mdk::File::success != db.Read(&info.WFMuscle, sizeof(char)) ) return 26;
-		if ( mdk::File::success != db.Read(&info.TGMuscle, sizeof(char)) ) return 27;
-		if ( mdk::File::success != db.Read(&info.TFMuscle, sizeof(char)) ) return 28;
-		if ( mdk::File::success != db.Read(&info.SDMuscle, sizeof(char)) ) return 29;
-
-		char len = 0;
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 30;
-		if ( len > 17 || len < 0 ) return 31;
-		int j = 0;
-		for ( j = 0; j < info.race.size(); j++ )
-		{
-			if ( mdk::File::success != db.Read(&varChar, sizeof(char)) ) return 32;
-			info.race.push_back(varChar);
-		}
-
-		if ( mdk::File::success != db.Read(&varChar, sizeof(char)) ) return 33;
-		info.synced = (0 == varChar?false:true);
-		char nickLen = 0;
-		if ( mdk::File::success != db.Read(&nickLen, sizeof(char)) ) return 41;
-		if ( 0 > nickLen || 20 < nickLen ) return 42;
-		if ( 0 != nickLen )
-		{
-			char nick[256];
-			if ( mdk::File::success != db.Read(nick, nickLen) ) return 43;
-			nick[nickLen] = 0;
-			info.nick = std::string(nick);
-		}
-		if ( mdk::File::success != db.Read(&info.curHP, sizeof(short)) ) return 34;
-		if ( mdk::File::success != db.Read(&info.state, sizeof(char)) ) return 35;
-		if ( mdk::File::success != db.Read(&info.skill1, sizeof(short)) ) return 36;
-		if ( mdk::File::success != db.Read(&info.skill2, sizeof(short)) ) return 37;
-		if ( mdk::File::success != db.Read(&info.skill3, sizeof(short)) ) return 38;
-		if ( mdk::File::success != db.Read(&info.skill4, sizeof(short)) ) return 39;
-		if ( mdk::File::success != db.Read(&info.itemId, sizeof(short)) ) return 40;
-		if ( "" == info.nick )
-		{
-			data::BUDDY *pBuddy = Buddy(info.number, m_game.BuddyBook());
-			if ( NULL == pBuddy ) continue;
-			info.nick = pBuddy->name;
-		}
-		pets.push_back(info);
-	}
-
-	return 0;
-}
-
-bool Client::SavePets(mdk::File &db, std::vector<data::PET> &pets)
-{
-	data::PET *pInfo;
-	int count = pets.size();
-	if ( count <= 0 ) return false;
-
-	db.Write(&count, sizeof(int));
-	int i = 0; 
-	char varChar;
-	for ( i = 0; i < pets.size(); i++ )
-	{
-		pInfo = &pets[i];
-		db.Write(&pInfo->id, sizeof(int));
-		db.Write(&pInfo->number, sizeof(short));
-		db.Write(&pInfo->talent, sizeof(char));
-		db.Write(&pInfo->nature, sizeof(char));
-		db.Write(&pInfo->HP, sizeof(short));
-		db.Write(&pInfo->WG, sizeof(short));
-		db.Write(&pInfo->WF, sizeof(short));
-		db.Write(&pInfo->TG, sizeof(short));
-		db.Write(&pInfo->TF, sizeof(short));
-		db.Write(&pInfo->SD, sizeof(short));
-		db.Write(&pInfo->SDHealthy, sizeof(char));
-		db.Write(&pInfo->HPMuscle, sizeof(char));
-		db.Write(&pInfo->WGMuscle, sizeof(char));
-		db.Write(&pInfo->WFMuscle, sizeof(char));
-		db.Write(&pInfo->TGMuscle, sizeof(char));
-		db.Write(&pInfo->TFMuscle, sizeof(char));
-		db.Write(&pInfo->SDMuscle, sizeof(char));
-
-		varChar = pInfo->race.size();
-		db.Write(&varChar, sizeof(char));
-		int j = 0;
-		for ( j = 0; j < pInfo->race.size(); j++ )
-		{
-			varChar = pInfo->race[j];
-			db.Write(&varChar, sizeof(char));
-		}
-
-		varChar = pInfo->synced?1:0;
-		db.Write(&varChar, sizeof(char));
-		if ( "" == pInfo->nick )
-		{
-			data::BUDDY *pBuddy = Buddy(pInfo->number, m_game.BuddyBook());
-			if ( NULL == pBuddy ) pInfo->nick = "Î´Öª°ÍµÏ";
-			else pInfo->nick = pBuddy->name;
-		}
-		char nickLen = pInfo->nick.size();
-		if ( nickLen > 17 || nickLen < 0 ) nickLen = 0;
-		db.Write(&nickLen, sizeof(char));
-		if ( 0 != nickLen )
-		{
-			db.Write((void*)(pInfo->nick.c_str()), nickLen);
-		}
-		db.Write(&pInfo->curHP, sizeof(short));
-		db.Write(&pInfo->state, sizeof(char));
-		db.Write(&pInfo->skill1, sizeof(short));
-		db.Write(&pInfo->skill2, sizeof(short));
-		db.Write(&pInfo->skill3, sizeof(short));
-		db.Write(&pInfo->skill4, sizeof(short));
-		db.Write(&pInfo->itemId, sizeof(short));
-	}
-
-	return true;
-}
-
 bool Client::SaveGame()
 {
 	mdk::File db("D:/data", "player.db");
@@ -947,12 +810,10 @@ bool Client::SaveGame()
 	db.Write(&m_player.lastLuckTime, sizeof(time_t));
 	db.Write(&m_player.luckCoin, sizeof(short));
 	db.Write(&m_player.synced, sizeof(bool));
-	short len = m_player.nick.size();
-	db.Write(&len, sizeof(short));
-	db.Write((void*)m_player.nick.c_str(), len);
+	db.Write(m_player.nick, 20);
 
 	SaveItems(db, m_items);//
-	SavePets(db, m_pets);//
+	SavePets(db, m_pets, m_game.BuddyBook());//
 
 	return true;
 }
@@ -969,15 +830,10 @@ bool Client::LoadGame()
 	if ( mdk::File::success != db.Read(&m_player.lastLuckTime, sizeof(time_t)) ) return false;
 	if ( mdk::File::success != db.Read(&m_player.luckCoin, sizeof(short)) ) return false;
 	if ( mdk::File::success != db.Read(&m_player.synced, sizeof(bool)) ) return false;
-	short len = 0;
-	if ( mdk::File::success != db.Read(&len, sizeof(short)) ) return false;
-	char buf[256];
-	if ( mdk::File::success != db.Read(buf, len) ) return false;
-	buf[len] = 0;
-	m_player.nick = buf;
+	if ( mdk::File::success != db.Read(m_player.nick, 20) ) return false;
 	int ret = LoadItems(db, m_items);//
 	if ( 0 != ret ) return false;
-	ret = LoadPets(db, m_pets);//
+	ret = LoadPets(db, m_pets, m_game.BuddyBook());//
 	if ( 0 != ret ) return false;
 
 	return true;

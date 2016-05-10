@@ -210,6 +210,25 @@ File::Error File::Read(void *content, int count)
 	return File::success;
 }
 
+File::Error File::Read(std::string &val, int limitedLen)
+{
+	if ( limitedLen > 1024 ) return File::errorParam;
+
+	short len;
+	Error ret = Read(&len, sizeof(short));
+	if ( mdk::File::success != ret ) return ret;
+	if ( 0 > len || limitedLen < len ) return File::faild;
+	char buf[1025];
+	if ( 0 < len )
+	{
+		ret = Read(buf, len);
+		if ( mdk::File::success != ret ) return ret;
+	}
+	buf[len] = 0;
+	val = std::string(buf);
+	return File::success;
+}
+
 File::Error File::Write(void *content, int count)
 {
 	if ( NULL == m_fp ) return File::unopen;
@@ -219,6 +238,22 @@ File::Error File::Write(void *content, int count)
 	int ret = fwrite(content, sizeof(char), count, m_fp);
 	if ( count > ret ) return File::faild;
 	m_act = File::write;
+
+	return File::success;
+}
+
+File::Error File::Write(std::string &val, int limitedLen)
+{
+	if ( limitedLen > 1024 ) return File::errorParam;
+
+	short len = val.size();
+	if ( 0 > len || limitedLen < len ) return File::faild;
+	Error ret = Write(&len, sizeof(short));
+	if ( mdk::File::success != ret ) return ret;
+	if ( 0 == len ) return File::success;
+
+	ret = Write((char*)val.c_str(), len);
+	if ( mdk::File::success != ret ) return ret;
 
 	return File::success;
 }

@@ -229,3 +229,125 @@ char* StateDes( char state )
 	
 	return "Õý³£";
 }
+
+bool SavePets(mdk::File &db, std::vector<data::PET> &pets, std::vector<data::BUDDY> &buddyBook)
+{
+	data::PET *pInfo;
+	int count = pets.size();
+	if ( count <= 0 ) return false;
+
+	db.Write(&count, sizeof(int));
+	int i = 0; 
+	char varChar;
+	for ( i = 0; i < pets.size(); i++ )
+	{
+		pInfo = &pets[i];
+		db.Write(&pInfo->id, sizeof(int));
+		db.Write(&pInfo->number, sizeof(short));
+		db.Write(&pInfo->talent, sizeof(char));
+		db.Write(&pInfo->nature, sizeof(char));
+		db.Write(&pInfo->HP, sizeof(short));
+		db.Write(&pInfo->WG, sizeof(short));
+		db.Write(&pInfo->WF, sizeof(short));
+		db.Write(&pInfo->TG, sizeof(short));
+		db.Write(&pInfo->TF, sizeof(short));
+		db.Write(&pInfo->SD, sizeof(short));
+		db.Write(&pInfo->SDHealthy, sizeof(char));
+		db.Write(&pInfo->HPMuscle, sizeof(char));
+		db.Write(&pInfo->WGMuscle, sizeof(char));
+		db.Write(&pInfo->WFMuscle, sizeof(char));
+		db.Write(&pInfo->TGMuscle, sizeof(char));
+		db.Write(&pInfo->TFMuscle, sizeof(char));
+		db.Write(&pInfo->SDMuscle, sizeof(char));
+
+		varChar = pInfo->race.size();
+		db.Write(&varChar, sizeof(char));
+		int j = 0;
+		for ( j = 0; j < pInfo->race.size(); j++ )
+		{
+			varChar = pInfo->race[j];
+			db.Write(&varChar, sizeof(char));
+		}
+
+		varChar = pInfo->synced?1:0;
+		db.Write(&varChar, sizeof(char));
+		if ( "" == pInfo->nick )
+		{
+			data::BUDDY *pBuddy = Buddy(pInfo->number, buddyBook);
+			if ( NULL == pBuddy ) pInfo->nick = "Î´Öª°ÍµÏ";
+			else pInfo->nick = pBuddy->name;
+		}
+		db.Write(pInfo->nick, 20);
+		db.Write(&pInfo->curHP, sizeof(short));
+		db.Write(&pInfo->state, sizeof(char));
+		db.Write(&pInfo->skill1, sizeof(short));
+		db.Write(&pInfo->skill2, sizeof(short));
+		db.Write(&pInfo->skill3, sizeof(short));
+		db.Write(&pInfo->skill4, sizeof(short));
+		db.Write(&pInfo->itemId, sizeof(short));
+	}
+
+	return true;
+}
+
+int LoadPets(mdk::File &db, std::vector<data::PET> &pets, std::vector<data::BUDDY> &buddyBook)
+{
+	data::PET info;
+	int count = 0;
+	if ( mdk::File::success != db.Read(&count, sizeof(int)) ) return 1;
+	if ( count <= 0 ) return 2;
+
+	int i = 0;
+	char varChar;
+	for ( i = 0; i < count; i++ )
+	{
+		info.nick = "";
+		if ( mdk::File::success != db.Read(&info.id, sizeof(int)) ) return 3;
+		if ( mdk::File::success != db.Read(&info.number, sizeof(short)) ) return 4;
+		if ( mdk::File::success != db.Read(&info.talent, sizeof(char)) ) return 5;
+		if ( mdk::File::success != db.Read(&info.nature, sizeof(char)) ) return 6;
+		if ( mdk::File::success != db.Read(&info.HP, sizeof(short)) ) return 12;
+		if ( mdk::File::success != db.Read(&info.WG, sizeof(short)) ) return 13;
+		if ( mdk::File::success != db.Read(&info.WF, sizeof(short)) ) return 14;
+		if ( mdk::File::success != db.Read(&info.TG, sizeof(short)) ) return 15;
+		if ( mdk::File::success != db.Read(&info.TF, sizeof(short)) ) return 16;
+		if ( mdk::File::success != db.Read(&info.SD, sizeof(short)) ) return 17;
+		if ( mdk::File::success != db.Read(&info.SDHealthy, sizeof(char)) ) return 23;
+		if ( mdk::File::success != db.Read(&info.HPMuscle, sizeof(char)) ) return 24;
+		if ( mdk::File::success != db.Read(&info.WGMuscle, sizeof(char)) ) return 25;
+		if ( mdk::File::success != db.Read(&info.WFMuscle, sizeof(char)) ) return 26;
+		if ( mdk::File::success != db.Read(&info.TGMuscle, sizeof(char)) ) return 27;
+		if ( mdk::File::success != db.Read(&info.TFMuscle, sizeof(char)) ) return 28;
+		if ( mdk::File::success != db.Read(&info.SDMuscle, sizeof(char)) ) return 29;
+
+		char len = 0;
+		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 30;
+		if ( len > 17 || len < 0 ) return 31;
+		int j = 0;
+		for ( j = 0; j < info.race.size(); j++ )
+		{
+			if ( mdk::File::success != db.Read(&varChar, sizeof(char)) ) return 32;
+			info.race.push_back(varChar);
+		}
+
+		if ( mdk::File::success != db.Read(&varChar, sizeof(char)) ) return 33;
+		info.synced = (0 == varChar?false:true);
+ 		if ( mdk::File::success != db.Read(info.nick, 20) ) return 43;
+		if ( mdk::File::success != db.Read(&info.curHP, sizeof(short)) ) return 34;
+		if ( mdk::File::success != db.Read(&info.state, sizeof(char)) ) return 35;
+		if ( mdk::File::success != db.Read(&info.skill1, sizeof(short)) ) return 36;
+		if ( mdk::File::success != db.Read(&info.skill2, sizeof(short)) ) return 37;
+		if ( mdk::File::success != db.Read(&info.skill3, sizeof(short)) ) return 38;
+		if ( mdk::File::success != db.Read(&info.skill4, sizeof(short)) ) return 39;
+		if ( mdk::File::success != db.Read(&info.itemId, sizeof(short)) ) return 40;
+		if ( "" == info.nick )
+		{
+			data::BUDDY *pBuddy = Buddy(info.number, buddyBook);
+			if ( NULL == pBuddy ) continue;
+			info.nick = pBuddy->name;
+		}
+		pets.push_back(info);
+	}
+
+	return 0;
+}

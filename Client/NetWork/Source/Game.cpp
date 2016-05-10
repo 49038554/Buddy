@@ -130,13 +130,9 @@ bool SaveItemBook( mdk::File &db, std::vector<data::ITEM> &items )
 		pItem = &items[i];
 
 		db.Write(&pItem->id, sizeof(short));
-		len = pItem->name.size();
-		db.Write(&len, sizeof(char));
-		db.Write((char*)(pItem->name.c_str()), len);
+		db.Write(pItem->name, 20);
 		db.Write(&pItem->coin, sizeof(int));
-		len = pItem->descript.size();
-		db.Write(&len, sizeof(char));
-		db.Write(&pItem->descript, len);
+		db.Write(pItem->descript, 128);
 
 		len = pItem->effects.size();
 		db.Write(&len, sizeof(char));
@@ -170,15 +166,9 @@ int LoadItemBook( mdk::File &db, std::vector<data::ITEM> &items )
 	for ( i = 0; i < count; i++ )
 	{
 		if ( mdk::File::success != db.Read(&info.id, sizeof(short)) ) return 3;
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 4;
-		if ( 20 < len || 0 >= len ) return 5;
-		if ( mdk::File::success != db.Read(buf, len) ) return 6;
-		info.name = std::string(buf, len);
+		if ( mdk::File::success != db.Read(info.name, 20) ) return 4;
 		if ( mdk::File::success != db.Read(&info.coin, sizeof(int)) ) return 7;
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 8;
-		if ( 128 < len || 0 >= len ) return 9;
-		if ( mdk::File::success != db.Read(&buf, len) ) return 10;
-		info.descript = std::string(buf, len);
+		if ( mdk::File::success != db.Read(info.descript, 128) ) return 8;
 
 		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 11;
 		if ( 5 < len || 0 > len ) return 12;
@@ -212,12 +202,8 @@ bool SaveTalentBook(mdk::File &db, std::vector<data::TALENT> &talents)
 		pTalent = &talents[i];
 
 		db.Write(&pTalent->id, sizeof(short));
-		len = pTalent->name.size();
-		db.Write(&len, sizeof(char));
-		db.Write((char*)(pTalent->name.c_str()), len);
-		len = pTalent->descript.size();
-		db.Write(&len, sizeof(char));
-		db.Write(&pTalent->descript, len);
+		db.Write(pTalent->name, 20);
+		db.Write(pTalent->descript, 128);
 
 		len = pTalent->effects.size();
 		db.Write(&len, sizeof(char));
@@ -251,14 +237,8 @@ int LoadTalentBook(mdk::File &db, std::vector<data::TALENT> &talents)
 	for ( i = 0; i < count; i++ )
 	{
 		if ( mdk::File::success != db.Read(&info.id, sizeof(short)) ) return 3;
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 4;
-		if ( 20 < len || 0 >= len ) return 5;
-		if ( mdk::File::success != db.Read(buf, len) ) return 6;
-		info.name = std::string(buf, len);
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 7;
-		if ( 128 < len || 0 >= len ) return 8;
-		if ( mdk::File::success != db.Read(&buf, len) ) return 9;
-		info.descript = std::string(buf, len);
+		if ( mdk::File::success != db.Read(info.name, 20) ) return 4;
+		if ( mdk::File::success != db.Read(info.descript, 128) ) return 5;
 
 		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 10;
 		if ( 5 < len || 0 >= len ) return 11;
@@ -292,12 +272,8 @@ bool SaveSkillBook(mdk::File &db, std::vector<data::SKILL> &skills)
 		pSkill = &skills[i];
 
 		db.Write(&pSkill->id, sizeof(short));
-		len = pSkill->name.size();
-		db.Write(&len, sizeof(char));
-		db.Write((char*)(pSkill->name.c_str()), len);
-		len = pSkill->descript.size();
-		db.Write(&len, sizeof(char));
-		db.Write(&pSkill->descript, len);
+		db.Write(pSkill->name, 20);
+		db.Write(pSkill->descript, 128);
 		db.Write(&pSkill->race, sizeof(char));
 		db.Write(&pSkill->power, sizeof(short));
 		db.Write(&pSkill->type, sizeof(char));
@@ -338,14 +314,8 @@ int LoadSkillBook(mdk::File &db, std::vector<data::SKILL> &skills)
 	for ( i = 0; i < count; i++ )
 	{
 		if ( mdk::File::success != db.Read(&info.id, sizeof(short)) ) return 3;
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 4;
-		if ( 20 < len || 0 >= len ) return 5;
-		if ( mdk::File::success != db.Read(buf, len) ) return 6;
-		info.name = std::string(buf, len);
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 7;
-		if ( 128 < len || 0 >= len ) return 8;
-		if ( mdk::File::success != db.Read(&buf, len) ) return 9;
-		info.descript = std::string(buf, len);
+		if ( mdk::File::success != db.Read(info.name, 20) ) return 4;
+		if ( mdk::File::success != db.Read(info.descript, 128) ) return 5;
 		if ( mdk::File::success != db.Read(&info.race, sizeof(char)) ) return 10;
 		if ( mdk::File::success != db.Read(&info.power, sizeof(short)) ) return 11;
 		if ( mdk::File::success != db.Read(&info.type, sizeof(char)) ) return 12;
@@ -385,12 +355,8 @@ bool SaveBuddyBook(mdk::File &db, std::vector<data::BUDDY> &buddys)
 		pBuddy = &buddys[i];
 
 		db.Write(&pBuddy->number, sizeof(short));
-		len = pBuddy->name.size();
-		db.Write(&len, sizeof(char));
-		db.Write((char*)(pBuddy->name.c_str()), len);
-		len = pBuddy->descript.size();
-		db.Write(&len, sizeof(char));
-		db.Write(&pBuddy->descript, len);
+		db.Write(pBuddy->name, 20);
+		db.Write(pBuddy->descript, 128);
 		db.Write(&pBuddy->race1, sizeof(char));
 		db.Write(&pBuddy->race2, sizeof(char));
 		db.Write(&pBuddy->talent1, sizeof(char));
@@ -447,14 +413,8 @@ int LoadBuddyBook(mdk::File &db, std::vector<data::BUDDY> &buddys)
 	for ( i = 0; i < count; i++ )
 	{
 		if ( mdk::File::success != db.Read(&info.number, sizeof(short)) ) return 3;
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 4;
-		if ( 20 < len || 0 >= len ) return 5;
-		if ( mdk::File::success != db.Read(buf, len) ) return 6;
-		info.name = std::string(buf, len);
-		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 7;
-		if ( 60 < len || 0 >= len ) return 8;
-		if ( mdk::File::success != db.Read(buf, len) ) return 9;
-		info.descript = std::string(buf, len);
+		if ( mdk::File::success != db.Read(info.name, 20) ) return 4;
+		if ( mdk::File::success != db.Read(info.descript, 60) ) return 5;
 		if ( mdk::File::success != db.Read(&info.race1, sizeof(char)) ) return 10;
 		if ( mdk::File::success != db.Read(&info.race2, sizeof(char)) ) return 11;
 		if ( mdk::File::success != db.Read(&info.talent1, sizeof(char)) ) return 12;

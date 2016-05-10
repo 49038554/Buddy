@@ -135,6 +135,8 @@ private:
 	}ROUND;
 
 
+	bool Save();
+	int Load();
 	const char* SetPetInfo(Battle::WARRIOR &player, int petId);
 	bool PlayRound();//完成返回true,中断返回false
 	void End();//战斗结束
