@@ -118,8 +118,8 @@ public:
 	bool IsEnd();
 	bool Log( std::vector<std::string> &log );
 	bool Log( std::vector<std::vector<std::string> > &log );
-	bool Save();
-	int Load(Game *game);
+	bool Save();//·µ»Øid
+	bool Load(Game *game, int bid);
 
 private:
 	typedef struct ROUND
@@ -140,7 +140,7 @@ private:
 
 
 	void WriteAction(mdk::File &logFile, Battle::Action act, int oId, Battle::RAND_PARAM &rp, std::vector<short> &petId);
-	int Load(int &id, std::string &playerName, std::string &enemyName,
+	int Load(int bid, std::string &playerName, std::string &enemyName,
 		unsigned int &playerId, unsigned int &enemyId, 
 		std::vector<data::PET> &me, std::vector<data::PET> &she,
 		std::vector<Battle::ROUND> &log);

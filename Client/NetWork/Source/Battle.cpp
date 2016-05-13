@@ -3012,7 +3012,9 @@ bool Battle::ImmuneSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 
 bool Battle::Save()
 {
-	mdk::File logFile("D:/data", "LastBattle");
+	char name[256];
+	sprintf(name, "battle %d.log", m_id);
+	mdk::File logFile("D:/data/battle", name);
 	if ( mdk::File::success != logFile.Open( mdk::File::write, mdk::File::assii ) ) return false;
 
 	logFile.Write( &m_player.playerId, sizeof(unsigned int) );
@@ -3062,13 +3064,15 @@ void Battle::WriteAction(mdk::File &logFile, Battle::Action act, int oId, Battle
 }
 
 
-int Battle::Load(int &id, std::string &playerName, std::string &enemyName,
+int Battle::Load(int bid, std::string &playerName, std::string &enemyName,
 	unsigned int &playerId, unsigned int &enemyId, 
 	std::vector<data::PET> &mePets, std::vector<data::PET> &shePets,
 	std::vector<Battle::ROUND> &log)
 
 {
-	mdk::File logFile("D:/data", "LastBattle");
+	char name[256];
+	sprintf(name, "battle %d.log", bid);
+	mdk::File logFile("D:/data/battle", name);
 	if ( mdk::File::success != logFile.Open(mdk::File::read, mdk::File::assii) ) return -1;
 
 	if ( mdk::File::success != logFile.Read(&playerId, sizeof(unsigned int)) ) return -2;
@@ -3129,15 +3133,14 @@ int Battle::ReadAction(mdk::File &logFile, Battle::Action &act, int &oId, Battle
 }
 
 
-int Battle::Load(Game *game)
+bool Battle::Load(Game *game, int bid)
 {
-	int bid = 1;
 	std::string playerName, enemyName;
 	unsigned int playerId, enemyId;
 	std::vector<data::PET> mePets, shePets;
 	std::vector<ROUND> log;
-	Load( bid, playerName, enemyName, playerId, enemyId, mePets, shePets, log );
-	Init(game, bid, playerName, enemyName, playerId, enemyId, mePets, shePets);
+	if ( 0 != Load( bid, playerName, enemyName, playerId, enemyId, mePets, shePets, log ) ) return false;
+	if ( !Init(game, bid, playerName, enemyName, playerId, enemyId, mePets, shePets) ) return false;
 	int i = 0;
 	int mePos = 0, shePos = 0;
 	for ( i = 0; i < log.size(); )
@@ -3163,6 +3166,6 @@ int Battle::Load(Game *game)
 		i++;
 	}
 
-	return bid;
+	return true;
 }
 

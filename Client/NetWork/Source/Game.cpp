@@ -1,6 +1,15 @@
 #include "Game.h"
 
 #include "mdk/File.h"
+#ifdef WIN32
+#include <io.h>
+#include <direct.h>
+#else
+#include   <unistd.h>                     //chdir() 
+#include   <sys/stat.h>                 //mkdir() 
+#include   <sys/types.h>               //mkdir() 
+#include   <dirent.h>					//closedir()
+#endif
 
 Game::Game(void)
 {
@@ -783,42 +792,34 @@ int Game::CreateBattle(unsigned int mePlayerId,
 	return CreateBattle(mePlayerId, playerName, me, shePlayerId, enemyName, she);
 }
 
-int Game::LoadBattle()
-{
-	int battleId = 1;
- 	m_battles[battleId].Load(this);
-
-	return battleId;
-}
-
 const char* Game::CheckReady(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return "战斗不存在";
-	Battle &pBattle = m_battles[battleId];
-	return pBattle.CheckReady(me, act, objectId, rp);
+	Battle &battle = m_battles[battleId];
+	return battle.CheckReady(me, act, objectId, rp);
 }
 
 bool Game::Log( int battleId, std::vector<std::string> &log )
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;
-	Battle &pBattle = m_battles[battleId];
-	return pBattle.Log(log);
+	Battle &battle = m_battles[battleId];
+	return battle.Log(log);
 }
 
 bool Game::Log( int battleId, std::vector<std::vector<std::string> > &log )
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;
-	Battle &pBattle = m_battles[battleId];
-	return pBattle.Log(log);
+	Battle &battle = m_battles[battleId];
+	return battle.Log(log);
 }
 
 
 bool Game::Ready(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;
-	Battle &pBattle = m_battles[battleId];
-	pBattle.Ready(me, act, objectId, rp);
-	pBattle.Save();
+	Battle &battle = m_battles[battleId];
+	battle.Ready(me, act, objectId, rp);
+	battle.Save();
 
 	return true;
 }
@@ -826,10 +827,10 @@ bool Game::Ready(int battleId, bool me, Battle::Action act, short objectId, Batt
 const char* Game::ChangePet(int battleId, bool me, short petId)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return "战斗不存在";
-	Battle &pBattle = m_battles[battleId];
-	const char *ret = pBattle.ChangePet(me, petId);
+	Battle &battle = m_battles[battleId];
+	const char *ret = battle.ChangePet(me, petId);
 	if ( NULL != ret ) return ret;
-	pBattle.Save();
+	battle.Save();
 	return ret; 
 }
 
@@ -842,7 +843,37 @@ Battle* Game::GetBattle(int battleId)
 Battle::WARRIOR* Game::Fighter(int battleId, bool me)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return NULL;
-	Battle &pBattle = m_battles[battleId];
-	return pBattle.Player(me);
+	Battle &battle = m_battles[battleId];
+	return battle.Player(me);
 }
 
+int Game::LoadBattle()
+{
+	int battleId = 1;
+
+	_finddata_t fileDir;
+	char* dir = "D:/data/battle/*.*";
+	long lfDir = _findfirst( dir, &fileDir );
+	if ( -11 == lfDir )
+	{
+		_findclose(lfDir);
+		return 0;
+	}
+	int tmpId;
+	do
+	{
+		if ( _A_SUBDIR & fileDir.attrib ) continue;
+		tmpId = battleId;
+		sscanf(fileDir.name, "battle %d", &battleId);
+		if ( !m_battles[battleId].Load(this, battleId) )
+		{
+			m_battles.erase(battleId);
+			battleId = tmpId; 
+		}
+	}
+	while( 0 == _findnext( lfDir, &fileDir ) );
+	_findclose(lfDir);
+
+
+	return battleId;
+}

@@ -63,6 +63,7 @@ private:
 	bool LoadGameInit();
 	bool SaveGameInit();
 
+
 private:
 	bool									m_gameInitLoaded;
 	data::SKILL								m_bornSkill;//Ä¬ÈÏ¼¼ÄÜ
