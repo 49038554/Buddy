@@ -302,6 +302,7 @@ int LoadPets(mdk::File &db, std::vector<data::PET> &pets, std::vector<data::BUDD
 	for ( i = 0; i < count; i++ )
 	{
 		info.nick = "";
+		info.race.clear();
 		if ( mdk::File::success != db.Read(&info.id, sizeof(int)) ) return 3;
 		if ( mdk::File::success != db.Read(&info.number, sizeof(short)) ) return 4;
 		if ( mdk::File::success != db.Read(&info.talent, sizeof(char)) ) return 5;
@@ -324,7 +325,7 @@ int LoadPets(mdk::File &db, std::vector<data::PET> &pets, std::vector<data::BUDD
 		if ( mdk::File::success != db.Read(&len, sizeof(char)) ) return 30;
 		if ( len > 17 || len < 0 ) return 31;
 		int j = 0;
-		for ( j = 0; j < info.race.size(); j++ )
+		for ( j = 0; j < len; j++ )
 		{
 			if ( mdk::File::success != db.Read(&varChar, sizeof(char)) ) return 32;
 			info.race.push_back(varChar);

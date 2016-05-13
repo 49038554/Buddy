@@ -38,6 +38,7 @@ void PrintPets(Battle::WARRIOR *pPlayer, Game *pGame);
 void PrintWarrior(Battle::WARRIOR *pPlayer, Game *pGame);
 void PrintUI(int battleId);
 bool ShowLog(int battleId);
+bool ShowAllLog(int battleId);
 
 char* OnCommand(std::vector<std::string> *param)
 {
@@ -355,6 +356,14 @@ char* OnCommand(std::vector<std::string> *param)
 		int battleId = atoi(cmd[1].c_str());
 		PrintPets(g_cli.Fighter(battleId, me), g_cli.GetGame());
 	}
+	else if ( "load" == cmd[0] )
+	{
+		int battleId = g_cli.LoadBattle();
+		ShowAllLog(battleId);
+		PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
+		PrintWarrior(g_cli.Fighter(battleId, false), g_cli.GetGame());
+	}
+	
 	else Helper();
 
 	return NULL;
@@ -383,6 +392,7 @@ void Helper()
 	printf( "\t\tsend battleId petId [she]\n" );
 	printf( "\t\tbuse battleId itemId count\n" );
 	printf( "\t\tpets battleId [she]\n" );
+	printf( "\t\tload\n" );
 }
 
 void PrintWarrior(Battle::WARRIOR *pPlayer, Game *pGame)
@@ -454,6 +464,24 @@ bool ShowLog(int battleId)
 	for ( i = 0; i < log.size(); i++ )
 	{
 		printf( "%s\n", log[i].c_str() );
+	}
+
+	return true;
+}
+
+bool ShowAllLog(int battleId)
+{
+	std::vector<std::vector<std::string> > log;
+	if ( !g_cli.Log(battleId, log) ) return false;
+
+	int i = 0;
+	for ( i = 0; i < log.size(); i++ )
+	{
+		int j = 0;
+		for ( j = 0; j < log[i].size(); j++ )
+		{
+			printf( "%s\n", log[i][j].c_str() );
+		}
 	}
 
 	return true;

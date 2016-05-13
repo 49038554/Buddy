@@ -1174,6 +1174,11 @@ bool Client::Log( int battleId, std::vector<std::string> &log )
 	return m_game.Log(battleId, log);
 }
 
+bool Client::Log( int battleId, std::vector<std::vector<std::string> > &log )
+{
+	return m_game.Log(battleId, log);
+}
+
 const char* Client::Ready(int battleId, Battle::Action act, short objectId)
 {
 	static std::string reason;
@@ -1225,4 +1230,9 @@ Battle* Client::GetBattle(int battleId)
 Battle::WARRIOR* Client::Fighter(int battleId, bool me)
 {
 	return m_game.Fighter(battleId, me);
+}
+
+int Client::LoadBattle()
+{
+	return m_game.LoadBattle();
 }

@@ -86,9 +86,9 @@ void Battle::WARRIOR::ChangePet()
 }
 
 
-bool Battle::Init(Game *game, int id, 
-	const std::string &playerName, const std::string &enemyName, 
-	unsigned int playerId, unsigned int enemyId, 
+bool Battle::Init(Game *game, int id,
+	const std::string &playerName, const std::string &enemyName,
+	unsigned int playerId, unsigned int enemyId,
 	std::vector<data::PET> &me, std::vector<data::PET> &she)
 {
 	m_game = game;
@@ -116,16 +116,19 @@ bool Battle::Init(Game *game, int id,
 	if ( NULL != ret ) return false;
 	ret = SetPetInfo(m_enemy, m_enemy.pets[0].id);
 	if ( NULL != ret ) return false;
-// 	Save();
+
 	m_curRound = -1;
 	m_weather = 0;
 	m_weatherCount = 0;
 	m_foolSpace = 0;
 
 	Battle::ROUND round;
+	round.me = unknow;
+	round.she = unknow;
 	m_log.push_back(round);
 	m_curRound++;
 	m_pCurRound = &m_log[m_curRound];
+	m_pCurRound->log.push_back(m_player.name + " VS " + m_enemy.name);
 	m_pCurRound->showPos = 0;
 	m_player.isChanged = ChangePet(m_player, m_player.pets[0].id);
 	m_enemy.isChanged = ChangePet(m_enemy, m_enemy.pets[0].id);
@@ -356,7 +359,7 @@ void Battle::End()
 	{
 		sprintf( result, "平局" );
 	}
-	else if ( m_player.lose ) 
+	else if ( m_player.lose )
 	{
 		sprintf( result, "%d:%d %s胜", 
 			playerCount, enemyCount, m_enemy.name.c_str() );
@@ -390,9 +393,25 @@ bool Battle::Log( std::vector<std::string> &log )
 	return true;
 }
 
+bool Battle::Log( std::vector<std::vector<std::string> > &log )
+{
+	m_pCurRound->showPos = m_pCurRound->log.size();
+	log.clear();
+	int i = 0;
+	for ( i = 0; i < m_log.size(); i++ )
+	{
+		log.push_back(m_log[i].log);
+	}
+	if ( 0 >= log.size() ) return false;
+
+	return true;
+}
+
 void Battle::StepStart()
 {
 	Battle::ROUND round;
+	round.me = unknow;
+	round.she = unknow;
 	m_log.push_back(round);
 	m_curRound++;
 	m_pCurRound = &m_log[m_curRound];
@@ -2994,35 +3013,156 @@ bool Battle::ImmuneSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 bool Battle::Save()
 {
 	mdk::File logFile("D:/data", "LastBattle");
-	if ( mdk::File::success != logFile.Open(mdk::File::write, mdk::File::assii) ) return false;
-	logFile.Write(&m_player.playerId, sizeof(unsigned int));
-	short len = m_player.name.size();
-	logFile.Write(&len, sizeof(short));
-	logFile.Write((char*)m_player.name.c_str(), len);
-	SavePets(logFile, m_playerInitPets, m_game->BuddyBook());
-	
-	logFile.Write(&m_enemy.playerId, sizeof(unsigned int));
-	len = m_enemy.name.size();
-	logFile.Write(&len, sizeof(short));
-	logFile.Write((char*)m_enemy.name.c_str(), len);
-	SavePets(logFile, m_enemyInitPets, m_game->BuddyBook());
+	if ( mdk::File::success != logFile.Open( mdk::File::write, mdk::File::assii ) ) return false;
+
+	logFile.Write( &m_player.playerId, sizeof(unsigned int) );
+	logFile.Write( m_player.name, 20 );
+	SavePets( logFile, m_playerInitPets, m_game->BuddyBook() );
+
+	logFile.Write( &m_enemy.playerId, sizeof(unsigned int) );
+	logFile.Write( m_enemy.name, 20 );
+	SavePets( logFile, m_enemyInitPets, m_game->BuddyBook() );
+
+	short rCount = m_log.size();
+	logFile.Write( &rCount, sizeof(short) );
+	int i = 0;
+	for ( i = 0; i < rCount; i++ )
+	{
+		WriteAction( logFile, m_log[i].me, m_log[i].meObjectId, m_log[i].meRP, m_log[i].mePetId);
+		WriteAction( logFile, m_log[i].she, m_log[i].sheObjectId, m_log[i].sheRP, m_log[i].shePetId);
+	}
 
 	return true;
 }
 
-int Battle::Load()
+void Battle::WriteAction(mdk::File &logFile, Battle::Action act, int oId, Battle::RAND_PARAM &rp, std::vector<short> &petId)
+{
+	char val = act;
+	logFile.Write(&val, sizeof(char));
+	logFile.Write(&oId, sizeof(int));
+	logFile.Write(&rp.miss, sizeof(char));//命中随机数
+	logFile.Write(&rp.sePro, sizeof(char));//技能特效随机数
+	logFile.Write(&rp.iePro, sizeof(char));//物品特效随机数
+	logFile.Write(&rp.tePro, sizeof(char));//特性特效随机数
+	logFile.Write(&rp.luanWu, sizeof(char));//乱舞回合数
+	logFile.Write(&rp.sleepRound, sizeof(char));//睡眠回合随机数
+	logFile.Write(&rp.frozenRound, sizeof(char));//冰冻回合随机数
+	logFile.Write(&rp.dian, sizeof(char));//麻痹随机数
+	val = rp.luan?1:0;
+	logFile.Write(&val, sizeof(char));//混乱随机数
+	logFile.Write(&rp.hurt, sizeof(unsigned char));//伤害随机数217~255
+	logFile.Write(&rp.speed, sizeof(unsigned char));//速度随机数
+	char count = petId.size();
+	logFile.Write(&count, sizeof(char));//上场PMID数
+	int i = 0;
+	for ( i = 0; i < petId.size(); i++ )
+	{
+		logFile.Write(&petId[i], sizeof(short));
+	}
+}
+
+
+int Battle::Load(int &id, std::string &playerName, std::string &enemyName,
+	unsigned int &playerId, unsigned int &enemyId, 
+	std::vector<data::PET> &mePets, std::vector<data::PET> &shePets,
+	std::vector<Battle::ROUND> &log)
+
 {
 	mdk::File logFile("D:/data", "LastBattle");
 	if ( mdk::File::success != logFile.Open(mdk::File::read, mdk::File::assii) ) return -1;
-	if ( mdk::File::success != logFile.Read(&m_player.playerId, sizeof(unsigned int)) ) return -2;
-	if ( mdk::File::success != logFile.Read(&m_player.name, 20) ) return -3;
-	int ret = LoadPets(logFile, m_playerInitPets, m_game->BuddyBook());
+
+	if ( mdk::File::success != logFile.Read(&playerId, sizeof(unsigned int)) ) return -2;
+	if ( mdk::File::success != logFile.Read(playerName, 20) ) return -3;
+	int ret = LoadPets(logFile, mePets, m_game->BuddyBook());
 	if ( 0 != ret ) return ret;
 
-	if ( mdk::File::success != logFile.Read(&m_enemy.playerId, sizeof(unsigned int)) ) return -2;
-	if ( mdk::File::success != logFile.Read(&m_enemy.name, 20) ) return -3;
-	ret = LoadPets(logFile, m_enemyInitPets, m_game->BuddyBook());
+	if ( mdk::File::success != logFile.Read(&enemyId, sizeof(unsigned int)) ) return -4;
+	if ( mdk::File::success != logFile.Read(enemyName, 20) ) return -5;
+	ret = LoadPets(logFile, shePets, m_game->BuddyBook());
 	if ( 0 != ret ) return ret;
+
+	short rCount;
+	if ( mdk::File::success != logFile.Read(&rCount, sizeof(short)) ) return -6;
+	int i = 0;
+	ROUND  rnd;
+	for ( i = 0; i < rCount; i++ )
+	{
+		ret = ReadAction(logFile, rnd.me, rnd.meObjectId, rnd.meRP, rnd.mePetId);
+		if ( 0 != ret ) return ret;
+		ret = ReadAction(logFile, rnd.she, rnd.sheObjectId, rnd.sheRP, rnd.shePetId);
+		if ( 0 != ret ) return ret;
+		log.push_back(rnd);
+	}
 
 	return 0;
 }
+
+int Battle::ReadAction(mdk::File &logFile, Battle::Action &act, int &oId, Battle::RAND_PARAM &rp, std::vector<short> &petId)
+{
+	char val;
+	if ( mdk::File::success != logFile.Read(&val, sizeof(char)) ) return 1;
+	act = (Action)val;
+	if ( mdk::File::success != logFile.Read(&oId, sizeof(int)) ) return 2;
+	if ( mdk::File::success != logFile.Read(&rp.miss, sizeof(char)) ) return 3;//命中随机数
+	if ( mdk::File::success != logFile.Read(&rp.sePro, sizeof(char)) ) return 4;//技能特效随机数
+	if ( mdk::File::success != logFile.Read(&rp.iePro, sizeof(char)) ) return 5;//物品特效随机数
+	if ( mdk::File::success != logFile.Read(&rp.tePro, sizeof(char)) ) return 6;//特性特效随机数
+	if ( mdk::File::success != logFile.Read(&rp.luanWu, sizeof(char)) ) return 7;//乱舞回合数
+	if ( mdk::File::success != logFile.Read(&rp.sleepRound, sizeof(char)) ) return 8;//睡眠回合随机数
+	if ( mdk::File::success != logFile.Read(&rp.frozenRound, sizeof(char)) ) return 9;//冰冻回合随机数
+	if ( mdk::File::success != logFile.Read(&rp.dian, sizeof(char)) ) return 10;//麻痹随机数
+	val = rp.luan?1:0;
+	if ( mdk::File::success != logFile.Read(&val, sizeof(char)) ) return 11;//混乱随机数
+	if ( mdk::File::success != logFile.Read(&rp.hurt, sizeof(unsigned char)) ) return 12;//伤害随机数217~255
+	if ( mdk::File::success != logFile.Read(&rp.speed, sizeof(unsigned char)) ) return 13;//速度随机数
+	int i = 0;
+	char count = 0;
+	if ( mdk::File::success != logFile.Read(&count, sizeof(char)) ) return 14;//上场PMID数
+	short id;
+	for ( i = 0; i < count; i++ )
+	{
+		if ( mdk::File::success != logFile.Read(&id, sizeof(short)) ) return 15;
+		petId.push_back(id);
+	}
+
+	return 0;
+}
+
+
+int Battle::Load(Game *game)
+{
+	int bid = 1;
+	std::string playerName, enemyName;
+	unsigned int playerId, enemyId;
+	std::vector<data::PET> mePets, shePets;
+	std::vector<ROUND> log;
+	Load( bid, playerName, enemyName, playerId, enemyId, mePets, shePets, log );
+	Init(game, bid, playerName, enemyName, playerId, enemyId, mePets, shePets);
+	int i = 0;
+	int mePos = 0, shePos = 0;
+	for ( i = 0; i < log.size(); )
+	{
+		if ( unknow != log[i].me ) 
+		{
+			Ready( true, log[i].me, log[i].meObjectId, log[i].meRP );
+		}
+		if ( unknow != log[i].she ) 
+		{
+			Ready( false, log[i].she, log[i].sheObjectId, log[i].sheRP );
+		}
+		if ( mePos < log[i].mePetId.size() && 0 >= m_player.pCurPet->curHP )
+		{
+			ChangePet(true, log[i].mePetId[mePos++]);
+			continue;
+		}
+		if ( shePos < log[i].shePetId.size() && 0 >= m_enemy.pCurPet->curHP )
+		{
+			ChangePet(true, log[i].shePetId[shePos++]);
+			continue;
+		}
+		i++;
+	}
+
+	return bid;
+}
+

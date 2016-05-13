@@ -10,9 +10,10 @@ class Battle
 public:
 	enum Action
 	{
-		change = 0,
-		useItem = 1,
-		attack = 2,
+		unknow = 0,
+		change = 1,
+		useItem = 2,
+		attack = 3,
 	};
 
 public:
@@ -116,6 +117,9 @@ public:
 	const char* ChangePet(bool me, short petId);
 	bool IsEnd();
 	bool Log( std::vector<std::string> &log );
+	bool Log( std::vector<std::vector<std::string> > &log );
+	bool Save();
+	int Load(Game *game);
 
 private:
 	typedef struct ROUND
@@ -135,8 +139,12 @@ private:
 	}ROUND;
 
 
-	bool Save();
-	int Load();
+	void WriteAction(mdk::File &logFile, Battle::Action act, int oId, Battle::RAND_PARAM &rp, std::vector<short> &petId);
+	int Load(int &id, std::string &playerName, std::string &enemyName,
+		unsigned int &playerId, unsigned int &enemyId, 
+		std::vector<data::PET> &me, std::vector<data::PET> &she,
+		std::vector<Battle::ROUND> &log);
+	int ReadAction(mdk::File &logFile, Battle::Action &act, int &oId, Battle::RAND_PARAM &rp, std::vector<short> &petId);
 	const char* SetPetInfo(Battle::WARRIOR &player, int petId);
 	bool PlayRound();//完成返回true,中断返回false
 	void End();//战斗结束

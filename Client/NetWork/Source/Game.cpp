@@ -783,6 +783,14 @@ int Game::CreateBattle(unsigned int mePlayerId,
 	return CreateBattle(mePlayerId, playerName, me, shePlayerId, enemyName, she);
 }
 
+int Game::LoadBattle()
+{
+	int battleId = 1;
+ 	m_battles[battleId].Load(this);
+
+	return battleId;
+}
+
 const char* Game::CheckReady(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return "战斗不存在";
@@ -797,11 +805,20 @@ bool Game::Log( int battleId, std::vector<std::string> &log )
 	return pBattle.Log(log);
 }
 
+bool Game::Log( int battleId, std::vector<std::vector<std::string> > &log )
+{
+	if ( m_battles.end() == m_battles.find(battleId) ) return false;
+	Battle &pBattle = m_battles[battleId];
+	return pBattle.Log(log);
+}
+
+
 bool Game::Ready(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;
 	Battle &pBattle = m_battles[battleId];
 	pBattle.Ready(me, act, objectId, rp);
+	pBattle.Save();
 
 	return true;
 }
@@ -810,7 +827,10 @@ const char* Game::ChangePet(int battleId, bool me, short petId)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return "战斗不存在";
 	Battle &pBattle = m_battles[battleId];
-	return pBattle.ChangePet(me, petId);
+	const char *ret = pBattle.ChangePet(me, petId);
+	if ( NULL != ret ) return ret;
+	pBattle.Save();
+	return ret; 
 }
 
 Battle* Game::GetBattle(int battleId)

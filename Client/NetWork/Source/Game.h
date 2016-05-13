@@ -44,7 +44,10 @@ public:
 
 	int CreateBattle(unsigned int mePlayerId, 
 		const std::string &playerName, std::vector<data::PET> &me);
+	int LoadBattle();
 	bool Log( int battleId, std::vector<std::string> &log );
+	bool Log( int battleId, std::vector<std::vector<std::string> > &log );
+
 	//检查玩家输入参数
 	const char* CheckReady(int battleId, bool me, Battle::Action act, 
 						short objectId, Battle::RAND_PARAM &rp);
