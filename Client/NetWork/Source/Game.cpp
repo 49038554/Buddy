@@ -29,6 +29,7 @@ Game::Game(void)
 	m_nullItem.id = 0;
 	m_nullItem.name = "Пе";
 	m_buddyWorld.SetGame(this);
+// 	LoadBattle();
 }
 
 Game::~Game(void)
