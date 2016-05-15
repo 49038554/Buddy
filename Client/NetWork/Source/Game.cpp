@@ -821,6 +821,9 @@ bool Game::Ready(int battleId, bool me, Battle::Action act, short objectId, Batt
 	Battle &battle = m_battles[battleId];
 	battle.Ready(me, act, objectId, rp);
 	battle.Save();
+	if ( !battle.IsAI() ) return false;
+	battle.AIReady();
+	battle.Save();
 
 	return true;
 }

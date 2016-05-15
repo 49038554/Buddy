@@ -18,11 +18,13 @@ public:
 
 public:
 	Battle();
+	Battle& operator = ( Battle &copy );
 	virtual ~Battle();
 	bool Init(Game *game, int id, 
 		const std::string &playerName, const std::string &enemyName, 
 		unsigned int playerId, unsigned int enemyId, 
 		std::vector<data::PET> &me, std::vector<data::PET> &she);
+	bool IsAI();
 	typedef struct RAND_PARAM
 	{
 		char miss;//命中随机数
@@ -47,7 +49,6 @@ public:
 		data::PET				*pCurPet;//当前场上巴迪
 		bool	lose;//失败
 		bool	isChanged;//有换人
-		int		outputHurt;//输出伤害
 
 		char	doomDesireRound;//破灭之愿剩余回合
 		char	predictRound;//预知未来剩余回合
@@ -60,6 +61,7 @@ public:
 		bool	isActioned;//已经行动
 		bool	isEnd;//已完成回合结束动作。换人时也要重置
 		bool	attacked;//被攻击
+		int		outputHurt;//输出伤害
 
 		//////////////////////////////////////////////////////////////////////////
 		//玩家输入设置
@@ -114,6 +116,7 @@ public:
 	Battle::WARRIOR* Player(bool me);
 	const char* CheckReady(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
 	bool Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	bool AIReady();
 	const char* ChangePet(bool me, short petId);
 	bool IsEnd();
 	bool Log( std::vector<std::string> &log );
@@ -185,6 +188,33 @@ private:
 	bool ImmuneState(Battle::WARRIOR &player);//免疫异常状态
 	bool Faint(Battle::WARRIOR &player);
 	void PlayerEnd(Battle::WARRIOR &player, Battle::WARRIOR &enemy);
+
+	//AI
+	enum TestResult
+	{
+		kill0 = 0,//对方挂，我无伤
+		kill30 = 1,//对方挂，受伤低于30%
+		kill60 = 2,//对方挂，受伤低于60%
+		kill99 = 3,//对方挂，受伤低于100%
+		nohurt = 4,//我无伤，输出百分比高于对方20%
+		hurt30 = 5,//受伤低于30%，输出百分比高于对方20%
+		hurt60  = 6,//受伤低于60%，输出百分比高于对方20%
+		ack = 7,//受伤低于30%，攻击
+		def = 8,//受伤低于30%，防御
+		dying  = 9,//受伤低于80%，输出百分比高于对方20%
+		badSkill = 10,//输出低于对方,或者输出接近,或者受伤达到80%
+		badDef = 11,//输出低于对方,或者输出接近,或者受伤达到80%
+		dead100 = 12,//同归
+		dead70 = 13,//挂了，输出高于70%
+		dead50 = 14,//挂了，输出高于50%
+		dead30 = 16,//挂了，输出高于30%
+		dead = 16,//挂了，输出低于30%
+		refuse = 17,//拒绝
+	};
+	Battle::TestResult TestSkill( int skillId, RAND_PARAM &rp );
+	Battle::TestResult TestChange( int petPos, RAND_PARAM &rp );
+	Battle::TestResult ActionLevel( Battle::WARRIOR &player, Battle::WARRIOR &npc );
+
 
 private:
 	Game *m_game;

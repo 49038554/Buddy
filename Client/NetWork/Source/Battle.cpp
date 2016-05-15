@@ -172,6 +172,8 @@ const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Batt
 
 	Battle::WARRIOR &player = me?m_player:m_enemy;
 	Battle::WARRIOR &enemy = me?m_enemy:m_player;
+	if ( player.defensed ) player.defensed = rand()%2;
+	else player.defensed = true;
 	if ( player.isReady ) return NULL;
 
 	if ( Battle::attack == act ) 
@@ -193,12 +195,6 @@ const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Batt
 		player.pSkill = Skill(objectId, m_game->SkillBook());
 		if ( NULL == player.pSkill ) return (reason = "技能不存在").c_str();
 		if ( 0 < player.tiaoDou && 2 == player.pSkill->type ) return (reason = "被挑逗，只能使用攻击技能").c_str();
-		if ( "忍耐" == player.pSkill->name || "保护" == player.pSkill->name )
-		{
-			if ( player.defensed ) player.defensed = rand()%2;
-			else player.defensed = true;
-		}
-		else player.defensed = false;
 	}
 	if ( Battle::useItem == act ) 
 	{
@@ -455,6 +451,10 @@ bool Battle::StepAttack()
 		m_pCurRound->log.push_back( m_enemy.pCurPet->nick + "开始聚气" );
 	}
 
+	if ( NULL == m_player.pSkill || 
+		("保护" != m_player.pSkill->name && "忍耐" != m_player.pSkill->name) ) m_player.defensed = false;
+	if ( NULL == m_enemy.pSkill || 
+		("保护" != m_enemy.pSkill->name && "忍耐" != m_enemy.pSkill->name) ) m_enemy.defensed = false;
 	if ( AttackOrder(m_player, m_enemy) )
 	{
 		if ( Battle::attack == m_player.act && !m_player.isActioned )
@@ -3169,3 +3169,148 @@ bool Battle::Load(Game *game, int bid)
 	return true;
 }
 
+bool Battle::IsAI()
+{
+	return 0 == m_enemy.playerId;
+}
+
+Battle& Battle::operator = ( Battle &copy )
+{
+	m_game = copy.m_game;
+	m_id = copy.m_id;
+	m_playerInitPets = copy.m_playerInitPets;
+	m_enemyInitPets = copy.m_enemyInitPets;
+	m_log = copy.m_log;
+	m_curRound = copy.m_curRound;
+	m_pCurRound = &m_log[m_curRound];
+	m_player = copy.m_player;
+	m_enemy = copy.m_enemy;
+	m_weather = copy.m_weather;//天气属性对应
+	m_weatherCount = copy.m_weatherCount;//天气剩余回合数 -1永久
+	m_foolSpace = copy.m_foolSpace;//欺骗空间剩余回合数 -1永久
+
+	int i = 0;
+	m_player.pCurPet = NULL;
+	for ( i = 0; i < copy.m_player.pets.size(); i++ )
+	{
+		if ( copy.m_player.pCurPet == &(copy.m_player.pets[i]) )
+		{
+			m_player.pCurPet = &m_player.pets[i];
+			break;
+		}
+	}
+
+	m_enemy.pCurPet = NULL;
+	for ( i = 0; i < copy.m_enemy.pets.size(); i++ )
+	{
+		if ( copy.m_enemy.pCurPet == &(copy.m_enemy.pets[i]) )
+		{
+			m_enemy.pCurPet = &m_enemy.pets[i];
+			break;
+		}
+	}
+
+	return *this;
+}
+
+bool Battle::AIReady()
+{
+	m_enemy.rp.miss = rand()%100 + 1;//命中随机数
+	m_enemy.rp.sePro = rand()%100 + 1;//技能特效随机数
+	m_enemy.rp.iePro = rand()%100 + 1;//物品特效随机数
+	m_enemy.rp.tePro = rand()%100 + 1;//特性特效随机数
+	m_enemy.rp.luanWu = rand()%2 + 2;//乱舞回合数
+	m_enemy.rp.sleepRound = rand()%7;//睡眠随机数
+	m_enemy.rp.frozenRound = rand()%7;//冰冻随机数
+	m_enemy.rp.dian = rand()%100 + 1;//麻痹随机数
+	m_enemy.rp.luan = rand()%2;//混乱随机数
+	m_enemy.rp.hurt = rand()%(255 - 217 + 1) + 217;//伤害随机数217~255
+	m_enemy.rp.speed = rand()%100;//速度随机数
+	
+	TestResult act[10];
+	int count = 0;
+	act[count++] = TestSkill(m_enemy.pCurPet->skill1, m_enemy.rp);
+	act[count++] = TestSkill(m_enemy.pCurPet->skill2, m_enemy.rp);
+	act[count++] = TestSkill(m_enemy.pCurPet->skill3, m_enemy.rp);
+	act[count++] = TestSkill(m_enemy.pCurPet->skill4, m_enemy.rp);
+	int i = 0;
+	for ( i = 0; i < m_enemy.pets.size(); i++ ) act[count++] = TestChange(i, m_enemy.rp);
+	int minResult = act[0];
+	int pos = 0;
+	for ( i = 1; i < count; i++ )
+	{
+		if ( minResult > act[i] ) 
+		{
+			pos = i;
+			minResult = act[pos];
+		}
+	}
+	if ( refuse == minResult || m_enemy.isReady ) return true;
+
+	if ( 0 == pos ) Ready(false, Action::attack, m_enemy.pCurPet->skill1, m_enemy.rp);
+	else if ( 1 == pos ) Ready(false, Action::attack, m_enemy.pCurPet->skill2, m_enemy.rp);
+	else if ( 2 == pos ) Ready(false, Action::attack, m_enemy.pCurPet->skill3, m_enemy.rp);
+	else if ( 3 == pos ) Ready(false, Action::attack, m_enemy.pCurPet->skill4, m_enemy.rp);
+	else Ready(false, Action::change, m_enemy.pets[pos - 4].id, m_enemy.rp);
+
+	return true;
+}
+
+Battle::TestResult Battle::TestSkill( int skillId, RAND_PARAM &rp )
+{
+	Battle testBattle;
+	testBattle = *this;
+	RAND_PARAM crp;
+	if ( NULL != testBattle.CheckReady( false, attack, skillId, crp ) ) return refuse;
+
+	testBattle.Ready( false, attack, skillId, rp );
+	TestResult ret = ActionLevel(testBattle.m_player, testBattle.m_enemy);
+	return ret;
+}
+
+Battle::TestResult Battle::TestChange( int petPos, RAND_PARAM &rp )
+{
+	if ( m_enemy.pCurPet == &m_enemy.pets[petPos] ) return refuse;//已出场拒绝交换
+
+	Battle testBattle;
+	testBattle = *this;
+	RAND_PARAM crp;
+	if ( NULL != testBattle.CheckReady( false, change, m_enemy.pets[petPos].id, crp ) ) return refuse;
+
+	testBattle.Ready( false, change, m_enemy.pets[petPos].id, rp );
+	TestResult ret = ActionLevel(testBattle.m_player, testBattle.m_enemy);
+	if ( ack == ret ) return def;
+	if ( badSkill == ret ) return badDef;
+	return ret;
+}
+
+Battle::TestResult Battle::ActionLevel( Battle::WARRIOR &player, Battle::WARRIOR &npc )
+{
+	int playerHurt = player.outputHurt * 100 / npc.pCurPet->HP;
+	int npcHurt = npc.outputHurt * 100 / player.pCurPet->HP;
+	if ( 0 == player.pCurPet->curHP && 0 == npc.pCurPet->curHP ) return dead100;//同归
+	if ( 0 == player.pCurPet->curHP )//对方挂
+	{
+		if ( 0 == playerHurt ) return kill0;
+		if ( 30 >= playerHurt ) return kill30;
+		if ( 60 >= playerHurt ) return kill60;
+		if ( 100 > playerHurt ) return kill99;
+	}
+	if ( 0 == npc.pCurPet->curHP )//我方挂
+	{
+		if ( 70 <= npcHurt ) return dead70;
+		if ( 50 <= npcHurt ) return dead50;
+		if ( 30 <= npcHurt ) return dead30;
+		return dead;
+	}
+	if ( npcHurt - playerHurt >= 20 )
+	{
+		if ( 0 == playerHurt ) return nohurt;
+		if ( 30 >= playerHurt ) return hurt30;
+		if ( 60 >= playerHurt ) return hurt60;
+		if ( 80 > playerHurt ) return dying;
+	}
+	if ( 30 >= playerHurt ) return ack;
+
+	return badSkill;
+}
