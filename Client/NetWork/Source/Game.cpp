@@ -807,14 +807,6 @@ bool Game::Log( int battleId, std::vector<std::string> &log )
 	return battle.Log(log);
 }
 
-bool Game::Log( int battleId, std::vector<std::vector<std::string> > &log )
-{
-	if ( m_battles.end() == m_battles.find(battleId) ) return false;
-	Battle &battle = m_battles[battleId];
-	return battle.Log(log);
-}
-
-
 bool Game::Ready(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;

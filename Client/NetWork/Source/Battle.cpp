@@ -134,8 +134,7 @@ bool Battle::Init(Game *game, int id,
 	m_player.pCurPet->sleepRound = 0;//催眠剩余回合
 	m_enemy.pCurPet->frozenRound = 0;//冰封剩余回合
 	StepChange();
-	m_player.NewRound();
-	m_enemy.NewRound();
+	StepStart();
 
 	return true;
 }
@@ -292,7 +291,6 @@ bool Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PAR
 	}
 	if ( !m_player.isReady || !m_enemy.isReady ) return false;
 
-	StepStart();
 	if ( Battle::change == m_player.act )
 	{
 		m_player.isChanged = ChangePet(m_player, m_player.objId);
@@ -304,7 +302,6 @@ bool Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PAR
 		m_player.tongGui = false;//未中同归
 	}
 	PlayRound();
-	End();
 	return true;
 }
 
@@ -325,7 +322,6 @@ const char* Battle::ChangePet(bool me, short petId)
 	player.isChanged = ChangePet(player, petId);
 	m_player.tongGui = m_enemy.tongGui = false;//未中同归
 	PlayRound();
-	End();
 
 	return NULL;
 }
@@ -338,8 +334,8 @@ bool Battle::PlayRound()
 	StepChange();
 	if ( !StepAttack() ) return false;
 	if ( !StepEnd() ) return false;
-	m_player.NewRound();
-	m_enemy.NewRound();
+	End();
+	StepStart();
 
 	return true;
 }
@@ -389,38 +385,29 @@ bool Battle::IsEnd()
 bool Battle::Log( std::vector<std::string> &log )
 {
 	log.clear();
-	for ( ; m_pCurRound->showPos < m_pCurRound->log.size(); m_pCurRound->showPos++ )
-	{
-		log.push_back(m_pCurRound->log[m_pCurRound->showPos]);
-	}
-	if ( 0 >= log.size() ) return false;
-
-	return true;
-}
-
-bool Battle::Log( std::vector<std::vector<std::string> > &log )
-{
-	m_pCurRound->showPos = m_pCurRound->log.size();
-	log.clear();
 	int i = 0;
-	for ( i = 0; i < m_log.size(); i++ )
+	for ( i = 0; i <= m_curRound; i++ )
 	{
-		log.push_back(m_log[i].log);
+		for ( ; m_log[i].showPos < m_log[i].log.size(); m_log[i].showPos++ )
+		{
+			log.push_back(m_log[i].log[m_log[i].showPos]);
+		}
 	}
 	if ( 0 >= log.size() ) return false;
-
 	return true;
 }
 
 void Battle::StepStart()
 {
+	m_player.NewRound();
+	m_enemy.NewRound();
+	if ( IsEnd() ) return;
 	Battle::ROUND round;
 	round.me = unknow;
 	round.she = unknow;
 	m_log.push_back(round);
 	m_curRound++;
 	m_pCurRound = &m_log[m_curRound];
-
 	char log[256];
 	sprintf( log, "回合%d开始", m_curRound );
 	m_pCurRound->log.push_back(log);
@@ -3095,7 +3082,7 @@ int Battle::Load(int bid, std::string &playerName, std::string &enemyName,
 	short rCount;
 	if ( mdk::File::success != logFile.Read(&rCount, sizeof(short)) ) return -6;
 	int i = 0;
-	ROUND  rnd;
+	Battle::ROUND  rnd;
 	for ( i = 0; i < rCount; i++ )
 	{
 		ret = ReadAction(logFile, rnd.me, rnd.meObjectId, rnd.meRP, rnd.mePetId);
@@ -3145,7 +3132,7 @@ bool Battle::Load(Game *game, int bid)
 	std::string playerName, enemyName;
 	unsigned int playerId, enemyId;
 	std::vector<data::PET> mePets, shePets;
-	std::vector<ROUND> log;
+	std::vector<Battle::ROUND> log;
 	if ( 0 != Load( bid, playerName, enemyName, playerId, enemyId, mePets, shePets, log ) ) return false;
 	if ( !Init(game, bid, playerName, enemyName, playerId, enemyId, mePets, shePets) ) return false;
 	int i = 0;
@@ -3160,15 +3147,19 @@ bool Battle::Load(Game *game, int bid)
 		{
 			Ready( false, log[i].she, log[i].sheObjectId, log[i].sheRP );
 		}
-		if ( mePos < log[i].mePetId.size() && 0 >= m_player.pCurPet->curHP )
+		while ( true )
 		{
-			ChangePet(true, log[i].mePetId[mePos++]);
-			continue;
-		}
-		if ( shePos < log[i].shePetId.size() && 0 >= m_enemy.pCurPet->curHP )
-		{
-			ChangePet(true, log[i].shePetId[shePos++]);
-			continue;
+			if ( mePos < log[i].mePetId.size() && 0 >= m_player.pCurPet->curHP )
+			{
+				ChangePet(true, log[i].mePetId[mePos++]);
+				continue;
+			}
+			if ( shePos < log[i].shePetId.size() && 0 >= m_enemy.pCurPet->curHP )
+			{
+				ChangePet(false, log[i].shePetId[shePos++]);
+				continue;
+			}
+			break;
 		}
 		i++;
 	}

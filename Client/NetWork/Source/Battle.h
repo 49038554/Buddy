@@ -119,7 +119,6 @@ public:
 	const char* ChangePet(bool me, short petId);
 	bool IsEnd();
 	bool Log( std::vector<std::string> &log );
-	bool Log( std::vector<std::vector<std::string> > &log );
 	bool Save();//·µ»Øid
 	bool Load(Game *game, int bid);
 	bool AI();
