@@ -819,11 +819,22 @@ bool Game::Ready(int battleId, bool me, Battle::Action act, short objectId, Batt
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;
 	Battle &battle = m_battles[battleId];
+
 	battle.Ready(me, act, objectId, rp);
 	battle.Save();
-	if ( !battle.IsAI() ) return false;
-	battle.AIReady();
-	battle.Save();
+	if ( me )//
+	{
+		if ( !battle.IsAI() ) return true;
+		battle.AI();
+		battle.Save();
+		while ( battle.AutoRound(me) )
+		{
+			battle.CheckReady(me, act, objectId, rp);
+			battle.Ready(me, act, objectId, rp);
+			battle.Save();
+		}
+		return true;
+	}
 
 	return true;
 }
@@ -880,4 +891,11 @@ int Game::LoadBattle()
 
 
 	return battleId;
+}
+
+bool Game::AutoRound( int battleId )
+{
+	if ( m_battles.end() == m_battles.find(battleId) ) return false;
+	Battle &battle = m_battles[battleId];
+	return battle.AutoRound(true);
 }

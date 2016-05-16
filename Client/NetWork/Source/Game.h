@@ -57,7 +57,8 @@ public:
 	const char* ChangePet(int battleId, bool me, short petId);//¸ü»»°ÍµÏ
 
 	Battle* GetBattle(int battleId);
-	Battle::WARRIOR* Game::Fighter(int battleId, bool me);
+	Battle::WARRIOR* Fighter(int battleId, bool me);
+	bool AutoRound( int battleId );
 
 private:
 	bool LoadGameInit();

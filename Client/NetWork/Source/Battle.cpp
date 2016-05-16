@@ -42,7 +42,6 @@ void Battle::WARRIOR::NewRound()
 	isActioned = false;//未行动
 	isEnd = false;//未完成回合结束动作
 	attacked = false;//被攻击
-	if ( 0 != banChangeRound && 0 != lockSkillTime ) isReady = true;
 }
 
 void Battle::WARRIOR::ChangePet()
@@ -170,28 +169,50 @@ const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Batt
 	static std::string reason;
 	if ( IsEnd() ) return (reason = "战斗结束").c_str();
 
+
 	Battle::WARRIOR &player = me?m_player:m_enemy;
 	Battle::WARRIOR &enemy = me?m_enemy:m_player;
+	//////////////////////////////////////////////////////////////////////////
+	//生成随机数
 	if ( player.defensed ) player.defensed = rand()%2;
 	else player.defensed = true;
+	rp.miss = rand()%100 + 1;//命中随机数
+	rp.sePro = rand()%100 + 1;//技能特效随机数
+	rp.iePro = rand()%100 + 1;//物品特效随机数
+	rp.tePro = rand()%100 + 1;//特性特效随机数
+	rp.luanWu = rand()%2 + 2;//乱舞回合数
+	rp.sleepRound = rand()%7;//睡眠随机数
+	rp.frozenRound = rand()%7;//冰冻随机数
+	rp.dian = rand()%100 + 1;//麻痹随机数
+	rp.luan = rand()%2;//混乱随机数
+	rp.hurt = rand()%(255 - 217 + 1) + 217;//伤害随机数217~255
+	rp.speed = rand()%100;//速度随机数
+
 	if ( player.isReady ) return NULL;
 
 	if ( Battle::attack == act ) 
 	{
 		if ( objectId != player.pCurPet->skill1 && objectId != player.pCurPet->skill2
 			&& objectId != player.pCurPet->skill3 && objectId != player.pCurPet->skill4 ) return (reason = "不会此技能").c_str();
+
+		if (player.xunXing
+			&& 0 != player.lockSkill 
+			&& 0 != player.lockSkillTime ) //同时中专爱，寻衅
+		{
+			player.pSkill = m_game->BornSkill();
+			return NULL;
+		}
+
 		if ( 0 != player.lockSkill 
 			&& 0 != player.lockSkillTime 
-			&& objectId != player.lockSkill ) 
+			&& objectId != player.lockSkill ) //技能被锁定
 		{
-			if (player.xunXing) 
-			{
-				player.pSkill = m_game->BornSkill();
-				return NULL;
-			}
 			return (reason = "不能更换技能").c_str();
 		}
-		if ( player.xunXing && objectId == player.lockSkill ) return (reason = "被寻衅，不能连续使用相同技能").c_str();
+		if ( player.xunXing && objectId == player.lockSkill ) 
+		{
+			return (reason = "被寻衅，不能连续使用相同技能").c_str();
+		}
 		player.pSkill = Skill(objectId, m_game->SkillBook());
 		if ( NULL == player.pSkill ) return (reason = "技能不存在").c_str();
 		if ( 0 < player.tiaoDou && 2 == player.pSkill->type ) return (reason = "被挑逗，只能使用攻击技能").c_str();
@@ -213,17 +234,6 @@ const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Batt
 		if ( NULL != ret ) return ret;
 	}
 
-	rp.miss = rand()%100 + 1;//命中随机数
-	rp.sePro = rand()%100 + 1;//技能特效随机数
-	rp.iePro = rand()%100 + 1;//物品特效随机数
-	rp.tePro = rand()%100 + 1;//特性特效随机数
-	rp.luanWu = rand()%2 + 2;//乱舞回合数
-	rp.sleepRound = rand()%7;//睡眠随机数
-	rp.frozenRound = rand()%7;//冰冻随机数
-	rp.dian = rand()%100 + 1;//麻痹随机数
-	rp.luan = rand()%2;//混乱随机数
-	rp.hurt = rand()%(255 - 217 + 1) + 217;//伤害随机数217~255
-	rp.speed = rand()%100;//速度随机数
 
 	return NULL;
 }
@@ -238,12 +248,11 @@ bool Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PAR
 
 	if ( Battle::attack == act ) 
 	{
-		if ( 0 != player.lockSkill && 0 != player.lockSkillTime ) 
+		if (player.xunXing
+			&& 0 != player.lockSkill 
+			&& 0 != player.lockSkillTime ) //同时中专爱，寻衅
 		{
-			if (player.xunXing)
-			{
-				player.pSkill = m_game->BornSkill();
-			}
+			player.pSkill = m_game->BornSkill();
 		}
 		else player.pSkill = Skill(objectId, m_game->SkillBook());
 		if ( NULL == player.pSkill ) return false;
@@ -494,7 +503,7 @@ bool Battle::StepEnd()
 	PlayerEnd(m_player, m_enemy);
 	if ( 0 >= m_player.pCurPet->curHP ) return false; 
 	PlayerEnd(m_enemy, m_player);
-	if ( 0 >= m_player.pCurPet->curHP ) return false; 
+	if ( 0 >= m_enemy.pCurPet->curHP ) return false; 
 
 	if ( 0 < m_weatherCount )
 	{
@@ -1285,6 +1294,7 @@ int Battle::CalPower(Battle::WARRIOR &playerAck, bool ct, Battle::WARRIOR &playe
 bool Battle::PetAction(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 {
 	playerAck.isActioned = true;
+	playerAck.lockSkill = playerAck.pSkill->id;
 	if ( playerAck.rest )
 	{
 		playerAck.rest = false;
@@ -1341,7 +1351,6 @@ bool Battle::PetAction(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 bool Battle::UseSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 {
 	m_pCurRound->log.push_back(playerAck.pCurPet->nick + "使用了" + playerAck.pSkill->name);
-	playerAck.lockSkill = playerAck.pSkill->id;
 
 	//////////////////////////////////////////////////////////////////////////
 	//辅助技能
@@ -2138,12 +2147,10 @@ bool Battle::HelpSkill(Battle::WARRIOR &playerAck, Battle::WARRIOR &playerDef)
 		}
 		int id = skills[rand()%i];
 		playerAck.pSkill = Skill(id, m_game->SkillBook());
-		short skill = playerAck.lockSkill;
 		if ( !UseSkill(playerAck, playerDef) )
 		{
 			if ( "大爆炸" == playerAck.pSkill->name ) Hurt(playerAck, playerAck.pCurPet->curHP);
 		}
-		playerAck.lockSkill = skill;
 	}
 	else if ( "香甜气息" == playerAck.pSkill->name )//		草	0	2	100	1	非战斗使用可引出野生巴迪
 	{
@@ -3213,46 +3220,64 @@ Battle& Battle::operator = ( Battle &copy )
 	return *this;
 }
 
-bool Battle::AIReady()
+bool Battle::AI()
 {
-	m_enemy.rp.miss = rand()%100 + 1;//命中随机数
-	m_enemy.rp.sePro = rand()%100 + 1;//技能特效随机数
-	m_enemy.rp.iePro = rand()%100 + 1;//物品特效随机数
-	m_enemy.rp.tePro = rand()%100 + 1;//特性特效随机数
-	m_enemy.rp.luanWu = rand()%2 + 2;//乱舞回合数
-	m_enemy.rp.sleepRound = rand()%7;//睡眠随机数
-	m_enemy.rp.frozenRound = rand()%7;//冰冻随机数
-	m_enemy.rp.dian = rand()%100 + 1;//麻痹随机数
-	m_enemy.rp.luan = rand()%2;//混乱随机数
-	m_enemy.rp.hurt = rand()%(255 - 217 + 1) + 217;//伤害随机数217~255
-	m_enemy.rp.speed = rand()%100;//速度随机数
-	
-	TestResult act[10];
-	int count = 0;
-	act[count++] = TestSkill(m_enemy.pCurPet->skill1, m_enemy.rp);
-	act[count++] = TestSkill(m_enemy.pCurPet->skill2, m_enemy.rp);
-	act[count++] = TestSkill(m_enemy.pCurPet->skill3, m_enemy.rp);
-	act[count++] = TestSkill(m_enemy.pCurPet->skill4, m_enemy.rp);
-	int i = 0;
-	for ( i = 0; i < m_enemy.pets.size(); i++ ) act[count++] = TestChange(i, m_enemy.rp);
-	int minResult = act[0];
-	int pos = 0;
-	for ( i = 1; i < count; i++ )
+	if ( 0 < m_enemy.pCurPet->curHP )//有战斗能力，战斗
 	{
-		if ( minResult > act[i] ) 
+		m_enemy.rp.miss = rand()%100 + 1;//命中随机数
+		m_enemy.rp.sePro = rand()%100 + 1;//技能特效随机数
+		m_enemy.rp.iePro = rand()%100 + 1;//物品特效随机数
+		m_enemy.rp.tePro = rand()%100 + 1;//特性特效随机数
+		m_enemy.rp.luanWu = rand()%2 + 2;//乱舞回合数
+		m_enemy.rp.sleepRound = rand()%7;//睡眠随机数
+		m_enemy.rp.frozenRound = rand()%7;//冰冻随机数
+		m_enemy.rp.dian = rand()%100 + 1;//麻痹随机数
+		m_enemy.rp.luan = rand()%2;//混乱随机数
+		m_enemy.rp.hurt = rand()%(255 - 217 + 1) + 217;//伤害随机数217~255
+		m_enemy.rp.speed = rand()%100;//速度随机数
+
+		TestResult act[10];
+		int count = 0;
+		act[count++] = TestSkill(m_enemy.pCurPet->skill1, m_enemy.rp);
+		act[count++] = TestSkill(m_enemy.pCurPet->skill2, m_enemy.rp);
+		act[count++] = TestSkill(m_enemy.pCurPet->skill3, m_enemy.rp);
+		act[count++] = TestSkill(m_enemy.pCurPet->skill4, m_enemy.rp);
+		int i = 0;
+		for ( i = 0; i < m_enemy.pets.size(); i++ ) act[count++] = TestChange(i, m_enemy.rp);
+		int minResult = act[0];
+		int pos = 0;
+		for ( i = 1; i < count; i++ )
 		{
-			pos = i;
-			minResult = act[pos];
+			if ( minResult > act[i] ) 
+			{
+				pos = i;
+				minResult = act[pos];
+			}
+		}
+		if ( refuse == minResult || m_enemy.isReady ) return true;
+
+		if ( 0 == pos ) Ready(false, Action::attack, m_enemy.pCurPet->skill1, m_enemy.rp);
+		else if ( 1 == pos ) Ready(false, Action::attack, m_enemy.pCurPet->skill2, m_enemy.rp);
+		else if ( 2 == pos ) Ready(false, Action::attack, m_enemy.pCurPet->skill3, m_enemy.rp);
+		else if ( 3 == pos ) Ready(false, Action::attack, m_enemy.pCurPet->skill4, m_enemy.rp);
+		else Ready(false, Action::change, m_enemy.pets[pos - 4].id, m_enemy.rp);
+		if ( 0 < m_enemy.pCurPet->curHP ) return true;
+
+		return AI();
+	}
+	//无战斗能力，AI换人
+	int i = 0;
+	while ( 0 == m_enemy.pCurPet->curHP )
+	{
+		for ( i = 0; i < m_enemy.pets.size(); i++ ) 
+		{
+			if ( m_enemy.pCurPet == &m_enemy.pets[i] ) continue;
+			const char *ret = ChangePet(false, m_enemy.pets[i].id);
+			if ( NULL != ret ) continue;
+			Save();
+			break;
 		}
 	}
-	if ( refuse == minResult || m_enemy.isReady ) return true;
-
-	if ( 0 == pos ) Ready(false, Action::attack, m_enemy.pCurPet->skill1, m_enemy.rp);
-	else if ( 1 == pos ) Ready(false, Action::attack, m_enemy.pCurPet->skill2, m_enemy.rp);
-	else if ( 2 == pos ) Ready(false, Action::attack, m_enemy.pCurPet->skill3, m_enemy.rp);
-	else if ( 3 == pos ) Ready(false, Action::attack, m_enemy.pCurPet->skill4, m_enemy.rp);
-	else Ready(false, Action::change, m_enemy.pets[pos - 4].id, m_enemy.rp);
-
 	return true;
 }
 
@@ -3313,4 +3338,20 @@ Battle::TestResult Battle::ActionLevel( Battle::WARRIOR &player, Battle::WARRIOR
 	if ( 30 >= playerHurt ) return ack;
 
 	return badSkill;
+}
+
+bool Battle::AutoRound(bool me)
+{
+	if ( me )
+	{
+		if ( 0 >= m_player.pCurPet->curHP ) return false;
+		if ( 0 != m_player.banChangeRound && 0 != m_player.lockSkillTime && 0 != m_player.lockSkill ) return true;
+	}
+	else
+	{
+		if ( 0 >= m_enemy.pCurPet->curHP ) return false;
+		if ( 0 != m_enemy.banChangeRound && 0 != m_enemy.lockSkillTime && 0 != m_enemy.lockSkill ) return true;
+	}
+
+	return false;
 }

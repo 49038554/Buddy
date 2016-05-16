@@ -116,14 +116,14 @@ public:
 	Battle::WARRIOR* Player(bool me);
 	const char* CheckReady(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
 	bool Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
-	bool AIReady();
 	const char* ChangePet(bool me, short petId);
 	bool IsEnd();
 	bool Log( std::vector<std::string> &log );
 	bool Log( std::vector<std::vector<std::string> > &log );
 	bool Save();//返回id
 	bool Load(Game *game, int bid);
-
+	bool AI();
+	bool AutoRound(bool me);//下回合自动
 private:
 	typedef struct ROUND
 	{
