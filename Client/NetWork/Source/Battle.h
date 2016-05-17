@@ -114,8 +114,9 @@ public:
 		void ChangePet();//交换巴迪时需要重置的数据
 	}WARRIOR;
 	Battle::WARRIOR* Player(bool me);
-	const char* CheckReady(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
-	bool Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	void CreateRP(bool me, Battle::RAND_PARAM &rp);
+	const char* CheckReady(bool me, Battle::Action act, short objectId);
+	const char* Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
 	const char* ChangePet(bool me, short petId);
 	bool IsEnd();
 	bool Log( std::vector<std::string> &log );

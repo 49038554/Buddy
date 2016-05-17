@@ -38,7 +38,6 @@ void PrintPets(Battle::WARRIOR *pPlayer, Game *pGame);
 void PrintWarrior(Battle::WARRIOR *pPlayer, Game *pGame);
 void PrintUI(int battleId);
 bool ShowLog(int battleId);
-bool ShowAllLog(int battleId);
 
 char* OnCommand(std::vector<std::string> *param)
 {
@@ -276,8 +275,17 @@ char* OnCommand(std::vector<std::string> *param)
 		int battleId = atoi(cmd[1].c_str());
 		int oId = atoi(cmd[2].c_str());
 		const char *ret = NULL;
-		if ( 1 == uId ) ret = g_cli.Ready(battleId, Battle::attack, oId);
-		else ret = g_cli.SheReady(battleId, Battle::attack, oId);
+		Battle::RAND_PARAM rp;
+		if ( 1 == uId ) 
+		{
+			g_cli.CreateRP(battleId, true, rp);
+			ret = g_cli.Ready(battleId, Battle::attack, oId, rp);
+		}
+		else 
+		{
+			g_cli.CreateRP(battleId, false, rp);
+			ret = g_cli.SheReady(battleId, Battle::attack, oId, rp);
+		}
 		if ( NULL != ret ) printf( "%s\n", ret );
 		if ( ShowLog(battleId) )
 		{
@@ -297,8 +305,18 @@ char* OnCommand(std::vector<std::string> *param)
 		int battleId = atoi(cmd[1].c_str());
 		int oId = atoi(cmd[2].c_str());
 		const char *ret = NULL;
-		if ( 1 == uId ) ret = g_cli.Ready(battleId, Battle::change, oId);
-		else ret = g_cli.SheReady(battleId, Battle::change, oId);
+		Battle::RAND_PARAM rp;
+		if ( 1 == uId ) 
+		{
+			g_cli.CreateRP(battleId, true, rp);
+			ret = g_cli.Ready(battleId, Battle::change, oId, rp);
+		}
+		else 
+		{
+			g_cli.CreateRP(battleId, false, rp);
+			ret = g_cli.SheReady(battleId, Battle::change, oId, rp);
+		}
+
 		if ( NULL != ret ) printf( "%s\n", ret );
 		if ( ShowLog(battleId) )
 		{
@@ -337,8 +355,17 @@ char* OnCommand(std::vector<std::string> *param)
 		int battleId = atoi(cmd[1].c_str());
 		int itemId = atoi(cmd[2].c_str());
 		const char *ret = NULL;
-		if ( 1 == uId ) ret = g_cli.Ready(battleId, Battle::useItem, itemId);
-		else ret = g_cli.SheReady(battleId, Battle::useItem, itemId);
+		Battle::RAND_PARAM rp;
+		if ( 1 == uId ) 
+		{
+			g_cli.CreateRP(battleId, true, rp);
+			ret = g_cli.Ready(battleId, Battle::useItem, itemId, rp);
+		}
+		else 
+		{
+			g_cli.CreateRP(battleId, false, rp);
+			ret = g_cli.SheReady(battleId, Battle::useItem, itemId, rp);
+		}
 		if ( NULL != ret ) printf( "%s\n", ret );
 		ShowLog(battleId);
 		PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
@@ -359,7 +386,7 @@ char* OnCommand(std::vector<std::string> *param)
 	else if ( "load" == cmd[0] )
 	{
 		int battleId = g_cli.LoadBattle();
-		ShowAllLog(battleId);
+		ShowLog(battleId);
 		PrintWarrior(g_cli.Fighter(battleId, true), g_cli.GetGame());
 		PrintWarrior(g_cli.Fighter(battleId, false), g_cli.GetGame());
 	}
@@ -464,24 +491,6 @@ bool ShowLog(int battleId)
 	for ( i = 0; i < log.size(); i++ )
 	{
 		printf( "%s\n", log[i].c_str() );
-	}
-
-	return true;
-}
-
-bool ShowAllLog(int battleId)
-{
-	std::vector<std::vector<std::string> > log;
-	if ( !g_cli.Log(battleId, log) ) return false;
-
-	int i = 0;
-	for ( i = 0; i < log.size(); i++ )
-	{
-		int j = 0;
-		for ( j = 0; j < log[i].size(); j++ )
-		{
-			printf( "%s\n", log[i][j].c_str() );
-		}
 	}
 
 	return true;

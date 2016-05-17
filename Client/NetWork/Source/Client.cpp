@@ -1174,7 +1174,12 @@ bool Client::Log( int battleId, std::vector<std::string> &log )
 	return m_game.Log(battleId, log);
 }
 
-const char* Client::Ready(int battleId, Battle::Action act, short objectId)
+void Client::CreateRP(int battleId, bool me, Battle::RAND_PARAM &rp)
+{
+	m_game.CreateRP(battleId, me, rp);
+}
+
+const char* Client::Ready(int battleId, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	static std::string reason;
 	if ( Battle::useItem == act ) 
@@ -1182,34 +1187,22 @@ const char* Client::Ready(int battleId, Battle::Action act, short objectId)
 		reason = UseItem(objectId, 1);
 		if ( "" != reason ) return reason.c_str();
 	}
-	Battle::RAND_PARAM rp;
-	const char *ret = m_game.CheckReady(battleId, true, act, objectId, rp);
-	if ( NULL != ret ) return ret;
-	m_game.Ready(battleId, true, act, objectId, rp);
-	return NULL;
+	return m_game.Ready(battleId, true, act, objectId, rp);
 }
 
 const char* Client::ChangePet(int battleId, short petId)
 {
-	const char *ret = m_game.ChangePet(battleId, true, petId);
-	if ( NULL != ret ) return ret;
-	return NULL;
+	return m_game.ChangePet(battleId, true, petId);
 }
 
-const char* Client::SheReady(int battleId, Battle::Action act, short objectId)
+const char* Client::SheReady(int battleId, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
-	Battle::RAND_PARAM rp;
-	const char *ret = m_game.CheckReady(battleId, false, act, objectId, rp);
-	if ( NULL != ret ) return ret;
-	m_game.Ready(battleId, false, act, objectId, rp);
-	return NULL;
+	return m_game.Ready(battleId, false, act, objectId, rp);
 }
 
 const char* Client::SheChangePet(int battleId, short petId)
 {
-	const char *ret = m_game.ChangePet(battleId, false, petId);
-	if ( NULL != ret ) return ret;
-	return NULL;
+	return m_game.ChangePet(battleId, false, petId);
 }
 
 Game* Client::GetGame()

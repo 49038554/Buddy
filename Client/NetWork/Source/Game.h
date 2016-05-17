@@ -46,12 +46,10 @@ public:
 		const std::string &playerName, std::vector<data::PET> &me);
 	int LoadBattle();
 	bool Log( int battleId, std::vector<std::string> &log );
-
-	//检查玩家输入参数
-	const char* CheckReady(int battleId, bool me, Battle::Action act, 
-						short objectId, Battle::RAND_PARAM &rp);
+	//产生本地随机数
+	void CreateRP(int battleId, bool me, Battle::RAND_PARAM &rp);
 	//操作完成，已准备
-	bool Ready(int battleId, bool me, Battle::Action act, 
+	const char* Ready(int battleId, bool me, Battle::Action act, 
 						short objectId, Battle::RAND_PARAM &rp);
 	const char* ChangePet(int battleId, bool me, short petId);//更换巴迪
 

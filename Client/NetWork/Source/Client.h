@@ -45,10 +45,12 @@ public:
 		std::vector<data::PET> &she);//对战
 	int CreateBattle();//野战
 	bool Log( int battleId, std::vector<std::string> &log );
-	const char* Ready(int battleId, Battle::Action act, short objectId);//操作完成，准备
+	//产生本地随机数
+	void CreateRP(int battleId, bool me, Battle::RAND_PARAM &rp);
+	const char* Ready(int battleId, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);//操作完成，准备
 	const char* ChangePet(int battleId, short petId);//更换巴迪
 	//对方行动
-	const char* SheReady(int battleId, Battle::Action act, short objectId);
+	const char* SheReady(int battleId, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
 	const char* SheChangePet(int battleId, short petId);
 
 	Game* GetGame();

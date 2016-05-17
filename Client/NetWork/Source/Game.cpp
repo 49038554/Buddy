@@ -793,13 +793,6 @@ int Game::CreateBattle(unsigned int mePlayerId,
 	return CreateBattle(mePlayerId, playerName, me, shePlayerId, enemyName, she);
 }
 
-const char* Game::CheckReady(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
-{
-	if ( m_battles.end() == m_battles.find(battleId) ) return "Õ½¶·²»´æÔÚ";
-	Battle &battle = m_battles[battleId];
-	return battle.CheckReady(me, act, objectId, rp);
-}
-
 bool Game::Log( int battleId, std::vector<std::string> &log )
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;
@@ -807,28 +800,36 @@ bool Game::Log( int battleId, std::vector<std::string> &log )
 	return battle.Log(log);
 }
 
-bool Game::Ready(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+void Game::CreateRP(int battleId, bool me, Battle::RAND_PARAM &rp)
+{
+	if ( m_battles.end() == m_battles.find(battleId) ) return;
+	m_battles[battleId].CreateRP(me, rp);
+	return;
+}
+
+const char* Game::Ready(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;
 	Battle &battle = m_battles[battleId];
 
-	battle.Ready(me, act, objectId, rp);
+	const char *ret = battle.Ready(me, act, objectId, rp);
+	if ( NULL != ret ) return ret;
+
 	battle.Save();
 	if ( me )//
 	{
-		if ( !battle.IsAI() ) return true;
+		if ( !battle.IsAI() ) return NULL;
 		battle.AI();
 		battle.Save();
 		while ( battle.AutoRound(me) )
 		{
-			battle.CheckReady(me, act, objectId, rp);
+			battle.CreateRP(me, rp);
 			battle.Ready(me, act, objectId, rp);
 			battle.Save();
 		}
-		return true;
 	}
 
-	return true;
+	return NULL;
 }
 
 const char* Game::ChangePet(int battleId, bool me, short petId)

@@ -163,16 +163,9 @@ const char* Battle::SetPetInfo(Battle::WARRIOR &player, int petId)
 	return (reason = "不存在的宠物").c_str();
 }
 
-const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+void Battle::CreateRP(bool me, Battle::RAND_PARAM &rp)
 {
-	static std::string reason;
-	if ( IsEnd() ) return (reason = "战斗结束").c_str();
-
-
 	Battle::WARRIOR &player = me?m_player:m_enemy;
-	Battle::WARRIOR &enemy = me?m_enemy:m_player;
-	//////////////////////////////////////////////////////////////////////////
-	//生成随机数
 	if ( player.defensed ) player.defensed = rand()%2;
 	else player.defensed = true;
 	rp.miss = rand()%100 + 1;//命中随机数
@@ -186,8 +179,15 @@ const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Batt
 	rp.luan = rand()%2;//混乱随机数
 	rp.hurt = rand()%(255 - 217 + 1) + 217;//伤害随机数217~255
 	rp.speed = rand()%100;//速度随机数
+}
 
-	if ( player.isReady ) return NULL;
+const char* Battle::CheckReady(bool me, Battle::Action act, short objectId)
+{
+	static std::string reason;
+	if ( IsEnd() ) return (reason = "战斗已结束").c_str();
+
+	Battle::WARRIOR &player = me?m_player:m_enemy;
+	if ( player.isReady ) return (reason = "动作已选定").c_str();
 
 	if ( Battle::attack == act ) 
 	{
@@ -196,7 +196,9 @@ const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Batt
 
 		if (player.xunXing
 			&& 0 != player.lockSkill 
-			&& 0 != player.lockSkillTime ) //同时中专爱，寻衅
+			&& 0 != player.lockSkillTime 
+			&& (1 == player.pets.size() || player.banChangeRound)
+			) //同时中专爱，寻衅, 没有技能可用,且不能换人
 		{
 			player.pSkill = m_game->BornSkill();
 			return NULL;
@@ -214,13 +216,38 @@ const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Batt
 		}
 		player.pSkill = Skill(objectId, m_game->SkillBook());
 		if ( NULL == player.pSkill ) return (reason = "技能不存在").c_str();
-		if ( 0 < player.tiaoDou && 2 == player.pSkill->type ) return (reason = "被挑逗，只能使用攻击技能").c_str();
+		if ( 0 < player.tiaoDou && 2 == player.pSkill->type ) 
+		{
+			int sid[4];
+			sid[0] = player.pCurPet->skill1;
+			sid[1] = player.pCurPet->skill2;
+			sid[2] = player.pCurPet->skill3;
+			sid[3] = player.pCurPet->skill4;
+			int i = 0;
+			for ( i = 0; i < 4; i++ )
+			{
+				if ( objectId == sid[i] ) continue;
+				if ( player.xunXing && objectId == sid[i] ) continue;
+				if ( 0 != player.lockSkill 	&& 0 != player.lockSkillTime && objectId != sid[i] ) continue;
+				player.pSkill = Skill(sid[i], m_game->SkillBook());
+				if ( NULL == player.pSkill || 2 == player.pSkill->type ) continue;
+				player.pSkill = NULL;
+				return (reason = "被挑逗，只能使用攻击技能").c_str();
+			}
+			//没有技能可用,且没有PM可换，或不准换PM
+			if ( 1 == player.pets.size() || player.banChangeRound )
+			{
+				player.pSkill = m_game->BornSkill();
+				return NULL;
+			}
+			player.pSkill = NULL;
+			return (reason = "被挑逗，只能使用攻击技能").c_str();;
+		}
 	}
 	if ( Battle::useItem == act ) 
 	{
 		player.pUseItem = Item(objectId, m_game->ItemBook());
 		if ( NULL == player.pUseItem ) return (reason = "物品不存在").c_str();
-		player.pSkill = NULL;
 	}
 	if ( Battle::change == act ) 
 	{
@@ -233,45 +260,23 @@ const char* Battle::CheckReady(bool me, Battle::Action act, short objectId, Batt
 		if ( NULL != ret ) return ret;
 	}
 
-
 	return NULL;
 }
 
-bool Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+const char* Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
 {
-	if ( IsEnd() ) return false;
+	const char *ret = CheckReady(me, act, objectId);
+	if ( NULL != ret ) return ret;
 
 	Battle::WARRIOR &player = me?m_player:m_enemy;
-	Battle::WARRIOR &enemy = me?m_enemy:m_player;
-	if ( player.isReady ) return false;
 
-	if ( Battle::attack == act ) 
-	{
-		if (player.xunXing
-			&& 0 != player.lockSkill 
-			&& 0 != player.lockSkillTime ) //同时中专爱，寻衅
-		{
-			player.pSkill = m_game->BornSkill();
-		}
-		else player.pSkill = Skill(objectId, m_game->SkillBook());
-		if ( NULL == player.pSkill ) return false;
-	}
-	if ( Battle::useItem == act )
+	if ( Battle::attack != act )
 	{
 		player.defensed = false;
 		player.rest = false;
 		player.pSkill = NULL;
-		player.pUseItem = Item(objectId, m_game->ItemBook());
-		if ( NULL == player.pUseItem ) return false;
 	}
-	if ( Battle::change == act ) 
-	{
-		if ( NULL != player.pCurPet && player.pCurPet->id == objectId )
-		{
-			return false;
-		}
-		if ( NULL != SetPetInfo(player, objectId) ) return false;
-	}
+
 	player.act = act;
 	player.objId = objectId;
 	player.rp = rp;
@@ -289,7 +294,7 @@ bool Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PAR
 		m_pCurRound->sheObjectId = objectId;
 		m_pCurRound->sheRP = m_enemy.rp;
 	}
-	if ( !m_player.isReady || !m_enemy.isReady ) return false;
+	if ( !m_player.isReady || !m_enemy.isReady ) return NULL;
 
 	if ( Battle::change == m_player.act )
 	{
@@ -302,7 +307,7 @@ bool Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PAR
 		m_player.tongGui = false;//未中同归
 	}
 	PlayRound();
-	return true;
+	return NULL;
 }
 
 const char* Battle::ChangePet(bool me, short petId)
@@ -3276,11 +3281,9 @@ Battle::TestResult Battle::TestSkill( int skillId, RAND_PARAM &rp )
 {
 	Battle testBattle;
 	testBattle = *this;
-	RAND_PARAM crp;
-	if ( NULL != testBattle.CheckReady( false, attack, skillId, crp ) ) return refuse;
-
-	testBattle.Ready( false, attack, skillId, rp );
+	if ( NULL != testBattle.Ready( false, attack, skillId, rp ) ) return refuse;
 	TestResult ret = ActionLevel(testBattle.m_player, testBattle.m_enemy);
+
 	return ret;
 }
 
@@ -3290,10 +3293,7 @@ Battle::TestResult Battle::TestChange( int petPos, RAND_PARAM &rp )
 
 	Battle testBattle;
 	testBattle = *this;
-	RAND_PARAM crp;
-	if ( NULL != testBattle.CheckReady( false, change, m_enemy.pets[petPos].id, crp ) ) return refuse;
-
-	testBattle.Ready( false, change, m_enemy.pets[petPos].id, rp );
+	if ( NULL != testBattle.Ready( false, change, m_enemy.pets[petPos].id, rp ) ) return refuse;
 	TestResult ret = ActionLevel(testBattle.m_player, testBattle.m_enemy);
 	if ( ack == ret ) return def;
 	if ( badSkill == ret ) return badDef;
@@ -3336,12 +3336,14 @@ bool Battle::AutoRound(bool me)
 	if ( me )
 	{
 		if ( 0 >= m_player.pCurPet->curHP ) return false;
-		if ( 0 != m_player.banChangeRound && 0 != m_player.lockSkillTime && 0 != m_player.lockSkill ) return true;
+		if ( (1 == m_player.pets.size() || 0 != m_player.banChangeRound )
+			&& 0 != m_player.lockSkillTime && 0 != m_player.lockSkill ) return true;
 	}
 	else
 	{
 		if ( 0 >= m_enemy.pCurPet->curHP ) return false;
-		if ( 0 != m_enemy.banChangeRound && 0 != m_enemy.lockSkillTime && 0 != m_enemy.lockSkill ) return true;
+		if ( (1 == m_player.pets.size() || 0 != m_player.banChangeRound )
+			&& 0 != m_enemy.lockSkillTime && 0 != m_enemy.lockSkill ) return true;
 	}
 
 	return false;
