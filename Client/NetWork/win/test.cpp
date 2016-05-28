@@ -275,7 +275,7 @@ char* OnCommand(std::vector<std::string> *param)
 		int battleId = atoi(cmd[1].c_str());
 		int oId = atoi(cmd[2].c_str());
 		const char *ret = NULL;
-		Battle::RAND_PARAM rp;
+		data::RAND_PARAM rp;
 		if ( 1 == uId ) 
 		{
 			g_cli.CreateRP(battleId, true, rp);
@@ -305,7 +305,7 @@ char* OnCommand(std::vector<std::string> *param)
 		int battleId = atoi(cmd[1].c_str());
 		int oId = atoi(cmd[2].c_str());
 		const char *ret = NULL;
-		Battle::RAND_PARAM rp;
+		data::RAND_PARAM rp;
 		if ( 1 == uId ) 
 		{
 			g_cli.CreateRP(battleId, true, rp);
@@ -355,7 +355,7 @@ char* OnCommand(std::vector<std::string> *param)
 		int battleId = atoi(cmd[1].c_str());
 		int itemId = atoi(cmd[2].c_str());
 		const char *ret = NULL;
-		Battle::RAND_PARAM rp;
+		data::RAND_PARAM rp;
 		if ( 1 == uId ) 
 		{
 			g_cli.CreateRP(battleId, true, rp);

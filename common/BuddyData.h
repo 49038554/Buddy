@@ -129,15 +129,15 @@ namespace data
 
 	typedef struct PET
 	{
-		int		id;
-		short	number;
+		int		id;//宠物Id
+		short	number;//巴迪编号
 		char	talent;//特性
 		char	nature;//性格
-		short	skill1;
-		short	skill2;
-		short	skill3;
-		short	skill4;
-		short	itemId;
+		short	skill1;//技能1
+		short	skill2;//技能2
+		short	skill3;//技能3
+		short	skill4;//技能4
+		short	itemId;//物品id
 		short	HP;//血
 		short	WG;//攻
 		short	WF;//防
@@ -153,7 +153,7 @@ namespace data
 		unsigned char	SDMuscle;//速度后天修炼
 		std::vector<char>	race;//17个属性的恶魔果实是否吃过
 
-		bool	synced;
+		bool	synced;//已同步
 		std::string	nick;//昵称
 		char	state;//状态
 		short	curHP;//当前血量
@@ -169,6 +169,21 @@ namespace data
 		bool			synced;
 	}PLAYER_ITEM;
 
+	typedef struct RAND_PARAM
+	{
+		char miss;//命中随机数
+		char sePro;//技能特效随机数
+		char iePro;//物品特效随机数
+		char tePro;//特性特效随机数
+		char luanWu;//乱舞回合数
+		char sleepRound;//睡眠回合随机数
+		char frozenRound;//冰冻回合随机数
+		char dian;//麻痹随机数
+		bool luan;//混乱随机数
+		unsigned char	hurt;//伤害随机数217~255
+		unsigned char	speed;//速度随机数
+		char			fouceChange;//强制换上第?只Pet，随机数1~5
+	}RAND_PARAM;
 }
 
 data::ITEM* Item(short id, std::vector<data::ITEM> &items);

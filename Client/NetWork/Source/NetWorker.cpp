@@ -139,3 +139,37 @@ void NetWorker::OnMsg(int svrType, net::Socket &svr, msg::Buffer &buffer)
 {
 	return;
 }
+
+NetTask* NetWorker::CreateTask()
+{
+	static int id = 0;
+	id++;
+	mdk::AutoLock lock(&m_lockPool);
+	if ( 0 == m_taskPool.size() ) 
+	{
+		NetTask *pTask = new NetTask();
+		pTask->id = id;
+		return pTask;
+	}
+	NetTask *pTask = m_taskPool.back();
+	pTask->id = id;
+	pTask->state = NetTask::unsend;
+	pTask->flushTime = time(NULL);
+	pTask->dataSize = 0;
+	m_taskPool.pop_back();
+
+	return pTask;
+}
+
+void NetWorker::ReleaseTask(NetTask *pTask)
+{
+	mdk::AutoLock lock(&m_lockPool);
+	if ( 100 <= m_taskPool.size() )
+	{
+		delete pTask;
+		return;
+	}
+	m_taskPool.push_back(pTask);
+
+	return;
+}

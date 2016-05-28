@@ -38,7 +38,7 @@ public:
 	data::BUDDY* Encounter( int mapId );
 	//////////////////////////////////////////////////////////////////////////
 	//战斗接口
-	int CreateBattle(unsigned int mePlayerId, const std::string &playerName, 
+	int CreateBattle(int battleId, unsigned int mePlayerId, const std::string &playerName, 
 		std::vector<data::PET> &me, unsigned int shePlayerId, 
 		const std::string &enemyName, std::vector<data::PET> &she);
 
@@ -47,10 +47,10 @@ public:
 	int LoadBattle();
 	bool Log( int battleId, std::vector<std::string> &log );
 	//产生本地随机数
-	void CreateRP(int battleId, bool me, Battle::RAND_PARAM &rp);
+	void CreateRP(int battleId, bool me, data::RAND_PARAM &rp);
 	//操作完成，已准备
 	const char* Ready(int battleId, bool me, Battle::Action act, 
-						short objectId, Battle::RAND_PARAM &rp);
+						short objectId, data::RAND_PARAM &rp);
 	const char* ChangePet(int battleId, bool me, short petId);//更换巴迪
 
 	Battle* GetBattle(int battleId);

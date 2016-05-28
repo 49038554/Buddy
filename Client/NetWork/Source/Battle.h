@@ -25,20 +25,6 @@ public:
 		unsigned int playerId, unsigned int enemyId, 
 		std::vector<data::PET> &me, std::vector<data::PET> &she);
 	bool IsAI();
-	typedef struct RAND_PARAM
-	{
-		char miss;//命中随机数
-		char sePro;//技能特效随机数
-		char iePro;//物品特效随机数
-		char tePro;//特性特效随机数
-		char luanWu;//乱舞回合数
-		char sleepRound;//睡眠回合随机数
-		char frozenRound;//冰冻回合随机数
-		char dian;//麻痹随机数
-		bool luan;//混乱随机数
-		unsigned char	hurt;//伤害随机数217~255
-		unsigned char	speed;//速度随机数
-	}RAND_PARAM;
 	typedef struct WARRIOR
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -72,7 +58,7 @@ public:
 		data::ITEM *pUseItem;
 		Action	act;
 		int		objId;
-		RAND_PARAM rp;
+		data::RAND_PARAM rp;
 
 		//////////////////////////////////////////////////////////////////////////
 		//上场重置数据
@@ -114,9 +100,9 @@ public:
 		void ChangePet();//交换巴迪时需要重置的数据
 	}WARRIOR;
 	Battle::WARRIOR* Player(bool me);
-	void CreateRP(bool me, Battle::RAND_PARAM &rp);
+	void CreateRP(bool me, data::RAND_PARAM &rp);
 	const char* CheckReady(bool me, Battle::Action act, short objectId);
-	const char* Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	const char* Ready(bool me, Battle::Action act, short objectId, data::RAND_PARAM &rp);
 	const char* ChangePet(bool me, short petId);
 	bool IsEnd();
 	bool Log( std::vector<std::string> &log );
@@ -129,12 +115,12 @@ private:
 	{
 		Action	me;
 		int		meObjectId;
-		RAND_PARAM	meRP;
+		data::RAND_PARAM	meRP;
 		std::vector<short> mePetId;
 
 		Action	she;
 		int		sheObjectId;
-		RAND_PARAM	sheRP;
+		data::RAND_PARAM	sheRP;
 		std::vector<short> shePetId;
 
 		std::vector<std::string> log;
@@ -142,12 +128,12 @@ private:
 	}ROUND;
 
 
-	void WriteAction(mdk::File &logFile, Battle::Action act, int oId, Battle::RAND_PARAM &rp, std::vector<short> &petId);
+	void WriteAction(mdk::File &logFile, Battle::Action act, int oId, data::RAND_PARAM &rp, std::vector<short> &petId);
 	int Load(int bid, std::string &playerName, std::string &enemyName,
 		unsigned int &playerId, unsigned int &enemyId, 
 		std::vector<data::PET> &me, std::vector<data::PET> &she,
 		std::vector<Battle::ROUND> &log);
-	int ReadAction(mdk::File &logFile, Battle::Action &act, int &oId, Battle::RAND_PARAM &rp, std::vector<short> &petId);
+	int ReadAction(mdk::File &logFile, Battle::Action &act, int &oId, data::RAND_PARAM &rp, std::vector<short> &petId);
 	const char* SetPetInfo(Battle::WARRIOR &player, int petId);
 	bool PlayRound();//完成返回true,中断返回false
 	void End();//战斗结束
@@ -211,8 +197,8 @@ private:
 		dead = 16,//挂了，输出低于30%
 		refuse = 17,//拒绝
 	};
-	Battle::TestResult TestSkill( int skillId, RAND_PARAM &rp );
-	Battle::TestResult TestChange( int petPos, RAND_PARAM &rp );
+	Battle::TestResult TestSkill( int skillId, data::RAND_PARAM &rp );
+	Battle::TestResult TestChange( int petPos, data::RAND_PARAM &rp );
 	Battle::TestResult ActionLevel( Battle::WARRIOR &player, Battle::WARRIOR &npc );
 
 

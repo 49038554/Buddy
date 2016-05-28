@@ -163,7 +163,7 @@ const char* Battle::SetPetInfo(Battle::WARRIOR &player, int petId)
 	return (reason = "不存在的宠物").c_str();
 }
 
-void Battle::CreateRP(bool me, Battle::RAND_PARAM &rp)
+void Battle::CreateRP(bool me, data::RAND_PARAM &rp)
 {
 	Battle::WARRIOR &player = me?m_player:m_enemy;
 	if ( player.defensed ) player.defensed = rand()%2;
@@ -179,6 +179,11 @@ void Battle::CreateRP(bool me, Battle::RAND_PARAM &rp)
 	rp.luan = rand()%2;//混乱随机数
 	rp.hurt = rand()%(255 - 217 + 1) + 217;//伤害随机数217~255
 	rp.speed = rand()%100;//速度随机数
+	rp.fouceChange = 1;//强制换上第?只Pet，随机数1~5
+	if ( player.pets.size() > 1 )
+	{
+		rp.fouceChange = rand()%(player.pets.size() - 1) + 1;//强制换上第?只Pet，随机数1~5
+	}
 }
 
 const char* Battle::CheckReady(bool me, Battle::Action act, short objectId)
@@ -263,7 +268,7 @@ const char* Battle::CheckReady(bool me, Battle::Action act, short objectId)
 	return NULL;
 }
 
-const char* Battle::Ready(bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+const char* Battle::Ready(bool me, Battle::Action act, short objectId, data::RAND_PARAM &rp)
 {
 	const char *ret = CheckReady(me, act, objectId);
 	if ( NULL != ret ) return ret;
@@ -2464,11 +2469,16 @@ bool Battle::ForcedLeave(Battle::WARRIOR &player)
 		return false;
 	}
 	int i = 0;
+	if ( player.rp.fouceChange > player.pets.size() - 1 ) player.rp.fouceChange = player.pets.size() - 1;
 	for ( i = 0; true; i++ )
 	{
 		if ( i >= player.pets.size() ) i = 0;
 		if ( player.pCurPet == &player.pets[i] ) continue;
-		if ( 0 == rand()%2 ) continue;
+		if ( 1 != player.rp.fouceChange ) 
+		{
+			player.rp.fouceChange--;
+			continue;
+		}
 		if ( NULL != SetPetInfo(player, player.pets[i].id) ) 
 		{
 			m_pCurRound->log.push_back(player.name + "队伍中存在非法巴迪");
@@ -3036,7 +3046,7 @@ bool Battle::Save()
 	return true;
 }
 
-void Battle::WriteAction(mdk::File &logFile, Battle::Action act, int oId, Battle::RAND_PARAM &rp, std::vector<short> &petId)
+void Battle::WriteAction(mdk::File &logFile, Battle::Action act, int oId, data::RAND_PARAM &rp, std::vector<short> &petId)
 {
 	char val = act;
 	logFile.Write(&val, sizeof(char));
@@ -3100,7 +3110,7 @@ int Battle::Load(int bid, std::string &playerName, std::string &enemyName,
 	return 0;
 }
 
-int Battle::ReadAction(mdk::File &logFile, Battle::Action &act, int &oId, Battle::RAND_PARAM &rp, std::vector<short> &petId)
+int Battle::ReadAction(mdk::File &logFile, Battle::Action &act, int &oId, data::RAND_PARAM &rp, std::vector<short> &petId)
 {
 	char val;
 	if ( mdk::File::success != logFile.Read(&val, sizeof(char)) ) return 1;
@@ -3277,7 +3287,7 @@ bool Battle::AI()
 	return true;
 }
 
-Battle::TestResult Battle::TestSkill( int skillId, RAND_PARAM &rp )
+Battle::TestResult Battle::TestSkill( int skillId, data::RAND_PARAM &rp )
 {
 	Battle testBattle;
 	testBattle = *this;
@@ -3287,7 +3297,7 @@ Battle::TestResult Battle::TestSkill( int skillId, RAND_PARAM &rp )
 	return ret;
 }
 
-Battle::TestResult Battle::TestChange( int petPos, RAND_PARAM &rp )
+Battle::TestResult Battle::TestChange( int petPos, data::RAND_PARAM &rp )
 {
 	if ( m_enemy.pCurPet == &m_enemy.pets[petPos] ) return refuse;//已出场拒绝交换
 

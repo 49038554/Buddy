@@ -37,6 +37,9 @@
     <Filter Include="PetCFG">
       <UniqueIdentifier>{f18dd3f0-1070-4c79-8c52-c1a4225bb830}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Protocl\Object\Game">
+      <UniqueIdentifier>{c5840484-e7d2-4a0c-b3a7-f8f372f1a246}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Protocl\cpp\Buffer.cpp">
@@ -192,6 +195,24 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Battle.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\Game\RoundReady.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\Game\SendPet.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\Game\Dekaron.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\Game\Challenge.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Protocl\cpp\Object\Game\BattleResult.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\NetTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -357,6 +378,24 @@
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Battle.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\Game\RoundReady.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\Game\SendPet.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\Game\Dekaron.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\Game\Challenge.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Protocl\cpp\Object\Game\BattleResult.h">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\NetTask.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

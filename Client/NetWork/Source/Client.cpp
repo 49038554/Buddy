@@ -41,6 +41,12 @@
 #include "Protocl/cpp/Object/DBEntry/SyncItem.h"
 #include "Protocl/cpp/Object/DBEntry/SyncPlayer.h"
 
+//Game
+#include "Protocl/cpp/Object/Game/Dekaron.h"
+#include "Protocl/cpp/Object/Game/Challenge.h"
+#include "Protocl/cpp/Object/Game/RoundReady.h"
+#include "Protocl/cpp/Object/Game/SendPet.h"
+#include "Protocl/cpp/Object/Game/BattleResult.h"
 
 Client::Client(void)
 {
@@ -52,6 +58,7 @@ Client::Client(void)
 // 	pf.SetSkill(m_pets[3], "末日歌", "黑雾", "替身", "龙之爪");
 // 	pf.SetSkill(m_pets[5], "裸奔气合拳", "气合拳", "同归", "掉包");
 // 	pf.AddItem(m_pets[5], "专爱头巾");
+	m_idle = true;
 }
 
 Client::~Client(void)
@@ -198,13 +205,10 @@ void Client::OnLogin(msg::Buffer &buffer)
 	ClientInfo();
 	printf( "user(%u)已登录\n", msg.m_userId );
 	GetEvent();
+
 	if ( m_player.playerId != m_user.id )
 	{
-		if ( !GameSaved() ) 
-		{
-			//发出通知
-			return;
-		}
+		SyncGame();//上传数据
 		m_palyerDataLoaded = false;
 		memset(&m_player, 0, sizeof(data::PLAYER));
 		m_player.synced = true;
@@ -212,13 +216,7 @@ void Client::OnLogin(msg::Buffer &buffer)
 		m_pets.clear();
 	}
 	m_player.nick = msg.m_nick;
-	if ( !m_palyerDataLoaded )//下载
-	{
-		msg::GetPlayerData msg;
-		msg.Build();
-		m_tcpEntry.Send(msg, msg.Size());
-	}
-	SyncGame();
+	SyncGame();//下载数据
 }
 
 bool Client::BindPhone(const std::string &moblie)
@@ -959,6 +957,17 @@ bool Client::GameSaved()
 void Client::SyncGame()
 {
 	if ( m_tcpEntry.IsClosed() ) return;
+
+	//下载
+	if ( !m_palyerDataLoaded )
+	{
+		msg::GetPlayerData msg;
+		msg.Build();
+		m_tcpEntry.Send(msg, msg.Size());
+		return;
+	}
+
+	//上传
 	if ( GameSaved() ) return;
 
 	if ( !m_player.synced )
@@ -1158,10 +1167,10 @@ void Client::SetLBS(int mapId)
 	m_mapId = mapId;
 }
 
-int Client::CreateBattle( unsigned int shePlayerId, const std::string &enemyName,
+int Client::CreateBattle( int battleId, unsigned int shePlayerId, const std::string &enemyName,
 	std::vector<data::PET> &she)
 {
-	return m_game.CreateBattle(m_player.playerId, m_player.nick, m_pets, shePlayerId, enemyName, she);
+	return m_game.CreateBattle(battleId, m_player.playerId, m_player.nick, m_pets, shePlayerId, enemyName, she);
 }
 
 int Client::CreateBattle()
@@ -1174,12 +1183,12 @@ bool Client::Log( int battleId, std::vector<std::string> &log )
 	return m_game.Log(battleId, log);
 }
 
-void Client::CreateRP(int battleId, bool me, Battle::RAND_PARAM &rp)
+void Client::CreateRP(int battleId, bool me, data::RAND_PARAM &rp)
 {
 	m_game.CreateRP(battleId, me, rp);
 }
 
-const char* Client::Ready(int battleId, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+const char* Client::Ready(int battleId, Battle::Action act, short objectId, data::RAND_PARAM &rp)
 {
 	static std::string reason;
 	if ( Battle::useItem == act ) 
@@ -1195,7 +1204,7 @@ const char* Client::ChangePet(int battleId, short petId)
 	return m_game.ChangePet(battleId, true, petId);
 }
 
-const char* Client::SheReady(int battleId, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+const char* Client::SheReady(int battleId, Battle::Action act, short objectId, data::RAND_PARAM &rp)
 {
 	return m_game.Ready(battleId, false, act, objectId, rp);
 }
@@ -1224,3 +1233,122 @@ int Client::LoadBattle()
 {
 	return m_game.LoadBattle();
 }
+
+const char* Client::Dekaron(int playerId)
+{
+	mdk::AutoLock lock(&m_lockTasks);
+	if ( !m_idle ) return "战斗未结束";
+
+	msg::Dekaron msg;
+	msg.m_playerId = playerId;
+	msg.m_nick = m_player.nick;
+	msg.m_pet = m_pets;
+	msg.Build();
+	char *pData = new char[msg.Size()];
+	if ( NULL == pData ) return "内存不足";
+
+	m_idle = false;
+	NetTask *pTask = CreateTask();
+	pTask->type = MsgId::dekaron;
+	pTask->pData = pData;
+	m_tasks.push_back(pTask);
+	if ( m_tcpEntry.IsClosed() ) return NULL;
+
+	pTask->state = NetTask::unresult;
+	m_tcpEntry.Send(msg, msg.Size());
+
+	return NULL;
+}
+
+const char* Client::Challenge(int battleId, int playerId, bool accept, const std::string &dNick, std::vector<data::PET> &dPet)
+{
+	mdk::AutoLock lock(&m_lockTasks);
+	if ( !m_idle ) return "战斗未结束";
+
+	if ( accept )
+	{
+		if ( 0 == m_game.CreateBattle(battleId, m_player.playerId, m_player.nick, m_pets, playerId, dNick, dPet ) )
+		{
+			return "不能创建战斗：用户数据有误";
+		}
+		m_idle = false;
+	}
+
+	msg::Challenge msg;
+	msg.m_battleId = battleId;
+	msg.m_playerId = playerId;	// 挑战玩家id
+	msg.m_accepted = accept;	// 接受挑战
+	msg.m_dNick = dNick;	// 挑战者昵称
+	msg.m_dPet = dPet;		// 挑战者宠物
+	msg.m_cNick = m_player.nick;	// 应战者昵称
+	msg.m_cPet = m_pets;		// 应战者宠物
+	msg.Build();
+	if ( !m_tcpEntry.IsClosed() ) 
+	{
+		m_tcpEntry.Send(msg, msg.Size());
+		return NULL;
+	}
+
+	//丢入任务队列
+	char *pData = new char[msg.Size()];
+	if ( NULL == pData ) 
+	{
+		m_idle = true;
+		return "内存不足";
+	}
+
+	NetTask *pTask = CreateTask();
+	pTask->type = MsgId::challenge;
+	pTask->dataSize = msg.Size();
+	pTask->pData = pData;
+	memcpy(pTask->pData, msg, msg.Size());
+	m_tasks.push_back(pTask);
+
+	return NULL;
+}
+
+const char* Client::RemoteReady(int battleId, Battle::Action act, short objectId, data::RAND_PARAM &rp)
+{
+	const char *ret = m_game.Ready(battleId, true, act, objectId, rp);
+	if ( NULL != ret ) return ret;
+
+	if ( !m_tcpEntry.IsClosed() ) return "网络异常";
+
+	msg::RoundReady msg;
+	msg.m_battleId = battleId;
+	msg.m_action = act;
+	msg.m_gameObjId = objectId;
+	msg.m_rp = rp;
+	msg.Build();
+	m_tcpEntry.Send(msg, msg.Size());
+
+	return NULL;
+}
+
+const char* Client::RemoteChangePet(int battleId, short petId)
+{
+	const char *ret = m_game.ChangePet(battleId, true, petId);
+	if ( NULL != ret ) return ret;
+	if ( !m_tcpEntry.IsClosed() ) return "网络异常";
+
+	msg::SendPet msg;
+	msg.m_battleId = battleId;
+	msg.m_petId = petId;
+	msg.Build();
+	m_tcpEntry.Send(msg, msg.Size());
+	return NULL;
+}
+
+const char* Client::WinnerResult(int winnerId, int loserId)
+{
+	if ( !m_tcpEntry.IsClosed() ) return "网络异常";
+
+	msg::BattleResult msg;
+	msg.m_winnerId = winnerId;
+	msg.m_loserId = loserId;
+	msg.Build();
+	m_tcpEntry.Send(msg, msg.Size());
+
+	return NULL;
+}
+

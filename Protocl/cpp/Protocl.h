@@ -52,37 +52,40 @@ namespace MsgId
 		//通知模块
 		event = 1001,//转发事件
 		getEvent = 1002,//读取事件
-		//数据中心
 
 		//游戏模块
+		dekaron = 1001,//挑战
+		challenge = 1002,//应战
+		roundReady = 1003,//回合准备
+		sendPet = 1004,//放出宠物
+		battleResult = 1005,//战斗结果
+
+		//数据中心
 		setupVersion = 1001,//安装版本
-		getPlayerData = 1002,//取玩家数据
-		buildHouse = 1003,//地图技能：秘密力量，造房子
-		treePlant = 1004,//种树
-		syncItem = 1005,//同步物品
-		syncPlayer = 1006,//同步玩家
-		syncPets = 1007,//同步宠物，只添加不减少
-
-// 		killBeast = 1006,//杀死野怪
-// 		growUp = 1007,//进化
-// 		tameBeast = 1008,//驯服野怪
-
-		putPet = 1010,//放置宠物
-		nearInfo = 1011,//周边信息
-		createShop = 1012,//开店
-		cityBuildInit = 1016,//开始城市建设
-		cityBuilding = 1017,//为城市建设添砖加瓦
-		delHouse = 1018,//地图技能：碎石踢，拆房子
-
 		raceMap = 2001,//属性表
 		skillBook = 2002,//技能图鉴
 		itemBook = 2003,//物品图鉴
 		talentBook = 2004,//特性图鉴
 		buddyBook = 2005,//巴迪图鉴
 		buddyMap = 2006,//巴迪分布地图
+		getPlayerData = 1002,//取玩家数据
 		player = 2007,//玩家数据
 		pets = 2008,//宠物数据
 		playerItems = 2009,//玩家物品
+		syncItem = 1005,//同步物品
+		syncPlayer = 1006,//同步玩家
+		syncPets = 1007,//同步宠物，只添加不减少
+
+		buildHouse = 1003,//地图技能：秘密力量，造房子
+		treePlant = 1004,//种树
+
+// 		putPet = 1010,//放置宠物
+// 		nearInfo = 1011,//周边信息
+// 		createShop = 1012,//开店
+// 		cityBuildInit = 1016,//开始城市建设
+// 		cityBuilding = 1017,//为城市建设添砖加瓦
+// 		delHouse = 1018,//地图技能：碎石踢，拆房子
+
 	};
 }
 

@@ -748,15 +748,12 @@ data::BUDDY* Game::Encounter( int mapId )
 	return NULL;
 }
 
-int Game::CreateBattle(unsigned int mePlayerId, const std::string &playerName, 
+int Game::CreateBattle(int battleId, unsigned int mePlayerId, const std::string &playerName, 
 	std::vector<data::PET> &me, unsigned int shePlayerId, 
 	const std::string &enemyName, std::vector<data::PET> &she)
 {
-	static int battleId = 0;
-	battleId++;
 	if ( !m_battles[battleId].Init(this, battleId, playerName, enemyName, mePlayerId, shePlayerId, me, she) )
 	{
-		battleId--;
 		return 0;
 	}
 	return battleId;
@@ -765,6 +762,9 @@ int Game::CreateBattle(unsigned int mePlayerId, const std::string &playerName,
 int Game::CreateBattle(unsigned int mePlayerId, 
 	const std::string &playerName, std::vector<data::PET> &me)
 {
+	static int battleId = 0;
+	battleId++;
+
 	unsigned int shePlayerId = 0; 
 	const std::string enemyName = "Ò¶ÈãÑþ";
 	std::vector<data::PET> she;
@@ -790,7 +790,13 @@ int Game::CreateBattle(unsigned int mePlayerId,
 	pet.id = id++;
 	she.push_back(pet);
 
-	return CreateBattle(mePlayerId, playerName, me, shePlayerId, enemyName, she);
+	if ( 0 == CreateBattle(battleId, mePlayerId, playerName, me, shePlayerId, enemyName, she) )
+	{
+		battleId--;
+		return 0;
+	}
+
+	return 	battleId;
 }
 
 bool Game::Log( int battleId, std::vector<std::string> &log )
@@ -800,25 +806,26 @@ bool Game::Log( int battleId, std::vector<std::string> &log )
 	return battle.Log(log);
 }
 
-void Game::CreateRP(int battleId, bool me, Battle::RAND_PARAM &rp)
+void Game::CreateRP(int battleId, bool me, data::RAND_PARAM &rp)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return;
 	m_battles[battleId].CreateRP(me, rp);
 	return;
 }
 
-const char* Game::Ready(int battleId, bool me, Battle::Action act, short objectId, Battle::RAND_PARAM &rp)
+const char* Game::Ready(int battleId, bool me, Battle::Action act, short objectId, data::RAND_PARAM &rp)
 {
 	if ( m_battles.end() == m_battles.find(battleId) ) return false;
 	Battle &battle = m_battles[battleId];
 
 	const char *ret = battle.Ready(me, act, objectId, rp);
 	if ( NULL != ret ) return ret;
-
 	battle.Save();
+
 	if ( me )//
 	{
 		if ( !battle.IsAI() ) return NULL;
+
 		battle.AI();
 		battle.Save();
 		while ( battle.AutoRound(me) )

@@ -4,6 +4,7 @@
 #include "NetWorker.h"
 #include "Game.h"
 #include "mdk/File.h"
+#include "mdk/Lock.h"
 
 class Client : public NetWorker
 {
@@ -35,22 +36,29 @@ public:
 
 	//////////////////////////////////////////////////////////////////////////
 	//Game
+	void SyncGame();//同步游戏数据
 	void SetLBS(int mapId);
 	std::string TestLuck();//试手气（摇钱树）
 	std::string UseItem( short itemId, int count );//使用物品
 	std::string Buy( short itemId, int count );//购买物品
 	std::string Devour( short itemId, int count );//吞噬物品
 	//战斗接口
-	int CreateBattle( unsigned int shePlayerId, const std::string &enemyName,
+	int CreateBattle( int battleId, unsigned int shePlayerId, const std::string &enemyName,
 		std::vector<data::PET> &she);//对战
 	int CreateBattle();//野战
 	bool Log( int battleId, std::vector<std::string> &log );
-	//产生本地随机数
-	void CreateRP(int battleId, bool me, Battle::RAND_PARAM &rp);
-	const char* Ready(int battleId, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);//操作完成，准备
+	void CreateRP(int battleId, bool me, data::RAND_PARAM &rp);//产生本地随机数
+	const char* Ready(int battleId, Battle::Action act, short objectId, data::RAND_PARAM &rp);//操作完成，准备
 	const char* ChangePet(int battleId, short petId);//更换巴迪
+	//对战指令
+	const char* Dekaron(int playerId);//挑战玩家
+	const char* Challenge(int battleId, int playerId, bool accept, const std::string &dName, std::vector<data::PET> &dPet);//应战玩家
+	const char* RemoteReady(int battleId, Battle::Action act, short objectId, data::RAND_PARAM &rp);//远端准备指令
+	const char* RemoteChangePet(int battleId, short petId);//远端放出宠物指令
+	const char* WinnerResult(int winnerId, int loserId);//胜利方通知战斗结果
+
 	//对方行动
-	const char* SheReady(int battleId, Battle::Action act, short objectId, Battle::RAND_PARAM &rp);
+	const char* SheReady(int battleId, Battle::Action act, short objectId, data::RAND_PARAM &rp);
 	const char* SheChangePet(int battleId, short petId);
 
 	Game* GetGame();
@@ -94,7 +102,6 @@ protected:
 	bool SaveItems(mdk::File &db, std::vector<data::PLAYER_ITEM> &items);
 	int LoadItems(mdk::File &db, std::vector<data::PLAYER_ITEM> &items);
 	bool GameSaved();
-	void SyncGame();
 	void IOCoin( int count );
 	void IOItem( short itemId, int count );
 	//////////////////////////////////////////////////////////////////////////
@@ -151,6 +158,10 @@ private:
 	};
 	PlayerState						m_state;
 	int								m_mapId;
+
+	std::vector<NetTask*>			m_tasks;
+	mdk::Mutex						m_lockTasks;
+	bool							m_idle;
 };
 
 #endif //CLIENT_H
