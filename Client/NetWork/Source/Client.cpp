@@ -217,6 +217,16 @@ void Client::OnLogin(msg::Buffer &buffer)
 	}
 	m_player.nick = msg.m_nick;
 	SyncGame();//下载数据
+
+	//重发请求
+	mdk::AutoLock lock(&m_lockTasks);
+	int i = 0;
+	for ( i = 0; i < m_tasks.size(); i++ )
+	{
+		m_tcpEntry.Send(m_tasks[i]->pData, m_tasks[i]->dataSize);
+		ReleaseTask(m_tasks[i]);
+	}
+	m_tasks.clear();
 }
 
 bool Client::BindPhone(const std::string &moblie)
@@ -1244,18 +1254,8 @@ const char* Client::Dekaron(int playerId)
 	msg.m_nick = m_player.nick;
 	msg.m_pet = m_pets;
 	msg.Build();
-	char *pData = new char[msg.Size()];
-	if ( NULL == pData ) return "内存不足";
-
+	if ( !SendMsg(NetTask::vs, msg, msg.Size()) ) return "内存不足";
 	m_idle = false;
-	NetTask *pTask = CreateTask();
-	pTask->type = MsgId::dekaron;
-	pTask->pData = pData;
-	m_tasks.push_back(pTask);
-	if ( m_tcpEntry.IsClosed() ) return NULL;
-
-	pTask->state = NetTask::unresult;
-	m_tcpEntry.Send(msg, msg.Size());
 
 	return NULL;
 }
@@ -1283,26 +1283,11 @@ const char* Client::Challenge(int battleId, int playerId, bool accept, const std
 	msg.m_cNick = m_player.nick;	// 应战者昵称
 	msg.m_cPet = m_pets;		// 应战者宠物
 	msg.Build();
-	if ( !m_tcpEntry.IsClosed() ) 
-	{
-		m_tcpEntry.Send(msg, msg.Size());
-		return NULL;
-	}
-
-	//丢入任务队列
-	char *pData = new char[msg.Size()];
-	if ( NULL == pData ) 
+	if ( !SendMsg(NetTask::vs, msg, msg.Size()) )
 	{
 		m_idle = true;
 		return "内存不足";
 	}
-
-	NetTask *pTask = CreateTask();
-	pTask->type = MsgId::challenge;
-	pTask->dataSize = msg.Size();
-	pTask->pData = pData;
-	memcpy(pTask->pData, msg, msg.Size());
-	m_tasks.push_back(pTask);
 
 	return NULL;
 }
@@ -1312,16 +1297,13 @@ const char* Client::RemoteReady(int battleId, Battle::Action act, short objectId
 	const char *ret = m_game.Ready(battleId, true, act, objectId, rp);
 	if ( NULL != ret ) return ret;
 
-	if ( !m_tcpEntry.IsClosed() ) return "网络异常";
-
 	msg::RoundReady msg;
 	msg.m_battleId = battleId;
 	msg.m_action = act;
 	msg.m_gameObjId = objectId;
 	msg.m_rp = rp;
 	msg.Build();
-	m_tcpEntry.Send(msg, msg.Size());
-
+	if ( !SendMsg(NetTask::vs, msg, msg.Size()) ) return "内存不足";
 	return NULL;
 }
 
@@ -1329,13 +1311,12 @@ const char* Client::RemoteChangePet(int battleId, short petId)
 {
 	const char *ret = m_game.ChangePet(battleId, true, petId);
 	if ( NULL != ret ) return ret;
-	if ( !m_tcpEntry.IsClosed() ) return "网络异常";
 
 	msg::SendPet msg;
 	msg.m_battleId = battleId;
 	msg.m_petId = petId;
 	msg.Build();
-	m_tcpEntry.Send(msg, msg.Size());
+	if ( !SendMsg(NetTask::vs, msg, msg.Size()) ) return "内存不足";
 	return NULL;
 }
 
@@ -1347,8 +1328,42 @@ const char* Client::WinnerResult(int winnerId, int loserId)
 	msg.m_winnerId = winnerId;
 	msg.m_loserId = loserId;
 	msg.Build();
-	m_tcpEntry.Send(msg, msg.Size());
-
+	if ( !SendMsg(NetTask::save, msg, msg.Size()) ) return "内存不足";
 	return NULL;
 }
 
+bool Client::SendMsg(short taskType, unsigned char *msg, int size)
+{
+	if ( !m_tcpEntry.IsClosed() ) 
+	{
+		m_tcpEntry.Send(msg, size);
+		return true;
+	}
+
+	//丢入任务队列
+	NetTask *pTask = CreateTask(size);
+	if ( NULL == pTask ) return false;
+
+	pTask->type = taskType;
+	pTask->dataSize = size;
+	memcpy(pTask->pData, msg, size);
+	m_tasks.push_back(pTask);
+
+	return true;
+}
+
+void Client::ClearTask(short taskType)
+{
+	mdk::AutoLock lock(&m_lockTasks);
+	std::vector<NetTask*>::iterator it = m_tasks.begin();
+	for ( ; it != m_tasks.end(); )
+	{
+		if ( (*it)->type != taskType ) 
+		{
+			it++;
+			continue;
+		}
+		ReleaseTask(*it);
+		it = m_tasks.erase(it);
+	}
+}

@@ -32,7 +32,7 @@ protected:
 	virtual void OnMsg(int svrType, net::Socket &svr, msg::Buffer &buffer);
 	int Svr(int svrType);
 	void Close(int svrType);
-	NetTask* CreateTask();
+	NetTask* CreateTask(int size);
 	void ReleaseTask(NetTask *pTask);
 private:
 	bool			m_running;

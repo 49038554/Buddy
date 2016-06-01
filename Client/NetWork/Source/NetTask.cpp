@@ -3,12 +3,10 @@
 
 NetTask::NetTask(void)
 {
-	id = 0;
 	type = 0;
-	state = unsend;
-	flushTime = time(NULL);
 	pData = NULL;
 	dataSize = 0;
+	spaceSize = 0;
 }
 
 

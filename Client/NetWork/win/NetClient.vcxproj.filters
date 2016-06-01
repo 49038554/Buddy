@@ -40,6 +40,9 @@
     <Filter Include="Protocl\Object\Game">
       <UniqueIdentifier>{c5840484-e7d2-4a0c-b3a7-f8f372f1a246}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mdk\ex">
+      <UniqueIdentifier>{603835e3-ee45-4e9d-9148-0b993253a12a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Protocl\cpp\Buffer.cpp">
@@ -173,9 +176,6 @@
     <ClCompile Include="..\..\..\Protocl\cpp\Object\DBEntry\TreePlant.cpp">
       <Filter>Protocl\Object\DBEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\mdk\File.cpp">
-      <Filter>mdk</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\common\BuddyData.cpp">
       <Filter>common</Filter>
     </ClCompile>
@@ -214,6 +214,15 @@
     </ClCompile>
     <ClCompile Include="..\Source\NetTask.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mdk\RecoverPool.cpp">
+      <Filter>mdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mdk\atom.cpp">
+      <Filter>mdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mdk_ex\File.cpp">
+      <Filter>mdk\ex</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -359,9 +368,6 @@
     <ClInclude Include="..\..\..\common\BuddyData.h">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\mdk\File.h">
-      <Filter>mdk</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Protocl\cpp\Object\DBEntry\Player.h">
       <Filter>Protocl\Object\DBEntry</Filter>
     </ClInclude>
@@ -397,6 +403,12 @@
     </ClInclude>
     <ClInclude Include="..\Source\NetTask.h">
       <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mdk\RecoverPool.h">
+      <Filter>mdk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mdk_ex\File.h">
+      <Filter>mdk\ex</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

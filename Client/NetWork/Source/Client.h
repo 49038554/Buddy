@@ -3,7 +3,7 @@
 
 #include "NetWorker.h"
 #include "Game.h"
-#include "mdk/File.h"
+#include "mdk_ex/File.h"
 #include "mdk/Lock.h"
 
 class Client : public NetWorker
@@ -122,6 +122,9 @@ protected:
 	void OnSyncPets(msg::Buffer &buffer);
 
 
+private:
+	bool SendMsg(short taskType, unsigned char *msg, int size);
+	void ClearTask(short taskType);
 private:
 	typedef struct BUDDY_DATA
 	{

@@ -140,24 +140,33 @@ void NetWorker::OnMsg(int svrType, net::Socket &svr, msg::Buffer &buffer)
 	return;
 }
 
-NetTask* NetWorker::CreateTask()
+NetTask* NetWorker::CreateTask(int size)
 {
-	static int id = 0;
-	id++;
+	int i = 2;
+	for ( ; i < size; ) i *= 2;
+	size = i;
+
+	NetTask *pTask = NULL;
 	mdk::AutoLock lock(&m_lockPool);
-	if ( 0 == m_taskPool.size() ) 
+	std::vector<NetTask*>::iterator it = m_taskPool.begin();
+	for ( ; it != m_taskPool.end(); it++)
 	{
-		NetTask *pTask = new NetTask();
-		pTask->id = id;
+		if ( size > (*it)->spaceSize ) continue;
+
+		pTask = *it;
+		m_taskPool.erase(it);
 		return pTask;
 	}
-	NetTask *pTask = m_taskPool.back();
-	pTask->id = id;
-	pTask->state = NetTask::unsend;
-	pTask->flushTime = time(NULL);
-	pTask->dataSize = 0;
-	m_taskPool.pop_back();
 
+	pTask = new NetTask();
+	if ( NULL == pTask ) return NULL;
+	pTask->spaceSize = size;
+	pTask->pData = new char[pTask->spaceSize];
+	if ( NULL == pTask->pData )
+	{
+		delete pTask;
+		pTask = NULL;
+	}
 	return pTask;
 }
 
