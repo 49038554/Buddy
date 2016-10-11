@@ -30,7 +30,7 @@ APXS = apxs
 ROOT_DIR = ..
 MDK_Dir = $(ROOT_DIR)/Micro-Development-Kit
 HiRedis_Dir = $(ROOT_DIR)/hiredis
-Protocl_HOME_Dir = $(ROOT_DIR)/Protocl/cpp
+Protocl_HOME_Dir = $(ROOT_DIR)/../..
 
 
 #依赖文件全局查找目录

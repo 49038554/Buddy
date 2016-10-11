@@ -28,6 +28,7 @@ APXS = apxs
 #范例：
 #ROOT_DIR = ../../../..
 ROOT_DIR = ..
+SDK_DIR = ../Server/SDK
 
 #依赖文件全局查找目录
 VPATH = $(OBJ_OUTPUT_DIR) $(SRC_DIR) 
@@ -52,7 +53,7 @@ Protocl9_Dir = $(ROOT_DIR)/Protocl/cpp/Object/Sort
 
 #输出目录
 OBJ_OUTPUT_DIR=./output
-OUTPUT_DIR=$(ROOT_DIR)/lib
+OUTPUT_DIR=$(ROOT_DIR)/Server/SDK/lib
 $(shell mkdir $(OBJ_OUTPUT_DIR))
 $(shell mkdir $(OUTPUT_DIR))
 
@@ -73,6 +74,7 @@ INCLUDE = -I. -I../include
 #按照以下格式添加
 #INCLUDE += -I目录+空格 
 INCLUDE += -I$(ROOT_DIR) 
+INCLUDE += -I$(SDK_DIR) 
 
 
 #库目录，库文件:-L 目录 -库名

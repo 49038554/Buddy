@@ -41,7 +41,7 @@ all:
 	@echo ""
 	@echo ""
 	@echo "Complie Protocl"
-	(make -C ./Protocl -w)
+	(make -C ../../Protocl -w)
 	@echo ""
 	@echo "Protocl Complie finished"
 	@echo ""

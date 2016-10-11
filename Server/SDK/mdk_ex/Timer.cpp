@@ -2,6 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#ifdef WIN32
+#include "windows.h"
+#endif
 #include "Timer.h"
 #include <ctime>
 #include<vector>

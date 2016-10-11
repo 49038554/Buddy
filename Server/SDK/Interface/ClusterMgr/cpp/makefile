@@ -65,6 +65,7 @@ INCLUDE = -I. -I../include
 #按照以下格式添加
 #INCLUDE += -I目录+空格 
 INCLUDE += -I$(ROOT_DIR) 
+INCLUDE += -I$(ROOT_DIR)/../.. 
 
 
 #库目录，库文件:-L 目录 -库名

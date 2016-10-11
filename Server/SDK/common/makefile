@@ -30,7 +30,7 @@ APXS = apxs
 ROOT_DIR = ..
 MDK_Dir = $(ROOT_DIR)/Micro-Development-Kit
 HiRedis_Dir = $(ROOT_DIR)/hiredis
-Mysql_dir = /usr/include/mysql
+Mysql_dir = $(ROOT_DIR)/mysql/include
 #Mysql_dir = $(ROOT_DIR)/mysql/include
 
 #依赖文件全局查找目录

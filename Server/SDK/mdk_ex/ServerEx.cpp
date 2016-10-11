@@ -104,7 +104,7 @@ void ServerEx::InitId( const std::string &fileName )
 bool ServerEx::CreateId( uint64 &id )
 {
 	//id“—”√ÕÍ
-	if ( 0x0001000000000000 == m_searialNo ) return false;
+	if ( 0x0001000000000000ull == m_searialNo ) return false;
 
 	id = m_nodeId;
 	id <<= 48;

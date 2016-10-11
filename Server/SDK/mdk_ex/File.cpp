@@ -29,9 +29,9 @@ bool File::CreateDir(const std::string &path)
 			if( 0 != mkdir(dir.c_str()) ) return false;
 #else
 			umask(0);
-			if( 0 != mkdir(strDir, 0777) ) return false;
+			if( 0 != mkdir(dir.c_str(), 0777) ) return false;
 			umask(0);
-			chmod(strDir,0777);
+			chmod(dir.c_str(),0777);
 #endif
 		}
 		if ( -1 == pos ) break;
@@ -48,7 +48,7 @@ bool File::Exist(const std::string &name)
 	{
 #ifndef WIN32
 		umask(0);
-		chmod(strFile,0777);
+		chmod(name.c_str(),0777);
 #endif
 		return true;
 	}
@@ -143,7 +143,6 @@ File::Error File::ToTail()
 	if ( NULL == m_fp ) return File::unopen;
 	if ( File::read != m_act && File::readWrite != m_act ) return File::refuse;
 
-	int count = ftell(m_fp);
 	if ( 0 == fseek(m_fp, SEEK_END, 0) ) 
 	{
 		m_size = ftell(m_fp) + 1;
@@ -161,7 +160,6 @@ File::Error File::Move(int pos)
 	if ( m_pos + pos > m_size + 1 ) return File::outPos;
 	if ( m_pos + pos <= 0 ) return File::outPos;
 
-	int ret;
 	if ( pos < 0 )
 	{
 		int unpos = m_pos + pos - 1;
@@ -198,7 +196,7 @@ File::Error File::Read(void *content, int count)
 	int ret = fread(content, sizeof(char), count, m_fp);
 	if ( ret < count )
 	{
-		if ( feof ) 
+		if ( feof(m_fp) ) 
 		{
 			m_isEnd = true;
 		}
