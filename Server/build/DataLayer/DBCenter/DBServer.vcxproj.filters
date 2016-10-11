@@ -40,6 +40,9 @@
     <Filter Include="Message\Object\DBEntry">
       <UniqueIdentifier>{22d3d172-cf1d-4d8d-ad1e-210cd9a6ccfb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mdk_ex">
+      <UniqueIdentifier>{465ecd45-911b-4eb2-b8d9-e9a8cdc7a6dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\DataLayer\DBCenter\Main.cpp">
@@ -170,6 +173,30 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncPlayer.cpp">
       <Filter>Message\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\Buffer.cpp">
+      <Filter>mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\Console.cpp">
+      <Filter>mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\FastMemoryPool.cpp">
+      <Filter>mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\File.cpp">
+      <Filter>mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\ServerEx.cpp">
+      <Filter>mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\ShareObject.cpp">
+      <Filter>mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\String.cpp">
+      <Filter>mdk_ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\SDK\mdk_ex\Timer.cpp">
+      <Filter>mdk_ex</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -305,6 +332,33 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncPlayer.h">
       <Filter>Message\Object\DBEntry</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\Buffer.h">
+      <Filter>mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\Console.h">
+      <Filter>mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\FastMemoryPool.h">
+      <Filter>mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\File.h">
+      <Filter>mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\FixSort.h">
+      <Filter>mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\ServerEx.h">
+      <Filter>mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\ShareObject.h">
+      <Filter>mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\String.h">
+      <Filter>mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\mdk_ex\Timer.h">
+      <Filter>mdk_ex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\DataLayer\DBCenter\bin\DBCenter.cfg" />
@@ -313,5 +367,8 @@
     <None Include="..\..\..\DataLayer\DBCenter\bin\run.sh" />
     <None Include="..\..\..\DataLayer\DBCenter\bin\stop.sh" />
     <None Include="..\..\..\DataLayer\DBCenter\makefile" />
+    <None Include="..\..\..\SDK\mdk_ex\makefile">
+      <Filter>mdk_ex</Filter>
+    </None>
   </ItemGroup>
 </Project>

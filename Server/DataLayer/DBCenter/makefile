@@ -40,8 +40,9 @@ SRC_DIR =
 #※末尾不能有空格
 #范例：
 #Main_Dir = $(ROOT_DIR)/main
-Main_Dir = $(ROOT_DIR)/SupportLayer/DBCenter
+Main_Dir = $(ROOT_DIR)/DataLayer/DBCenter
 MysqlClient_dir = $(MYSQL_DIR)
+Common_Dir = $(ROOT_DIR)/../common
 
 #输出目录
 OBJ_OUTPUT_DIR=./output
@@ -71,12 +72,7 @@ INCLUDE += -I$(ROOT_DIR)/SDK/hiredis/include
 INCLUDE += -I$(MYSQL_DIR)/linux/include 
 INCLUDE += -I$(ROOT_DIR)/SDK/Interface 
 INCLUDE += -I$(ROOT_DIR)/SDK/Interface/ClusterMgr/cpp 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/base 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/Object/Auth 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/Object/Mall 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/Object/Room 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/Object/Database 
+INCLUDE += -I$(ROOT_DIR)/..
 
 #库目录，库文件:-L 目录 -库名
 #LIB = -lnsl -lc -lm -lpthread -lstdc++ -lrt 
@@ -111,6 +107,8 @@ OUTPUT = DBCenter
 #OBJ列表2 = $(notdir $(patsubst %.cpp,%.o,$(wildcard mdk目录/source/frame/netserver/*.cpp))) 
 Main_OBJ = $(notdir $(patsubst %.cpp,%.o,$(wildcard $(Main_Dir)/*.cpp))) 
 MysqlClient_OBJ = $(notdir $(patsubst %.cpp,%.o,$(wildcard $(MysqlClient_dir)/*.cpp))) 
+Common_OBJ = $(notdir $(patsubst %.cpp,%.o,$(wildcard $(Common_Dir)/*.cpp))) 
+
 
 #依赖的目标文件
 DEPENDENCE = 
@@ -120,6 +118,8 @@ DEPENDENCE =
 #DEPENDENCE += $(OBJ列表2) 
 DEPENDENCE += $(Main_OBJ) 
 DEPENDENCE += $(MysqlClient_OBJ) 
+DEPENDENCE += $(Common_OBJ) 
+
 
 #连接项目，需要的所有其它源文件或目标文件(带目录)
 OBJ = 
@@ -130,6 +130,7 @@ OBJ =
 #OBJ += $(addprefix $(OBJ_OUTPUT_DIR)/, $(OBJ列表2)) 
 OBJ += $(addprefix $(OBJ_OUTPUT_DIR)/, $(Main_OBJ)) 
 OBJ += $(addprefix $(OBJ_OUTPUT_DIR)/, $(MysqlClient_OBJ)) 
+OBJ += $(addprefix $(OBJ_OUTPUT_DIR)/, $(Common_OBJ)) 
 
 #------------------------------------------输出End--------------------------------------------------------
 
@@ -231,6 +232,17 @@ $(MysqlClient_OBJ):%.o:$(MysqlClient_dir)/%.cpp $(MysqlClient_dir)/%.h
 	@echo "Complie $(OBJ_OUTPUT_DIR)/$*.o"
 	@echo ""
 	$(CC) -c -o $(OBJ_OUTPUT_DIR)/$*.o $(CFLAGS)$(WARNING_LEVEL)$(INCLUDE) $(MysqlClient_dir)/$*.cpp
+	@echo ""
+	@echo "$(OBJ_OUTPUT_DIR)/$*.o complie finished"
+	@echo ""
+	@echo ""
+	@echo ""
+	@echo ""
+
+$(Common_OBJ):%.o:$(Common_Dir)/%.cpp $(Common_Dir)/%.h
+	@echo "Complie $(OBJ_OUTPUT_DIR)/$*.o"
+	@echo ""
+	$(CC) -c -o $(OBJ_OUTPUT_DIR)/$*.o $(CFLAGS)$(WARNING_LEVEL)$(INCLUDE) $(Common_Dir)/$*.cpp
 	@echo ""
 	@echo "$(OBJ_OUTPUT_DIR)/$*.o complie finished"
 	@echo ""

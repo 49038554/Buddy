@@ -53,6 +53,14 @@
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp" />
     <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp" />
     <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp" />
+    <ClCompile Include="..\..\..\SDK\mdk_ex\Buffer.cpp" />
+    <ClCompile Include="..\..\..\SDK\mdk_ex\Console.cpp" />
+    <ClCompile Include="..\..\..\SDK\mdk_ex\FastMemoryPool.cpp" />
+    <ClCompile Include="..\..\..\SDK\mdk_ex\File.cpp" />
+    <ClCompile Include="..\..\..\SDK\mdk_ex\ServerEx.cpp" />
+    <ClCompile Include="..\..\..\SDK\mdk_ex\ShareObject.cpp" />
+    <ClCompile Include="..\..\..\SDK\mdk_ex\String.cpp" />
+    <ClCompile Include="..\..\..\SDK\mdk_ex\Timer.cpp" />
     <ClCompile Include="..\..\..\SDK\mysql\MySqlClient.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -99,6 +107,15 @@
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h" />
     <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h" />
     <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h" />
+    <ClInclude Include="..\..\..\SDK\mdk_ex\Buffer.h" />
+    <ClInclude Include="..\..\..\SDK\mdk_ex\Console.h" />
+    <ClInclude Include="..\..\..\SDK\mdk_ex\FastMemoryPool.h" />
+    <ClInclude Include="..\..\..\SDK\mdk_ex\File.h" />
+    <ClInclude Include="..\..\..\SDK\mdk_ex\FixSort.h" />
+    <ClInclude Include="..\..\..\SDK\mdk_ex\ServerEx.h" />
+    <ClInclude Include="..\..\..\SDK\mdk_ex\ShareObject.h" />
+    <ClInclude Include="..\..\..\SDK\mdk_ex\String.h" />
+    <ClInclude Include="..\..\..\SDK\mdk_ex\Timer.h" />
     <ClInclude Include="..\..\..\SDK\mysql\MySqlClient.h" />
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +125,7 @@
     <None Include="..\..\..\DataLayer\DBCenter\bin\run.sh" />
     <None Include="..\..\..\DataLayer\DBCenter\bin\stop.sh" />
     <None Include="..\..\..\DataLayer\DBCenter\makefile" />
+    <None Include="..\..\..\SDK\mdk_ex\makefile" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{32DB8B3E-4426-48C5-891B-CDC71E78474F}</ProjectGuid>

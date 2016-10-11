@@ -29,6 +29,7 @@ APXS = apxs
 #ROOT_DIR = ../../../..
 ROOT_DIR = ../..
 SDK_DIR = $(ROOT_DIR)/SDK
+Protocl_DIR = $(ROOT_DIR)/..
 
 #依赖文件全局查找目录
 VPATH = $(OBJ_OUTPUT_DIR) $(SRC_DIR) 
@@ -69,6 +70,7 @@ INCLUDE += -I$(ROOT_DIR)/SDK
 INCLUDE += -I$(SDK_DIR) 
 INCLUDE += -I$(ROOT_DIR)/SDK/Micro-Development-Kit/include 
 INCLUDE += -I$(ROOT_DIR)/SDK/hiredis/include 
+INCLUDE += -I$(Protocl_DIR) 
 INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp 
 INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/base 
 INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/Object/Notify 

@@ -42,12 +42,12 @@ SRC_DIR =
 Protocl_Dir = $(ROOT_DIR)/Protocl/cpp
 Protocl1_Dir = $(ROOT_DIR)/Protocl/cpp/base
 Protocl2_Dir = $(ROOT_DIR)/Protocl/cpp/Object/
-Protocl3_Dir = $(ROOT_DIR)/Protocl/cpp/Object/Auth
-Protocl4_Dir = $(ROOT_DIR)/Protocl/cpp/Object/Mall
-Protocl5_Dir = $(ROOT_DIR)/Protocl/cpp/Object/Room
-Protocl6_Dir = $(ROOT_DIR)/Protocl/cpp/Object/Operation
-Protocl7_Dir = $(ROOT_DIR)/Protocl/cpp/Object/Database
-Protocl8_Dir = $(ROOT_DIR)/Protocl/cpp/Object/Notify
+Protocl3_Dir = $(ROOT_DIR)/Protocl/cpp/Object/Operation
+Protocl4_Dir = $(ROOT_DIR)/Protocl/cpp/Object/Auth
+Protocl5_Dir = $(ROOT_DIR)/Protocl/cpp/Object/Notify
+Protocl6_Dir = $(ROOT_DIR)/Protocl/cpp/Object/SNS
+Protocl7_Dir = $(ROOT_DIR)/Protocl/cpp/Object/DBEntry
+Protocl8_Dir = $(ROOT_DIR)/Protocl/cpp/Object/Game
 Protocl9_Dir = $(ROOT_DIR)/Protocl/cpp/Object/Sort
 
 

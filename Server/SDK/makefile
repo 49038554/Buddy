@@ -63,4 +63,4 @@ clean:
 	(make -C ./common -w clean)
 	(make -C ./DBCenter -w clean)
 	(make -C ./mdk_ex -w clean)
-	(make -C ./Protocl -w clean)
+	(make -C ../../Protocl -w clean)

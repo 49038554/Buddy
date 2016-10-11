@@ -39,6 +39,9 @@ SRC_DIR =
 #范例：
 #Main_Dir = $(ROOT_DIR)/main
 Main_Dir = $(ROOT_DIR)/WorkLayer/Auth
+Interface_Dir = $(ROOT_DIR)/SDK/Interface
+DBCenter_Dir = $(ROOT_DIR)/SDK/Interface/DBCenter/cpp
+
 
 #输出目录
 OBJ_OUTPUT_DIR=./output
@@ -67,12 +70,7 @@ INCLUDE += -I$(ROOT_DIR)/SDK/Micro-Development-Kit/include
 INCLUDE += -I$(ROOT_DIR)/SDK/hiredis/include 
 INCLUDE += -I$(ROOT_DIR)/SDK/Interface 
 INCLUDE += -I$(ROOT_DIR)/SDK/Interface/ClusterMgr/cpp 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/base 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/Object/Auth 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/Object/Mall 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/Object/Room 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/Object/Database 
+INCLUDE += -I$(ROOT_DIR)/.. 
 
 #库目录，库文件:-L 目录 -库名
 #LIB = -lnsl -lc -lm -lpthread -lstdc++ -lrt 
@@ -105,6 +103,8 @@ OUTPUT = Auth
 #OBJ列表2 = $(notdir $(patsubst %.cpp,%.o,$(wildcard mdk目录/source/frame/netserver/*.cpp))) 
 #OBJ列表2 = $(notdir $(patsubst %.cpp,%.o,$(wildcard mdk目录/source/frame/netserver/*.cpp))) 
 Main_OBJ = $(notdir $(patsubst %.cpp,%.o,$(wildcard $(Main_Dir)/*.cpp))) 
+Interface_OBJ = $(notdir $(patsubst %.cpp,%.o,$(wildcard $(Interface_Dir)/*.cpp))) 
+DBCenter_OBJ = $(notdir $(patsubst %.cpp,%.o,$(wildcard $(DBCenter_Dir)/*.cpp))) 
 
 #依赖的目标文件
 DEPENDENCE = 
@@ -113,6 +113,9 @@ DEPENDENCE =
 #DEPENDENCE += $(OBJ列表1) 
 #DEPENDENCE += $(OBJ列表2) 
 DEPENDENCE += $(Main_OBJ) 
+DEPENDENCE += $(Interface_OBJ) 
+DEPENDENCE += $(DBCenter_OBJ) 
+
 
 #连接项目，需要的所有其它源文件或目标文件(带目录)
 OBJ = 
@@ -122,6 +125,8 @@ OBJ =
 #OBJ += $(addprefix $(OBJ_OUTPUT_DIR)/, $(OBJ列表1)) 
 #OBJ += $(addprefix $(OBJ_OUTPUT_DIR)/, $(OBJ列表2)) 
 OBJ += $(addprefix $(OBJ_OUTPUT_DIR)/, $(Main_OBJ)) 
+OBJ += $(addprefix $(OBJ_OUTPUT_DIR)/, $(Interface_OBJ)) 
+OBJ += $(addprefix $(OBJ_OUTPUT_DIR)/, $(DBCenter_OBJ)) 
 
 #------------------------------------------输出End--------------------------------------------------------
 
@@ -212,6 +217,28 @@ $(Main_OBJ):%.o:$(Main_Dir)/%.cpp $(Main_Dir)/%.h
 	@echo "Complie $(OBJ_OUTPUT_DIR)/$*.o"
 	@echo ""
 	$(CC) -c -o $(OBJ_OUTPUT_DIR)/$*.o $(CFLAGS)$(WARNING_LEVEL)$(INCLUDE) $(Main_Dir)/$*.cpp
+	@echo ""
+	@echo "$(OBJ_OUTPUT_DIR)/$*.o complie finished"
+	@echo ""
+	@echo ""
+	@echo ""
+	@echo ""
+
+$(Interface_OBJ):%.o:$(Interface_Dir)/%.cpp $(Interface_Dir)/%.h
+	@echo "Complie $(OBJ_OUTPUT_DIR)/$*.o"
+	@echo ""
+	$(CC) -c -o $(OBJ_OUTPUT_DIR)/$*.o $(CFLAGS)$(WARNING_LEVEL)$(INCLUDE) $(Interface_Dir)/$*.cpp
+	@echo ""
+	@echo "$(OBJ_OUTPUT_DIR)/$*.o complie finished"
+	@echo ""
+	@echo ""
+	@echo ""
+	@echo ""
+
+$(DBCenter_OBJ):%.o:$(DBCenter_Dir)/%.cpp $(DBCenter_Dir)/%.h
+	@echo "Complie $(OBJ_OUTPUT_DIR)/$*.o"
+	@echo ""
+	$(CC) -c -o $(OBJ_OUTPUT_DIR)/$*.o $(CFLAGS)$(WARNING_LEVEL)$(INCLUDE) $(DBCenter_Dir)/$*.cpp
 	@echo ""
 	@echo "$(OBJ_OUTPUT_DIR)/$*.o complie finished"
 	@echo ""

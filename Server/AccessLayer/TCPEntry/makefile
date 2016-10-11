@@ -68,12 +68,6 @@ INCLUDE += -I$(ROOT_DIR)/..
 INCLUDE += -I$(ROOT_DIR)/SDK/hiredis/include 
 INCLUDE += -I$(ROOT_DIR)/SDK/Interface 
 INCLUDE += -I$(ROOT_DIR)/SDK/Interface/ClusterMgr/cpp 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/base 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/Object/Auth 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/Object/Mall 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/Object/Room 
-INCLUDE += -I$(ROOT_DIR)/SDK/Protocl/cpp/Object/Database 
 
 #库目录，库文件:-L 目录 -库名
 #LIB = -lnsl -lc -lm -lpthread -lstdc++ -lrt 

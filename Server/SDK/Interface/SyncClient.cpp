@@ -13,8 +13,9 @@ SyncClient::~SyncClient()
 {
 	if ( NULL != m_client )
 	{
-		delete m_client;
+		net::Socket *pSocket = (net::Socket*)m_client;
 		m_client = NULL;
+		delete pSocket;
 	}
 }
 
