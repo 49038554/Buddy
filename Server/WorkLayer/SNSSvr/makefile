@@ -38,7 +38,7 @@ SRC_DIR =
 #※末尾不能有空格
 #范例：
 #Main_Dir = $(ROOT_DIR)/main
-Main_Dir = $(ROOT_DIR)/WorkLayer/Auth
+Main_Dir = $(ROOT_DIR)/WorkLayer/SNSSvr
 Interface_Dir = $(ROOT_DIR)/SDK/Interface
 DBCenter_Dir = $(ROOT_DIR)/SDK/Interface/DBCenter/cpp
 
@@ -91,7 +91,7 @@ LIB += $(ROOT_DIR)/SDK/Micro-Development-Kit/lib/mdk.a
 
 #------------------------------------------输出--------------------------------------------------------
 #编译产生的程序文件名
-OUTPUT = Auth
+OUTPUT = SNSSvr
 
 #目标文件
 #范例
