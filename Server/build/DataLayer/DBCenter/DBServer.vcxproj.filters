@@ -45,12 +45,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\DataLayer\DBCenter\Main.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\DataLayer\DBCenter\Worker.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\SDK\mysql\MySqlClient.cpp">
       <Filter>MySQL</Filter>
     </ClCompile>
@@ -198,11 +192,14 @@
     <ClCompile Include="..\..\..\SDK\mdk_ex\Timer.cpp">
       <Filter>mdk_ex</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\DataLayer\DBCenter\Main.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\DataLayer\DBCenter\Worker.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\DataLayer\DBCenter\Main.h">
-      <Filter>Main</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\DataLayer\DBCenter\Worker.h">
       <Filter>Main</Filter>
     </ClInclude>
@@ -358,6 +355,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\SDK\mdk_ex\Timer.h">
       <Filter>mdk_ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\DataLayer\DBCenter\Main.h">
+      <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

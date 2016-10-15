@@ -70,71 +70,71 @@ Worker::Worker(void)
 	std::string reason;
 	m_log.Info( "Run", "集群配置服务(%s %d)", ((std::string)m_cfg["ClusterMgr"]["ip"]).c_str(), 
 		(int)m_cfg["ClusterMgr"]["port"] );
-// 	if ( SyncClient::SUCESS != m_cluster.GetCluster(Moudle::all, clusterInfo, reason) )
-// 	{
-// 		m_log.Info( "Error", "获取集群信息失败:%s", reason.c_str() );
-// 		mdk::mdk_assert(false);
-// 		exit(0);
-// 	}
-// 	m_authSvrCount = 0;
-// 	m_snsSvrCount = 0;
-// 	m_dbSvrCount = 0;
-// 	int notifySvrCount = 0;
-// 	ConnectInfo *pNode;
-// 	std::map<Moudle::Moudle, std::map<NetLine::NetLine, std::vector<msg::Cluster::NODE> > >::iterator itMoudle;
-// 	std::map<NetLine::NetLine, std::vector<msg::Cluster::NODE> >::iterator itLine;
-// 	std::vector<msg::Cluster::NODE>::iterator it;
-// 	for ( itMoudle = clusterInfo.m_cluster.begin(); itMoudle != clusterInfo.m_cluster.end(); itMoudle++ )
-// 	{
-// 		itLine = itMoudle->second.begin();
-// 		for ( ; itLine != itMoudle->second.end(); itLine++ )
-// 		{
-// 			for ( it = itLine->second.begin(); it != itLine->second.end(); it++ )
-// 			{
-// 				if ( Moudle::TcpEntry == itMoudle->first )
-// 				{
-// 					if ( port == it->port )
-// 					{
-// 						if ( 0 == strcmp(ip.c_str(), it->ip.c_str()) )
-// 						{
-// 							m_nodeId = it->nodeId;
-// 							m_cfg["opt"]["nodeId"] = m_nodeId;
-// 							m_cfg.Save();
-// 						}
-// 					}
-// 					continue;
-// 				}
-// 				else if ( Moudle::Notify == itMoudle->first ) 
-// 				{
-// 					notifySvrCount++;
-// 					continue;
-// 				}
-// 				else if ( Moudle::Auth == itMoudle->first ) m_authSvrCount++;
-// 				else if ( Moudle::SNS == itMoudle->first ) m_snsSvrCount++;
-// 				else if ( Moudle::DBEntry == itMoudle->first ) m_dbSvrCount++;
-// 				else continue;
-// 
-// 				pNode = new ConnectInfo;
-// 				pNode->nodeId = it->nodeId;
-// 				pNode->type = itMoudle->first;
-// 				pNode->lineType = itLine->first;
-// 				pNode->ip = it->ip;
-// 				pNode->port = it->port;
-// 				Connect(pNode->ip.c_str(), pNode->port, pNode, 5);
-// 			}
-// 		}
-// 	}
-// 	m_log.Info("Run", "认证结点%d个, sns结点%d个, DBEntry结点%d个", m_authSvrCount, m_snsSvrCount, m_dbSvrCount);
-// 	if ( 0 >= m_authSvrCount || 0 >= m_snsSvrCount || 0 >= m_dbSvrCount )
-// 	{
-// 		m_log.Info( "Error", "集群缺少模块，请检查Cluster库" );
-// 		mdk::mdk_assert(false);
-// 		exit(0);
-// 	}
-// 	m_notifyCluster.SetNodeCount(notifySvrCount);
-// 	m_authCluster.SetNodeCount(m_authSvrCount);
-// 	m_snsCluster.SetNodeCount(m_snsSvrCount);
-// 	m_dbCluster.SetNodeCount(m_dbSvrCount);
+	if ( SyncClient::SUCESS != m_cluster.GetCluster(Moudle::all, clusterInfo, reason) )
+	{
+		m_log.Info( "Error", "获取集群信息失败:%s", reason.c_str() );
+		mdk::mdk_assert(false);
+		exit(0);
+	}
+	m_authSvrCount = 0;
+	m_snsSvrCount = 0;
+	m_dbSvrCount = 0;
+	int notifySvrCount = 0;
+	ConnectInfo *pNode;
+	std::map<Moudle::Moudle, std::map<NetLine::NetLine, std::vector<msg::Cluster::NODE> > >::iterator itMoudle;
+	std::map<NetLine::NetLine, std::vector<msg::Cluster::NODE> >::iterator itLine;
+	std::vector<msg::Cluster::NODE>::iterator it;
+	for ( itMoudle = clusterInfo.m_cluster.begin(); itMoudle != clusterInfo.m_cluster.end(); itMoudle++ )
+	{
+		itLine = itMoudle->second.begin();
+		for ( ; itLine != itMoudle->second.end(); itLine++ )
+		{
+			for ( it = itLine->second.begin(); it != itLine->second.end(); it++ )
+			{
+				if ( Moudle::TcpEntry == itMoudle->first )
+				{
+					if ( port == it->port )
+					{
+						if ( 0 == strcmp(ip.c_str(), it->ip.c_str()) )
+						{
+							m_nodeId = it->nodeId;
+							m_cfg["opt"]["nodeId"] = m_nodeId;
+							m_cfg.Save();
+						}
+					}
+					continue;
+				}
+				else if ( Moudle::Notify == itMoudle->first ) 
+				{
+					notifySvrCount++;
+					continue;
+				}
+				else if ( Moudle::Auth == itMoudle->first ) m_authSvrCount++;
+				else if ( Moudle::SNS == itMoudle->first ) m_snsSvrCount++;
+				else if ( Moudle::DBEntry == itMoudle->first ) m_dbSvrCount++;
+				else continue;
+
+				pNode = new ConnectInfo;
+				pNode->nodeId = it->nodeId;
+				pNode->type = itMoudle->first;
+				pNode->lineType = itLine->first;
+				pNode->ip = it->ip;
+				pNode->port = it->port;
+				Connect(pNode->ip.c_str(), pNode->port, pNode, 5);
+			}
+		}
+	}
+	m_log.Info("Run", "认证结点%d个, sns结点%d个, DBEntry结点%d个", m_authSvrCount, m_snsSvrCount, m_dbSvrCount);
+	if ( 0 >= m_authSvrCount || 0 >= m_snsSvrCount || 0 >= m_dbSvrCount )
+	{
+		m_log.Info( "Error", "集群缺少模块，请检查Cluster库" );
+		mdk::mdk_assert(false);
+		exit(0);
+	}
+	m_notifyCluster.SetNodeCount(notifySvrCount);
+	m_authCluster.SetNodeCount(m_authSvrCount);
+	m_snsCluster.SetNodeCount(m_snsSvrCount);
+	m_dbCluster.SetNodeCount(m_dbSvrCount);
 	int CPU = mdk::GetCUPNumber(32, 32);
 	SetWorkThreadCount(CPU);
 	m_cache.InitCluster(m_cfg, CPU);

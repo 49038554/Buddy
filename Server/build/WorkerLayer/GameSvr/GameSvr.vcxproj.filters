@@ -49,6 +49,9 @@
     <Filter Include="Protocl\Object\Game">
       <UniqueIdentifier>{a5de57e4-331f-4091-8fa9-b8baee08a9f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Protocl\Object\DBEntry">
+      <UniqueIdentifier>{cd54fbfd-4678-4935-aee7-c51d815b27da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\WorkLayer\GameSvr\bin\GameSvr.cfg" />
@@ -124,73 +127,67 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.cpp">
       <Filter>Protocl\Object\MsgCenter</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\TameBeast.cpp">
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuildHouse.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\GetPlayerData.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Pets.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Player.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\PlayerItems.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncItem.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncPets.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncPlayer.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\TalentBook.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\TreePlant.cpp">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BattleResult.cpp">
       <Filter>Protocl\Object\Game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\KillBeast.cpp">
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Challenge.cpp">
       <Filter>Protocl\Object\Game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\PutPet.cpp">
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Dekaron.cpp">
       <Filter>Protocl\Object\Game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\GrowUp.cpp">
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\RoundReady.cpp">
       <Filter>Protocl\Object\Game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CityBuildInit.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CityBuilding.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuildHouse.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\DelHouse.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\TreePlant.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Pick.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Buy.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CatchStar.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\UseItem.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\NearInfo.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CreatePlayer.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\CreateShop.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Devour.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyMap.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyBook.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\ItemBook.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SkillBook.cpp">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\RaceMap.cpp">
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SendPet.cpp">
       <Filter>Protocl\Object\Game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -264,70 +261,67 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.h">
       <Filter>Protocl\Object\MsgCenter</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\TameBeast.h">
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyBook.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuddyMap.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\BuildHouse.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\GetPlayerData.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\ItemBook.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Pets.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\Player.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\PlayerItems.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SetupVersion.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncItem.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncPets.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SyncPlayer.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\TalentBook.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\TreePlant.h">
+      <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BattleResult.h">
       <Filter>Protocl\Object\Game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\KillBeast.h">
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Challenge.h">
       <Filter>Protocl\Object\Game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\PutPet.h">
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Dekaron.h">
       <Filter>Protocl\Object\Game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\GrowUp.h">
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\RoundReady.h">
       <Filter>Protocl\Object\Game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\CityBuilding.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuildHouse.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\DelHouse.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\TreePlant.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Pick.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Buy.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\CatchStar.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\UseItem.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\NearInfo.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\CreatePlayer.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\CreateShop.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Devour.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SetupVersion.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyMap.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\BuddyBook.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\ItemBook.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SkillBook.h">
-      <Filter>Protocl\Object\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\RaceMap.h">
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SendPet.h">
       <Filter>Protocl\Object\Game</Filter>
     </ClInclude>
   </ItemGroup>
