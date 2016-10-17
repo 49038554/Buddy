@@ -1402,8 +1402,14 @@ void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
 		return;
 	}
 	data::PLAYER player;
-	memset(&player, 0, sizeof (data::PLAYER));
 	player.playerId = msg.m_objectId;
+	player.nick = "ÃùÌì´óµÛ";
+	player.coin = 0;
+	player.petCount = 0;
+	memset( player.pet, 0, 6 );
+	player.lastLuckTime = 0;
+	player.luckCoin = 0;
+	player.synced = false;
 	int coin = 0;
 	if ( !ReadPlayer(pMysql, player, msg.m_code, msg.m_reason) )
 	{
