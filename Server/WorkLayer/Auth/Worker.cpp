@@ -291,8 +291,9 @@ bool Worker::SetLoginState( mdk::uint64 tcpEntryId, mdk::uint32 userId, ClientTy
 	mdk::AutoLock lock(&m_usersLock);
 	if ( m_users[tcpEntryId].end() == m_users[tcpEntryId].find(userId) )
 	{
-		m_users[tcpEntryId][userId].androidOnline = false;
-		m_users[tcpEntryId][userId].iphoneOnline = false;
+		Cache::LoginState state;
+		state.Build();
+		m_users[tcpEntryId].insert(std::map<mdk::uint32, Cache::LoginState>::value_type(userId, state));        
 	}
 	Cache::LoginState &state = m_users[tcpEntryId][userId];
 	if (ClientType::android == type) state.androidOnline = online;
