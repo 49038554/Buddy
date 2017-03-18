@@ -223,14 +223,15 @@ bool Worker::OnUserLogin(mdk::NetHost& host, msg::Buffer& buffer)
 			bool logined = false;
 			mdk::AutoLock lock(&m_usersLock);
 			std::map<mdk::uint64, std::map<mdk::uint32, Cache::LoginState> >::iterator it;
+			std::map<mdk::uint32, Cache::LoginState>::iterator itState;
 			for ( it = m_users.begin(); it != m_users.end(); it++)
 			{
-				if ( it->second.end() != it->second.find(userId) )
+				itState = it->second.find(userId);
+				if ( it->second.end() != itState )
 				{
-					Cache::LoginState &loginState = it->second[userId];
 					if ( 
-						(ClientType::android == msg.m_clientType && loginState.androidOnline)
-						|| (ClientType::iphone == msg.m_clientType && loginState.androidOnline)
+						(ClientType::android == msg.m_clientType && itState->second.androidOnline)
+						|| (ClientType::iphone == msg.m_clientType && itState->second.androidOnline)
 						) 
 					{
 						logined = true;
@@ -292,7 +293,6 @@ bool Worker::SetLoginState( mdk::uint64 tcpEntryId, mdk::uint32 userId, ClientTy
 	if ( m_users[tcpEntryId].end() == m_users[tcpEntryId].find(userId) )
 	{
 		Cache::LoginState state;
-		state.Build();
 		m_users[tcpEntryId].insert(std::map<mdk::uint32, Cache::LoginState>::value_type(userId, state));        
 	}
 	Cache::LoginState &state = m_users[tcpEntryId][userId];

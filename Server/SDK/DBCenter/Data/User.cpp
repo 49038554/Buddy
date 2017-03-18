@@ -3,7 +3,7 @@
 
 namespace Cache {
 
-User::User(void)
+User::User()
 	: id(-1)
 	, pwd("NULL")
 	, randKey("NULL")
@@ -18,12 +18,12 @@ User::User(void)
 	SetByteOrder(net::smallOrder); // ÉèÖÃ×Ö½ÚÐò
 }
 
-User::~User(void)
+User::~User()
 {
 	// body
 }
 
-bool User::Build(void)
+bool User::Build()
 {
 	Clear();
 
@@ -41,7 +41,7 @@ bool User::Build(void)
 	return true;
 }
 
-bool User::Parse(void)
+bool User::Parse()
 {
 	if ( -1 == Size() ) return false;
 

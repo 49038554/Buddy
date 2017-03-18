@@ -3,20 +3,20 @@
 namespace Cache 
 {
 
-IdList::IdList(void)
+IdList::IdList()
 {
 	m_buffer = new unsigned char[sizeof(int)+sizeof(int)*10000];
 	Bind(m_buffer, sizeof(int)+sizeof(int)*10000);          // 绑定一个缓冲区，在此之上做转换
 	SetByteOrder(net::smallOrder); // 设置字节序
 }
 
-IdList::~IdList(void)
+IdList::~IdList()
 {
 	// body
 	delete[]m_buffer;
 }
 
-bool IdList::Build(void)
+bool IdList::Build()
 {
 	Clear();
 	int count = m_ids.size();
@@ -30,7 +30,7 @@ bool IdList::Build(void)
 	return true;
 }
 
-bool IdList::Parse(void)
+bool IdList::Parse()
 {
 	m_ids.clear();
 	if ( -1 == Size() ) return false;

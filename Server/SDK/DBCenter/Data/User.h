@@ -22,11 +22,11 @@ public:
 	std::string		bindImei;		//账号：Imei
 	std::string		bindMobile;		//账号：手机号码
 public:
-	User(void);
-	virtual ~User(void);
+	User();
+	virtual ~User();
 
-	bool Build(void);  // 构造
-	bool Parse(void);  // 解析
+	bool Build();  // 构造
+	bool Parse();  // 解析
 	std::string ToString();//转换字符串
 private:
 	unsigned char m_buffer[1024];

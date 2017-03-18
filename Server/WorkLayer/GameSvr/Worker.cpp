@@ -3,25 +3,30 @@
 #include "Interface/DBCenter/cpp/DBCenterCluster.h"
 #include "Protocl/cpp/Object/Notify/Event.h"
 
-#include "Protocl/cpp/Object/Game/SetupVersion.h"
-#include "Protocl/cpp/Object/Game/CreatePlayer.h"
-#include "Protocl/cpp/Object/Game/KillBeast.h"
-#include "Protocl/cpp/Object/Game/UseItem.h"
-#include "Protocl/cpp/Object/Game/GrowUp.h"
-#include "Protocl/cpp/Object/Game/TameBeast.h"
-#include "Protocl/cpp/Object/Game/BuildHouse.h"
-#include "Protocl/cpp/Object/Game/PutPet.h"
-#include "Protocl/cpp/Object/Game/TreePlant.h"
-#include "Protocl/cpp/Object/Game/Pick.h"
-#include "Protocl/cpp/Object/Game/NearInfo.h"
-#include "Protocl/cpp/Object/Game/CreateShop.h"
-#include "Protocl/cpp/Object/Game/Buy.h"
-#include "Protocl/cpp/Object/Game/Devour.h"
-#include "Protocl/cpp/Object/Game/CatchStar.h"
-#include "Protocl/cpp/Object/Game/CityBuildInit.h"
-#include "Protocl/cpp/Object/Game/CityBuilding.h"
-#include "Protocl/cpp/Object/Game/DelHouse.h"
-#include "Protocl/cpp/Object/Game/RaceMap.h"
+#include "Protocl/cpp/Object/DBEntry/SetupVersion.h"
+#include "Protocl/cpp/Object/DBEntry/SkillBook.h"
+#include "Protocl/cpp/Object/DBEntry/ItemBook.h"
+#include "Protocl/cpp/Object/DBEntry/BuddyBook.h"
+#include "Protocl/cpp/Object/DBEntry/BuddyMap.h"
+#include "Protocl/cpp/Object/DBEntry/RaceMap.h"
+
+//#include "Protocl/cpp/Object/Game/CreatePlayer.h"
+//#include "Protocl/cpp/Object/Game/KillBeast.h"
+//#include "Protocl/cpp/Object/Game/UseItem.h"
+// #include "Protocl/cpp/Object/Game/GrowUp.h"
+// #include "Protocl/cpp/Object/Game/TameBeast.h"
+// #include "Protocl/cpp/Object/Game/BuildHouse.h"
+// #include "Protocl/cpp/Object/Game/PutPet.h"
+// #include "Protocl/cpp/Object/Game/TreePlant.h"
+// #include "Protocl/cpp/Object/Game/Pick.h"
+// #include "Protocl/cpp/Object/Game/NearInfo.h"
+// #include "Protocl/cpp/Object/Game/CreateShop.h"
+// #include "Protocl/cpp/Object/Game/Buy.h"
+// #include "Protocl/cpp/Object/Game/Devour.h"
+// #include "Protocl/cpp/Object/Game/CatchStar.h"
+// #include "Protocl/cpp/Object/Game/CityBuildInit.h"
+// #include "Protocl/cpp/Object/Game/CityBuilding.h"
+// #include "Protocl/cpp/Object/Game/DelHouse.h"
 
 #ifdef WIN32
 #ifdef _DEBUG
@@ -238,57 +243,57 @@ void Worker::OnMsg(mdk::NetHost& host)
 		case MsgId::setupVersion://安装版本,地图数据，巴迪图鉴，物品图鉴
 			OnSetupVersion(host, buffer);
 			break;
-		case MsgId::createPlayer://创建玩家
-			OnCreatePlayer(host, buffer);
-			break;
-		case MsgId::killBeast://杀死野怪
-			OnKillBeast(host, buffer);
-			break;
-		case MsgId::useItem://使用物品
-			OnUseItem(host, buffer);
-			break;
-		case MsgId::growUp://进化
-			OnGrowUp(host, buffer);
-			break;
-		case MsgId::tameBeast://驯服野怪
-			OnTameBeast(host, buffer);
-			break;
-		case MsgId::buildHouse://地图技能：光墙，造房子
-			OnBuildHouse(host, buffer);
-			break;
-		case MsgId::putPet://放置宠物
-			OnPutPet(host, buffer);
-			break;
-		case MsgId::treePlant://种树
-			OnTreePlant(host, buffer);
-			break;
-		case MsgId::pick://采摘
-			OnPick(host, buffer);
-			break;
-		case MsgId::nearInfo://周边信息
-			OnNearInfo(host, buffer);
-			break;
-		case MsgId::createShop://开店
-			OnCreateShop(host, buffer);
-			break;
-		case MsgId::buy://购买
-			OnBuy(host, buffer);
-			break;
-		case MsgId::devour://地图技能：吞噬，物品转换正能量
-			OnDevour(host, buffer);
-			break;
-		case MsgId::catchStar://地图技能：摘星术，将天上的法宝打下来
-			OnCatchStar(host, buffer);
-			break;
-		case MsgId::cityBuildInit://开始城市建设
-			OnCityBuildInit(host, buffer);
-			break;
-		case MsgId::cityBuilding://为城市建设添砖加瓦
-			OnCityBuilding(host, buffer);
-			break;
-		case MsgId::delHouse://地图技能：瓦割，拆房子
-			OnDelHouse(host, buffer);
-			break;
+// 		case MsgId::createPlayer://创建玩家
+// 			OnCreatePlayer(host, buffer);
+// 			break;
+// 		case MsgId::killBeast://杀死野怪
+// 			OnKillBeast(host, buffer);
+// 			break;
+// 		case MsgId::useItem://使用物品
+// 			OnUseItem(host, buffer);
+// 			break;
+// 		case MsgId::growUp://进化
+// 			OnGrowUp(host, buffer);
+// 			break;
+// 		case MsgId::tameBeast://驯服野怪
+// 			OnTameBeast(host, buffer);
+// 			break;
+// 		case MsgId::buildHouse://地图技能：光墙，造房子
+// 			OnBuildHouse(host, buffer);
+// 			break;
+// 		case MsgId::putPet://放置宠物
+// 			OnPutPet(host, buffer);
+// 			break;
+// 		case MsgId::treePlant://种树
+// 			OnTreePlant(host, buffer);
+// 			break;
+// 		case MsgId::pick://采摘
+// 			OnPick(host, buffer);
+// 			break;
+// 		case MsgId::nearInfo://周边信息
+// 			OnNearInfo(host, buffer);
+// 			break;
+// 		case MsgId::createShop://开店
+// 			OnCreateShop(host, buffer);
+// 			break;
+// 		case MsgId::buy://购买
+// 			OnBuy(host, buffer);
+// 			break;
+// 		case MsgId::devour://地图技能：吞噬，物品转换正能量
+// 			OnDevour(host, buffer);
+// 			break;
+// 		case MsgId::catchStar://地图技能：摘星术，将天上的法宝打下来
+// 			OnCatchStar(host, buffer);
+// 			break;
+// 		case MsgId::cityBuildInit://开始城市建设
+// 			OnCityBuildInit(host, buffer);
+// 			break;
+// 		case MsgId::cityBuilding://为城市建设添砖加瓦
+// 			OnCityBuilding(host, buffer);
+// 			break;
+// 		case MsgId::delHouse://地图技能：瓦割，拆房子
+// 			OnDelHouse(host, buffer);
+// 			break;
 		default:
 			break;
 	}
@@ -327,19 +332,19 @@ void Worker::OnSetupVersion(mdk::NetHost &host, msg::Buffer &buf)
 	}
 
 	//如果client版本小于服务版本，则发送新版数据
-	if ( msg.m_raceVersion < m_raceVersion )
+	if ( msg.m_dataVersion < m_raceVersion )
 	{
 		msg::RaceMap msg;
-		msg.m_raceVersion = m_raceVersion;
+// 		msg.m_raceVersion = m_raceVersion;
 		msg.m_races = m_races;
 		msg.Build();
 		host.Send(msg, msg.Size());
 	}
-	if ( msg.m_skillVersion < m_skillVersion )
+	if ( msg.m_dataVersion < m_skillVersion )
 	{
-		int i = msg.m_skillVersion; 
+		int i = msg.m_dataVersion; 
 		msg::SkillBook msg;
-		msg.m_skillVersion = m_skillVersion;
+// 		msg.m_skillVersion = m_skillVersion;
 		int j = 0;
 		while ( i < m_skills.size() )
 		{
@@ -353,11 +358,11 @@ void Worker::OnSetupVersion(mdk::NetHost &host, msg::Buffer &buf)
 			host.Send(msg, msg.Size());
 		}
 	}
-	if ( msg.m_itemVersion < m_itemVersion )
+	if ( msg.m_dataVersion < m_itemVersion )
 	{
-		int i = msg.m_itemVersion; 
+		int i = msg.m_dataVersion; 
 		msg::ItemBook msg;
-		msg.m_itemVersion = m_itemVersion;
+// 		msg.m_itemVersion = m_itemVersion;
 		int j = 0;
 		while ( i < m_items.size() )
 		{
@@ -371,11 +376,11 @@ void Worker::OnSetupVersion(mdk::NetHost &host, msg::Buffer &buf)
 			host.Send(msg, msg.Size());
 		}
 	}
-	if ( msg.m_buddyVersion < m_buddyVersion )
+	if ( msg.m_dataVersion < m_buddyVersion )
 	{
-		int i = msg.m_buddyVersion; 
+		int i = msg.m_dataVersion; 
 		msg::BuddyBook msg;
-		msg.m_buddyVersion = m_buddyVersion;
+// 		msg.m_buddyVersion = m_buddyVersion;
 		int j = 0;
 		while ( i < m_buddyMaps.size() )
 		{
@@ -389,10 +394,10 @@ void Worker::OnSetupVersion(mdk::NetHost &host, msg::Buffer &buf)
 			host.Send(msg, msg.Size());
 		}
 	}
-	if ( msg.m_lbsVersion < m_lbsVersion )
+	if ( msg.m_dataVersion < m_lbsVersion )
 	{
 		msg::BuddyMap msg;
-		msg.m_lbsVersion = m_lbsVersion;
+// 		msg.m_lbsVersion = m_lbsVersion;
 		int i = 0;
 		int j = 0;
 		while ( i < m_buddyMaps.size() )
@@ -414,240 +419,240 @@ void Worker::OnSetupVersion(mdk::NetHost &host, msg::Buffer &buf)
 	return;
 }
 
-void Worker::OnCreatePlayer(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnKillBeast(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnUseItem(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnGrowUp(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnTameBeast(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnBuildHouse(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnPutPet(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnTreePlant(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnPick(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnNearInfo(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnCreateShop(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnBuy(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnDevour(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnCatchStar(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnCityBuildInit(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnCityBuilding(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
-
-void Worker::OnDelHouse(mdk::NetHost &host, msg::Buffer &buf)
-{
-	msg::SetupVersion msg;
-	memcpy(msg, buf, buf.Size());
-	if ( !msg.Parse() )
-	{
-		msg.m_code = ResultCode::FormatInvalid;
-		msg.m_reason = "非法报文格式";
-		msg.Build(true);
-		host.Send(msg, msg.Size());
-		return;
-	}
-}
+// void Worker::OnCreatePlayer(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnKillBeast(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnUseItem(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnGrowUp(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnTameBeast(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnBuildHouse(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnPutPet(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnTreePlant(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnPick(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnNearInfo(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnCreateShop(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnBuy(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnDevour(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnCatchStar(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnCityBuildInit(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnCityBuilding(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }
+// 
+// void Worker::OnDelHouse(mdk::NetHost &host, msg::Buffer &buf)
+// {
+// 	msg::SetupVersion msg;
+// 	memcpy(msg, buf, buf.Size());
+// 	if ( !msg.Parse() )
+// 	{
+// 		msg.m_code = ResultCode::FormatInvalid;
+// 		msg.m_reason = "非法报文格式";
+// 		msg.Build(true);
+// 		host.Send(msg, msg.Size());
+// 		return;
+// 	}
+// }

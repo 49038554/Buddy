@@ -23,7 +23,7 @@ char* OnCommand(std::vector<std::string> *cmd);
 
 int main(int argc, char* argv[])
 {
-	g_cli.Connect(Client::TcpSvr, "127.0.0.1", 6601);
+	g_cli.Connect(Client::TcpSvr, "192.168.2.22", 6601);
 	g_cli.Start();
 
 	mdk::Console cmd("§¥÷˜»À§œ»Î§Í§ﬁ§π", 256);

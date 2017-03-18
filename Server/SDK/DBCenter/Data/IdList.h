@@ -14,11 +14,11 @@ public:
 	std::vector<int>	m_ids;
 
 public:
-	IdList(void);
-	virtual ~IdList(void);
+	IdList();
+	virtual ~IdList();
 
-	bool Build(void);  // 构造
-	bool Parse(void);  // 解析
+	bool Build();  // 构造
+	bool Parse();  // 解析
 
 private:
 	unsigned char *m_buffer;

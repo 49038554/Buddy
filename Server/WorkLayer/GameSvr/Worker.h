@@ -14,10 +14,6 @@
 #include "DBCenter/CacheInterface.h"
 #include "Interface/ClusterMgr/cpp/ClusterMgr.h"
 #include "common/HostCluster.h"
-#include "Protocl/cpp/Object/Game/SkillBook.h"
-#include "Protocl/cpp/Object/Game/ItemBook.h"
-#include "Protocl/cpp/Object/Game/BuddyBook.h"
-#include "Protocl/cpp/Object/Game/BuddyMap.h"
 
 /**
  * Worker
