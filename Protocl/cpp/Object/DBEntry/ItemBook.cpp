@@ -12,7 +12,7 @@ ItemBook::~ItemBook()
 {
 }
 
-bool ItemBook::Build()
+bool ItemBook::Build( bool isResult )
 {
 	unsigned char count = m_items.size();
 	if ( 0 >= count || count > 50 ) 

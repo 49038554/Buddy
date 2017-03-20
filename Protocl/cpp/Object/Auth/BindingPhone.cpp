@@ -20,7 +20,7 @@ bool BindingPhone::Build(bool isResult)
 	if (!AddData(m_phone)) return false;    // 手机号
 
 	//回应参数
-	if (!isResult || ResultCode::Success != m_code) return true;
+	if (!isResult || ResultCode::success != m_code) return true;
 
 	return true;
 }
@@ -33,7 +33,7 @@ bool BindingPhone::Parse(void)
 	if (!GetData(m_phone)) return false;    // 手机号
 
 	// 回应参数
-	if (!IsResult() || ResultCode::Success != m_code) return true;
+	if (!IsResult() || ResultCode::success != m_code) return true;
 
 	return true;
 }

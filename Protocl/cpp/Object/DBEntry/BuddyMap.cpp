@@ -12,7 +12,7 @@ BuddyMap::~BuddyMap()
 {
 }
 
-bool BuddyMap::Build()
+bool BuddyMap::Build( bool isResult )
 {
 	unsigned char count = m_buddyMaps.size();
 	if ( 0 >= count || count > 30 ) return false;

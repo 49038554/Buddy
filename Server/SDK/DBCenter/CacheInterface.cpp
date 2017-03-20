@@ -138,7 +138,6 @@ Redis::Result CacheInterface::GetLoginState(mdk::uint32 userId, Cache::LoginStat
 	std::string data;
 	Redis::Result ret = node.GetMapItem(key, "loginState", data);
 	if ( Redis::success != ret ) return ret;
-	state.Clear();
 	memcpy(state, data.c_str(),data.size());
 	if ( !state.Parse() ) return Redis::nullData;
 
@@ -193,7 +192,6 @@ Redis::Result CacheInterface::GetUserInfo(Cache::User &userInfo)
 	std::string data;
 	Redis::Result ret = node.GetMapItem(key, "info", data);
 	if ( Redis::success != ret ) return ret;
-	userInfo.Clear();
 	memcpy(userInfo, data.c_str(),data.size());
 	if ( !userInfo.Parse() ) return Redis::nullData;
 
@@ -311,7 +309,6 @@ Redis::Result CacheInterface::GetUserFans(mdk::uint32 userId, Cache::IdList &lis
 	std::string data;
 	Redis::Result ret = node.GetMapItem(key, "fans", data);
 	if ( Redis::success != ret ) return ret;
-	list.Clear();
 	memcpy(list, data.c_str(), data.size());
 	if ( !list.Parse() ) return Redis::nullData;
 
@@ -373,7 +370,6 @@ Redis::Result CacheInterface::GetUserIdol(mdk::uint32 userId, Cache::IdList &lis
 	std::string data;
 	Redis::Result ret = node.GetMapItem(key, "idol", data);
 	if ( Redis::success != ret ) return ret;
-	list.Clear();
 	memcpy(list, data.c_str(), data.size());
 	if ( !list.Parse() ) return Redis::nullData;
 

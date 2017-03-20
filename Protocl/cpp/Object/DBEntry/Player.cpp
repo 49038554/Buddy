@@ -13,7 +13,7 @@ Player::~Player()
 {
 }
 
-bool Player::Build()
+bool Player::Build( bool isResult )
 {
 	if ( m_player.coin < 0 
 		|| m_player.petCount > 6 

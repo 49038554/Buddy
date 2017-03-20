@@ -22,7 +22,7 @@ bool UserRegister::Build(bool isResult)
 	if (!AddData(m_pwd)) return false;                //密码md5(明文)
 	
 	// 回应参数
-	if (!isResult || ResultCode::Success != m_code) return true;
+	if (!isResult || ResultCode::success != m_code) return true;
 
 	if (!AddData(m_userId)) return false;  // 用户id(失败时候不填写)
 
@@ -40,7 +40,7 @@ bool UserRegister::Parse(void)
 	if (!GetData(m_pwd)) return false;    
 
 	// 回应参数
-	if (!IsResult() || ResultCode::Success != m_code) return true;
+	if (!IsResult() || ResultCode::success != m_code) return true;
 
 	if (!GetData(m_userId)) return false;
 

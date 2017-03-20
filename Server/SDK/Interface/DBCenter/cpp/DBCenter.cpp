@@ -29,10 +29,6 @@ static uint64 memtoiSmall( unsigned char *buf, int size )
 	return value;
 }
 
-
-/**
- * DBCenter
- */
 DBCenter::DBCenter(void)
 	: m_pSocket(new net::Socket)
 	, m_strIP("")
@@ -53,118 +49,38 @@ DBCenter::~DBCenter(void)
 
 bool DBCenter::CreateUser(msg::UserRegister& msg)
 {
-	return doLogic(msg);
+	if ( ResultCode::success != Query(&msg, 1) ) return false;
+	return true;
 }
 
 bool DBCenter::ResetUserPwd(msg::ResetPassword& msg)
 {
-	return doLogic(msg);
+	if ( ResultCode::success != Query(&msg, 1) ) return false;
+	return true;
 }
 
 bool DBCenter::BindingPhone(msg::BindingPhone& msg)
 {
-	return doLogic(msg);
-}
-
-void DBCenter::SetServerInfo(const std::string& strIP, int nPort)
-{
-	m_strIP = strIP;
-	m_nPort = nPort;
-}
-
-void DBCenter::GetServerInfo(std::string& strIP, int& nPort)
-{
-	strIP = m_strIP;
-	nPort = m_nPort;
-}
-
-bool DBCenter::Connect(void)
-{
-	if (m_bIsConnected) return true;
-	if (! net::Socket::SocketInit()) return false;
-	if (! m_pSocket->Init(net::Socket::tcp)) return false;
-	if (! m_pSocket->Connect(m_strIP.c_str(), m_nPort)) return false;
-
-	m_pSocket->SetSockMode(true);
-	m_pSocket->SetNoDelay(true);
-
-	m_bIsConnected = true;
-
-	return true;
-}
-
-void DBCenter::Close(void)
-{
-	m_pSocket->Close();
-	m_bIsConnected = false;
-}
-
-bool DBCenter::Send(msg::Buffer& msg)
-{
-	return (m_pSocket->Send(msg, msg.Size()) >= 0);
-}
-
-bool DBCenter::Receive(msg::Buffer& msg)
-{
-	msg.ReInit();
-
-	if (m_pSocket->Receive(msg, msg.HeaderSize(), true, 3) < 0) return false;
-	if (msg.Size() < 0) return false;
-	if (m_pSocket->Receive(msg, msg.Size(), false, 3) < 0) return false;
-
-	return true;
-}
-
-bool DBCenter::doLogic(msg::Buffer& msg)
-{
-	if (! Connect()) 
-	{
-		msg.m_code = ResultCode::SvrError;
-		msg.m_reason = "数据中心服务器忙";
-		msg.Build(true);
-		return false;
-	}
-	if (! Send(msg))
-	{
-		Close();
-		msg.m_code = ResultCode::SvrError;
-		msg.m_reason = "数据中心服务器忙";
-		msg.Build(true);
-		return false;
-	}
-	if (! Receive(msg))
-	{
-		Close();
-		msg.m_code = ResultCode::SvrError;
-		msg.m_reason = "数据中心服务器忙";
-		msg.Build(true);
-		return false;
-	}
-	if ( !msg.Parse() )
-	{
-		Close();
-		msg.m_code = ResultCode::SvrError;
-		msg.m_reason = "数据中心服务回应非法报文";
-		msg.Build(true);
-		return false;
-	}
-
+	if ( ResultCode::success != Query(&msg, 1) ) return false;
 	return true;
 }
 
 bool DBCenter::AddBuddy(msg::AddBuddy& msg)
 {
-	return doLogic(msg);
+	if ( ResultCode::success != Query(&msg, 1) ) return false;
+	return true;
 }
 
 bool DBCenter::DelBuddy(msg::DelBuddy& msg)
 {
-	return doLogic(msg);
+	if ( ResultCode::success != Query(&msg, 1) ) return false;
+	return true;
 }
 
 bool DBCenter::SetUserData(msg::SetUserData& msg)
 {
-	return doLogic(msg);
+	if ( ResultCode::success != Query(&msg, 1) ) return false;
+	return true;
 }
 
 bool DBCenter::GetGameSetupData( 
@@ -186,10 +102,9 @@ bool DBCenter::GetGameSetupData(
 	lbsVersion = 0;
 	buddyMaps.clear();
 
-	if ( !Connect() ) return false;
 	msg::SetupVersion query;
 	query.Build();
-	if ( !Send(query) )
+	if ( ResultCode::success != Send(query, query.Size()) )
 	{
 		Close();
 		return false;
@@ -198,12 +113,7 @@ bool DBCenter::GetGameSetupData(
 	msg::Buffer buf;
 	while ( true )
 	{
-		if ( !Receive(buf) )
-		{
-			Close();
-			return false;
-		}
-		if ( !buf.Parse() )
+		if ( ReadMsg(&buf, 10) )
 		{
 			Close();
 			return false;
@@ -278,7 +188,7 @@ bool DBCenter::GetGameSetupData(
 				Close();
 				return false;
 			}
-			if ( ResultCode::Success != reply.m_code )
+			if ( ResultCode::success != reply.m_code )
 			{
 				Close();
 				return false;

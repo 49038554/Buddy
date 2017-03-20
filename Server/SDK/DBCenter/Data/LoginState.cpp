@@ -19,7 +19,7 @@ LoginState::~LoginState()
 
 bool LoginState::Build()
 {
-	Clear();
+	StartAdd();
 	if ( !AddData((char)flashOnline) ) return false;	//flash端在线
 	if ( !AddData((char)androidOnline) ) return false;	//android端在线
 	if ( !AddData((char)iphoneOnline) ) return false;	//iphone端在线
@@ -29,6 +29,7 @@ bool LoginState::Build()
 
 bool LoginState::Parse()
 {
+	StartGet();
 	if ( -1 == Size() ) return false;
 	char val;
 	if ( !GetData(val) ) return false;		//flash端在线

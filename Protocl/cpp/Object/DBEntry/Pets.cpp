@@ -12,7 +12,7 @@ Pets::~Pets()
 {
 }
 
-bool Pets::Build()
+bool Pets::Build( bool isResult )
 {
 	if ( m_pets.size() > 100 )
 	{

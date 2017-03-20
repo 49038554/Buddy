@@ -65,12 +65,12 @@ Worker::Worker(void)
 	}
 	std::string ip = m_cfg["opt"]["ip"];
 	int port = m_cfg["opt"]["listen"];
-	m_cluster.SetSvr(m_cfg["ClusterMgr"]["ip"], m_cfg["ClusterMgr"]["port"]);
+	m_cluster.SetService(m_cfg["ClusterMgr"]["ip"], m_cfg["ClusterMgr"]["port"]);
 	msg::Cluster clusterInfo;
 	std::string reason;
 	m_log.Info( "Run", "集群配置服务(%s %d)", ((std::string)m_cfg["ClusterMgr"]["ip"]).c_str(), 
 		(int)m_cfg["ClusterMgr"]["port"] );
-	if ( SyncClient::SUCESS != m_cluster.GetCluster(Moudle::all, clusterInfo, reason) )
+	if ( ResultCode::success != m_cluster.GetCluster(Moudle::all, clusterInfo, reason) )
 	{
 		m_log.Info( "Error", "获取集群信息失败:%s", reason.c_str() );
 		mdk::mdk_assert(false);
@@ -268,10 +268,10 @@ void Worker::OnMsg(mdk::NetHost &host)
 {
 	msg::Buffer buffer; 
 	if ( !host.Recv(buffer, buffer.HeaderSize(), false) ) return;
-	if ( -1 == buffer.Size() )
+	if ( !buffer.ReadHeader() )
 	{
 		if ( !host.IsServer() ) host.Close();
-		m_log.Info("Error","非法报文");
+		m_log.Info("Error","报文头错误");
 		return;
 	}
 	if ( !host.Recv(buffer, buffer.Size()) ) return;
@@ -366,8 +366,7 @@ bool Worker::OnServerMsg( msg::Buffer &buffer )
 			return true;
 		}
 	}
-	if ( ResultCode::FormatInvalid == buffer.m_code 
-		|| ResultCode::MsgInvalid == buffer.m_code )
+	if ( ResultCode::msgError == buffer.m_code )
 	{
 		clientHost.Close();
 		m_log.Info("Waring", "拒绝连接(%llu),原因(%d):%s", 
@@ -529,7 +528,7 @@ bool Worker::OnUserLogin(mdk::NetHost &host, msg::Buffer &buffer)
 		Redis::Result ret = m_cache.GetUserId(msg.m_accountType, msg.m_account, userId);
 		if ( Redis::unsvr == ret )
 		{
-			msg.m_code = ResultCode::DBError;
+			msg.m_code = ResultCode::refuse;
 			msg.m_reason = "Redis未连接";
 			m_log.Info("Error", "登录失败：GetUserId，Redis未连接");
 			msg.Build(true);
@@ -538,7 +537,7 @@ bool Worker::OnUserLogin(mdk::NetHost &host, msg::Buffer &buffer)
 		}
 		if ( Redis::nullData == ret )
 		{
-			msg.m_code = ResultCode::Refuse;
+			msg.m_code = ResultCode::refuse;
 			msg.m_reason = "账号不存在";
 			m_log.Info("Error", "账号(%s)不存在", msg.m_account.c_str());
 			msg.Build(true);
@@ -797,7 +796,6 @@ bool Worker::OnNotify(mdk::NetHost &host, msg::Buffer &buffer)
 					m_log.Info("Error", "1条消息无法解析");
 					continue;
 				}
-				buffer.ReInit();
 				memcpy(buffer, data.m_msg, data.m_msg.Size());
 				if ( !buffer.Parse() ) 
 				{
@@ -832,7 +830,6 @@ bool Worker::NotifyUser(msg::Buffer &buffer)
 		m_log.Info("Waring", "找不到用户(%d)连接，通知无法到达用户", msg.m_recverId);
 		return false;
 	}
-	buffer.ReInit();
 	memcpy(buffer, msg.m_msg, msg.m_msg.Size());
 	if ( !buffer.Parse() )
 	{

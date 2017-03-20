@@ -18,7 +18,7 @@ IdList::~IdList()
 
 bool IdList::Build()
 {
-	Clear();
+	StartAdd();
 	int count = m_ids.size();
 	if (! AddData(count)) return false;
 	int i = 0;
@@ -33,6 +33,7 @@ bool IdList::Build()
 bool IdList::Parse()
 {
 	m_ids.clear();
+	StartGet();
 	if ( -1 == Size() ) return false;
 	int count;
 	if (! GetData(count)) return false;

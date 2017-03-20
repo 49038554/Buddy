@@ -14,7 +14,7 @@ Cluster::~Cluster()
 {
 }
 
-bool Cluster::Build()
+bool Cluster::Build( bool isResult)
 {
 	SetId(MsgId::cluster, false);
 	if ( !FillTransmitParam() ) return false;//Tcp服务填写参数

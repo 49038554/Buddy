@@ -61,14 +61,15 @@ void Worker::OnCloseConnect(mdk::NetHost &host)
 
 void Worker::OnMsg(mdk::NetHost &host)
 {
-	msg::Buffer buffer;
+	msg::Buffer buffer; 
 	if ( !host.Recv(buffer, buffer.HeaderSize(), false) ) return;
-	if ( -1 == buffer.Size() )
+	if ( !buffer.ReadHeader() )
 	{
-		m_log.Info("Error", "非法的报文长度");
-		host.Close();
+		if ( !host.IsServer() ) host.Close();
+		m_log.Info("Error","报文头错误");
 		return;
 	}
+	if ( !host.Recv(buffer, buffer.Size()) ) return;
 	if ( Moudle::Operation != buffer.MoudleId() )
 	{
 		m_log.Info("Error", "不是运维模块请求");
@@ -76,7 +77,6 @@ void Worker::OnMsg(mdk::NetHost &host)
 		return;
 	}
 
-	if ( !host.Recv(buffer, buffer.Size()) ) return;
 	switch ( buffer.Id() )
 	{
 	case MsgId::getCluster :

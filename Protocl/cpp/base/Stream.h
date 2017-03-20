@@ -1,14 +1,10 @@
 #pragma once
 
 #ifdef WIN32
-#else
-#include <sys/types.h>
-#endif
-
-#ifdef WIN32
 typedef __int64				int64;
 typedef unsigned __int64	uint64;
 #else
+#include <sys/types.h>
 typedef int64_t				int64;
 typedef u_int64_t			uint64;
 #endif
@@ -21,7 +17,8 @@ namespace net
 	{
 		netOrder = 0,
 		bigOrder = 1,
-		smallOrder = 2
+		smallOrder = 2,
+		local = 3,
 	};
 
 /**
@@ -39,7 +36,6 @@ public:
 	operator unsigned char*();
 	operator char*();
 	operator void*();
-	void Clear();//重置游标
 	int Size();//实际长度，非法值，小于0
 //////////////////////////////////////////////////////////////////////////
 //添加参数,成功返回true，失败返回false
@@ -117,12 +113,16 @@ protected:
 	//从流中取出整型参数，size表示整型长度char short int int64
 	uint64 Stream2I( unsigned char *buf, int size );
 
+	void StartAdd();
+	void StartGet();
+
 protected:
 	unsigned char*	m_buffer;		//绑定的缓冲区
 	unsigned int	m_space;		//缓冲大小
 	int				m_size;			//流实际长度
 	int				m_pos;			//游标位置
 	ByteOrder		m_byteOrder;	//报文使用的字节顺
+	bool			m_building;		//报文构建中
 };
 
 }

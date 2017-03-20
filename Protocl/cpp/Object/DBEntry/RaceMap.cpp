@@ -12,7 +12,7 @@ RaceMap::~RaceMap()
 {
 }
 
-bool RaceMap::Build()
+bool RaceMap::Build( bool isResult )
 {
 	if ( 0 >= m_races.size() ) 
 	{

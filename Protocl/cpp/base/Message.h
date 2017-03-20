@@ -3,7 +3,6 @@
 
 namespace net
 {
-
 /*
 	通信协议接口基类
 	使用说明
@@ -38,13 +37,12 @@ public:
 	virtual ~Message(void);
 
 public:
-	virtual void ReInit();//重新初始化，为了重复利用
 	virtual int HeaderSize();//报文头长度
+	bool ReadHeader();//读取报文头
 	//发送时用于直接传递给send接口，接收时用于直接将数据复制入msg，避免多次copy
 	operator unsigned char*();
 	operator char*();
 	operator void*();
-	virtual int Size();//报文长度,如果报文长度非法返回-1(超出最大限制或者小于最小长度)
 	virtual unsigned char MoudleId();//模块号，避免同时加载多个sdk时协议号重复
 	virtual short Id();//返回协议号
 	virtual bool IsResult();//是回应报文
@@ -55,7 +53,7 @@ protected:
 	//绑定协议设置:buffer、最大长度、模块Id，避免多个sdk协议号重复
 	void BindSetting( unsigned char *buffer, int maxSize, char byteOrder, unsigned char moudleId );//绑定派生类设置
 	virtual void SetId( short id, bool isResult = false );//设置id
-	void ReadHeader();//读取报文头
+
 private:
 	unsigned char	m_moudleId;	//模块Id
 	short			m_id;		//协议号

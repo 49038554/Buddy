@@ -25,8 +25,7 @@ User::~User()
 
 bool User::Build()
 {
-	Clear();
-
+	StartAdd();
 	if (! AddData(id)) return false;
 	if (! AddData(pwd)) return false;
 	if (! AddData(randKey)) return false;
@@ -43,6 +42,7 @@ bool User::Build()
 
 bool User::Parse()
 {
+	StartGet();
 	if ( -1 == Size() ) return false;
 
 	if (! GetData(id)) return false;

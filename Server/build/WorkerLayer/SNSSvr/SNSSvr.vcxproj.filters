@@ -85,9 +85,6 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp">
       <Filter>Protocl\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp">
-      <Filter>SDK\Interface</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\SDK\common\common.cpp">
       <Filter>SDK\common</Filter>
     </ClCompile>
@@ -172,6 +169,9 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.cpp">
       <Filter>Protocl\Object\DBEntry</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Client.cpp">
+      <Filter>SDK\Interface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\WorkLayer\SNSSvr\Main.h">
@@ -194,9 +194,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h">
       <Filter>Protocl\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h">
-      <Filter>SDK\Interface</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\SDK\common\common.h">
       <Filter>SDK\common</Filter>
@@ -281,6 +278,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\RaceMap.h">
       <Filter>Protocl\Object\DBEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Client.h">
+      <Filter>SDK\Interface</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

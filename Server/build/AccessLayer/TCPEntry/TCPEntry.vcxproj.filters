@@ -56,9 +56,6 @@
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp">
       <Filter>SDK\DBCenterSDK\Data</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp">
-      <Filter>Interface</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
@@ -116,6 +113,9 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\GetEvent.cpp">
       <Filter>SDK\Protocl\Object\MsgCenter</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Client.cpp">
+      <Filter>SDK\Protocl\base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\AccessLayer\TCPEntry\Worker.h">
@@ -132,9 +132,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h">
       <Filter>SDK\DBCenterSDK\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h">
-      <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h">
       <Filter>Interface</Filter>
@@ -195,6 +192,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\GetEvent.h">
       <Filter>SDK\Protocl\Object\MsgCenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Client.h">
+      <Filter>SDK\Protocl\base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

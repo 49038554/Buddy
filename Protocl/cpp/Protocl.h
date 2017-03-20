@@ -142,12 +142,18 @@ namespace ResultCode
 {
 	enum ResultCode
 	{
-		Success = 0,				//成功
-		FormatInvalid = 1,			//非法格式，需要断开Client连接
-		MsgInvalid = 2,				//非法报文，需要断开Client连接
-		Refuse = 3,					//拒绝
-		DBError = 4,				//数据库错误，查数据库服务是否正常
-		SvrError = 5,				//服务错误，查服务端原因
+		success = 0,				//成功
+// 		FormatInvalid = 1,			//非法格式，需要断开Client连接
+// 		MsgInvalid = 2,				//非法报文，需要断开Client连接
+// 		Refuse = 3,					//拒绝
+// 		DBError = 4,				//数据库错误，查数据库服务是否正常
+// 		SvrError = 5,				//服务错误，查服务端原因
+
+		paramError = 1,//参数错误
+		netError = 2,//网络错误
+		msgError = 3,//报文错误
+		refuse = 4,//拒绝
+		svrBug = 5,//服务存在bug
 	};
 };
 

@@ -18,6 +18,7 @@
     <None Include="..\..\..\WorkLayer\GameSvr\makefile" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Client.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp" />
@@ -56,13 +57,13 @@
     <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp" />
     <ClCompile Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenter.cpp" />
     <ClCompile Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.cpp" />
-    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp" />
     <ClCompile Include="..\..\..\SDK\mdk_ex\Console.cpp" />
     <ClCompile Include="..\..\..\SDK\mdk_ex\ServerEx.cpp" />
     <ClCompile Include="..\..\..\WorkLayer\GameSvr\Main.cpp" />
     <ClCompile Include="..\..\..\WorkLayer\GameSvr\Worker.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Client.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h" />
@@ -102,7 +103,6 @@
     <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h" />
     <ClInclude Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenter.h" />
     <ClInclude Include="..\..\..\SDK\Interface\DBCenter\cpp\DBCenterCluster.h" />
-    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h" />
     <ClInclude Include="..\..\..\SDK\mdk_ex\Console.h" />
     <ClInclude Include="..\..\..\SDK\mdk_ex\ServerEx.h" />
     <ClInclude Include="..\..\..\WorkLayer\GameSvr\Main.h" />

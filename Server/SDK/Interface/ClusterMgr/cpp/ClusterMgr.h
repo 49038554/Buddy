@@ -2,15 +2,15 @@
 
 #include <string>
 #include <vector>
-#include "Interface/SyncClient.h"
+#include "Protocl/cpp/base/Client.h"
 #include "Protocl/cpp/Object/Operation/Cluster.h"
 
-class ClusterMgr : public SyncClient
+class ClusterMgr : public net::Client
 {
 public:
 	ClusterMgr();
 	~ClusterMgr();
 
 	//取集群信息
-	SyncClient::ErrorCode GetCluster( Moudle::Moudle moudleId, msg::Cluster &data, std::string &reason );
+	ResultCode::ResultCode GetCluster( Moudle::Moudle moudleId, msg::Cluster &data, std::string &reason );
 };

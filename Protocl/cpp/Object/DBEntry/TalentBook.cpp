@@ -12,7 +12,7 @@ TalentBook::~TalentBook()
 {
 }
 
-bool TalentBook::Build()
+bool TalentBook::Build( bool isResult )
 {
 	unsigned char count = m_talents.size();
 	if ( 0 >= count || count > 50 ) 

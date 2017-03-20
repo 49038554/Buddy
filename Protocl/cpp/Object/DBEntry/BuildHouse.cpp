@@ -25,7 +25,7 @@ bool BuildHouse::Build(bool isResult)
 	if ( !AddData(m_coin) ) return false;
 	
 	//回应参数
-	if ( !isResult || ResultCode::Success != m_code ) return true;
+	if ( !isResult || ResultCode::success != m_code ) return true;
 	if ( !AddData(m_buildId) ) return false;
 
 	return true;
@@ -43,7 +43,7 @@ bool BuildHouse::Parse()
 	if ( !GetData(m_coin) ) return false;
 	
 	//回应参数
-	if ( !IsResult() || ResultCode::Success != m_code ) return true;
+	if ( !IsResult() || ResultCode::success != m_code ) return true;
 	if ( !GetData(m_buildId) ) return false;
 
 	return true;

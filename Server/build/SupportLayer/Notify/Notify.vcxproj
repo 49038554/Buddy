@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Client.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp" />
@@ -26,11 +27,11 @@
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp" />
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp" />
     <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp" />
-    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp" />
     <ClCompile Include="..\..\..\SupportLayer\Notify\Main.cpp" />
     <ClCompile Include="..\..\..\SupportLayer\Notify\Worker.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Client.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h" />
@@ -47,7 +48,6 @@
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h" />
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h" />
     <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h" />
-    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h" />
     <ClInclude Include="..\..\..\SupportLayer\Notify\Main.h" />
     <ClInclude Include="..\..\..\SupportLayer\Notify\Worker.h" />
   </ItemGroup>

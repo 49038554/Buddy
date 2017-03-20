@@ -18,7 +18,7 @@ public:
 public:
 	BuddyMap();
 	virtual ~BuddyMap();
-	bool Build();//构造报文，发送
+	bool Build( bool isResult = false );//构造报文，发送
 	bool Parse();//解析报文，接收
 
 private:

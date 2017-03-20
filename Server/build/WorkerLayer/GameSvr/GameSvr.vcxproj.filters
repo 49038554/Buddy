@@ -54,11 +54,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\WorkLayer\GameSvr\bin\GameSvr.cfg" />
     <None Include="..\..\..\WorkLayer\GameSvr\bin\stop.sh" />
     <None Include="..\..\..\WorkLayer\GameSvr\bin\list.sh" />
     <None Include="..\..\..\WorkLayer\GameSvr\makefile" />
     <None Include="..\..\..\WorkLayer\GameSvr\bin\run.sh" />
+    <None Include="..\..\..\WorkLayer\GameSvr\bin\GameSvr.cfg" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\WorkLayer\GameSvr\Main.cpp">
@@ -87,9 +87,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp">
       <Filter>SDK\Cache\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp">
-      <Filter>SDK\InterFace</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp">
       <Filter>SDK\InterFace\ClusterMgr</Filter>
@@ -190,6 +187,9 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SendPet.cpp">
       <Filter>Protocl\Object\Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Client.cpp">
+      <Filter>Protocl\base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\WorkLayer\GameSvr\Main.h">
@@ -218,9 +218,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h">
       <Filter>SDK\Cache\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h">
-      <Filter>SDK\InterFace</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h">
       <Filter>SDK\InterFace\ClusterMgr</Filter>
@@ -323,6 +320,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SendPet.h">
       <Filter>Protocl\Object\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Client.h">
+      <Filter>Protocl\base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

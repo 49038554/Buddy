@@ -35,12 +35,12 @@ Worker::Worker(void)
 	}
 	std::string ip = m_cfg["opt"]["ip"];
 	int port = m_cfg["opt"]["listen"];
-	m_cluster.SetSvr(m_cfg["ClusterMgr"]["ip"], m_cfg["ClusterMgr"]["port"]);
+	m_cluster.SetService(m_cfg["ClusterMgr"]["ip"], m_cfg["ClusterMgr"]["port"]);
 	msg::Cluster clusterInfo;
 	std::string reason;
 	m_log.Info( "Run", "集群配置服务(%s %d)", ((std::string)m_cfg["ClusterMgr"]["ip"]).c_str(), 
 		(int)m_cfg["ClusterMgr"]["port"] );
-	if ( SyncClient::SUCESS != m_cluster.GetCluster(Moudle::all, clusterInfo, reason) )
+	if ( ResultCode::success != m_cluster.GetCluster(Moudle::all, clusterInfo, reason) )
 	{
 		m_log.Info( "Error", "获取集群信息失败:%s", reason.c_str() );
 		mdk::mdk_assert(false);
@@ -180,16 +180,15 @@ void Worker::OnCloseConnect(mdk::NetHost &host)
 void Worker::OnMsg(mdk::NetHost &host)
 {
 	msg::Buffer buffer;
-
 	if ( !host.Recv(buffer, buffer.HeaderSize(), false) ) return;
-	if ( 0 > buffer.Size() ) 
+	if ( !buffer.ReadHeader() )
 	{
-		m_log.Info("Waring", "非法报文长度");
-		host.Close();
+		if ( !host.IsServer() ) host.Close();
+		m_log.Info("Error","报文头错误");
 		return;
 	}
-
 	if ( !host.Recv(buffer, buffer.Size()) ) return;
+
 	if ( Moudle::Notify != buffer.MoudleId() 
 		|| buffer.IsResult() ) 
 	{

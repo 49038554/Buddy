@@ -48,9 +48,6 @@
     <ClCompile Include="..\..\..\SDK\mysql\MySqlClient.cpp">
       <Filter>MySQL</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp">
-      <Filter>Interface</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
@@ -198,6 +195,9 @@
     <ClCompile Include="..\..\..\DataLayer\DBCenter\Worker.cpp">
       <Filter>Main</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Client.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\DataLayer\DBCenter\Worker.h">
@@ -205,9 +205,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\SDK\mysql\MySqlClient.h">
       <Filter>MySQL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h">
-      <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h">
       <Filter>Interface</Filter>
@@ -358,6 +355,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\DataLayer\DBCenter\Main.h">
       <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Client.h">
+      <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

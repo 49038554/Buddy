@@ -21,7 +21,7 @@ bool UserRelogin::Build(bool isResult)
 	if (!AddData(m_position)) return false;  // 登录位置
 
 	// 回应参数
-	if (!isResult || ResultCode::Success != m_code) return true;
+	if (!isResult || ResultCode::success != m_code) return true;
 
 
 	return true;
@@ -35,7 +35,7 @@ bool UserRelogin::Parse(void)
 	if (!GetData(m_position)) return false;  // 登录位置
 
 	// 回应参数
-	if (!IsResult() || ResultCode::Success != m_code) return true;
+	if (!IsResult() || ResultCode::success != m_code) return true;
 
 	return true;
 }

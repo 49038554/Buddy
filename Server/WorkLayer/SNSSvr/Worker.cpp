@@ -49,12 +49,12 @@ Worker::Worker(void)
 	int         curSvrPORT = m_cfg["opt"]["listen"];
 
 	// 从集群配置服获取集群配置信息
-	m_cluster.SetSvr(m_cfg["ClusterMgr"]["ip"], m_cfg["ClusterMgr"]["port"]);
+	m_cluster.SetService(m_cfg["ClusterMgr"]["ip"], m_cfg["ClusterMgr"]["port"]);
 	m_log.Info("Run", "集群配置服务(%s %d)", std::string(m_cfg["ClusterMgr"]["ip"]).c_str(), int(m_cfg["ClusterMgr"]["port"]));
 
 	msg::Cluster clusterInfo;
 	std::string  reason;
-	if (SyncClient::SUCESS != m_cluster.GetCluster(Moudle::all, clusterInfo, reason))
+	if (ResultCode::success != m_cluster.GetCluster(Moudle::all, clusterInfo, reason))
 	{
 		m_log.Info( "Error", "获取集群信息失败:%s", reason.c_str() );
 		mdk::mdk_assert(false);
@@ -184,14 +184,19 @@ void Worker::OnCloseConnect(mdk::NetHost &host)
 void Worker::OnMsg(mdk::NetHost& host)
 {
 	msg::Buffer buffer;
-	if (! host.Recv(buffer, buffer.HeaderSize(), false)) return;
-	if (-1 == buffer.Size())
+	if ( !host.Recv(buffer, buffer.HeaderSize(), false) ) return;
+	if ( !buffer.ReadHeader() )
 	{
-		m_log.Info("Error", "非法报文,断开连接!!!" );
-		host.Close();
+		if ( !host.IsServer() ) host.Close();
+		m_log.Info("Error","报文头错误");
 		return;
 	}
-	if (! host.Recv(buffer, buffer.Size())) return;
+	if ( !host.Recv(buffer, buffer.Size()) ) return;
+	if ( Moudle::SNS != buffer.MoudleId() )
+	{
+		m_log.Info("Error", "不是社交模块报文" );
+		return;
+	}
 	if ( buffer.IsResult() )
 	{
 		m_log.Info("Error", "未预料的回应,断开连接!!!" );
@@ -242,7 +247,7 @@ bool Worker::OnAddBuddy(mdk::NetHost& host, msg::Buffer &buffer)
 
 	if ( !msg.Parse() )
 	{
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code   = ResultCode::msgError;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -253,7 +258,7 @@ bool Worker::OnAddBuddy(mdk::NetHost& host, msg::Buffer &buffer)
 		std::map<mdk::uint32, mdk::uint32> buddyIds;
 		if ( Redis::unsvr == m_cache.GetBuddys(msg.m_objectId, buddyIds) )
 		{
-			msg.m_code   = ResultCode::DBError;
+			msg.m_code   = ResultCode::refuse;
 			msg.m_reason = "Redis服务异常";
 			msg.Build(true);
 			host.Send(msg, msg.Size());
@@ -262,7 +267,7 @@ bool Worker::OnAddBuddy(mdk::NetHost& host, msg::Buffer &buffer)
 		}
 		if ( buddyIds.end() != buddyIds.find(msg.m_buddyId) )
 		{
-			msg.m_code   = ResultCode::Refuse;
+			msg.m_code   = ResultCode::refuse;
 			msg.m_reason = "已经是小伙伴";
 			msg.Build(true);
 			host.Send(msg, msg.Size());
@@ -276,7 +281,7 @@ bool Worker::OnAddBuddy(mdk::NetHost& host, msg::Buffer &buffer)
 	if ( Redis::success != m_cache.GetUserInfo(ui) )
 	{
 		m_log.Info("Error", "添加小伙伴失败：读用户信息失败");
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "读用户信息失败";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -294,7 +299,7 @@ bool Worker::OnAddBuddy(mdk::NetHost& host, msg::Buffer &buffer)
 		}
 		else //对方拒绝
 		{
-			msg.m_code = ResultCode::Refuse;
+			msg.m_code = ResultCode::refuse;
 			msg.m_reason = "对方拒绝";
 			msg.Build();
 		}
@@ -314,7 +319,7 @@ bool Worker::OnDelBuddy(mdk::NetHost& host, msg::Buffer &buffer)
 
 	if ( !msg.Parse() )
 	{
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code   = ResultCode::msgError;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -324,7 +329,7 @@ bool Worker::OnDelBuddy(mdk::NetHost& host, msg::Buffer &buffer)
 	msg.Build();
 	DBCenter *pDBCenter = ((DBCenterCluster*)SafeObject())->Node(msg.m_userId);
 	pDBCenter->DelBuddy(msg);
-	if ( ResultCode::Success == msg.m_code ) 
+	if ( ResultCode::success == msg.m_code ) 
 	{
 		if ( !SendNotify(msg.m_buddyId, msg::Event::user, &msg, time(NULL) + 86400 * 7) )
 		{
@@ -345,7 +350,7 @@ bool Worker::OnGetBuddys(mdk::NetHost& host, msg::Buffer &buffer)
 
 	if ( !msg.Parse() )
 	{
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code   = ResultCode::msgError;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -355,7 +360,7 @@ bool Worker::OnGetBuddys(mdk::NetHost& host, msg::Buffer &buffer)
 	std::map<mdk::uint32, mdk::uint32> buddyIds;
 	if ( Redis::unsvr == m_cache.GetBuddys(msg.m_userId, buddyIds) )
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "Redis服务异常";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -375,7 +380,6 @@ bool Worker::OnGetBuddys(mdk::NetHost& host, msg::Buffer &buffer)
 	for ( it = buddyIds.begin(); it != buddyIds.end(); it++ )
 	{
 		buddyItem.id = it->second;
-		ui.Clear();
 		ui.id = buddyItem.id;
 		buddyItem.nickName = "未获取";
 		buddyItem.face = "---";
@@ -409,7 +413,7 @@ bool Worker::OnChat(mdk::NetHost& host, msg::Buffer &buffer)
 
 	if ( !msg.Parse() )
 	{
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code   = ResultCode::msgError;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -428,7 +432,7 @@ bool Worker::OnChat(mdk::NetHost& host, msg::Buffer &buffer)
 		if ( Redis::nullData == ret || buddyIds.end() == buddyIds.find(msg.m_recverId) )
 		{
 			m_log.Info("Error", "不是伙伴不能发消息");
-			msg.m_code = ResultCode::Refuse;
+			msg.m_code = ResultCode::refuse;
 			msg.m_reason = "不是小伙伴";
 			msg.Build(true);
 			host.Send(msg, msg.Size());
@@ -468,7 +472,7 @@ bool Worker::OnChat(mdk::NetHost& host, msg::Buffer &buffer)
 	if ( Redis::success != m_cache.GetUserInfo(ui) )
 	{
 		m_log.Info("Error", "聊天失败：读用户信息失败");
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "读用户信息失败";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -489,7 +493,7 @@ bool Worker::OnSetUserData(mdk::NetHost& host, msg::Buffer &buffer)
 
 	if ( !msg.Parse() )
 	{
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code   = ResultCode::msgError;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -507,7 +511,7 @@ bool Worker::OnGetUserData(mdk::NetHost& host, msg::Buffer &buffer)
 
 	if ( !msg.Parse() )
 	{
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code   = ResultCode::msgError;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -524,7 +528,7 @@ bool Worker::OnGetUserData(mdk::NetHost& host, msg::Buffer &buffer)
 		}
 		if ( Redis::nullData == ret )
 		{
-			msg.m_code   = ResultCode::Refuse;
+			msg.m_code   = ResultCode::refuse;
 			msg.m_reason = "不能查询陌生人信息";
 			msg.Build(true);
 			host.Send(msg, msg.Size());

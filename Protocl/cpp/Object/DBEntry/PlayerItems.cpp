@@ -12,7 +12,7 @@ PlayerItems::~PlayerItems()
 {
 }
 
-bool PlayerItems::Build()
+bool PlayerItems::Build( bool isResult )
 {
 	if ( m_items.size() > 200 ) 
 	{

@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\common\BuddyData.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Client.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Message.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Socket.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Stream.cpp" />
@@ -52,7 +53,6 @@
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\LoginState.cpp" />
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\User.cpp" />
     <ClCompile Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.cpp" />
-    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp" />
     <ClCompile Include="..\..\..\SDK\mdk_ex\Buffer.cpp" />
     <ClCompile Include="..\..\..\SDK\mdk_ex\Console.cpp" />
     <ClCompile Include="..\..\..\SDK\mdk_ex\FastMemoryPool.cpp" />
@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\common\BuddyData.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Client.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Socket.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Stream.h" />
@@ -106,7 +107,6 @@
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\LoginState.h" />
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\User.h" />
     <ClInclude Include="..\..\..\SDK\Interface\ClusterMgr\cpp\ClusterMgr.h" />
-    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h" />
     <ClInclude Include="..\..\..\SDK\mdk_ex\Buffer.h" />
     <ClInclude Include="..\..\..\SDK\mdk_ex\Console.h" />
     <ClInclude Include="..\..\..\SDK\mdk_ex\FastMemoryPool.h" />

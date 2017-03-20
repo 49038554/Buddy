@@ -7,7 +7,7 @@ namespace msg
 Buffer::Buffer()
 {
 	BindSetting(m_buffer, MAX_MSG_SIZE, BYTE_ORDER, 0);
-	m_code = ResultCode::Success;
+	m_code = ResultCode::success;
 }
 
 Buffer::~Buffer()
@@ -22,6 +22,7 @@ bool Buffer::Build( bool isResult )
 	char buf[10240];
 	int dataSize = Size() - headerSize;
 	if ( dataSize < 0 ) return false;
+	StartAdd();
 	memcpy(buf, &m_buffer[headerSize], dataSize );
 
 	m_size = HeaderSize();
@@ -40,7 +41,7 @@ bool Buffer::FillTransmitParam()
 	if ( !AddData(m_ip[2]) ) return false;//用户id(TCP接入服填写)
 	if ( !AddData(m_ip[3]) ) return false;//用户id(TCP接入服填写)
 	if ( !AddData((char)m_code) ) return false;//结果码 0成功 >0失败
-	if ( ResultCode::Success != m_code )
+	if ( ResultCode::success != m_code )
 	{
 		if ( !AddData(m_reason) ) return false;//失败原因(成功时不填写)
 	}
@@ -50,8 +51,7 @@ bool Buffer::FillTransmitParam()
 
 bool Buffer::Parse()
 {
-	if ( -1 == Size() ) return false;
-	ReadHeader();
+	if ( !ReadHeader() ) return false;
 	if ( !GetData(m_connectId) ) return false;//链接Id	Tcp服务填写（回应必填）
 	if ( !GetData(m_objectId) ) return false;//用户id(TCP接入服填写)
 	if ( !GetData(m_ip[0]) ) return false;//用户id(TCP接入服填写)
@@ -61,7 +61,7 @@ bool Buffer::Parse()
 	char val;
 	if ( !GetData(val) ) return false;//结果码 0成功 >0失败
 	m_code = (ResultCode::ResultCode) val;
-	if ( ResultCode::Success != m_code )
+	if ( ResultCode::success != m_code )
 	{
 		if ( !GetData(m_reason) ) return false;//失败原因(成功时不填写)
 	}

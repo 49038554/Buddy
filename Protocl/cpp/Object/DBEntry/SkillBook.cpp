@@ -12,7 +12,7 @@ SkillBook::~SkillBook()
 {
 }
 
-bool SkillBook::Build()
+bool SkillBook::Build( bool isResult )
 {
 	unsigned char count = m_skills.size();
 	if ( 0 >= count || count > 50 ) 

@@ -13,7 +13,7 @@ BuddyBook::~BuddyBook()
 {
 }
 
-bool BuddyBook::Build()
+bool BuddyBook::Build( bool isResult )
 {
 	unsigned char count = m_buddys.size();
 	if ( 0 >= count || count > 20 ) 

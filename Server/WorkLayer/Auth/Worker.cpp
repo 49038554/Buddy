@@ -53,12 +53,12 @@ Worker::Worker(void)
 	int         curSvrPORT = m_cfg["opt"]["listen"];
 
 	// 从集群配置服获取集群配置信息
-	m_cluster.SetSvr(m_cfg["ClusterMgr"]["ip"], m_cfg["ClusterMgr"]["port"]);
+	m_cluster.SetService(m_cfg["ClusterMgr"]["ip"], m_cfg["ClusterMgr"]["port"]);
 	m_log.Info("Run", "集群配置服务(%s %d)", std::string(m_cfg["ClusterMgr"]["ip"]).c_str(), int(m_cfg["ClusterMgr"]["port"]));
 
 	msg::Cluster clusterInfo;
 	std::string  reason;
-	if (SyncClient::SUCESS != m_cluster.GetCluster(Moudle::all, clusterInfo, reason))
+	if (ResultCode::success != m_cluster.GetCluster(Moudle::all, clusterInfo, reason))
 	{
 		m_log.Info( "Error", "获取集群信息失败:%s", reason.c_str() );
 		mdk::mdk_assert(false);
@@ -145,15 +145,19 @@ void Worker::OnCloseConnect(mdk::NetHost &host)
 void Worker::OnMsg(mdk::NetHost& host)
 {
 	msg::Buffer buffer;
-	if (! host.Recv(buffer, buffer.HeaderSize(), false)) return;
-	if (-1 == buffer.Size())
+	if ( !host.Recv(buffer, buffer.HeaderSize(), false) ) return;
+	if ( !buffer.ReadHeader() )
 	{
-		m_log.Info("Error", "非法报文,断开连接!!!" );
-		host.Close();
+		if ( !host.IsServer() ) host.Close();
+		m_log.Info("Error", "报文头错误");
 		return;
 	}
-	if (! host.Recv(buffer, buffer.Size())) return;
-
+	if ( !host.Recv(buffer, buffer.Size()) ) return;
+	if ( Moudle::Auth != buffer.MoudleId() )
+	{
+		m_log.Info("Error", "不是认证模块报文");
+		return;
+	}
 	// 按照msgId进行消息处理，并过滤掉忽略的消息，记入日志
 	int msgId = buffer.Id();
 	if (MsgId::userRegister == msgId) OnUserRegister(host, buffer);
@@ -179,7 +183,7 @@ bool Worker::OnUserRegister(mdk::NetHost& host, msg::Buffer& buffer)
 	{
 		if ( !msg.Parse() )
 		{
-			msg.m_code   = ResultCode::FormatInvalid;
+			msg.m_code   = ResultCode::msgError;
 			msg.m_reason = "报文格式非法";
 			break;
 		}
@@ -188,7 +192,7 @@ bool Worker::OnUserRegister(mdk::NetHost& host, msg::Buffer& buffer)
 		pDBCenter->CreateUser(msg); 
 	}
 	while (false);
-	if ( ResultCode::Success != msg.m_code )
+	if ( ResultCode::success != msg.m_code )
 	{
 		m_log.Info("Error", "注册失败：%s", msg.m_reason.c_str());
 	}
@@ -207,7 +211,7 @@ bool Worker::OnUserLogin(mdk::NetHost& host, msg::Buffer& buffer)
 	{
 		if ( !msg.Parse() )
 		{
-			msg.m_code   = ResultCode::FormatInvalid;
+			msg.m_code   = ResultCode::msgError;
 			msg.m_reason = "报文格式非法";
 			break;
 		}
@@ -241,7 +245,7 @@ bool Worker::OnUserLogin(mdk::NetHost& host, msg::Buffer& buffer)
 			}
 			if ( logined )
 			{
-				msg.m_code = ResultCode::Refuse;
+				msg.m_code = ResultCode::refuse;
 				msg.m_reason = "已在其它地方登录";
 				break;
 			}
@@ -252,7 +256,7 @@ bool Worker::OnUserLogin(mdk::NetHost& host, msg::Buffer& buffer)
 		userInfo.id = userId;
 		if ( Redis::success != m_cache.GetUserInfo(userInfo))
 		{
-			msg.m_code = ResultCode::DBError;
+			msg.m_code = ResultCode::refuse;
 			msg.m_reason = "获取用户信息失败！";
 			break;
 		}
@@ -267,7 +271,7 @@ bool Worker::OnUserLogin(mdk::NetHost& host, msg::Buffer& buffer)
 		// 设置登陆状态
 		if ( !SetLoginState(host.ID(), userId, msg.m_clientType, true) )
 		{
-			msg.m_code = ResultCode::DBError;
+			msg.m_code = ResultCode::refuse;
 			msg.m_reason = "保存登录状态失败！";
 			break;
 		}
@@ -277,7 +281,7 @@ bool Worker::OnUserLogin(mdk::NetHost& host, msg::Buffer& buffer)
 		msg.m_nick = userInfo.nickName;
 	}
 	while (false);
-	if ( ResultCode::Success != msg.m_code )
+	if ( ResultCode::success != msg.m_code )
 	{
 		m_log.Info("Error", "登录失败：%s", msg.m_reason.c_str());
 	}
@@ -338,7 +342,7 @@ bool Worker::OnUserResetPwd(mdk::NetHost& host, msg::Buffer& buffer)
 	{
 		if ( !msg.Parse() )
 		{
-			msg.m_code   = ResultCode::FormatInvalid;
+			msg.m_code   = ResultCode::msgError;
 			msg.m_reason = "报文格式非法";
 			break;
 		}
@@ -347,7 +351,7 @@ bool Worker::OnUserResetPwd(mdk::NetHost& host, msg::Buffer& buffer)
 		pDBCenter->ResetUserPwd(msg);
 	} 
 	while (false);
-	if ( ResultCode::Success != msg.m_code )
+	if ( ResultCode::success != msg.m_code )
 	{
 		m_log.Info("Error", "修改密码失败：%s", msg.m_reason.c_str());
 	}
@@ -367,7 +371,7 @@ bool Worker::OnUserBindingPhone(mdk::NetHost& host, msg::Buffer& buffer)
 	{
 		if ( !msg.Parse() )
 		{
-			msg.m_code   = ResultCode::FormatInvalid;
+			msg.m_code   = ResultCode::msgError;
 			msg.m_reason = "报文格式非法";
 			break;
 		}
@@ -376,7 +380,7 @@ bool Worker::OnUserBindingPhone(mdk::NetHost& host, msg::Buffer& buffer)
 		pDBCenter->BindingPhone(msg);
 	} 
 	while (false);
-	if ( ResultCode::Success != msg.m_code )
+	if ( ResultCode::success != msg.m_code )
 	{
 		m_log.Info("Error", "绑定手机失败：%s", msg.m_reason.c_str());
 	}

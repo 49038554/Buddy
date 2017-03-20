@@ -20,7 +20,7 @@ bool TreePlant::Build(bool isResult)
 	if ( !AddData(m_houseId) ) return false;
 
 	//回应参数
-	if ( !isResult || ResultCode::Success != m_code ) return true;
+	if ( !isResult || ResultCode::success != m_code ) return true;
 	if ( !AddData(m_treeId) ) return false;
 
 	return true;
@@ -33,7 +33,7 @@ bool TreePlant::Parse()
 	if ( !GetData(m_houseId) ) return false;
 
 	//回应参数
-	if ( !IsResult() || ResultCode::Success != m_code ) return true;
+	if ( !IsResult() || ResultCode::success != m_code ) return true;
 	if ( !GetData(m_treeId) ) return false;
 
 	return true;

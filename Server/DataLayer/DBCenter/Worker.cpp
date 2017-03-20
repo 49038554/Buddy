@@ -56,12 +56,12 @@ Worker::Worker(void)
 	int         curSvrPORT = m_cfg["opt"]["listen"];
 
 	// 从集群配置服获取集群配置信息
-	m_cluster.SetSvr(m_cfg["ClusterMgr"]["ip"], m_cfg["ClusterMgr"]["port"]);
+	m_cluster.SetService(m_cfg["ClusterMgr"]["ip"], m_cfg["ClusterMgr"]["port"]);
 	m_log.Info("Run", "集群配置服务(%s %d)", std::string(m_cfg["ClusterMgr"]["ip"]).c_str(), int(m_cfg["ClusterMgr"]["port"]));
 
 	msg::Cluster clusterInfo;
 	std::string  reason;
-	if (SyncClient::SUCESS != m_cluster.GetCluster(Moudle::all, clusterInfo, reason))
+	if (ResultCode::success != m_cluster.GetCluster(Moudle::all, clusterInfo, reason))
 	{
 		m_log.Info( "Error", "获取集群信息失败:%s", reason.c_str() );
 		mdk::mdk_assert(false);
@@ -189,14 +189,14 @@ void Worker::OnCloseConnect(mdk::STNetHost &host)
 void Worker::OnMsg(mdk::STNetHost& host)
 {
 	msg::Buffer buffer;
-	if (!host.Recv(buffer, buffer.HeaderSize(), false)) return;
-	if (-1 == buffer.Size())
+	if ( !host.Recv(buffer, buffer.HeaderSize(), false) ) return;
+	if ( !buffer.ReadHeader() )
 	{
-		m_log.Info("Error", "非法报文长度! 强制断开");
-		host.Close();
+		if ( !host.IsServer() ) host.Close();
+		m_log.Info("Error","报文头错误");
 		return;
 	}
-	if (! host.Recv(buffer, buffer.Size())) return;
+	if ( !host.Recv(buffer, buffer.Size()) ) return;
 	if ( buffer.IsResult() )
 	{
 		m_log.Info("Error", "未预料的结果报文! 强制断开");
@@ -244,7 +244,7 @@ bool Worker::OnUserRegister(mdk::STNetHost& host, msg::Buffer& buffer)
 	{
 		if ( !msg.Parse() )
 		{
-			msg.m_code   = ResultCode::FormatInvalid;
+			msg.m_code   = ResultCode::msgError;
 			msg.m_reason = "报文格式非法";
 			break;
 		}
@@ -252,13 +252,13 @@ bool Worker::OnUserRegister(mdk::STNetHost& host, msg::Buffer& buffer)
 		Redis::Result ret = m_cache.GetUserId(msg.m_accountType, msg.m_account, userId);
 		if ( Redis::unsvr == ret )
 		{
-			msg.m_code   = ResultCode::ResultCode(ErrorCode::EC_UserExist);
+			msg.m_code   = ResultCode::refuse;
 			msg.m_reason = "Redis服务异常";
 			break;
 		}
 		if (  Redis::success == ret )
 		{
-			msg.m_code   = ResultCode::ResultCode(ErrorCode::EC_UserExist);
+			msg.m_code   = ResultCode::refuse;
 			msg.m_reason = "账号已存在！";
 			break;
 		}
@@ -286,16 +286,15 @@ bool Worker::OnResetPassword(mdk::STNetHost& host, msg::Buffer& buffer)
 	{
 		if ( !msg.Parse() )
 		{
-			msg.m_code   = ResultCode::FormatInvalid;
+			msg.m_code   = ResultCode::msgError;
 			msg.m_reason = "报文格式非法";
-			m_log.Info("Error", "报文格式非法!");
 			break;
 		}
 		Cache::User ui;
 		ui.id = msg.m_objectId;
 		if ( Redis::success != m_cache.GetUserInfo(ui) )
 		{
-			msg.m_code   = ResultCode::DBError;
+			msg.m_code   = ResultCode::refuse;
 			msg.m_reason = "读Redis失败";
 			break;
 		}
@@ -304,7 +303,7 @@ bool Worker::OnResetPassword(mdk::STNetHost& host, msg::Buffer& buffer)
 		MySqlClient* pMysql = m_mySQLCluster.Node("Buddy", msg.m_objectId);
 		if (!pMysql)
 		{
-			msg.m_code   = ResultCode::DBError;
+			msg.m_code   = ResultCode::refuse;
 			msg.m_reason = "找不到Buddy数据库结点";
 			break;
 		}
@@ -314,20 +313,20 @@ bool Worker::OnResetPassword(mdk::STNetHost& host, msg::Buffer& buffer)
 			ui.pwd.c_str(), ui.id);
 		if (!pMysql->ExecuteSql(sql))
 		{
-			msg.m_code   = ResultCode::DBError;
+			msg.m_code   = ResultCode::refuse;
 			msg.m_reason = "修改用户信息失败:";
 			msg.m_reason += pMysql->GetLastError();
 			break;
 		}
 		if ( !m_cache.SetUserInfo(ui) )
 		{
-			msg.m_code   = ResultCode::DBError;
+			msg.m_code   = ResultCode::refuse;
 			msg.m_reason = "写缓存失败";
 			break;
 		}
 	}
 	while (false);
-	if ( ResultCode::Success != msg.m_code )
+	if ( ResultCode::success != msg.m_code )
 	{
 		m_log.Info("Error", "修改密码失败：%s", msg.m_reason.c_str());
 	}
@@ -346,7 +345,7 @@ bool Worker::OnBindingPhone(mdk::STNetHost& host, msg::Buffer& buffer)
 	{
 		if ( !msg.Parse() )
 		{
-			msg.m_code   = ResultCode::FormatInvalid;
+			msg.m_code   = ResultCode::msgError;
 			msg.m_reason = "报文格式非法";
 			break;
 		}
@@ -354,7 +353,7 @@ bool Worker::OnBindingPhone(mdk::STNetHost& host, msg::Buffer& buffer)
 		MySqlClient *pMysql = m_mySQLCluster.Node("Auth", msg.m_phone);
 		if (!pMysql)
 		{
-			msg.m_code   = ResultCode::DBError;
+			msg.m_code   = ResultCode::refuse;
 			msg.m_reason = "找不到Auth数据库结点";
 			break;
 		}
@@ -363,7 +362,7 @@ bool Worker::OnBindingPhone(mdk::STNetHost& host, msg::Buffer& buffer)
 		sprintf(sql, "select * from bind_mobile where id = %d", msg.m_objectId);
 		if ( !pMysql->ExecuteSql(sql) )
 		{
-			msg.m_code   = ResultCode::DBError;
+			msg.m_code   = ResultCode::refuse;
 			msg.m_reason = "查询Auth库失败";
 			msg.m_reason += pMysql->GetLastError();
 			break;
@@ -380,21 +379,21 @@ bool Worker::OnBindingPhone(mdk::STNetHost& host, msg::Buffer& buffer)
 		}
 		if ( !pMysql->ExecuteSql(sql) )
 		{
-			msg.m_code   = ResultCode::DBError;
+			msg.m_code   = ResultCode::refuse;
 			msg.m_reason = "DB Error!";
 			msg.m_reason += pMysql->GetLastError();
 			break;
 		}
 		if ( !m_cache.BindUserName(AccountType::mobile, msg.m_phone, msg.m_objectId) )
 		{
-			msg.m_code   = ResultCode::DBError;
+			msg.m_code   = ResultCode::refuse;
 			msg.m_reason = "缓存账号信息失败";
 			msg.m_reason += pMysql->GetLastError();
 			break;
 		}
 	}
 	while (false);
-	if ( ResultCode::Success != msg.m_code )
+	if ( ResultCode::success != msg.m_code )
 	{
 		m_log.Info("Error", "绑定手机失败：%s", msg.m_reason.c_str());
 	}
@@ -410,7 +409,7 @@ bool Worker::CreateUser(msg::UserRegister& userRegister, Cache::User& user)
 	//创建数据
 	if (! CreateId(user.id)) 
 	{
-		userRegister.m_code   = ResultCode::Refuse;
+		userRegister.m_code   = ResultCode::refuse;
 		userRegister.m_reason = "Id资源用完！";
 		return false;
 	}
@@ -425,7 +424,7 @@ bool Worker::CreateUser(msg::UserRegister& userRegister, Cache::User& user)
 	MySqlClient* pMysql = m_mySQLCluster.Node("Auth", userRegister.m_account);
 	if ( !pMysql ) 
 	{
-		userRegister.m_code   = ResultCode::DBError;
+		userRegister.m_code   = ResultCode::refuse;
 		userRegister.m_reason = "找不到Auth数据库结点";
 		return false;
 	}
@@ -443,13 +442,13 @@ bool Worker::CreateUser(msg::UserRegister& userRegister, Cache::User& user)
 			userRegister.m_account.c_str(), user.id);
 		break;
 	default:
-		userRegister.m_code   = ResultCode::Refuse;
+		userRegister.m_code   = ResultCode::refuse;
 		userRegister.m_reason = "非法账号类型";
 		return false;
 	}
 	if (! pMysql->ExecuteSql(sql))
 	{
-		userRegister.m_code   = ResultCode::DBError;
+		userRegister.m_code   = ResultCode::refuse;
 		userRegister.m_reason = "写Auth库失败：";
 		userRegister.m_reason += pMysql->GetLastError();
 		return false;
@@ -457,7 +456,7 @@ bool Worker::CreateUser(msg::UserRegister& userRegister, Cache::User& user)
 	pMysql = m_mySQLCluster.Node("Buddy", user.id);
 	if ( !pMysql ) 
 	{
-		userRegister.m_code = ResultCode::DBError;
+		userRegister.m_code = ResultCode::refuse;
 		userRegister.m_reason = "找不到Buddy数据库结点";
 		return false;
 	}
@@ -466,7 +465,7 @@ bool Worker::CreateUser(msg::UserRegister& userRegister, Cache::User& user)
 				user.id, user.pwd.c_str(), user.randKey.c_str(), user.nickName.c_str());
 	if (! pMysql->ExecuteSql(sql))
 	{
-		userRegister.m_code   = ResultCode::DBError;
+		userRegister.m_code   = ResultCode::refuse;
 		userRegister.m_reason = "写Buddy库失败：";
 		userRegister.m_reason += pMysql->GetLastError();
 		return false;
@@ -475,13 +474,13 @@ bool Worker::CreateUser(msg::UserRegister& userRegister, Cache::User& user)
 	//修改redis
 	if ( !m_cache.SetUserInfo(user) )
 	{
-		userRegister.m_code   = ResultCode::DBError;
+		userRegister.m_code   = ResultCode::refuse;
 		userRegister.m_reason = "写Redis失败";
 		return false;
 	}
 	if ( !m_cache.BindUserName(userRegister.m_accountType, userRegister.m_account, user.id) )
 	{
-		userRegister.m_code   = ResultCode::DBError;
+		userRegister.m_code   = ResultCode::refuse;
 		userRegister.m_reason = "写Redis失败";
 		return false;
 	}
@@ -539,7 +538,7 @@ void Worker::OnAddBuddy(mdk::STNetHost &host, msg::Buffer &buffer)
 	{
 		if ( !msg.Parse() )
 		{
-			msg.m_code   = ResultCode::FormatInvalid;
+			msg.m_code   = ResultCode::msgError;
 			msg.m_reason = "报文格式非法";
 			break;
 		}
@@ -560,13 +559,13 @@ bool Worker::SetBuddy(mdk::uint32 userId, mdk::uint32 buddyId, msg::AddBuddy &ms
 	std::map<mdk::uint32, mdk::uint32> buddyIds;
 	if ( Redis::unsvr == m_cache.GetBuddys(userId, buddyIds) )
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "Redis服务异常";
 		return false;
 	}
 	if ( buddyIds.end() != buddyIds.find(buddyId) )
 	{
-		msg.m_code   = ResultCode::Refuse;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "已经是小伙伴";
 		return true;
 	}
@@ -576,20 +575,20 @@ bool Worker::SetBuddy(mdk::uint32 userId, mdk::uint32 buddyId, msg::AddBuddy &ms
 	MySqlClient *pMysql = m_mySQLCluster.Node("Buddy", userId);
 	if (!pMysql)
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "找不到Buddy数据库结点";
 		return false;
 	}
 	if ( !pMysql->ExecuteSql(sql) )
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "修改数据库失败:";
 		msg.m_reason += pMysql->GetLastError();
 		return false;
 	}
 	if ( !m_cache.AddBuddy(userId, buddyId) )
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "写缓存失败";
 		return false;
 	}
@@ -605,7 +604,7 @@ void Worker::OnDelBuddy(mdk::STNetHost &host, msg::Buffer &buffer)
 	{
 		if ( !msg.Parse() )
 		{
-			msg.m_code   = ResultCode::FormatInvalid;
+			msg.m_code   = ResultCode::msgError;
 			msg.m_reason = "报文格式非法";
 			break;
 		}
@@ -629,20 +628,20 @@ bool Worker::DelBuddy(mdk::uint32 userId, mdk::uint32 buddyId, msg::DelBuddy &ms
 	MySqlClient *pMysql = m_mySQLCluster.Node("Buddy", userId);
 	if (!pMysql)
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "找不到Buddy数据库结点";
 		return false;
 	}
 	if ( !pMysql->ExecuteSql(sql) )
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "修改数据库失败:";
 		msg.m_reason += pMysql->GetLastError();
 		return false;
 	}
 	if ( !m_cache.DelBuddy(userId, buddyId) )
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "写缓存失败";
 		return false;
 	}
@@ -658,7 +657,7 @@ void Worker::OnSetUserData(mdk::STNetHost &host, msg::Buffer &buffer)
 	{
 		if ( !msg.Parse() )
 		{
-			msg.m_code   = ResultCode::FormatInvalid;
+			msg.m_code   = ResultCode::msgError;
 			msg.m_reason = "报文格式非法";
 			break;
 		}
@@ -680,13 +679,13 @@ bool Worker::SetUserData(msg::SetUserData &msg)
 	Redis::Result ret = m_cache.GetUserInfo(ui);
 	if ( Redis::unsvr == ret )
 	{
-		msg.m_code   = ResultCode::SvrError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "redis无法访问";
 		return false;
 	}
 	if ( Redis::nullData == ret )
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "用户数据不存在";
 		return false;
 	}
@@ -730,20 +729,20 @@ bool Worker::SetUserData(msg::SetUserData &msg)
 	MySqlClient *pMysql = m_mySQLCluster.Node("Buddy", msg.m_userId);
 	if (!pMysql)
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "找不到Buddy数据库结点";
 		return false;
 	}
 	if ( !pMysql->ExecuteSql(sql) )
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "修改数据库失败:";
 		msg.m_reason += pMysql->GetLastError();
 		return false;
 	}
 	if ( !m_cache.SetUserInfo(ui) )
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "写缓存失败";
 		return false;
 	}
@@ -1228,7 +1227,7 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() )
 	{
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code   = ResultCode::msgError;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -1236,7 +1235,7 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 	}
 	if ( m_gameVersion == msg.m_dataVersion )//版本一致
 	{
-		msg.m_code   = ResultCode::Success;
+		msg.m_code   = ResultCode::success;
 		msg.Build(true);
 		host.Send(msg, msg.Size());
 		return true;
@@ -1364,7 +1363,7 @@ bool Worker::OnSetupVersion(mdk::STNetHost &host, msg::Buffer &buffer)
 			host.Send(msg, msg.Size());
 		}
 	}
-	msg.m_code = ResultCode::Success;
+	msg.m_code = ResultCode::success;
 	msg.Build(true);
 	host.Send(msg, msg.Size());
 	return true;
@@ -1376,7 +1375,7 @@ void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() )
 	{
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code   = ResultCode::msgError;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -1384,7 +1383,7 @@ void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
 	}
 	if ( !CreatePlayer(msg.m_objectId) )
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "创建玩家数据失败";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -1395,7 +1394,7 @@ void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
 	MySqlClient *pMysql = m_mySQLCluster.Node("GameBuddy", msg.m_objectId);
 	if (!pMysql)
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "找不到GameBuddy数据库结点";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -1485,7 +1484,7 @@ void Worker::OnGetPlayerData(mdk::STNetHost &host, msg::Buffer &buffer)
 		}
 	}
 
-	msg.m_code = ResultCode::Success;
+	msg.m_code = ResultCode::success;
 	msg.Build(true);
 	host.Send(msg, msg.Size());
 
@@ -1551,14 +1550,14 @@ bool Worker::ReadPlayer(MySqlClient *pMysql, data::PLAYER &player, ResultCode::R
 	sprintf( sql, "select * from player where userId = %d ", player.playerId );
 	if ( !pMysql->ExecuteSql(sql) ) 
 	{
-		result = ResultCode::DBError;
+		result = ResultCode::refuse;
 		reason = "访问玩家数据失败:";
 		reason += pMysql->GetLastError();
 		return false;
 	}
 	if ( pMysql->IsEmpty() ) 
 	{
-		result = ResultCode::DBError;
+		result = ResultCode::refuse;
 		reason = "玩家数据不存在";
 		return false;
 	}
@@ -1592,14 +1591,14 @@ bool Worker::ReadPets(MySqlClient *pMysql, unsigned int userId, std::vector<data
 	sprintf( sql, "select * from pet where userId = %d ", userId );
 	if ( !pMysql->ExecuteSql(sql) ) 
 	{
-		result = ResultCode::DBError;
+		result = ResultCode::refuse;
 		reason = "访问宠物数据失败:";
 		reason += pMysql->GetLastError();
 		return false;
 	}
 	if ( pMysql->IsEmpty() ) 
 	{
-		result = ResultCode::DBError;
+		result = ResultCode::refuse;
 		reason = "玩家没有宠物";
 		return false;
 	}
@@ -1640,7 +1639,7 @@ bool Worker::ReadPets(MySqlClient *pMysql, unsigned int userId, std::vector<data
 		sprintf( sql, "select * from pet_skill where userId = %d and petId = %d", userId, pets[i].id );
 		if ( !pMysql->ExecuteSql(sql) ) 
 		{
-			result = ResultCode::DBError;
+			result = ResultCode::refuse;
 			reason = "访问宠物数据失败:";
 			reason += pMysql->GetLastError();
 			return false;
@@ -1665,7 +1664,7 @@ bool Worker::ReadPlayerItems(MySqlClient *pMysql, unsigned int userId, std::vect
 	sprintf( sql, "select * from player_item where userId = %d ", userId );
 	if ( !pMysql->ExecuteSql(sql) ) 
 	{
-		result = ResultCode::DBError;
+		result = ResultCode::refuse;
 		reason = "访问物品数据失败:";
 		reason += pMysql->GetLastError();
 		return false;
@@ -1690,7 +1689,7 @@ void Worker::OnBuildHouse(mdk::STNetHost &host, msg::Buffer &buffer)
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() )
 	{
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code   = ResultCode::msgError;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -1699,13 +1698,13 @@ void Worker::OnBuildHouse(mdk::STNetHost &host, msg::Buffer &buffer)
 	msg.m_buildId = AddHouse(msg.m_objectId, msg.m_name, msg.m_address, msg.m_longitude, msg.m_latitude, msg.m_radius, msg.m_coin );
 	if ( 0 == msg.m_buildId )
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "创建房子数据失败";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
 		return;
 	}
-	msg.m_code   = ResultCode::Success;
+	msg.m_code   = ResultCode::success;
 	msg.Build(true);
 	host.Send(msg, msg.Size());
 	return;
@@ -1717,7 +1716,7 @@ void Worker::OnTreePlant(mdk::STNetHost &host, msg::Buffer &buffer)
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() )
 	{
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code   = ResultCode::msgError;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -1726,7 +1725,7 @@ void Worker::OnTreePlant(mdk::STNetHost &host, msg::Buffer &buffer)
 	int coin = 0;
 	if ( !UseItem(msg.m_objectId, 8, 1) )
 	{
-		msg.m_code   = ResultCode::Refuse;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "物品不足";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -1735,14 +1734,14 @@ void Worker::OnTreePlant(mdk::STNetHost &host, msg::Buffer &buffer)
 	msg.m_treeId = AddTree(msg.m_objectId, msg.m_houseId);
 	if ( 0 == msg.m_treeId)
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "种果树失败";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
 		return;
 	}
 
-	msg.m_code = ResultCode::Success;
+	msg.m_code = ResultCode::success;
 	msg.Build(true);
 	host.Send(msg, msg.Size());
 	return;
@@ -1754,7 +1753,7 @@ void Worker::OnSyncPets(mdk::STNetHost &host, msg::Buffer &buffer)
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() )
 	{
-		msg.m_code = ResultCode::FormatInvalid;
+		msg.m_code = ResultCode::msgError;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -1783,7 +1782,7 @@ void Worker::OnSyncItem(mdk::STNetHost &host, msg::Buffer &buffer)
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() )
 	{
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code   = ResultCode::msgError;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -1807,7 +1806,7 @@ void Worker::OnSyncPlayer(mdk::STNetHost &host, msg::Buffer &buffer)
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() )
 	{
-		msg.m_code   = ResultCode::FormatInvalid;
+		msg.m_code   = ResultCode::msgError;
 		msg.m_reason = "报文格式非法";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -1815,7 +1814,7 @@ void Worker::OnSyncPlayer(mdk::STNetHost &host, msg::Buffer &buffer)
 	}
 	if ( msg.m_objectId != msg.m_player.playerId )
 	{
-		msg.m_code   = ResultCode::Refuse;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "非本用户操作";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -1824,7 +1823,7 @@ void Worker::OnSyncPlayer(mdk::STNetHost &host, msg::Buffer &buffer)
 	SyncPlayer(msg.m_player);
 	if ( !msg.m_player.synced ) 
 	{
-		msg.m_code   = ResultCode::DBError;
+		msg.m_code   = ResultCode::refuse;
 		msg.m_reason = "访问失败";
 	}
 	msg.Build(true);

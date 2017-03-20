@@ -83,9 +83,6 @@
     <ClCompile Include="..\..\..\WorkLayer\Auth\Worker.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\SDK\Interface\SyncClient.cpp">
-      <Filter>Interface</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\SDK\DBCenter\Data\IdList.cpp">
       <Filter>DBCenter\Data</Filter>
     </ClCompile>
@@ -140,6 +137,9 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.cpp">
       <Filter>Message\Object\DataBase</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\base\Client.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Message.h">
@@ -180,9 +180,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\WorkLayer\Auth\Worker.h">
       <Filter>Main</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\SDK\Interface\SyncClient.h">
-      <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\SDK\DBCenter\Data\IdList.h">
       <Filter>DBCenter\Data</Filter>
@@ -237,6 +234,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\DBEntry\SkillBook.h">
       <Filter>Message\Object\DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\base\Client.h">
+      <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 #ifndef __DB_CENTER_H__
 #define __DB_CENTER_H__
 
-#include "Protocl/cpp/base/Socket.h"
+#include "Protocl/cpp/base/Client.h"
 #include "Protocl/cpp/Object/Auth/UserRegister.h"
 #include "Protocl/cpp/Object/Auth/ResetPassword.h"
 #include "Protocl/cpp/Object/Auth/BindingPhone.h"
@@ -20,7 +20,7 @@
 #include <map>
 
 //DBCenter访问client类(非线程安全)
-class DBCenter
+class DBCenter : public net::Client
 {
 public:
 	DBCenter(void);
@@ -47,24 +47,6 @@ public:
 		unsigned short &buddyVersion, std::vector<data::BUDDY> &buddys,
 		unsigned short &lbsVersion, std::vector<data::BUDDY_MAP> &buddyMaps
 		);
-
-	// 设置服务器连接信息(IP, PORT)
-	void SetServerInfo(const std::string& strIP, int nPort);
-	// 获取服务器连接信息(IP, PORT)
-	void GetServerInfo(std::string& strIP, int& nPort);
-
-	// 连接服务器
-	bool Connect(void);
-	// 断开服务器
-	void Close(void);
-
-	// 发送数据
-	bool Send(msg::Buffer& msg);
-	// 接收数据
-	bool Receive(msg::Buffer& msg);
-
-	// 连接，发送，接收整合
-	bool doLogic(msg::Buffer& msg);
 
 private:
 	net::Socket* m_pSocket;       // Socket对象

@@ -65,12 +65,12 @@ Worker::Worker(void)
 	int         curSvrPORT = m_cfg["opt"]["listen"];
 
 	// 从集群配置服获取集群配置信息
-	m_cluster.SetSvr(m_cfg["ClusterMgr"]["ip"], m_cfg["ClusterMgr"]["port"]);
+	m_cluster.SetService(m_cfg["ClusterMgr"]["ip"], m_cfg["ClusterMgr"]["port"]);
 	m_log.Info("Run", "集群配置服务(%s %d)", std::string(m_cfg["ClusterMgr"]["ip"]).c_str(), int(m_cfg["ClusterMgr"]["port"]));
 
 	msg::Cluster clusterInfo;
 	std::string  reason;
-	if (SyncClient::SUCESS != m_cluster.GetCluster(Moudle::all, clusterInfo, reason))
+	if (ResultCode::success != m_cluster.GetCluster(Moudle::all, clusterInfo, reason))
 	{
 		m_log.Info( "Error", "获取集群信息失败:%s", reason.c_str() );
 		mdk::mdk_assert(false);
@@ -221,14 +221,14 @@ void Worker::OnCloseConnect(mdk::NetHost &host)
 void Worker::OnMsg(mdk::NetHost& host)
 {
 	msg::Buffer buffer;
-	if (! host.Recv(buffer, buffer.HeaderSize(), false)) return;
-	if (-1 == buffer.Size())
+	if ( !host.Recv(buffer, buffer.HeaderSize(), false) ) return;
+	if ( !buffer.ReadHeader() )
 	{
-		m_log.Info("Error", "非法报文,断开连接!!!" );
-		host.Close();
+		if ( !host.IsServer() ) host.Close();
+		m_log.Info("Error","报文头错误");
 		return;
 	}
-	if (! host.Recv(buffer, buffer.Size())) return;
+	if ( !host.Recv(buffer, buffer.Size()) ) return;
 	if ( buffer.IsResult() )
 	{
 		m_log.Info("Error", "未预料的回应,断开连接!!!" );
@@ -324,7 +324,7 @@ void Worker::OnSetupVersion(mdk::NetHost &host, msg::Buffer &buf)
 	memcpy(msg, buf, buf.Size());
 	if ( !msg.Parse() )
 	{
-		msg.m_code = ResultCode::FormatInvalid;
+		msg.m_code = ResultCode::msgError;
 		msg.m_reason = "非法报文格式";
 		msg.Build(true);
 		host.Send(msg, msg.Size());
@@ -413,7 +413,7 @@ void Worker::OnSetupVersion(mdk::NetHost &host, msg::Buffer &buf)
 		}
 	}
 
-	msg.m_code = ResultCode::Success;
+	msg.m_code = ResultCode::success;
 	msg.Build(true);
 	host.Send(msg, msg.Size());
 	return;

@@ -31,7 +31,7 @@ bool UserLogout::Parse()
 	if ( !GetData(val) ) return false; m_clientType  = (ClientType::ClientType)val;
 
 	//回应参数
-	if ( !IsResult() || ResultCode::Success != m_code ) return true;
+	if ( !IsResult() || ResultCode::success != m_code ) return true;
 
 	return true;
 }

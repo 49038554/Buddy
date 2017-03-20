@@ -60,7 +60,7 @@ bool DBCenterCluster::CheckCluster()
 void DBCenterCluster::AddNode( int nodeId, const std::string &ip, int port)
 {
 	DBCenter *pDB = new DBCenter();
-	pDB->SetServerInfo(ip, port);
+	pDB->SetService(ip, port);
 	m_nodes[nodeId] = pDB;
 }
 
