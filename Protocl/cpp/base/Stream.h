@@ -36,6 +36,7 @@ public:
 	operator unsigned char*();
 	operator char*();
 	operator void*();
+	void SetSize(int size);
 	int Size();//实际长度，非法值，小于0
 //////////////////////////////////////////////////////////////////////////
 //添加参数,成功返回true，失败返回false

@@ -297,6 +297,11 @@ Stream::operator void*()
 	return m_buffer;
 }
 
+void Stream::SetSize(int size)
+{
+	m_size = size;
+}
+
 int Stream::Size()
 {
 	return m_size;

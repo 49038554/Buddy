@@ -46,7 +46,6 @@ bool Event::Parse()
 	if ( !GetData(m_holdTime) ) return false;//有效时间
 	int size = 0;
 	if ( !GetData(m_msg, size) ) return false;//原始消息流
-	if ( 0 > m_msg.Size() ) return false;
 	if ( !m_msg.Parse() ) return false;
 
 	return true;

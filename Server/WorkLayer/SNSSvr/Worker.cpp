@@ -234,6 +234,7 @@ bool Worker::SendNotify(mdk::uint32 recverId, unsigned char recvType, msg::Buffe
 	notify.m_recverId = recverId;
 	notify.m_holdTime = holdTime;
 	memcpy(notify.m_msg, *pMsg, pMsg->Size());
+	notify.m_msg.SetSize(pMsg->Size());
 	notify.Build();
 	notifyHost.Send(notify, notify.Size());
 
