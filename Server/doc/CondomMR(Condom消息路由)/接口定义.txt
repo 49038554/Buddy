@@ -1,0 +1,43 @@
+//SDK 接口
+
+//初始化SDK，并启动IO线程，专门负责消息中心消息的IO，并且断线自动重连
+//SDK其实就是一个mdk::NetServer / mdk::STNetServer
+//这个服务专门处理与消息中心的通信，隔离了消息中心的特殊报文
+//不用再在服务自身的OnMsg中去识别与处理消息中心的特殊格式报文
+//管理了与消息中心集群的连接，不用服务自身再去维护
+//管理了与消息中心之间的报文io，不用自己再去做io缓存
+
+//callFun是接口消息中心发过来的消息的回调函数
+//param是用户传递给callFun的参数
+Start( std::vector<消息中心连接信息（ip, port）>, void* (callFun*)(void *param, char *msg, int size), void* param );
+
+/*
+	按照hostId确定选择哪个CondomMR节点
+
+	路由系统通过此方法知道hostId这个主机，目前在哪个服务上
+	服务标识不需要传递，服务与消息中心的连接就是唯一标识
+*/
+HostLogin(unsigned int hostId);
+
+/*
+	按照hostId确定选择哪个CondomMR节点
+
+	路由系统通过此方法知道hostId这个主机，离开了哪个服务上
+	服务标识不需要传递，服务与消息中心的连接就是唯一标识
+*/
+HostLogOut(unsigned int hostId);
+
+/*
+	按照hostId确定选择哪个CondomMR节点
+
+	通过路由系统，将用户消息转发到hostId
+*/
+SendMessage(unsigned int hostId, char *usrMsg, int usrMsgSize);
+
+/*
+	按照hostId确定选择哪个CondomMR节点
+
+	从路由系统获取主机hostId的离线消息
+*/
+GetLevelMessage(unsigned int hostId, time_t lastGetTime);
+
