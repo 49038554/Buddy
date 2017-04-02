@@ -225,6 +225,8 @@ public:
 	*/
 	static bool SocketInit(void *lpVoid = NULL);
 	static void SocketDestory();
+	//功能：等待数据，默认无限等待
+	static bool WaitData( int *list, int &count, long lSecond = -1, long lMinSecond = -1);
 	//返回最后的错误信息
 	void GetLastErrorMsg( std::string &strError );
 	

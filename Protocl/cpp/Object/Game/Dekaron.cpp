@@ -17,7 +17,6 @@ bool Dekaron::Build(bool isResult)
 	SetId(MsgId::dekaron, isResult);
 	if ( !FillTransmitParam() ) return false;//Tcp服务填写参数
 	//请求参数
-	if ( !AddData(m_battleId) ) return false;//战斗Id Game服务器统一设置
 	if ( !AddData(m_playerId) ) return false;//被挑战玩家id
 	if ( !AddData(m_nick) ) return false;		// 挑战者昵称
 	if ( !AddData(m_pet.size()) ) return false;		// 挑战者昵称
@@ -52,7 +51,6 @@ bool Dekaron::Parse()
 {
 	if ( !Buffer::Parse() ) return false;
 	//请求参数
-	if ( !GetData(m_battleId) ) return false;//战斗Id Game服务器统一设置
 	if ( !GetData(m_playerId) ) return false;//被挑战玩家id
 	if ( !GetData(m_nick) ) return false;		// 挑战者昵称
 	int count = 0;

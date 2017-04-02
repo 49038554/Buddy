@@ -41,11 +41,10 @@ public:
 
 	//获取安装数据
 	bool GetGameSetupData( 
-		unsigned short &raceVersion, std::map<unsigned char, std::string> &races,
-		unsigned short &skillVersion, std::vector<data::SKILL> &skills,
-		unsigned short &itemVersion, std::vector<data::ITEM> &items,
-		unsigned short &buddyVersion, std::vector<data::BUDDY> &buddys,
-		unsigned short &lbsVersion, std::vector<data::BUDDY_MAP> &buddyMaps
+		unsigned short &dataVersion, 
+		std::map<unsigned char, std::string> &races,
+		std::vector<data::SKILL> &skills, std::vector<data::ITEM> &items,
+		std::vector<data::BUDDY> &buddys, std::vector<data::BUDDY_MAP> &buddyMaps
 		);
 
 private:

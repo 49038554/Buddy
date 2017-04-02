@@ -13,7 +13,6 @@ class Dekaron : public Buffer
 {
 public:
 	//请求参数
-	int						m_battleId;	// 战斗Id Game服务器统一设置
 	unsigned int			m_playerId;	// 被挑战玩家id
 	std::string				m_nick;		// 挑战者昵称
 	std::vector<data::PET>	m_pet;		// 挑战者宠物

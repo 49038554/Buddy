@@ -190,6 +190,9 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\base\Client.cpp">
       <Filter>Protocl\base</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\UnDekaron.cpp">
+      <Filter>Protocl\Object\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\WorkLayer\GameSvr\Main.h">
@@ -323,6 +326,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Protocl\cpp\base\Client.h">
       <Filter>Protocl\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\UnDekaron.h">
+      <Filter>Protocl\Object\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

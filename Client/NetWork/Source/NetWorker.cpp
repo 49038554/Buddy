@@ -82,7 +82,6 @@ void* NetWorker::TMain(void *param)
 			}
 			if ( it == m_services.end() ) continue;
 
-			buffer.ReInit();
 			int result = it->second.svr.Receive(buffer, buffer.HeaderSize(), true);
 			if ( 0 > result )
 			{

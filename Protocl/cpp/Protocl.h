@@ -55,10 +55,11 @@ namespace MsgId
 
 		//游戏模块
 		dekaron = 1001,//挑战
-		challenge = 1002,//应战
-		roundReady = 1003,//回合准备
-		sendPet = 1004,//放出宠物
-		battleResult = 1005,//战斗结果
+		undekaron = 1002,//挑战取消
+		challenge = 1003,//应战
+		roundReady = 1004,//回合准备
+		sendPet = 1005,//放出宠物
+		battleResult = 1006,//战斗结果
 
 		//数据中心
 		setupVersion = 1001,//安装版本

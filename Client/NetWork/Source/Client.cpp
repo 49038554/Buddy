@@ -136,7 +136,7 @@ void Client::OnRegister(msg::Buffer &buffer)
 	msg::UserRegister msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-	if ( ResultCode::Success != msg.m_code )
+	if ( ResultCode::success != msg.m_code )
 	{
 		printf( "注册失败：%s\n", msg.m_reason.c_str() );
 		return;
@@ -195,7 +195,7 @@ void Client::OnLogin(msg::Buffer &buffer)
 	msg::UserLogin msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-	if ( ResultCode::Success != msg.m_code )
+	if ( ResultCode::success != msg.m_code )
 	{
 		printf( "登录失败：%s\n", msg.m_reason.c_str() );
 		return;
@@ -250,7 +250,7 @@ void Client::OnBindPhone(msg::Buffer &buffer)
 	msg::BindingPhone msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-	if ( ResultCode::Success != msg.m_code )
+	if ( ResultCode::success != msg.m_code )
 	{
 		printf( "绑定失败：%s\n", msg.m_reason.c_str() );
 		return;
@@ -295,7 +295,7 @@ void Client::OnResetPassword(msg::Buffer &buffer)
 	msg::ResetPassword msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-	if ( ResultCode::Success != msg.m_code )
+	if ( ResultCode::success != msg.m_code )
 	{
 		printf( "修改密码失败：%s\n", msg.m_reason.c_str() );
 		return;
@@ -368,7 +368,7 @@ void Client::OnAddBuddy(msg::Buffer &buffer)
 		return;
 	}
 
-	if ( ResultCode::Success != msg.m_code )
+	if ( ResultCode::success != msg.m_code )
 	{
 		printf( "添加小伙伴失败：%s\n", msg.m_reason.c_str() );
 		return;
@@ -564,7 +564,7 @@ void Client::OnChat(msg::Buffer &buffer)
 			return;
 		}
 		if ( msg::Chat::buddy != msg.m_recvType ) return;
-		if ( ResultCode::Refuse != msg.m_code ) return;
+		if ( ResultCode::refuse != msg.m_code ) return;
 		printf( "你不是对方的小伙伴，不能与用户(%u)聊天\n", msg.m_recverId );
 		return;
 	}
@@ -710,7 +710,7 @@ void Client::OnSetupVersion(msg::Buffer &buffer)
 	msg::SetupVersion msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-	if ( ResultCode::Success != msg.m_code ) return;
+	if ( ResultCode::success != msg.m_code ) return;
 	m_game.OnSetupVersion(msg.m_dataVersion);
 }
 
@@ -941,7 +941,7 @@ void Client::OnGetPlayerData(msg::Buffer &buffer)
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
 
-	if ( ResultCode::Success != msg.m_code ) return;
+	if ( ResultCode::success != msg.m_code ) return;
 	SaveGame();
 	m_palyerDataLoaded = true;
 	//发出通知
@@ -1117,7 +1117,7 @@ void Client::OnSyncPlayer(msg::Buffer &buffer)
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
 
-	if ( ResultCode::Success != msg.m_code ) return;
+	if ( ResultCode::success != msg.m_code ) return;
 	m_player.synced = true;
 	SaveGame();
 }
@@ -1127,7 +1127,7 @@ void Client::OnSyncItem(msg::Buffer &buffer)
 	msg::SyncItem msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-	if ( ResultCode::Success != msg.m_code ) return;
+	if ( ResultCode::success != msg.m_code ) return;
 
 	int i = 0;
 	data::PLAYER_ITEM *pInfo;
@@ -1152,7 +1152,7 @@ void Client::OnSyncPets(msg::Buffer &buffer)
 	msg::SyncPets msg;
 	memcpy(msg, buffer, buffer.Size());
 	if ( !msg.Parse() ) return;
-	if ( ResultCode::Success != msg.m_code ) return;
+	if ( ResultCode::success != msg.m_code ) return;
 
 	int i = 0;
 	data::PET *pInfo;

@@ -44,6 +44,7 @@
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\Dekaron.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\RoundReady.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\SendPet.cpp" />
+    <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Game\UnDekaron.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.cpp" />
     <ClCompile Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.cpp" />
@@ -89,6 +90,7 @@
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\Dekaron.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\RoundReady.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\SendPet.h" />
+    <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Game\UnDekaron.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Notify\Event.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\Cluster.h" />
     <ClInclude Include="..\..\..\..\Protocl\cpp\Object\Operation\GetCluster.h" />

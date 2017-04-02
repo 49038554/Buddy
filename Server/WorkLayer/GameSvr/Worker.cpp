@@ -149,11 +149,7 @@ Worker::Worker(void)
 	SetThreadsObjects(objList);
 	//检查本地是否有数据，没有则从数据层读取
 	DBCenter *pDBCenter = pCluster->Node(m_nodeId);
-	if ( !pDBCenter->GetGameSetupData( m_raceVersion, m_races,
-										m_skillVersion, m_skills,								
-										m_itemVersion, m_items,
-										m_buddyVersion, m_buddys,
-										m_lbsVersion, m_buddyMaps) )
+	if ( !pDBCenter->GetGameSetupData( m_dataVersion, m_races, m_skills, m_items, m_buddys, m_buddyMaps) )
 	{
 		m_log.Info("run", "获取安装数据失败");
 		mdk::mdk_assert(false);
@@ -331,20 +327,25 @@ void Worker::OnSetupVersion(mdk::NetHost &host, msg::Buffer &buf)
 		return;
 	}
 
-	//如果client版本小于服务版本，则发送新版数据
-	if ( msg.m_dataVersion < m_raceVersion )
+	if ( msg.m_dataVersion == m_dataVersion )
+	{
+		msg.m_code = ResultCode::success;
+		msg.Build(true);
+		host.Send(msg, msg.Size());
+		return;
+	}
+
+	//如果client版本与服务不匹配，则发送新版数据
+	msg.m_dataVersion = m_dataVersion;
 	{
 		msg::RaceMap msg;
-// 		msg.m_raceVersion = m_raceVersion;
 		msg.m_races = m_races;
 		msg.Build();
 		host.Send(msg, msg.Size());
 	}
-	if ( msg.m_dataVersion < m_skillVersion )
 	{
-		int i = msg.m_dataVersion; 
 		msg::SkillBook msg;
-// 		msg.m_skillVersion = m_skillVersion;
+		int i = 0;
 		int j = 0;
 		while ( i < m_skills.size() )
 		{
@@ -358,11 +359,9 @@ void Worker::OnSetupVersion(mdk::NetHost &host, msg::Buffer &buf)
 			host.Send(msg, msg.Size());
 		}
 	}
-	if ( msg.m_dataVersion < m_itemVersion )
 	{
-		int i = msg.m_dataVersion; 
 		msg::ItemBook msg;
-// 		msg.m_itemVersion = m_itemVersion;
+		int i = 0;
 		int j = 0;
 		while ( i < m_items.size() )
 		{
@@ -376,11 +375,9 @@ void Worker::OnSetupVersion(mdk::NetHost &host, msg::Buffer &buf)
 			host.Send(msg, msg.Size());
 		}
 	}
-	if ( msg.m_dataVersion < m_buddyVersion )
 	{
-		int i = msg.m_dataVersion; 
 		msg::BuddyBook msg;
-// 		msg.m_buddyVersion = m_buddyVersion;
+		int i = 0;
 		int j = 0;
 		while ( i < m_buddyMaps.size() )
 		{
@@ -394,10 +391,8 @@ void Worker::OnSetupVersion(mdk::NetHost &host, msg::Buffer &buf)
 			host.Send(msg, msg.Size());
 		}
 	}
-	if ( msg.m_dataVersion < m_lbsVersion )
 	{
 		msg::BuddyMap msg;
-// 		msg.m_lbsVersion = m_lbsVersion;
 		int i = 0;
 		int j = 0;
 		while ( i < m_buddyMaps.size() )
@@ -416,6 +411,7 @@ void Worker::OnSetupVersion(mdk::NetHost &host, msg::Buffer &buf)
 	msg.m_code = ResultCode::success;
 	msg.Build(true);
 	host.Send(msg, msg.Size());
+
 	return;
 }
 

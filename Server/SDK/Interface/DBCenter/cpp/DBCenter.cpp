@@ -84,22 +84,17 @@ bool DBCenter::SetUserData(msg::SetUserData& msg)
 }
 
 bool DBCenter::GetGameSetupData( 
-	unsigned short &raceVersion, std::map<unsigned char, std::string> &races,
-	unsigned short &skillVersion, std::vector<data::SKILL> &skills,
-	unsigned short &itemVersion, std::vector<data::ITEM> &items,
-	unsigned short &buddyVersion, std::vector<data::BUDDY> &buddys,
-	unsigned short &lbsVersion, std::vector<data::BUDDY_MAP> &buddyMaps
+	unsigned short &dataVersion, 
+	std::map<unsigned char, std::string> &races,
+	std::vector<data::SKILL> &skills, std::vector<data::ITEM> &items,
+	std::vector<data::BUDDY> &buddys, std::vector<data::BUDDY_MAP> &buddyMaps
 	)
 {
-	raceVersion = 0;
+	dataVersion = 0;
 	races.clear();
-	itemVersion = 0;
 	items.clear();
-	skillVersion = 0;
 	skills.clear();
-	buddyVersion = 0;
 	buddys.clear();
-	lbsVersion = 0;
 	buddyMaps.clear();
 
 	msg::SetupVersion query;
@@ -193,6 +188,7 @@ bool DBCenter::GetGameSetupData(
 				Close();
 				return false;
 			}
+			dataVersion = reply.m_dataVersion;
 			break;
 		}
 	}

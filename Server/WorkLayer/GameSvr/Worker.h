@@ -75,17 +75,12 @@ private:
 	mdk::uint16					m_nodeId;
 
 	//业务属性
-	unsigned short								m_raceVersion;
+	mdk::uint16									m_dataVersion;//数据版本
 	std::map<unsigned char, std::string>		m_races;
-	mdk::uint16									m_skillVersion;
 	std::vector<data::SKILL>					m_skills;
-	mdk::uint16									m_itemVersion;
 	std::vector<data::ITEM>						m_items;
-	mdk::uint16									m_buddyVersion;
 	std::vector<data::BUDDY>					m_buddys;
-	mdk::uint16									m_lbsVersion;
 	std::vector<data::BUDDY_MAP>				m_buddyMaps;
-
 };
 
 #endif // __WORKER_H__
